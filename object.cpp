@@ -175,10 +175,6 @@ void Object::PushBehind(int objtype)
 	Object *target = Objects::FindByType(objtype);
 	if (target)
 		PushBehind(target);
-	#ifdef DEBUG
-	else
-		staterr("PushBehind: could not find any objects of type %s", DescribeObjectType(objtype));
-	#endif
 }
 
 /*
