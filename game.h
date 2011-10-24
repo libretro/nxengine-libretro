@@ -101,7 +101,6 @@ struct Game
 	} curlytarget;
 	
 	int fullscreen;
-	int ffwdtime;		// debug option: disables speed-limiting for ffwdtime ticks
 	
 // ---------------------------------------
 
