@@ -23,7 +23,7 @@ nx:  main.o game.o object.o ObjManager.o \
 	 ai/boss/ballos.o endgame/island.o endgame/misc.o endgame/credits.o endgame/CredReader.o \
 	 intro/intro.o intro/title.o pause/pause.o pause/options.o pause/dialog.o \
 	 pause/message.o pause/objects.o graphics/nxsurface.o graphics/graphics.o graphics/sprites.o \
-	 graphics/tileset.o graphics/font.o graphics/safemode.o sound/sound.o sound/sslib.o \
+	 graphics/tileset.o graphics/font.o sound/sound.o sound/sslib.o \
 	 sound/org.o sound/pxt.o siflib/sif.o siflib/sifloader.o siflib/sectSprites.o \
 	 siflib/sectStringArray.o extract/extract.o extract/extractpxt.o extract/extractfiles.o extract/extractstages.o \
 	 extract/crc.o autogen/AssignSprites.o autogen/objnames.o stagedata.o common/InitList.o \

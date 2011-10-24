@@ -38,9 +38,6 @@ int nOnscreenObjects;
 
 Game game;
 TextBox textbox;
-#ifdef DEBUG
-DebugConsole console;
-#endif
 ObjProp objprop[OBJ_LAST];
 
 // init Game object: only called once during startup
@@ -55,11 +52,7 @@ bool Game::init()
 	for(i=0;i<OBJ_LAST;i++)
 	{
 		objprop[i].shaketime = 16;
-#ifdef DEBUG	// big red "NO" sprite points out unimplemented objects
-		objprop[i].sprite = SPR_UNIMPLEMENTED_OBJECT;
-#else
 		objprop[i].sprite = SPR_NULL;
-#endif
 	}
 
 	AssignSprites();	// auto-generated function to assign sprites to objects
@@ -149,9 +142,6 @@ bool Game::setmode(int newmode, int param, bool force)
 	if (game.mode == newmode && !force)
 		return 0;
 
-#ifdef DEBUG
-	stat("Setting tick function to type %d param %d", newmode, param);
-#endif
 
 	if (tickfunctions[game.mode].OnExit)
 		tickfunctions[game.mode].OnExit();
@@ -162,9 +152,6 @@ bool Game::setmode(int newmode, int param, bool force)
 	{
 		if (tickfunctions[game.mode].OnEnter(param))
 		{
-#ifdef DEBUG
-			staterr("game.setmode: initilization failed for mode %d", newmode);
-#endif
 			game.mode = GM_NONE;
 			return 1;
 		}
@@ -178,10 +165,6 @@ bool Game::pause(int pausemode, int param)
 	if (game.paused == pausemode)
 		return 0;
 
-#ifdef DEBUG
-	stat("Setting pause: type %d param %d", pausemode, param);
-#endif
-
 	if (tickfunctions[game.paused].OnExit)
 		tickfunctions[game.paused].OnExit();
 
@@ -191,9 +174,6 @@ bool Game::pause(int pausemode, int param)
 	{
 		if (tickfunctions[game.paused].OnEnter(param))
 		{
-#ifdef DEBUG
-			staterr("game.pause: initilization failed for mode %d", pausemode);
-#endif
 			game.paused = 0;
 			return 1;
 		}
@@ -207,10 +187,7 @@ bool Game::pause(int pausemode, int param)
 
 void Game::tick(void)
 {
-	#ifdef DEBUG
-	debug_clear();
-	#endif
-	
+
 	if (game.paused)
 	{
 		tickfunctions[game.paused].OnTick();
@@ -219,18 +196,13 @@ void Game::tick(void)
 	{
 		// record/playback replays
 		Replay::run();
-		
+
 		// run scripts
 		RunScripts();
-		
+
 		// call the tick function for the current game mode
 		tickfunctions[game.mode].OnTick();
 	}
-	
-	#ifdef DEBUG
-	DrawDebug();
-	console.Draw();
-	#endif
 }
 
 
@@ -248,15 +220,12 @@ void Game::reset()
 	memset(inputs, 0, sizeof(inputs));
 	StopLoopSounds();
 	StopScripts();
-	
+
 	Replay::end_record();
 	Replay::end_playback();
-	
+
 	game.pause(false);
 	game.setmode(GM_INTRO, 0, true);
-	#ifdef DEBUG
-	console.SetVisible(false);
-	#endif
 }
 
 /*
@@ -396,9 +365,6 @@ void DrawScene(void)
 			}
 			else
 			{
-				#ifdef DEBUG
-				staterr("%s:%d: Max Objects Overflow", __FILE__, __LINE__);
-				#endif
 				return;
 			}
 
@@ -438,9 +404,6 @@ void DrawScene(void)
 	// draw all floattext (rising damage and XP amounts)
 	FloatText::DrawAll();
 
-	#ifdef DEBUG
-	if (game.debug.DrawBoundingBoxes) DrawBoundingBoxes();
-	#endif
 	//if (game.debug.debugmode) DrawAttrPoints();
 }
 
@@ -497,9 +460,6 @@ bool game_load(Profile *p)
 		int scriptno = p->teleslots[i].scriptno;
 
 		textbox.StageSelect.SetSlot(slotno, scriptno);
-		#ifdef DEBUG
-		stat(" - Read Teleporter Slot %d: slotno=%d scriptno=%d", i, slotno, scriptno);
-		#endif
 	}
 
 	// have to load the stage last AFTER the flags are loaded because
@@ -521,9 +481,6 @@ bool game_save(int num)
 {
 	Profile p;
 
-	#ifdef DEBUG
-	stat("game_save: writing savefile %d", num);
-	#endif
 
 	if (game_save(&p))
 		return 1;
@@ -744,10 +701,5 @@ void AssignExtraSprites(void)
 	objprop[OBJ_BUYOBUYO].defaultnxflags |= NXFLAG_NO_DROP_POWERUPS;
 	
 	// these are set by AI; this is just to silence unimplemented object warnings
-	#ifdef DEBUG
-	objprop[OBJ_CRITTER_FLYING].sprite = SPR_CRITTER_FLYING_CYAN;
-	for(int i=OBJ_SHOTS_START;i<=OBJ_SHOTS_END;i++)
-		if (objprop[i].sprite==SPR_UNIMPLEMENTED_OBJECT) objprop[i].sprite = SPR_NULL;
-	#endif
 }
 

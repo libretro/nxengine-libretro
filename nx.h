@@ -48,7 +48,6 @@ class Object;
 #include "object.h"
 #include "ObjManager.h"
 #include "console.h"
-#include "debug.h"
 #include "game.h"
 #include "caret.h"
 #include "screeneffect.h"
