@@ -1,4 +1,4 @@
-
+#ifdef DEBUG
 #include <SDL/SDL.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -227,4 +227,4 @@ int s, c, i;
 	
 	return 0;
 }
-
+#endif

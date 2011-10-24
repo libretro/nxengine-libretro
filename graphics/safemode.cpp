@@ -1,4 +1,4 @@
-
+#ifdef DEBUG
 // a limited and redundant graphics system which allows placing text on the screen
 // in the case of startup errors or before the real data files are extracted.
 #include <SDL/SDL.h>
@@ -261,7 +261,4 @@ TextRecord::~TextRecord()
 		sfc = NULL;
 	}
 }
-
-
-
-
+#endif

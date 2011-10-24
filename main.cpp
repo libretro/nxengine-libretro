@@ -1,7 +1,9 @@
 
 #include <stdarg.h>
 #include "nx.h"
+#ifdef DEBUG
 #include "graphics/safemode.h"
+#endif
 #include "main.fdh"
 
 const char *data_dir = "data";
@@ -45,9 +47,18 @@ int main(int argc, char *argv[])
 	// so we know the initial screen resolution.
 	settings_load();
 
-	if (Graphics::init(settings->resolution)) { staterr("Failed to initilize graphics."); return 1; }
-	if (font_init()) { staterr("Failed to load font."); return 1; }
+	if (Graphics::init(settings->resolution))
+	{
+		staterr("Failed to initilize graphics.");
+		return 1;
+	}
+	if (font_init())
+	{
+		staterr("Failed to load font.");
+		return 1;
+	}
 
+	#ifdef DEBUG
 	if (!settings->files_extracted)
 	{
 		if (extract_main())
@@ -67,14 +78,44 @@ int main(int argc, char *argv[])
 	{
 		return 1;
 	}
+	#endif
 
 	//Graphics::ShowLoadingScreen();
-	if (sound_init()) { fatal("Failed to initilize sound."); return 1; }
-	if (trig_init()) { fatal("Failed trig module init."); return 1; }
-
-	if (tsc_init()) { fatal("Failed to initilize script engine."); return 1; }
-	if (textbox.Init()) { fatal("Failed to initialize textboxes."); return 1; }
-	if (Carets::init()) { fatal("Failed to initialize carets."); return 1; }
+	if (sound_init())
+	{
+		#ifdef DEBUG
+		fatal("Failed to initilize sound.");
+		#endif
+		return 1;
+	}
+	if (trig_init())
+	{
+		#ifdef DEBUG
+		fatal("Failed trig module init.");
+		#endif
+		return 1;
+	}
+	if (tsc_init())
+	{
+		#ifdef DEBUG
+		fatal("Failed to initilize script engine.");
+		#endif
+		return 1;
+	}
+	if (textbox.Init())
+	{
+		#ifdef DEBUG
+		fatal("Failed to initialize textboxes.");
+		#endif
+		return 1;
+	}
+	if (Carets::init())
+	{
+		#ifdef DEBUG
+		fatal("Failed to initialize carets.");
+		#endif
+		return 1;
+	}
 
 	if (game.init()) return 1;
 	game.setmode(GM_NORMAL);
@@ -123,7 +164,9 @@ int main(int argc, char *argv[])
 			stat("= Loading game =");
 			if (game_load(settings->last_save_slot))
 			{
+				#ifdef DEBUG
 				fatal("savefile error");
+				#endif
 				goto ingame_error;
 			}
 
@@ -139,7 +182,9 @@ int main(int argc, char *argv[])
 			StopScripts();
 			if (Replay::begin_playback(GetReplayName(game.switchstage.param)))
 			{
+				#ifdef DEBUG
 				fatal("error starting playback");
+				#endif
 				goto ingame_error;
 			}
 		}
@@ -417,6 +462,7 @@ void InitNewGame(bool with_intro)
 void c------------------------------() {}
 */
 
+#ifdef DEBUG
 static void fatal(const char *str)
 {
 	staterr("fatal: '%s'", str);
@@ -457,7 +503,6 @@ char fname[MAXPATHLEN];
 	return 1;
 }
 
-#ifdef DEBUG
 void visible_warning(const char *fmt, ...)
 {
 	va_list ar;
