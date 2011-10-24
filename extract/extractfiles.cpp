@@ -1,4 +1,4 @@
-
+#ifdef DEBUG
 #include <SDL/SDL.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -210,13 +210,4 @@ static void createdir(const char *fname)
 	
 	free(dir);
 }
-
-
-
-
-
-
-
-
-
-
+#endif

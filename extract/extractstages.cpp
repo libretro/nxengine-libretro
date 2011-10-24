@@ -1,4 +1,4 @@
-
+#ifdef DEBUG
 #include <SDL/SDL.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -124,7 +124,4 @@ static int find_index(const char *fname, const char *list[])
 	
 	return -1;
 }
-
-
-
-
+#endif

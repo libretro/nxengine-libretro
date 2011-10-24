@@ -1,4 +1,4 @@
-
+#ifdef DEBUG
 #include <SDL/SDL.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -286,4 +286,4 @@ recheck: ;
 	return hit;
 }
 #endif
-
+#endif
