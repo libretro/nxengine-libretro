@@ -9,9 +9,9 @@
 #include "../dirnames.h"
 #include "graphics.fdh"
 
-NXSurface *screen = NULL;				// created from SDL's screen
-static NXSurface *drawtarget = NULL;	// target of DrawRect etc; almost always screen
-int screen_bpp = 16;					// the default if we can't get video info
+NXSurface *screen = NULL;			// created from SDL's screen
+static NXSurface *drawtarget = NULL;		// target of DrawRect etc; almost always screen
+int screen_bpp = 16;				// the default if we can't get video info
 
 const NXColor DK_BLUE(0, 0, 0x21);		// the popular dk blue backdrop color
 const NXColor BLACK(0, 0, 0);			// pure black, only works if no colorkey
@@ -22,7 +22,7 @@ static int current_res = -1;
 
 bool Graphics::init(int resolution)
 {
-const SDL_VideoInfo *info;
+	const SDL_VideoInfo *info;
 
 	// it's faster if we create the SDL screen at the bpp of the real screen.
 	// max fps went from 120 to 160 on my X11 system this way.
@@ -32,16 +32,16 @@ const SDL_VideoInfo *info;
 		if (info->vfmt->BitsPerPixel > 8)
 			screen_bpp = info->vfmt->BitsPerPixel;
 	}
-	
+
 	if (SetResolution(resolution, false))
 		return 1;
-	
+
 	if (Tileset::Init())
 		return 1;
-	
+
 	if (Sprites::Init())
 		return 1;
-	
+
 	return 0;
 }
 
@@ -57,30 +57,30 @@ void c------------------------------() {}
 
 bool Graphics::InitVideo()
 {
-SDL_Surface *sdl_screen;
+	SDL_Surface *sdl_screen;
 
 	stat("Graphics::InitVideo");
 	if (drawtarget == screen) drawtarget = NULL;
 	if (screen) delete screen;
-	
+
 #ifdef PANDORA
 	is_fullscreen = true;
 #endif
 	uint32_t flags = SDL_HWSURFACE | SDL_DOUBLEBUF;
 	if (is_fullscreen) flags |= SDL_FULLSCREEN;
-	
+
 	putenv((char *)"SDL_VIDEO_CENTERED=1");
-	
+
 	sdl_screen = SDL_SetVideoMode(SCREEN_WIDTH*SCALE, SCREEN_HEIGHT*SCALE, screen_bpp, flags);
 	if (!sdl_screen)
 	{
 		staterr("Graphics::InitVideo: error setting video mode");
 		return 1;
 	}
-	
+
 	SDL_WM_SetCaption("NXEngine", NULL);
 	SDL_ShowCursor(is_fullscreen == false);
-	
+
 	screen = new NXSurface(sdl_screen, false);
 	if (!drawtarget) drawtarget = screen;
 	return 0;
