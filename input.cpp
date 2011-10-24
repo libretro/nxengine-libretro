@@ -116,11 +116,13 @@ void c------------------------------() {}
 
 void input_poll(void)
 {
-static uint8_t shiftstates = 0;
-extern bool freezeframe;
-SDL_Event evt;
-int ino;
-int key;
+	static uint8_t shiftstates = 0;
+#ifdef DEBUG
+	extern bool freezeframe;
+#endif
+	SDL_Event evt;
+	int ino;
+	int key;
 
 	while(SDL_PollEvent(&evt))
 	{
@@ -128,86 +130,86 @@ int key;
 		{
 			case SDL_KEYDOWN:
 			case SDL_KEYUP:
-			{
-				key = evt.key.keysym.sym;
-				
-				#ifdef DEBUG
-				if (console.IsVisible() && !IsNonConsoleKey(key))
 				{
-					if (key == SDLK_LSHIFT)
+					key = evt.key.keysym.sym;
+
+#ifdef DEBUG
+					if (console.IsVisible() && !IsNonConsoleKey(key))
 					{
-						if (evt.type == SDL_KEYDOWN)
-							shiftstates |= LEFTMASK;
+						if (key == SDLK_LSHIFT)
+						{
+							if (evt.type == SDL_KEYDOWN)
+								shiftstates |= LEFTMASK;
+							else
+								shiftstates &= ~LEFTMASK;
+						}
+						else if (key == SDLK_RSHIFT)
+						{
+							if (evt.type == SDL_KEYDOWN)
+								shiftstates |= RIGHTMASK;
+							else
+								shiftstates &= ~RIGHTMASK;
+						}
 						else
-							shiftstates &= ~LEFTMASK;
-					}
-					else if (key == SDLK_RSHIFT)
-					{
-						if (evt.type == SDL_KEYDOWN)
-							shiftstates |= RIGHTMASK;
-						else
-							shiftstates &= ~RIGHTMASK;
+						{
+							int ch = key;
+							if (shiftstates != 0)
+							{
+								ch = toupper(ch);
+								if (ch == '.') ch = '>';
+								if (ch == '-') ch = '_';
+								if (ch == '/') ch = '?';
+								if (ch == '1') ch = '!';
+							}
+
+							if (evt.type == SDL_KEYDOWN)
+								console.HandleKey(ch);
+							else
+								console.HandleKeyRelease(ch);
+						}
 					}
 					else
 					{
-						int ch = key;
-						if (shiftstates != 0)
-						{
-							ch = toupper(ch);
-							if (ch == '.') ch = '>';
-							if (ch == '-') ch = '_';
-							if (ch == '/') ch = '?';
-							if (ch == '1') ch = '!';
-						}
-						
+#endif
+						ino = mappings[key];
+						if (ino != 0xff) inputs[ino] = (evt.type == SDL_KEYDOWN);
+
 						if (evt.type == SDL_KEYDOWN)
-							console.HandleKey(ch);
-						else
-							console.HandleKeyRelease(ch);
-					}
-				}
-				else
-				{
-				#endif
-					ino = mappings[key];
-					if (ino != 0xff) inputs[ino] = (evt.type == SDL_KEYDOWN);
-					
-					if (evt.type == SDL_KEYDOWN)
-					{
-						if (Replay::IsPlaying() && ino <= LASTCONTROLKEY)
 						{
-							stat("user interrupt - stopping playback of replay");
-							Replay::end_playback();
-							memset(inputs, 0, sizeof(inputs));
-							inputs[ino] = true;
-						}
-						
-						#ifdef DEBUG
-						if (key == '`')		// bring up console
-						{
-							if (!freezeframe)
+							if (Replay::IsPlaying() && ino <= LASTCONTROLKEY)
 							{
-								sound(SND_SWITCH_WEAPON);
-								console.SetVisible(true);
+								stat("user interrupt - stopping playback of replay");
+								Replay::end_playback();
+								memset(inputs, 0, sizeof(inputs));
+								inputs[ino] = true;
 							}
+
+#ifdef DEBUG
+							if (key == '`')		// bring up console
+							{
+								if (!freezeframe)
+								{
+									sound(SND_SWITCH_WEAPON);
+									console.SetVisible(true);
+								}
+							}
+							else
+							{
+#endif
+								last_sdl_key = key;
+#ifdef DEBUG
+							}
+#endif
 						}
-						else
-						{
-						#endif
-							last_sdl_key = key;
-						#ifdef DEBUG
-						}
-						#endif
+#ifdef DEBUG
 					}
-				#ifdef DEBUG
+#endif
 				}
-				#endif
-			}
-			break;
-			
+				break;
+
 			case SDL_QUIT:
 				game.running = false;
-			break;
+				break;
 		}
 	}
 }
