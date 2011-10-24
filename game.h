@@ -65,6 +65,7 @@ struct Game
 	
 	uint32_t counter;	// Nikumaru counter value
 	
+	#ifdef DEBUG
 	struct
 	{
 		bool god;
@@ -72,6 +73,7 @@ struct Game
 		bool infinite_damage;
 		bool DrawBoundingBoxes;
 	} debug;
+	#endif
 	
 	// if mapno becomes >= 0 the stage ends and we switch to the new stage
 	struct

@@ -257,6 +257,7 @@ static int frameskip = 0;
 	}
 	
 	// freeze frame
+	#ifdef DEBUG
 	if (settings->enable_debug_keys)
 	{
 		if (inputs[FREEZE_FRAME_KEY] && !last_freezekey)
@@ -279,12 +280,15 @@ static int frameskip = 0;
 		last_freezekey = inputs[FREEZE_FRAME_KEY];
 		last_framekey = inputs[FRAME_ADVANCE_KEY];
 	}
+	#endif
 	
+	#ifdef DEBUG
 	// fast-forward key (F5)
 	if (inputs[FFWDKEY] && (settings->enable_debug_keys || Replay::IsPlaying()))
 	{
 		game.ffwdtime = 2;
 	}
+	#endif
 	
 	if (can_tick)
 	{
@@ -368,7 +372,9 @@ void InitNewGame(bool with_intro)
 	
 	game.quaketime = game.megaquaketime = 0;
 	game.showmapnametime = 0;
+	#ifdef DEBUG
 	game.debug.god = 0;
+	#endif
 	game.running = true;
 	game.frozen = false;
 	
@@ -431,16 +437,18 @@ char fname[MAXPATHLEN];
 	return 1;
 }
 
+#ifdef DEBUG
 void visible_warning(const char *fmt, ...)
 {
-va_list ar;
-char buffer[80];
+	va_list ar;
+	char buffer[80];
 
 	va_start(ar, fmt);
 	vsnprintf(buffer, sizeof(buffer), fmt, ar);
 	va_end(ar);
-	
+
 	console.Print(buffer);
 }
+#endif
 
 

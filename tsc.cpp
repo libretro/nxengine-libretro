@@ -1105,7 +1105,9 @@ char debugbuffer[100];
 			break;
 			
 			default:
+				#ifdef DEBUG
 				console.Print("- unimplemented opcode %s; script %04d halted.", cmd_table[cmd].mnemonic, s->scriptno);
+				#endif
 				StopScript(s);
 				return;
 		}

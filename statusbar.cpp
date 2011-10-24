@@ -100,8 +100,10 @@ bool maxed_out;
 	{
 		if (!player->hurt_flash_state)
 		{
+			#ifdef DEBUG
 			if (!game.debug.god)
 			{
+			#endif
 				// -- draw the health bar -----------------------------
 				draw_sprite(HEALTH_X, HEALTH_Y, SPR_HEALTHBAR, 0, 0);
 				
@@ -109,7 +111,9 @@ bool maxed_out;
 				
 				// draw the health in numbers
 				DrawNumberRAlign(HEALTH_X+24, HEALTH_Y, SPR_WHITENUMBERS, PHealthBar.displayed_value);
+			#ifdef DEBUG
 			}
+			#endif
 			
 			// -- draw the XP bar ---------------------------------
 			level = player->weapons[player->curWeapon].level;

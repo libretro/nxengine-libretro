@@ -38,7 +38,9 @@ int nOnscreenObjects;
 
 Game game;
 TextBox textbox;
+#ifdef DEBUG
 DebugConsole console;
+#endif
 ObjProp objprop[OBJ_LAST];
 
 // init Game object: only called once during startup
@@ -205,7 +207,9 @@ bool Game::pause(int pausemode, int param)
 
 void Game::tick(void)
 {
+	#ifdef DEBUG
 	debug_clear();
+	#endif
 	
 	if (game.paused)
 	{
@@ -223,8 +227,10 @@ void Game::tick(void)
 		tickfunctions[game.mode].OnTick();
 	}
 	
+	#ifdef DEBUG
 	DrawDebug();
 	console.Draw();
+	#endif
 }
 
 
@@ -248,7 +254,9 @@ void Game::reset()
 	
 	game.pause(false);
 	game.setmode(GM_INTRO, 0, true);
+	#ifdef DEBUG
 	console.SetVisible(false);
+	#endif
 }
 
 /*
@@ -430,7 +438,9 @@ void DrawScene(void)
 	// draw all floattext (rising damage and XP amounts)
 	FloatText::DrawAll();
 
+	#ifdef DEBUG
 	if (game.debug.DrawBoundingBoxes) DrawBoundingBoxes();
+	#endif
 	//if (game.debug.debugmode) DrawAttrPoints();
 }
 

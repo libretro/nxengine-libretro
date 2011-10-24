@@ -335,10 +335,23 @@ char org_load(char *fname)
 	int i, j;
 
 	fp = fopen(fname, "rb");
-	if (!fp) { visible_warning("org_load: no such file: '%s'", fname); return 1; }
+	if (!fp)
+	{
+		#ifdef DEBUG
+		visible_warning("org_load: no such file: '%s'", fname);
+		#endif
+		return 1;
+	}
 
 	for(i=0;i<6;i++) { buf[i] = fgetc(fp); } buf[i] = 0;
-	if (strcmp(buf, magic)) { visible_warning("org-load: not an org file (got '%s')", buf); fclose(fp); return 1; }
+	if (strcmp(buf, magic))
+	{
+#ifdef DEBUG
+		visible_warning("org-load: not an org file (got '%s')", buf);
+#endif
+		fclose(fp);
+		return 1;
+	}
 	#ifdef DEBUG
 	stat("%s: %s detected", fname, magic);
 	#endif
@@ -356,7 +369,9 @@ char org_load(char *fname)
 
 	if (song.loop_end < song.loop_start)
 	{
+		#ifdef DEBUG
 		visible_warning("org_load: loop end is before loop start");
+		#endif
 		fclose(fp);
 		return 1;
 	}
@@ -382,7 +397,9 @@ char org_load(char *fname)
 
 		if (song.instrument[i].nnotes >= MAX_SONG_LENGTH)
 		{
+			#ifdef DEBUG
 			visible_warning(" * org_load: instrument %d has too many notes! (has %d, max %d)", i, song.instrument[i].nnotes, MAX_SONG_LENGTH);
+			#endif
 			fclose(fp);
 			return 1;
 		}
