@@ -310,7 +310,6 @@ void megaquake(int quaketime, int snd)
 void DrawScene(void)
 {
 	int scr_x, scr_y;
-	extern int flipacceltime;
 
 	// sporidically-used animated tile feature,
 	// e.g. water currents in Waterway
@@ -318,11 +317,8 @@ void DrawScene(void)
 		AnimateMotionTiles();
 
 	// draw background map tiles
-	if (!flipacceltime)
-	{
-		map_draw_backdrop();
-		map_draw(false);
-	}
+	map_draw_backdrop();
+	map_draw(false);
 
 	// draw all objects following their z-order
 	nOnscreenObjects = 0;
@@ -392,8 +388,7 @@ void DrawScene(void)
 	DrawPlayer();
 
 	// draw foreground map tiles
-	if (!flipacceltime)
-		map_draw(TA_FOREGROUND);
+	map_draw(TA_FOREGROUND);
 
 	// draw carets (always-on-top effects such as boomflash)
 	Carets::DrawAll();

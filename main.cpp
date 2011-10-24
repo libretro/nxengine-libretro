@@ -11,7 +11,6 @@ const char *nxdata_dir = ".";
 
 #define GAME_WAIT			(1000/GAME_FPS)	// sets framerate
 int framecount = 0;
-int flipacceltime = 0;
 
 int main(int argc, char *argv[])
 {
@@ -226,7 +225,6 @@ static inline void run_tick()
 {
 	static bool last_freezekey = false;
 	static bool last_framekey = false;
-	static int frameskip = 0;
 
 	input_poll();
 
@@ -254,19 +252,7 @@ static inline void run_tick()
 
 	Replay::DrawStatus();
 
-	if (!flipacceltime)
-	{
-		screen->Flip();
-	}
-	else
-	{
-		flipacceltime--;
-		if (--frameskip < 0)
-		{
-			screen->Flip();
-			frameskip = 256;
-		}
-	}
+	screen->Flip();
 
 	memcpy(lastinputs, inputs, sizeof(lastinputs));
 

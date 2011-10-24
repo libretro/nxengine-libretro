@@ -13,7 +13,6 @@ static ReplayPlaying play;
 static int next_ffwdto = 0;
 static int next_stopat = 0;
 static bool next_accel = false;
-extern int flipacceltime;
 
 // begin recording a replay into the given file,
 // creating the save-profile section from the current game state.
@@ -208,8 +207,6 @@ static void Replay::run_playback()
 	if (play.ffwdto && play.elapsed_frames < play.ffwdto)
 	{
 		game.ffwdtime = 2;
-		if (play.ffwd_accel)
-			flipacceltime = 2;	// global variable from main; disables screen->Flip()
 	}
 	
 	// RLE decoding
