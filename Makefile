@@ -9,7 +9,7 @@ OBJS    := $(patsubst %.cpp,%.o,$(SRCS))
 TARGETS := nx
 
 # Add SDL dependency
-CFLAGS  =$(shell pkg-config sdl --cflags) -O2 -Wreturn-type -Wunused-variable -Wno-multichar -DPANDORA
+CFLAGS  =$(shell pkg-config sdl --cflags) -O2 -Wreturn-type -Wunused-variable -Wno-multichar
 LDFLAGS +=-lSDL_gfx -lSDL_ttf -lSDL_image -lSDL_mixer -lstdc++ -lm  $(shell pkg-config sdl --libs)
 
 all: $(TARGETS)
