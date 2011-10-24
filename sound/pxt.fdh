@@ -48,7 +48,6 @@ void FreePXTBuf(stPXSound *snd);
 char pxt_load(const char *fname, stPXSound *snd);
 static char LoadComponent(FILE *fp, stPXWave *pxw);
 static char ReadToBracket(FILE *fp);
-char pxt_save(const char *fname, stPXSound *snd);
 static void SaveComponent(FILE *fp, const char *name, stPXWave *pxw);
 static void SaveComponentMachine(FILE *fp, stPXWave *pxw, char trailcomma);
 static void SaveEnvVertice(FILE *fp, stPXEnvelope *env, int v);

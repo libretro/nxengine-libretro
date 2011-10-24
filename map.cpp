@@ -26,9 +26,6 @@ bool load_stage(int stage_no)
 	char stage[MAXPATHLEN];
 	char fname[MAXPATHLEN];
 
-	#ifdef DEBUG
-	stat(" >> Entering stage %d: '%s'.", stage_no, stages[stage_no].stagename);
-	#endif
 	game.curmap = stage_no;		// do it now so onspawn events will have it
 
 	if (Tileset::Load(stages[stage_no].tileset))
@@ -93,12 +90,6 @@ bool load_map(const char *fname)
 		fclose(fp);
 		return 1;
 	}
-	#ifdef DEBUG
-	else
-	{
-		stat("load_map: level size %dx%d", map.xsize, map.ysize);
-	}
-	#endif
 
 	for(y=0;y<map.ysize;y++)
 		for(x=0;x<map.xsize;x++)
@@ -113,9 +104,6 @@ bool load_map(const char *fname)
 	if (map.xsize * TILE_W<SCREEN_WIDTH)
 		map.maxxscroll = (((map.xsize * TILE_W) - 360) - 8) << CSF;
 
-	#ifdef DEBUG
-	stat("load_map: '%s' loaded OK! - %dx%d", fname, map.xsize, map.ysize);
-	#endif
 	return 0;
 }
 
@@ -131,9 +119,6 @@ bool load_entities(const char *fname)
 	Objects::DestroyAll(false);
 	FloatText::ResetAll();
 
-#ifdef DEBUG
-	stat("load_entities: reading in %s", fname);
-#endif
 	// now we can load in the new objects
 	fp = fopen(fname, "rb");
 	if (!fp)
@@ -176,9 +161,6 @@ bool load_entities(const char *fname)
 				if (game.flags[id1])
 				{
 					addobject = true;
-#ifdef DEBUG
-					stat(" -- Appearing object %02d (%s) because flag %d is set", id2, DescribeObjectType(type), id1);
-#endif
 				}
 			}
 			else if (flags & FLAG_DISAPPEAR_ON_FLAGID)
@@ -187,12 +169,6 @@ bool load_entities(const char *fname)
 				{
 					addobject = true;
 				}
-#ifdef DEBUG
-				else
-				{
-					stat(" -- Disappearing object %02d (%s) because flag %d is set", id2, DescribeObjectType(type), id1);
-				}
-#endif
 			}
 			else
 			{
@@ -250,15 +226,9 @@ bool load_tileattr(const char *fname)
 
 	map.nmotiontiles = 0;
 
-#ifdef DEBUG
-	stat("load_pxa: reading in %s", fname);
-#endif
 	fp = fopen(fname, "rb");
 	if (!fp)
 	{
-#ifdef DEBUG
-		staterr("load_pxa: no such file: '%s'", fname);
-#endif
 		return 1;
 	}
 
@@ -282,9 +252,6 @@ bool load_tileattr(const char *fname)
 			map.motiontiles[map.nmotiontiles].sprite = SPR_WATER_CURRENT;
 
 			map.nmotiontiles++;
-#ifdef DEBUG
-			stat("Added tile %02x to animation list, tc=%02x", i, tc);
-#endif
 		}
 	}
 
@@ -299,9 +266,6 @@ bool load_stages(void)
 	fp = fopen("stage.dat", "rb");
 	if (!fp)
 	{
-#ifdef DEBUG
-		staterr("%s(%d): failed to open stage.dat", __FILE__, __LINE__);
-#endif
 		num_stages = 0;
 		return 1;
 	}
@@ -319,15 +283,9 @@ bool initmapfirsttime(void)
 	FILE *fp;
 	int i;
 
-#ifdef DEBUG
-	stat("initmapfirsttime: loading tilekey.dat.");
-#endif
 
 	if (!(fp = fopen("tilekey.dat", "rb")))
 	{
-#ifdef DEBUG
-		staterr("tilekey.dat is missing!");
-#endif
 		return 1;
 	}
 
@@ -410,9 +368,6 @@ int x, y;
 		
 		default:
 			map.parscroll_x = map.parscroll_y = 0;
-			#ifdef DEBUG
-			staterr("map_draw_backdrop: unhandled map scrolling type %d", map.scrolltype);
-			#endif
 		break;
 	}
 	
@@ -475,9 +430,6 @@ char fname[MAXPATHLEN];
 		backdrop[backdrop_no] = NXSurface::FromFile(fname, use_chromakey);
 		if (!backdrop[backdrop_no])
 		{
-			#ifdef DEBUG
-			staterr("Failed to load backdrop '%s'", fname);
-			#endif
 			return 1;
 		}
 	}
@@ -672,11 +624,8 @@ void map_scroll_do(void)
 			if (!player->hide)
 			{
 				scroll_normal();
-				
-				#ifdef DEBUG
-				if (!inputs[DEBUG_MOVE_KEY] || !settings->enable_debug_keys)
-				#endif
-					doing_normal_scroll = true;
+
+				doing_normal_scroll = true;
 			}
 		}
 	}
@@ -776,28 +725,6 @@ void run_phase_compensator(void)
 		}
 	}
 }
-
-// debug function
-#ifdef DEBUG
-void dump_phase_data()
-{
-	int phase_offs = abs(map.real_xscroll - player->x) % 512;
-	int final_phase = abs(map.displayed_xscroll - player->x) % 512;
-	debug("phase_offs: %d", phase_offs);
-	debug("");
-	debug("real xscroll: %d", map.real_xscroll);
-	debug("displayed xscroll: %d", map.displayed_xscroll);
-	debug("difference: %d", map.real_xscroll - map.displayed_xscroll);
-	debug("");
-	debug("phase_adj: %d", map.phase_adj);
-	debug("final_phase: %d", final_phase);
-}
-#endif
-
-/*
-void c------------------------------() {}
-*/
-
 
 // scroll position sanity checking
 void map_sanitycheck(void)
@@ -933,13 +860,6 @@ int x_off, y_off;
 Object *FindObjectByID2(int id2)
 {
 	Object *result = ID2Lookup[id2];
-	
-	#ifdef DEBUG
-	if (result)
-		staterr("FindObjectByID2: ID2 %04d found: type %s; coords: (%d, %d)", id2, DescribeObjectType(ID2Lookup[id2]->type), ID2Lookup[id2]->x>>CSF,ID2Lookup[id2]->y>>CSF);
-	else
-		staterr("FindObjectByID2: no such object %04d", id2);
-	#endif
 	
 	return result;
 }

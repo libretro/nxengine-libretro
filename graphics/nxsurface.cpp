@@ -342,49 +342,6 @@ void NXSurface::Scale8(SDL_Surface *src, SDL_Surface *dst, int factor)
 	}
 }
 
-void NXSurface::putpixel(SDL_Surface *surface, int x, int y, uint32_t color)
-{
-	int bpp = surface->format->BytesPerPixel;
-	uint8_t *p = (uint8_t *)surface->pixels + y * surface->pitch + x * bpp;
-	
-	switch(bpp)
-	{
-		case 1:
-			*p = (uint8_t)color;
-		break;
-		
-		case 2:
-			*(uint16_t *)p = (uint16_t)color;
-		break;
-		
-		case 3:
-		{
-			if (SDL_BYTEORDER == SDL_BIG_ENDIAN)
-			{
-				p[0] = (uint8_t)((color >> 16) & 0xff);
-				p[1] = (uint8_t)((color >> 8) & 0xff);
-				p[2] = (uint8_t)(color & 0xff);
-			}
-			else
-			{
-				p[0] = (uint8_t)(color & 0xff);
-				p[1] = (uint8_t)((color >> 8) & 0xff);
-				p[2] = (uint8_t)((color >> 16) & 0xff);
-			}
-		}
-		break;
-		
-		case 4:
-			*(uint32_t *)p = color;
-		break;
-	}
-}
-
-
-/*
-void c------------------------------() {}
-*/
-
 void NXSurface::EnableColorKey()
 {
 	SDL_SetColorKey(fSurface, SDL_SRCCOLORKEY, SDL_MapRGB(fSurface->format, 0, 0, 0));

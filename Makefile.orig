@@ -6,7 +6,7 @@ nx:  main.o game.o object.o ObjManager.o \
 	 TextBox/SaveSelect.o profile.o settings.o caret.o slope.o \
 	 player.o playerstats.o p_arms.o statusbar.o tsc.o \
 	 screeneffect.o floattext.o input.o replay.o trig.o \
-	 inventory.o map_system.o debug.o console.o niku.o \
+	 inventory.o map_system.o debug.o niku.o \
 	 ai/ai.o ai/first_cave/first_cave.o ai/village/village.o ai/village/balrog_boss_running.o ai/village/ma_pignon.o \
 	 ai/egg/egg.o ai/egg/igor.o ai/egg/egg2.o ai/weed/weed.o ai/weed/balrog_boss_flying.o \
 	 ai/weed/frenzied_mimiga.o ai/sand/sand.o ai/sand/puppy.o ai/sand/curly_boss.o ai/sand/toroko_frenzied.o \
@@ -35,7 +35,7 @@ nx:  main.o game.o object.o ObjManager.o \
 	 TextBox/SaveSelect.o profile.o settings.o caret.o slope.o \
 	 player.o playerstats.o p_arms.o statusbar.o tsc.o \
 	 screeneffect.o floattext.o input.o replay.o trig.o \
-	 inventory.o map_system.o debug.o console.o niku.o \
+	 inventory.o map_system.o debug.o niku.o \
 	 ai/ai.o ai/first_cave/first_cave.o ai/village/village.o ai/village/balrog_boss_running.o ai/village/ma_pignon.o \
 	 ai/egg/egg.o ai/egg/igor.o ai/egg/egg2.o ai/weed/weed.o ai/weed/balrog_boss_flying.o \
 	 ai/weed/frenzied_mimiga.o ai/sand/sand.o ai/sand/puppy.o ai/sand/curly_boss.o ai/sand/toroko_frenzied.o \
@@ -71,7 +71,7 @@ main.o:	main.cpp main.fdh nx.h common/basics.h \
 		tsc.h stageboss.h ai/ai.h \
 		map.h maprecord.h stagedata.h \
 		statusbar.h floattext.h object.h \
-		ObjManager.h console.h debug.h \
+		ObjManager.h debug.h \
 		game.h caret.h screeneffect.h \
 		settings.h slope.h player.h \
 		p_arms.h ai/weapons/whimstar.h replay.h \
@@ -89,7 +89,7 @@ game.o:	game.cpp game.fdh nx.h common/basics.h \
 		tsc.h stageboss.h ai/ai.h \
 		map.h maprecord.h stagedata.h \
 		statusbar.h floattext.h object.h \
-		ObjManager.h console.h debug.h \
+		ObjManager.h debug.h \
 		game.h caret.h screeneffect.h \
 		settings.h slope.h player.h \
 		p_arms.h ai/weapons/whimstar.h replay.h \
@@ -110,7 +110,7 @@ object.o:	object.cpp object.fdh nx.h common/basics.h \
 		tsc.h stageboss.h ai/ai.h \
 		map.h maprecord.h stagedata.h \
 		statusbar.h floattext.h object.h \
-		ObjManager.h console.h debug.h \
+		ObjManager.h debug.h \
 		game.h caret.h screeneffect.h \
 		settings.h slope.h player.h \
 		p_arms.h ai/weapons/whimstar.h replay.h \
@@ -128,7 +128,7 @@ ObjManager.o:	ObjManager.cpp ObjManager.fdh nx.h common/basics.h \
 		tsc.h stageboss.h ai/ai.h \
 		map.h maprecord.h stagedata.h \
 		statusbar.h floattext.h object.h \
-		ObjManager.h console.h debug.h \
+		ObjManager.h debug.h \
 		game.h caret.h screeneffect.h \
 		settings.h slope.h player.h \
 		p_arms.h ai/weapons/whimstar.h replay.h \
@@ -146,7 +146,7 @@ map.o:	map.cpp map.fdh nx.h common/basics.h \
 		tsc.h stageboss.h ai/ai.h \
 		map.h maprecord.h stagedata.h \
 		statusbar.h floattext.h object.h \
-		ObjManager.h console.h debug.h \
+		ObjManager.h debug.h \
 		game.h caret.h screeneffect.h \
 		settings.h slope.h player.h \
 		p_arms.h ai/weapons/whimstar.h replay.h \
@@ -164,7 +164,7 @@ TextBox/TextBox.o:	TextBox/TextBox.cpp TextBox/TextBox.fdh nx.h common/basics.h 
 		tsc.h stageboss.h ai/ai.h \
 		map.h maprecord.h stagedata.h \
 		statusbar.h floattext.h object.h \
-		ObjManager.h console.h debug.h \
+		ObjManager.h debug.h \
 		game.h caret.h screeneffect.h \
 		settings.h slope.h player.h \
 		p_arms.h ai/weapons/whimstar.h replay.h \
@@ -182,7 +182,7 @@ TextBox/YesNoPrompt.o:	TextBox/YesNoPrompt.cpp TextBox/YesNoPrompt.fdh nx.h comm
 		tsc.h stageboss.h ai/ai.h \
 		map.h maprecord.h stagedata.h \
 		statusbar.h floattext.h object.h \
-		ObjManager.h console.h debug.h \
+		ObjManager.h debug.h \
 		game.h caret.h screeneffect.h \
 		settings.h slope.h player.h \
 		p_arms.h ai/weapons/whimstar.h replay.h \
@@ -1980,7 +1980,7 @@ graphics/font.o:	graphics/font.cpp graphics/font.fdh nx.h common/basics.h \
 		tsc.h stageboss.h ai/ai.h \
 		map.h maprecord.h stagedata.h \
 		statusbar.h floattext.h object.h \
-		ObjManager.h console.h debug.h \
+		ObjManager.h debug.h \
 		game.h caret.h screeneffect.h \
 		settings.h slope.h player.h \
 		p_arms.h ai/weapons/whimstar.h replay.h \
@@ -2003,7 +2003,7 @@ sound/sound.o:	sound/sound.cpp sound/sound.fdh nx.h common/basics.h \
 		tsc.h stageboss.h ai/ai.h \
 		map.h maprecord.h stagedata.h \
 		statusbar.h floattext.h object.h \
-		ObjManager.h console.h debug.h \
+		ObjManager.h debug.h \
 		game.h caret.h screeneffect.h \
 		settings.h slope.h player.h \
 		p_arms.h ai/weapons/whimstar.h replay.h \
@@ -2067,7 +2067,7 @@ autogen/AssignSprites.o:	autogen/AssignSprites.cpp autogen/AssignSprites.fdh nx.
 		tsc.h stageboss.h ai/ai.h \
 		map.h maprecord.h stagedata.h \
 		statusbar.h floattext.h object.h \
-		ObjManager.h console.h debug.h \
+		ObjManager.h debug.h \
 		game.h caret.h screeneffect.h \
 		settings.h slope.h player.h \
 		p_arms.h ai/weapons/whimstar.h replay.h \
@@ -2136,7 +2136,6 @@ clean:
 	rm -f inventory.o
 	rm -f map_system.o
 	rm -f debug.o
-	rm -f console.o
 	rm -f niku.o
 	rm -f ai/ai.o
 	rm -f ai/first_cave/first_cave.o
@@ -2274,7 +2273,6 @@ cleanfdh:
 	rm -f inventory.fdh
 	rm -f map_system.fdh
 	rm -f debug.fdh
-	rm -f console.fdh
 	rm -f niku.fdh
 	rm -f ai/ai.fdh
 	rm -f ai/first_cave/first_cave.fdh

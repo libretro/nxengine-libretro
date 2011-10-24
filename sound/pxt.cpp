@@ -821,9 +821,6 @@ char pxt_LoadSoundFX(const char *path, const char *cache_name, int top)
 	stPXSound snd;
 	FILE *fp = NULL;
 
-	#ifdef DEBUG
-	stat("Loading Sound FX...");
-	#endif
 	load_top = top;
 
 	if (cache_name)
@@ -837,9 +834,6 @@ char pxt_LoadSoundFX(const char *path, const char *cache_name, int top)
 		fp = fopen(cache_name, "wb");
 		if (!fp)
 		{
-			#ifdef DEBUG
-			staterr("LoadSoundFX: failed open: '%s'", cache_name);
-			#endif
 			return 1;
 		}
 
@@ -881,9 +875,6 @@ char pxt_LoadSoundFX(const char *path, const char *cache_name, int top)
 
 	if (fp)
 	{
-		#ifdef DEBUG
-		stat(" - created %s; %d bytes", cache_name, ftell(fp));
-		#endif
 		fclose(fp);
 	}
 
@@ -902,26 +893,17 @@ stPXSound snd;
 	fp = fopen(fname, "rb");
 	if (!fp)
 	{
-		#ifdef DEBUG
-		stat("LoadFXCache: audio cache %s not exist", fname);
-		#endif
 		return 1;
 	}
 	
 	if (fgetl(fp) != 'PXC1')
 	{
-		#ifdef DEBUG
-		stat("LoadFXCache: %s is incorrect format", fname);
-		#endif
 		fclose(fp);
 		return 1;
 	}
 	
 	if (fgeti(fp) != top)
 	{
-		#ifdef DEBUG
-		stat("LoadFXCache: # of sounds has changed since cache creation");
-		#endif
 		fclose(fp);
 		return 1;
 	}
@@ -929,9 +911,6 @@ stPXSound snd;
 	int allocd_size = 0;
 	snd.final_buffer = NULL;
 	
-	#ifdef DEBUG
-	stat("LoadFXCache: restoring pxts from cache");
-	#endif
 	for(;;)
 	{
 		snd.final_size = fgetl(fp);
@@ -946,9 +925,6 @@ stPXSound snd;
 			snd.final_buffer = (signed char *)malloc(allocd_size);
 			if (!snd.final_buffer)
 			{
-				#ifdef DEBUG
-				staterr("LoadFXCache: out of memory!");
-				#endif
 				return 1;
 			}
 		}
@@ -1075,9 +1051,6 @@ char load_extended_section = 0;
 		{	// opening a new channel
 			if (cc >= PXT_NO_CHANNELS)
 			{
-				#ifdef DEBUG
-				staterr("pxt_load: sound '%s' contains too many channels!", fname);
-				#endif
 				goto error;
 			}
 			
@@ -1103,9 +1076,6 @@ char load_extended_section = 0;
 	
 	if (load_extended_section)
 	{
-		#ifdef DEBUG
-		stat("pxt_load: extended section found, loading it");
-		#endif
 		if (ReadToBracket(fp)) return 1;
 		for(cc=0;cc<PXT_NO_CHANNELS;cc++)
 		{
@@ -1166,89 +1136,6 @@ uchar ch;
 			return 1;
 		}
 	}
-	return 0;
-}
-
-
-char pxt_save(const char *fname, stPXSound *snd)
-{
-FILE *fp;
-int i, j;
-
-	fp = fopen(fname, "wb");
-	if (!fp)
-	{
-		#ifdef DEBUG
-		stat("save_pxt: unable to open '%s'", fname);
-		#endif
-		return 1;
-	}
-	
-	for(i=0;i<PXT_NO_CHANNELS;i++)
-	{
-		fprintf(fp, "use  :%d\r\n", snd->chan[i].enabled);
-		fprintf(fp, "size :%d\r\n", snd->chan[i].size_blocks);
-		
-		SaveComponent(fp, "main", &snd->chan[i].main);
-		SaveComponent(fp, "pitch", &snd->chan[i].pitch);
-		SaveComponent(fp, "volume", &snd->chan[i].volume);
-		
-		fprintf(fp, "initialY:%d\r\n", snd->chan[i].envelope.initial);
-		for(j=0;j<PXENV_NUM_VERTICES;j++)
-		{
-			SaveEnvVertice(fp, &snd->chan[i].envelope, j);
-		}
-		
-		fprintf(fp, "\r\n");
-	}
-	
-	// save "machine-readable" section
-	for(i=0;i<PXT_NO_CHANNELS;i++)
-	{
-		fprintf(fp, "{");
-		
-		fprintf(fp, "%d,%d,", snd->chan[i].enabled, snd->chan[i].size_blocks);
-		
-		SaveComponentMachine(fp, &snd->chan[i].main, 1);
-		SaveComponentMachine(fp, &snd->chan[i].pitch, 1);
-		SaveComponentMachine(fp, &snd->chan[i].volume, 1);
-		
-		fprintf(fp, "%d,", snd->chan[i].envelope.initial);
-		for(j=0;j<PXENV_NUM_VERTICES-1;j++)
-		{
-			fprintf(fp, "%d,%d,", snd->chan[i].envelope.time[j], snd->chan[i].envelope.val[j]);
-		}
-		fprintf(fp, "%d,%d", snd->chan[i].envelope.time[j], snd->chan[i].envelope.val[j]);
-		
-		fprintf(fp, "},\r\n");
-	}
-	
-	// save "extended" section-- original PixTone seems really picky about
-	// trying to put anything it doesn't know about into the normal section
-	
-	// machine readable pitch2
-	fprintf(fp, "\r\n-> {");
-	for(i=0;i<PXT_NO_CHANNELS;i++)
-	{
-		SaveComponentMachine(fp, &snd->chan[i].pitch2, (i+1<PXT_NO_CHANNELS));
-	}
-	fprintf(fp, "},\r\n");
-	
-	// machine readable extra envelope vertices
-	fprintf(fp, "-> {255,0,255,0,255,0,255,0},\r\n");
-	
-	// human readable copy
-	fprintf(fp, "\r\n");
-	for(i=0;i<PXT_NO_CHANNELS;i++)
-	{
-		SaveComponent(fp, "pitch2", &snd->chan[i].pitch);
-		fprintf(fp, "dx      :255\r\n");
-		fprintf(fp, "dy      :0\r\n");
-		fprintf(fp, "\r\n");
-	}
-	
-	fclose(fp);
-	stat("pxt save ok '%s'", fname);
 	return 0;
 }
 

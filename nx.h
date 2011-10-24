@@ -47,7 +47,6 @@ class Object;
 #include "floattext.h"
 #include "object.h"
 #include "ObjManager.h"
-#include "console.h"
 #include "game.h"
 #include "caret.h"
 #include "screeneffect.h"

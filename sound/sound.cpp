@@ -124,15 +124,9 @@ void music(int songno)
 	lastsong = cursong;
 	cursong = songno;
 	
-	#ifdef DEBUG
-	stat(" >> music(%d)", songno);
-	#endif
 	
 	if (songno != 0 && !should_music_play(songno, settings->music_enabled))
 	{
-		#ifdef DEBUG
-		stat("Not playing track %d because music_enabled is %d", songno, settings->music_enabled);
-		#endif
 		org_stop();
 		return;
 	}
@@ -169,10 +163,6 @@ void music_set_enabled(int newstate)
 {
 	if (newstate != settings->music_enabled)
 	{
-		#ifdef DEBUG
-		stat("music_set_enabled(%d)", newstate);
-		#endif
-		
 		settings->music_enabled = newstate;
 		bool play = should_music_play(cursong, newstate);
 		

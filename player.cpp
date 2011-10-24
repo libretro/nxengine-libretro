@@ -124,11 +124,7 @@ void HandlePlayer(void)
 		PDoWeapons();	// p_arms.cpp
 		PDoHurtFlash();
 		
-		#ifdef DEBUG
-		switch((inputs[DEBUG_MOVE_KEY] && settings->enable_debug_keys) ? MOVEMODE_DEBUG : player->movementmode)
-		#else
 		switch(player->movementmode)
-		#endif
 		{
 			case MOVEMODE_NORMAL:
 			{
@@ -147,23 +143,6 @@ void HandlePlayer(void)
 				PHandleZeroG();
 			}
 			break;
-			#ifdef DEBUG
-			case MOVEMODE_DEBUG:
-			{
-				player->xinertia = player->yinertia = 0;
-				player->blockl = player->blockr = player->blockd = player->blocku = 0;
-				
-				if (inputs[DOWNKEY]) player->y += 0x1000;
-				if (inputs[UPKEY]) player->y -= 0x1000;
-				if (inputs[LEFTKEY]) { player->x -= 0x1000; player->dir = LEFT; }
-				if (inputs[RIGHTKEY]) { player->x += 0x1000; player->dir = RIGHT; }
-				
-				map_scroll_jump(player->x, player->y);
-				
-				player->frame = 2;
-			}
-			break;
-			#endif
 			default:
 			{
 				player->xinertia = player->yinertia = 0;
@@ -388,11 +367,7 @@ int tile;
 			{
 				if (!player->inputs_locked) player->airleft--;
 				
-				#ifdef DEBUG
-				if (player->airleft <= 0 && !game.debug.god)
-				#else
 				if (player->airleft <= 0)
-				#endif
 				{	// player drowned
 					// if flag 4000 is set, then we do not drown, but are in the Almond
 					// level after Core battle, and should instead execute script 1100.
@@ -666,16 +641,9 @@ int i, key;
 			if (!player->walking && !player->lookaway && \
 				!pinputs[JUMPKEY] && !pinputs[FIREKEY])
 			{
-				#ifdef DEBUG
-				if (!inputs[DEBUG_MOVE_KEY] || !settings->enable_debug_keys)
-				{
-				#endif
-					player->lookaway = true;
-					player->xinertia = 0;
-					PTryActivateScript();
-				#ifdef DEBUG
-				}
-				#endif
+				player->lookaway = true;
+				player->xinertia = 0;
+				PTryActivateScript();
 			}
 		}
 		
@@ -1157,9 +1125,6 @@ void hurtplayer(int damage, bool even_if_controls_locked)
 {
 	if (damage == 0) return;
 	if (!player || !player->hp) return;
-	#ifdef DEBUG
-	if (settings->enable_debug_keys && (game.debug.god || inputs[DEBUG_MOVE_KEY])) return;
-	#endif
 	
 	if (player->hurt_time)
 		return;
@@ -1344,11 +1309,6 @@ void PDoRepel(void)
 	// won't be updated until the following frame, so we always check the attributes
 	// directly here.
 	static const int REPEL_SPEED =	(1<<CSF);
-	
-	#ifdef DEBUG
-	if (settings->enable_debug_keys && inputs[DEBUG_MOVE_KEY])
-		return;
-	#endif
 	
 	// pushes player out of walls if he become embedded in them, ala Super Mario 1.
 	// this can happen for example because his R,L block points are further out than
