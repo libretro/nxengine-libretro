@@ -20,16 +20,16 @@ static struct TickFunctions
 }
 tickfunctions[] =
 {
-	NULL,				NULL,			NULL,			// GM_NONE
+	NULL,			NULL,			NULL,			// GM_NONE
 	game_tick_normal,	NULL,			NULL,			// GM_NORMAL
-	inventory_tick,		inventory_init,	NULL,			// GM_INVENTORY
-	ms_tick,			ms_init,		ms_close,		// GM_MAP_SYSTEM
-	island_tick,		island_init,	NULL,			// GM_ISLAND
-	credit_tick,		credit_init,	credit_close,	// GM_CREDITS
-	intro_tick,			intro_init,		NULL,			// GM_INTRO
-	title_tick,			title_init,		NULL,			// GM_TITLE
-	pause_tick,			pause_init,		NULL,			// GP_PAUSED
-	options_tick,		options_init,	options_close	// GP_OPTIONS
+	inventory_tick,		inventory_init,		NULL,			// GM_INVENTORY
+	ms_tick,		ms_init,		ms_close,		// GM_MAP_SYSTEM
+	island_tick,		island_init,		NULL,			// GM_ISLAND
+	credit_tick,		credit_init,		credit_close,	// GM_CREDITS
+	intro_tick,		intro_init,		NULL,			// GM_INTRO
+	title_tick,		title_init,		NULL,			// GM_TITLE
+	pause_tick,		pause_init,		NULL,			// GP_PAUSED
+	options_tick,		options_init,		options_close	// GP_OPTIONS
 	//old_options_tick,		old_options_init,	old_options_close	// GP_OPTIONS
 };
 
@@ -44,33 +44,33 @@ ObjProp objprop[OBJ_LAST];
 // init Game object: only called once during startup
 bool Game::init()
 {
-int i;
+	int i;
 
 	memset(&game, 0, sizeof(game));
-	
+
 	// set default properties
 	memset(objprop, 0, sizeof(objprop));
 	for(i=0;i<OBJ_LAST;i++)
 	{
 		objprop[i].shaketime = 16;
-		#ifdef DEBUG	// big red "NO" sprite points out unimplemented objects
-			objprop[i].sprite = SPR_UNIMPLEMENTED_OBJECT;
-		#else
-			objprop[i].sprite = SPR_NULL;
-		#endif
+#ifdef DEBUG	// big red "NO" sprite points out unimplemented objects
+		objprop[i].sprite = SPR_UNIMPLEMENTED_OBJECT;
+#else
+		objprop[i].sprite = SPR_NULL;
+#endif
 	}
-	
+
 	AssignSprites();		// auto-generated function to assign sprites to objects
 	AssignExtraSprites();	// assign rest of sprites (to be replaced at some point)
-	
+
 	if (ai_init()) return 1;			// setup function pointers to AI routines
-	
+
 	if (initslopetable()) return 1;
 	if (initmapfirsttime()) return 1;
-	
+
 	// create the player object--note that the player is NOT destroyed on map change
 	if (game.createplayer()) return 1;
-	
+
 	return 0;
 }
 
@@ -249,47 +249,47 @@ void c------------------------------() {}
 // standard in-game tick (as opposed to title-screen, inventory etc)
 void game_tick_normal(void)
 {
-Object *o;
+	Object *o;
 	player->riding = NULL;
 	Objects::UpdateBlockStates();
-	
+
 	if (!game.frozen)
 	{
 		// run AI for player and stageboss first
 		HandlePlayer();
 		game.stageboss.Run();
-		
+
 		// now objects AI and move all objects to their new positions
 		Objects::RunAI();
 		Objects::PhysicsSim();
-		
+
 		// run the "aftermove" AI routines
 		HandlePlayer_am();
 		game.stageboss.RunAftermove();
-		
+
 		FOREACH_OBJECT(o)
 		{
 			if (!o->deleted)
 				o->OnAftermove();
 		}
 	}
-	
+
 	// important to put this before and not after DrawScene(), or non-existant objects
 	// can wind up in the onscreen_objects[] array, and blow up the program on the next tick.
 	Objects::CullDeleted();
-	
+
 	map_scroll_do();
-	
+
 	DrawScene();
 	DrawStatusBar();
 	fade.Draw();
-	
+
 	niku_run();
 	if (player->equipmask & EQUIP_NIKUMARU)
 		niku_draw(game.counter);
-	
+
 	textbox.Draw();
-	
+
 	ScreenEffects::Draw();
 	map_draw_map_name();	// stage name overlay as on entry
 }
@@ -323,33 +323,31 @@ void megaquake(int quaketime, int snd)
 
 void DrawScene(void)
 {
-int scr_x, scr_y;
-extern int flipacceltime;
+	int scr_x, scr_y;
+	extern int flipacceltime;
 
 	// sporidically-used animated tile feature,
 	// e.g. water currents in Waterway
 	if (map.nmotiontiles)
 		AnimateMotionTiles();
-	
+
 	// draw background map tiles
 	if (!flipacceltime)
 	{
 		map_draw_backdrop();
 		map_draw(false);
 	}
-	
+
 	// draw all objects following their z-order
 	nOnscreenObjects = 0;
-	
-	for(Object *o = lowestobject;
-		o != NULL;
-		o = o->higher)
+
+	for(Object *o = lowestobject; o != NULL; o = o->higher)
 	{
 		if (o == player) continue;	// player drawn specially in DrawPlayer
-		
+
 		// keep it's floattext linked with it's position
 		o->DamageText->UpdatePos(o);
-		
+
 		// shake enemies that were just hit. when they stop shaking,
 		// start rising up how many damage they took.
 		if (o->shaketime)
@@ -362,17 +360,17 @@ extern int flipacceltime;
 			o->DamageText->AddQty(o->DamageWaiting);
 			o->DamageWaiting = 0;
 		}
-		
+
 		// get object's onscreen position
 		scr_x = (o->x >> CSF) - (map.displayed_xscroll >> CSF);
 		scr_y = (o->y >> CSF) - (map.displayed_yscroll >> CSF);
 		scr_x -= sprites[o->sprite].frame[o->frame].dir[o->dir].drawpoint.x;
 		scr_y -= sprites[o->sprite].frame[o->frame].dir[o->dir].drawpoint.y;
-		
+
 		// don't draw objects that are completely offscreen
 		// (+26 so floattext won't suddenly disappear on object near bottom of screen)
 		if (scr_x <= SCREEN_WIDTH && scr_y <= SCREEN_HEIGHT+26 && \
-			scr_x >= -sprites[o->sprite].w && scr_y >= -sprites[o->sprite].h)
+				scr_x >= -sprites[o->sprite].w && scr_y >= -sprites[o->sprite].h)
 		{
 			if (nOnscreenObjects < MAX_OBJECTS-1)
 			{
@@ -384,11 +382,11 @@ extern int flipacceltime;
 				staterr("%s:%d: Max Objects Overflow", __FILE__, __LINE__);
 				return;
 			}
-			
+
 			if (!o->invisible && o->sprite != SPR_NULL)
 			{
 				scr_x += o->display_xoff;
-				
+
 				if (o->clip_enable)
 				{
 					draw_sprite_clipped(scr_x, scr_y, o->sprite, o->frame, o->dir, o->clipx1, o->clipx2, o->clipy1, o->clipy2);
@@ -404,23 +402,23 @@ extern int flipacceltime;
 			o->onscreen = false;
 		}
 	}
-	
+
 	// draw the player
 	DrawPlayer();
-	
+
 	// draw foreground map tiles
 	if (!flipacceltime)
 		map_draw(TA_FOREGROUND);
-	
+
 	// draw carets (always-on-top effects such as boomflash)
 	Carets::DrawAll();
-	
+
 	// draw rising/falling water in maps like Almond
 	map_drawwaterlevel();
-	
+
 	// draw all floattext (rising damage and XP amounts)
 	FloatText::DrawAll();
-	
+
 	if (game.debug.DrawBoundingBoxes) DrawBoundingBoxes();
 	//if (game.debug.debugmode) DrawAttrPoints();
 }
@@ -431,26 +429,26 @@ void c------------------------------() {}
 
 bool game_load(int num)
 {
-Profile p;
+	Profile p;
 
 	stat("game_load: loading savefile %d", num);
-	
+
 	if (profile_load(GetProfileName(num), &p))
 		return 1;
-	
+
 	return game_load(&p);
 }
 
 bool game_load(Profile *p)
 {
-int i;
+	int i;
 
 	player->hp = p->hp;
 	player->maxHealth = p->maxhp;
-	
+
 	player->whimstar.nstars = p->num_whimstars;
 	player->equipmask = p->equipmask;
-	
+
 	// load weapons
 	for(i=0;i<WPN_COUNT;i++)
 	{
@@ -460,79 +458,79 @@ int i;
 		player->weapons[i].ammo = p->weapons[i].ammo;
 		player->weapons[i].maxammo = p->weapons[i].maxammo;
 	}
-	
+
 	player->curWeapon = p->curWeapon;
-	
+
 	// load inventory
 	memcpy(player->inventory, p->inventory, sizeof(player->inventory));
 	player->ninventory = p->ninventory;
-	
+
 	// load flags
 	memcpy(game.flags, p->flags, sizeof(game.flags));
-	
+
 	// load teleporter slots
 	textbox.StageSelect.ClearSlots();
 	for(i=0;i<p->num_teleslots;i++)
 	{
 		int slotno = p->teleslots[i].slotno;
 		int scriptno = p->teleslots[i].scriptno;
-		
+
 		textbox.StageSelect.SetSlot(slotno, scriptno);
 		stat(" - Read Teleporter Slot %d: slotno=%d scriptno=%d", i, slotno, scriptno);
 	}
-	
+
 	// have to load the stage last AFTER the flags are loaded because
 	// of the options to appear and disappear objects based on flags.
 	if (load_stage(p->stage)) return 1;
 	music(p->songno);
-	
+
 	player->x = p->px;
 	player->y = p->py;
 	player->dir = p->pdir;
 	player->hide = false;
 	game.showmapnametime = 0;
-	
+
 	return 0;
 }
 
 
 bool game_save(int num)
 {
-Profile p;
+	Profile p;
 
 	stat("game_save: writing savefile %d", num);
-	
+
 	if (game_save(&p))
 		return 1;
-	
+
 	if (profile_save(GetProfileName(num), &p))
 		return 1;
-	
+
 	return 0;
 }
 
 bool game_save(Profile *p)
 {
-int i;
+	int i;
 
 	memset(p, 0, sizeof(Profile));
-	
+
 	p->stage = game.curmap;
 	p->songno = music_cursong();
-	
+
 	p->px = player->x;
 	p->py = player->y;
 	p->pdir = player->dir;
-	
+
 	p->hp = player->hp;
 	p->maxhp = player->maxHealth;
-	
+
 	p->num_whimstars = player->whimstar.nstars;
 	p->equipmask = player->equipmask;
-	
+
 	// save weapons
 	p->curWeapon = player->curWeapon;
-	
+
 	for(i=0;i<WPN_COUNT;i++)
 	{
 		p->weapons[i].hasWeapon = player->weapons[i].hasWeapon;
@@ -541,14 +539,14 @@ int i;
 		p->weapons[i].ammo = player->weapons[i].ammo;
 		p->weapons[i].maxammo = player->weapons[i].maxammo;
 	}
-	
+
 	// save inventory
 	p->ninventory = player->ninventory;
 	memcpy(p->inventory, player->inventory, sizeof(p->inventory));
-	
+
 	// save flags
 	memcpy(p->flags, game.flags, sizeof(p->flags));
-	
+
 	// save teleporter slots
 	for(i=0;i<NUM_TELEPORTER_SLOTS;i++)
 	{
@@ -560,7 +558,7 @@ int i;
 			p->num_teleslots++;
 		}
 	}
-	
+
 	return 0;
 }
 

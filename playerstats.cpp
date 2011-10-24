@@ -11,11 +11,11 @@ void AddHealth(int hp)
 
 void AddXP(int xp, bool quiet)
 {
-Weapon *weapon = &player->weapons[player->curWeapon];
-bool leveled_up = false;
+	Weapon *weapon = &player->weapons[player->curWeapon];
+	bool leveled_up = false;
 
 	weapon->xp += xp;
-	
+
 	// leveling up...
 	while(weapon->xp > weapon->max_xp[weapon->level])
 	{
@@ -31,12 +31,12 @@ bool leveled_up = false;
 			break;
 		}
 	}
-	
+
 	statusbar.xpflashcount = 30;
-	
+
 	if (player->curWeapon == WPN_SPUR)
 		leveled_up = false;
-	
+
 	if (!quiet)
 	{
 		if (!player->hide)
@@ -51,18 +51,18 @@ bool leveled_up = false;
 				sound(SND_GET_XP);
 			}
 		}
-		
+
 		player->XPText->AddQty(xp);
 	}
 }
 
 void SubXP(int xp, bool quiet)
 {
-Weapon *weapon = &player->weapons[player->curWeapon];
-bool leveled_down = false;
+	Weapon *weapon = &player->weapons[player->curWeapon];
+	bool leveled_down = false;
 
 	weapon->xp -= xp;
-	
+
 	// leveling down...
 	while(weapon->xp < 0)
 	{
@@ -78,10 +78,10 @@ bool leveled_down = false;
 			break;
 		}
 	}
-	
+
 	if (player->curWeapon == WPN_SPUR)
 		leveled_down = false;
-	
+
 	if (leveled_down && !quiet && !player->hide)
 	{
 		effect(player->CenterX(), player->CenterY(), EFFECT_LEVELDOWN);

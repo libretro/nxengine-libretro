@@ -323,32 +323,32 @@ SDL_Surface *scaled;
 
 void NXSurface::Scale8(SDL_Surface *src, SDL_Surface *dst, int factor)
 {
-int x, y, i;
-//if (factor==2)
-if (false)
-	NXSurface::scale2x(src,dst);
-else
-{
-	for(y=0;y<src->h;y++)
+	int x, y, i;
+	//if (factor==2)
+	if (false)
+		NXSurface::scale2x(src,dst);
+	else
 	{
-		uint8_t *srcline = (uint8_t *)src->pixels + (y * src->pitch);
-		uint8_t *dstline = (uint8_t *)dst->pixels + (y * factor * dst->pitch);
-		uint8_t *dstptr = dstline;
-		
-		for(x=0;x<src->w;x++)
+		for(y=0;y<src->h;y++)
 		{
-			for(i=0;i<factor;i++)
-				*(dstptr++) = srcline[x];
-		}
-		
-		dstptr = dstline;
-		for(i=1;i<factor;i++)
-		{
-			dstptr += dst->pitch;
-			memcpy(dstptr, dstline, dst->pitch);
+			uint8_t *srcline = (uint8_t *)src->pixels + (y * src->pitch);
+			uint8_t *dstline = (uint8_t *)dst->pixels + (y * factor * dst->pitch);
+			uint8_t *dstptr = dstline;
+
+			for(x=0;x<src->w;x++)
+			{
+				for(i=0;i<factor;i++)
+					*(dstptr++) = srcline[x];
+			}
+
+			dstptr = dstline;
+			for(i=1;i<factor;i++)
+			{
+				dstptr += dst->pitch;
+				memcpy(dstptr, dstline, dst->pitch);
+			}
 		}
 	}
-}
 }
 
 
