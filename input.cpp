@@ -1,4 +1,5 @@
 
+#include "SDL.h"
 #include "nx.h"
 #include "input.fdh"
 
