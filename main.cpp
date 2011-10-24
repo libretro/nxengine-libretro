@@ -1,9 +1,6 @@
 
 #include <stdarg.h>
 #include "nx.h"
-#ifdef DEBUG
-#include "graphics/safemode.h"
-#endif
 #include "main.fdh"
 
 const char *data_dir = "data";
@@ -11,17 +8,9 @@ const char *stage_dir = "data/Stage";
 const char *pic_dir = "endpic";
 const char *nxdata_dir = ".";
 
-#ifdef DEBUG
-int fps = 0;
-static int fps_so_far = 0;
-static uint32_t fpstimer = 0;
-#endif
 
 #define GAME_WAIT			(1000/GAME_FPS)	// sets framerate
 int framecount = 0;
-#ifdef DEBUG
-bool freezeframe = false;
-#endif
 int flipacceltime = 0;
 
 int main(int argc, char *argv[])
@@ -58,62 +47,26 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	#ifdef DEBUG
-	if (!settings->files_extracted)
-	{
-		if (extract_main())
-		{
-			Graphics::close();
-			font_close();
-			return 0;
-		}
-		else
-		{
-			settings->files_extracted = true;
-			settings_save();
-		}
-	}
-
-	if (check_data_exists())
-	{
-		return 1;
-	}
-	#endif
 
 	//Graphics::ShowLoadingScreen();
 	if (sound_init())
 	{
-		#ifdef DEBUG
-		fatal("Failed to initilize sound.");
-		#endif
 		return 1;
 	}
 	if (trig_init())
 	{
-		#ifdef DEBUG
-		fatal("Failed trig module init.");
-		#endif
 		return 1;
 	}
 	if (tsc_init())
 	{
-		#ifdef DEBUG
-		fatal("Failed to initilize script engine.");
-		#endif
 		return 1;
 	}
 	if (textbox.Init())
 	{
-		#ifdef DEBUG
-		fatal("Failed to initialize textboxes.");
-		#endif
 		return 1;
 	}
 	if (Carets::init())
 	{
-		#ifdef DEBUG
-		fatal("Failed to initialize carets.");
-		#endif
 		return 1;
 	}
 
@@ -164,9 +117,6 @@ int main(int argc, char *argv[])
 			stat("= Loading game =");
 			if (game_load(settings->last_save_slot))
 			{
-				#ifdef DEBUG
-				fatal("savefile error");
-				#endif
 				goto ingame_error;
 			}
 
@@ -182,9 +132,6 @@ int main(int argc, char *argv[])
 			StopScripts();
 			if (Replay::begin_playback(GetReplayName(game.switchstage.param)))
 			{
-				#ifdef DEBUG
-				fatal("error starting playback");
-				#endif
 				goto ingame_error;
 			}
 		}
@@ -256,24 +203,12 @@ void gameloop(void)
 	{
 		uint32_t curtime = SDL_GetTicks();
 
-		#ifdef DEBUG
-		if ((curtime - gametimer >= GAME_WAIT) || game.ffwdtime)
-		#else
 		if ((curtime - gametimer >= GAME_WAIT))
-		#endif
 		{
 			run_tick();
 
 			// try to "catch up" if something else on the system bogs us down for a moment.
 			// but if we get really far behind, it's ok to start dropping frames
-			#ifdef DEBUG
-			if (game.ffwdtime)
-			{
-				gametimer = curtime;
-				game.ffwdtime--;
-			}
-			else
-			#endif
 			if ((curtime - gametimer > (GAME_WAIT * 3)))
 			{
 				gametimer = curtime;
@@ -289,9 +224,6 @@ void gameloop(void)
 
 static inline void run_tick()
 {
-#ifdef DEBUG
-	static bool can_tick = true;
-#endif
 	static bool last_freezekey = false;
 	static bool last_framekey = false;
 	static int frameskip = 0;
@@ -316,88 +248,27 @@ static inline void run_tick()
 	}
 
 	// freeze frame
-#ifdef DEBUG
-	if (settings->enable_debug_keys)
+
+
+	game.tick();
+
+	Replay::DrawStatus();
+
+	if (!flipacceltime)
 	{
-		if (inputs[FREEZE_FRAME_KEY] && !last_freezekey)
-		{
-			can_tick = true;
-			freezeframe ^= 1;
-			framecount = 0;
-		}
-
-		if (inputs[FRAME_ADVANCE_KEY] && !last_framekey)
-		{
-			can_tick = true;
-			if (!freezeframe)
-			{
-				freezeframe = 1;
-				framecount = 0;
-			}
-		}
-
-		last_freezekey = inputs[FREEZE_FRAME_KEY];
-		last_framekey = inputs[FRAME_ADVANCE_KEY];
+		screen->Flip();
 	}
-#endif
-
-#ifdef DEBUG
-	// fast-forward key (F5)
-	if (inputs[FFWDKEY] && (settings->enable_debug_keys || Replay::IsPlaying()))
+	else
 	{
-		game.ffwdtime = 2;
-	}
-#endif
-
-#ifdef DEBUG
-	if (can_tick)
-	{
-#endif
-		game.tick();
-
-#ifdef DEBUG
-		if (freezeframe)
-		{
-			char buf[1024];
-			sprintf(buf, "[] Tick %d", framecount++);
-			font_draw_shaded(4, (SCREEN_HEIGHT-GetFontHeight()-4), buf, 0, &greenfont);
-			can_tick = false;
-		}
-		else
-		{
-#endif
-			Replay::DrawStatus();
-#ifdef DEBUG
-		}
-
-		if (settings->show_fps)
-		{
-			update_fps();
-		}
-#endif
-
-		if (!flipacceltime)
+		flipacceltime--;
+		if (--frameskip < 0)
 		{
 			screen->Flip();
+			frameskip = 256;
 		}
-		else
-		{
-			flipacceltime--;
-			if (--frameskip < 0)
-			{
-				screen->Flip();
-				frameskip = 256;
-			}
-		}
-
-		memcpy(lastinputs, inputs, sizeof(lastinputs));
-#ifdef DEBUG
-	} 
-	else
-	{	// frame is frozen; don't hog CPU
-		SDL_Delay(10);
 	}
-#endif
+
+	memcpy(lastinputs, inputs, sizeof(lastinputs));
 
 	// immediately after a game tick is when we have the most amount of time before
 	// the game needs to run again. so now's as good a time as any for some
@@ -405,27 +276,6 @@ static inline void run_tick()
 
 	org_run();
 }
-
-#ifdef DEBUG
-void update_fps()
-{
-	fps_so_far++;
-	
-	if ((SDL_GetTicks() - fpstimer) >= 500)
-	{
-		fpstimer = SDL_GetTicks();
-		fps = (fps_so_far << 1);
-		fps_so_far = 0;
-	}
-	
-	char fpstext[64];
-	sprintf(fpstext, "%d fps", fps);
-	
-	int x = (SCREEN_WIDTH - 4) - GetFontWidth(fpstext, 0, true);
-	font_draw_shaded(x, 4, fpstext, 0, &greenfont);
-}
-#endif
-
 
 void InitNewGame(bool with_intro)
 {
@@ -437,9 +287,6 @@ void InitNewGame(bool with_intro)
 	
 	game.quaketime = game.megaquaketime = 0;
 	game.showmapnametime = 0;
-	#ifdef DEBUG
-	game.debug.god = 0;
-	#endif
 	game.running = true;
 	game.frozen = false;
 	
@@ -457,63 +304,3 @@ void InitNewGame(bool with_intro)
 
 	fade.set_full(FADE_OUT);
 }
-
-/*
-void c------------------------------() {}
-*/
-
-#ifdef DEBUG
-static void fatal(const char *str)
-{
-	staterr("fatal: '%s'", str);
-	
-	if (!safemode::init())
-	{
-		safemode::moveto(SM_UPPER_THIRD);
-		safemode::print("Fatal Error");
-		
-		safemode::moveto(SM_CENTER);
-		safemode::print("%s", str);
-		
-		safemode::run_until_key();
-		safemode::close();
-	}
-}
-
-static bool check_data_exists()
-{
-char fname[MAXPATHLEN];
-
-	sprintf(fname, "%s/npc.tbl", data_dir);
-	if (file_exists(fname)) return 0;
-	
-	if (!safemode::init())
-	{
-		safemode::moveto(SM_UPPER_THIRD);
-		safemode::print("Fatal Error");
-		
-		safemode::moveto(SM_CENTER);
-		safemode::print("Missing \"%s\" directory.", data_dir);
-		safemode::print("Please copy it over from a Doukutsu installation.");
-		
-		safemode::run_until_key();
-		safemode::close();
-	}
-	
-	return 1;
-}
-
-void visible_warning(const char *fmt, ...)
-{
-	va_list ar;
-	char buffer[80];
-
-	va_start(ar, fmt);
-	vsnprintf(buffer, sizeof(buffer), fmt, ar);
-	va_end(ar);
-
-	console.Print(buffer);
-}
-#endif
-
-

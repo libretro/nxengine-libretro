@@ -117,9 +117,6 @@ void c------------------------------() {}
 void input_poll(void)
 {
 	static uint8_t shiftstates = 0;
-#ifdef DEBUG
-	extern bool freezeframe;
-#endif
 	SDL_Event evt;
 	int ino;
 	int key;
@@ -133,77 +130,21 @@ void input_poll(void)
 				{
 					key = evt.key.keysym.sym;
 
-#ifdef DEBUG
-					if (console.IsVisible() && !IsNonConsoleKey(key))
+					ino = mappings[key];
+					if (ino != 0xff) inputs[ino] = (evt.type == SDL_KEYDOWN);
+
+					if (evt.type == SDL_KEYDOWN)
 					{
-						if (key == SDLK_LSHIFT)
+						if (Replay::IsPlaying() && ino <= LASTCONTROLKEY)
 						{
-							if (evt.type == SDL_KEYDOWN)
-								shiftstates |= LEFTMASK;
-							else
-								shiftstates &= ~LEFTMASK;
+							stat("user interrupt - stopping playback of replay");
+							Replay::end_playback();
+							memset(inputs, 0, sizeof(inputs));
+							inputs[ino] = true;
 						}
-						else if (key == SDLK_RSHIFT)
-						{
-							if (evt.type == SDL_KEYDOWN)
-								shiftstates |= RIGHTMASK;
-							else
-								shiftstates &= ~RIGHTMASK;
-						}
-						else
-						{
-							int ch = key;
-							if (shiftstates != 0)
-							{
-								ch = toupper(ch);
-								if (ch == '.') ch = '>';
-								if (ch == '-') ch = '_';
-								if (ch == '/') ch = '?';
-								if (ch == '1') ch = '!';
-							}
 
-							if (evt.type == SDL_KEYDOWN)
-								console.HandleKey(ch);
-							else
-								console.HandleKeyRelease(ch);
-						}
+						last_sdl_key = key;
 					}
-					else
-					{
-#endif
-						ino = mappings[key];
-						if (ino != 0xff) inputs[ino] = (evt.type == SDL_KEYDOWN);
-
-						if (evt.type == SDL_KEYDOWN)
-						{
-							if (Replay::IsPlaying() && ino <= LASTCONTROLKEY)
-							{
-								stat("user interrupt - stopping playback of replay");
-								Replay::end_playback();
-								memset(inputs, 0, sizeof(inputs));
-								inputs[ino] = true;
-							}
-
-#ifdef DEBUG
-							if (key == '`')		// bring up console
-							{
-								if (!freezeframe)
-								{
-									sound(SND_SWITCH_WEAPON);
-									console.SetVisible(true);
-								}
-							}
-							else
-							{
-#endif
-								last_sdl_key = key;
-#ifdef DEBUG
-							}
-#endif
-						}
-#ifdef DEBUG
-					}
-#endif
 				}
 				break;
 

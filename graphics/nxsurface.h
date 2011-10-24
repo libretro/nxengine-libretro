@@ -100,9 +100,7 @@ public:
 private:
 	static SDL_Surface *Scale(SDL_Surface *original, int factor, bool use_colorkey, bool free_original, bool use_display_format);
 	static void Scale8(SDL_Surface *src, SDL_Surface *dst, int factor);
-	static void scale2x(SDL_Surface *surface, SDL_Surface *dest);
 	
-	static inline uint32_t getpixel(SDL_Surface *surface, int x, int y);
 	static inline void putpixel(SDL_Surface *surface, int x, int y, uint32_t pixel);
 	
 	inline uint32_t MapColor(uint8_t r, uint8_t g, uint8_t b);
