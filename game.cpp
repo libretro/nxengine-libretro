@@ -60,7 +60,7 @@ bool Game::init()
 #endif
 	}
 
-	AssignSprites();		// auto-generated function to assign sprites to objects
+	AssignSprites();	// auto-generated function to assign sprites to objects
 	AssignExtraSprites();	// assign rest of sprites (to be replaced at some point)
 
 	if (ai_init()) return 1;			// setup function pointers to AI routines
@@ -85,7 +85,8 @@ bool Game::initlevel()
 	game.bossbar.object = NULL;
 	nOnscreenObjects = 0;
 	
-	if (statusbar_init()) return 1;					// reset his displayed health value
+	if (statusbar_init())
+		return 1;	// reset his displayed health value
 	InitPlayer();
 	initmap();
 	
@@ -174,27 +175,31 @@ bool Game::pause(int pausemode, int param)
 {
 	if (game.paused == pausemode)
 		return 0;
-	
+
+#ifdef DEBUG
 	stat("Setting pause: type %d param %d", pausemode, param);
-	
+#endif
+
 	if (tickfunctions[game.paused].OnExit)
 		tickfunctions[game.paused].OnExit();
-	
+
 	game.paused = pausemode;
-	
+
 	if (tickfunctions[game.paused].OnEnter)
 	{
 		if (tickfunctions[game.paused].OnEnter(param))
 		{
+#ifdef DEBUG
 			staterr("game.pause: initilization failed for mode %d", pausemode);
+#endif
 			game.paused = 0;
 			return 1;
 		}
 	}
-	
+
 	if (!game.paused)
 		memset(inputs, 0, sizeof(inputs));
-	
+
 	return 0;
 }
 
@@ -383,7 +388,9 @@ void DrawScene(void)
 			}
 			else
 			{
+				#ifdef DEBUG
 				staterr("%s:%d: Max Objects Overflow", __FILE__, __LINE__);
+				#endif
 				return;
 			}
 
@@ -480,7 +487,9 @@ bool game_load(Profile *p)
 		int scriptno = p->teleslots[i].scriptno;
 
 		textbox.StageSelect.SetSlot(slotno, scriptno);
+		#ifdef DEBUG
 		stat(" - Read Teleporter Slot %d: slotno=%d scriptno=%d", i, slotno, scriptno);
+		#endif
 	}
 
 	// have to load the stage last AFTER the flags are loaded because
@@ -502,7 +511,9 @@ bool game_save(int num)
 {
 	Profile p;
 
+	#ifdef DEBUG
 	stat("game_save: writing savefile %d", num);
+	#endif
 
 	if (game_save(&p))
 		return 1;

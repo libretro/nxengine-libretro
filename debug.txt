@@ -1,4 +1,4 @@
-Log set 1319486216
+Log set 1319487835
 Loading settings...
 videoinfo: desktop bpp 32
 Graphics::SetResolution(2)
@@ -11,15 +11,11 @@ Loading SIF section 2 from address 043a
 sslib: initilization was successful.
 Calculating pitch scale...
 -- Drums loaded from cache
-Reading npc.tbl...
-InitList::CallFunctions(0069b6a0): executing 61 functions...
+InitList::CallFunctions(0069afc0): executing 61 functions...
 initslopetable: generating slopetables.
- >> Entering stage 72: 'u'.
 StageBossManager::SetType(0)
 -- Starting on-entry script 100
 niku_load: couldn't open file '290.rec'
- >> music(24)
- >> Entering stage 0: 'Null'.
 StageBossManager::SetType(0)
 Loading profile from profile.dat...
 Loading profile from profile2.dat...
@@ -31,35 +27,87 @@ Loading profile from profile4.dat...
 Loading profile from profile5.dat...
  error << profile_load: unable to open 'profile5.dat' >>
 Writing settings...
- >> music(0)
 = Loading game =
 game_load: loading savefile 0
 Loading profile from profile.dat...
- >> Entering stage 13: 'Start Point'.
- >> music(8)
 Replay::OnGameStarting()
 begin_record_next: starting record to slot 0
 begin_record('replay/rep0.dat')
 StageBossManager::SetType(0)
- >> Entering stage 12: 'First Cave'.
 StageBossManager::SetType(0)
--- Starting on-entry script 91
-end_record(): wrote 987 frames
- >> music(0)
- >> music(3)
-= Loading game =
-game_load: loading savefile 0
+-- Starting on-entry script 94
+StageBossManager::SetType(0)
+-- Starting on-entry script 94
+StageBossManager::SetType(0)
+-- Starting on-entry script 94
+StageBossManager::SetType(0)
+-- Starting on-entry script 94
+StageBossManager::SetType(0)
+-- Starting on-entry script 94
+StageBossManager::SetType(0)
+-- Starting on-entry script 94
 Loading profile from profile.dat...
- >> Entering stage 13: 'Start Point'.
- >> music(8)
-Replay::OnGameStarting()
-begin_record_next: starting record to slot 0
-begin_record('replay/rep0.dat')
+Loading profile from profile2.dat...
+ error << profile_load: unable to open 'profile2.dat' >>
+Loading profile from profile3.dat...
+ error << profile_load: unable to open 'profile3.dat' >>
+Loading profile from profile4.dat...
+ error << profile_load: unable to open 'profile4.dat' >>
+Loading profile from profile5.dat...
+ error << profile_load: unable to open 'profile5.dat' >>
+Writing settings...
 StageBossManager::SetType(0)
- >> Entering stage 12: 'First Cave'.
+-- Starting on-entry script 94
 StageBossManager::SetType(0)
--- Starting on-entry script 91
-end_record(): wrote 775 frames
- >> music(0)
-Setting pause: type 8 param 0
+-- Starting on-entry script 92
+StageBossManager::SetType(0)
+-- Starting on-entry script 90
+StageBossManager::SetType(0)
+-- Starting on-entry script 94
+Loading profile from profile.dat...
+Loading profile from profile2.dat...
+ error << profile_load: unable to open 'profile2.dat' >>
+Loading profile from profile3.dat...
+ error << profile_load: unable to open 'profile3.dat' >>
+Loading profile from profile4.dat...
+ error << profile_load: unable to open 'profile4.dat' >>
+Loading profile from profile5.dat...
+ error << profile_load: unable to open 'profile5.dat' >>
+Writing settings...
+StageBossManager::SetType(0)
+-- Starting on-entry script 94
+StageBossManager::SetType(0)
+-- Starting on-entry script 94
+Loading profile from profile.dat...
+Loading profile from profile2.dat...
+ error << profile_load: unable to open 'profile2.dat' >>
+Loading profile from profile3.dat...
+ error << profile_load: unable to open 'profile3.dat' >>
+Loading profile from profile4.dat...
+ error << profile_load: unable to open 'profile4.dat' >>
+Loading profile from profile5.dat...
+ error << profile_load: unable to open 'profile5.dat' >>
+Writing settings...
+StageSelect: starting activation script 6001
+StageBossManager::SetType(0)
+-- Starting on-entry script 99
+StageBossManager::SetType(0)
+-- Starting on-entry script 94
+Loading profile from profile.dat...
+Loading profile from profile2.dat...
+ error << profile_load: unable to open 'profile2.dat' >>
+Loading profile from profile3.dat...
+ error << profile_load: unable to open 'profile3.dat' >>
+Loading profile from profile4.dat...
+ error << profile_load: unable to open 'profile4.dat' >>
+Loading profile from profile5.dat...
+ error << profile_load: unable to open 'profile5.dat' >>
+Writing settings...
+StageBossManager::SetType(0)
+-- Starting on-entry script 94
+StageBossManager::SetType(0)
+-- Starting on-entry script 94
+StageBossManager::SetType(0)
+-- Starting on-entry script 94
+end_record(): wrote 17071 frames
 Graphics::Close()

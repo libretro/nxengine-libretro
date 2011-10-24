@@ -24,7 +24,9 @@ bool ai_init(void)
 	// of every AI-related module which assign AI logic to objects.
 	if (AIRoutines.CallFunctions())
 	{
+		#ifdef DEBUG
 		staterr("ai_init: failed to initilize AIRoutines function pointers");
+		#endif
 		return 1;
 	}
 	
@@ -39,9 +41,17 @@ const int nEntries = 361;
 int i;
 
 	FILE *fp = fopen("data/npc.tbl", "rb");
-	if (!fp) { staterr("load_npc_tbl: data/npc.tbl is missing"); return 1; }
+	if (!fp)
+	{
+		#ifdef DEBUG
+		staterr("load_npc_tbl: data/npc.tbl is missing");
+		#endif
+		return 1; 
+	}
 	
+	#ifdef DEBUG
 	stat("Reading npc.tbl...");
+	#endif
 	
 	for(i=0;i<nEntries;i++) objprop[i].defaultflags = fgeti(fp);
 	for(i=0;i<nEntries;i++) objprop[i].initial_hp = fgeti(fp);

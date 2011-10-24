@@ -146,8 +146,10 @@ Object *target;
 			o->state = 1;
 			
 			// correct values: 0x3F0, 0xAE
+			#ifdef DEBUG
 			stat("Computed toss values xi: 0x%x, 0x%x", o->xinertia, o->yinertia);
 			stat("Target x/y: 0x%x, 0x%x", target->x, target->y);
+			#endif
 		}
 		case 1:
 			ANIMATE(1, 0, 1);

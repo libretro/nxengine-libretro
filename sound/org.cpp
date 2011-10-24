@@ -695,7 +695,9 @@ static void ForceSamplePos(int m, int desired_samples)
 		}
 		else
 		{	// this should NEVER actually happen!!
+			#ifdef DEBUG
 			stat("ForceSamplePos: WARNING: !!! truncated channel %d from %d to %d samples !!!", m, note_channel[m].samples_so_far, desired_samples);
+			#endif
 			note_channel[m].samples_so_far = desired_samples;
 			note_channel[m].outpos = desired_samples * 2;
 		}
@@ -706,13 +708,13 @@ static void ForceSamplePos(int m, int desired_samples)
 // adds num_samples samples of silence to the output buffer of channel "m".
 static void silence_gen(stNoteChannel *chan, int num_samples)
 {
-int clear_bytes;
+	int clear_bytes;
 
 	//stat("silence_gen: making %d samples of silence", num_samples);
-	
+
 	clear_bytes = (num_samples * 2 * 2);		// clear twice as many shorts as = num_samples
 	memset(&chan->outbuffer[chan->outpos], 0, clear_bytes);
-	
+
 	chan->samples_so_far += num_samples;
 	chan->outpos += (num_samples * 2);
 }

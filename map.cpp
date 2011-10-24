@@ -23,36 +23,38 @@ unsigned int tilekey[MAX_TILES];			// mapping from tile codes -> tile attributes
 // tile attributes (pxa), and script (tsc).
 bool load_stage(int stage_no)
 {
-char stage[MAXPATHLEN];
-char fname[MAXPATHLEN];
+	char stage[MAXPATHLEN];
+	char fname[MAXPATHLEN];
 
+	#ifdef DEBUG
 	stat(" >> Entering stage %d: '%s'.", stage_no, stages[stage_no].stagename);
+	#endif
 	game.curmap = stage_no;		// do it now so onspawn events will have it
 
 	if (Tileset::Load(stages[stage_no].tileset))
 		return 1;
-	
+
 	// get the base name of the stage without extension
 	const char *mapname = stages[stage_no].filename;
 	if (!strcmp(mapname, "lounge")) mapname = "Lounge";
 	sprintf(stage, "%s/%s", stage_dir, mapname);
-	
+
 	sprintf(fname, "%s.pxm", stage);
 	if (load_map(fname)) return 1;
-	
+
 	sprintf(fname, "%s/%s.pxa", stage_dir, tileset_names[stages[stage_no].tileset]);
 	if (load_tileattr(fname)) return 1;
-	
+
 	sprintf(fname, "%s.pxe", stage);
 	if (load_entities(fname)) return 1;
-	
+
 	sprintf(fname, "%s.tsc", stage);
 	if (tsc_load(fname, SP_MAP) == -1) return 1;
-	
+
 	map_set_backdrop(stages[stage_no].bg_no);
 	map.scrolltype = stages[stage_no].scroll_type;
 	map.motionpos = 0;
-	
+
 	return 0;
 }
 
