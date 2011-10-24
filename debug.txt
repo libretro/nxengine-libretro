@@ -1,4 +1,4 @@
-Log set 1319484596
+Log set 1319486216
 Loading settings...
 videoinfo: desktop bpp 32
 Graphics::SetResolution(2)
@@ -9,32 +9,17 @@ SIFLoader::LoadHeader: read index of 6 sections
 Loading SIF section 1 from address 003b
 Loading SIF section 2 from address 043a
 sslib: initilization was successful.
-Loading Sound FX...
-LoadFXCache: restoring pxts from cache
 Calculating pitch scale...
 -- Drums loaded from cache
 Reading npc.tbl...
-InitList::CallFunctions(0069bd40): executing 61 functions...
+InitList::CallFunctions(0069b6a0): executing 61 functions...
 initslopetable: generating slopetables.
-initmapfirsttime: loading tilekey.dat.
-Setting tick function to type 1 param 0
-Setting tick function to type 6 param 0
  >> Entering stage 72: 'u'.
-load_map: level size 21x16
-load_map: 'data/Stage/Kings.pxm' loaded OK! - 21x16
-load_pxa: reading in data/Stage/White.pxa
-load_entities: reading in data/Stage/Kings.pxe
 StageBossManager::SetType(0)
 -- Starting on-entry script 100
-Setting tick function to type 7 param 0
 niku_load: couldn't open file '290.rec'
  >> music(24)
-./org/theme.org: Org-02 detected
  >> Entering stage 0: 'Null'.
-load_map: level size 21x20
-load_map: 'data/Stage/0.pxm' loaded OK! - 21x20
-load_pxa: reading in data/Stage/0.pxa
-load_entities: reading in data/Stage/0.pxe
 StageBossManager::SetType(0)
 Loading profile from profile.dat...
 Loading profile from profile2.dat...
@@ -47,224 +32,34 @@ Loading profile from profile5.dat...
  error << profile_load: unable to open 'profile5.dat' >>
 Writing settings...
  >> music(0)
-Setting tick function to type 1 param 0
 = Loading game =
 game_load: loading savefile 0
 Loading profile from profile.dat...
  >> Entering stage 13: 'Start Point'.
-load_map: level size 21x16
-load_map: 'data/Stage/Start.pxm' loaded OK! - 21x16
-load_pxa: reading in data/Stage/Cave.pxa
-load_entities: reading in data/Stage/Start.pxe
- -- Disappearing object 200 ([Type 0]) because flag 430 is set
  >> music(8)
-./org/gestation.org: Org-02 detected
 Replay::OnGameStarting()
 begin_record_next: starting record to slot 0
 begin_record('replay/rep0.dat')
 StageBossManager::SetType(0)
-Setting tick function to type 3 param 1
-Setting tick function to type 1 param 0
-Setting tick function to type 2 param 0
-Setting tick function to type 1 param 0
  >> Entering stage 12: 'First Cave'.
-load_map: level size 60x45
-load_map: 'data/Stage/Cave.pxm' loaded OK! - 60x45
-load_pxa: reading in data/Stage/Cave.pxa
-load_entities: reading in data/Stage/Cave.pxe
-onspawn_spike_small: spike 01d74310 embedded in wall, deleting
-onspawn_spike_small: spike 01d74460 embedded in wall, deleting
 StageBossManager::SetType(0)
 -- Starting on-entry script 91
-end_record(): wrote 1065 frames
+end_record(): wrote 987 frames
  >> music(0)
  >> music(3)
-./org/gameover.org: Org-02 detected
 = Loading game =
 game_load: loading savefile 0
 Loading profile from profile.dat...
  >> Entering stage 13: 'Start Point'.
-load_map: level size 21x16
-load_map: 'data/Stage/Start.pxm' loaded OK! - 21x16
-load_pxa: reading in data/Stage/Cave.pxa
-load_entities: reading in data/Stage/Start.pxe
- -- Disappearing object 200 ([Type 0]) because flag 430 is set
  >> music(8)
-./org/gestation.org: Org-02 detected
 Replay::OnGameStarting()
 begin_record_next: starting record to slot 0
 begin_record('replay/rep0.dat')
 StageBossManager::SetType(0)
  >> Entering stage 12: 'First Cave'.
-load_map: level size 60x45
-load_map: 'data/Stage/Cave.pxm' loaded OK! - 60x45
-load_pxa: reading in data/Stage/Cave.pxa
-load_entities: reading in data/Stage/Cave.pxe
-onspawn_spike_small: spike 01d76c90 embedded in wall, deleting
-onspawn_spike_small: spike 01d76de0 embedded in wall, deleting
 StageBossManager::SetType(0)
 -- Starting on-entry script 91
- >> music(16)
-./org/fanfale3.org: Org-02 detected
- >> music(8)
-./org/gestation.org: Org-02 detected
- >> Entering stage 90: 'Hermit Gunsmith'.
-load_map: level size 21x16
-load_map: 'data/Stage/Pole.pxm' loaded OK! - 21x16
-load_pxa: reading in data/Stage/Cave.pxa
-load_entities: reading in data/Stage/Pole.pxe
-StageBossManager::SetType(0)
--- Starting on-entry script 92
- >> music(10)
-./org/fanfale1.org: Org-02 detected
- >> music(8)
-./org/gestation.org: Org-02 detected
- >> Entering stage 18: 'Shelter'.
-load_map: level size 21x16
-load_map: 'data/Stage/Shelt.pxm' loaded OK! - 21x16
-load_pxa: reading in data/Stage/Store.pxa
-load_entities: reading in data/Stage/Shelt.pxe
-StageBossManager::SetType(0)
--- Starting on-entry script 501
- >> music(21)
-./org/access.org: Org-02 detected
- >> Entering stage 90: 'Hermit Gunsmith'.
-load_map: level size 21x16
-load_map: 'data/Stage/Pole.pxm' loaded OK! - 21x16
-load_pxa: reading in data/Stage/Cave.pxa
-load_entities: reading in data/Stage/Pole.pxe
- -- Disappearing object 200 (OBJ_CHEST_CLOSED(15)) because flag 1640 is set
- -- Appearing object 201 (OBJ_CHEST_OPEN(21)) because flag 1640 is set
-StageBossManager::SetType(0)
--- Starting on-entry script 95
- >> music(8)
-./org/gestation.org: Org-02 detected
-Setting tick function to type 3 param 1
-Setting tick function to type 1 param 0
-Setting tick function to type 2 param 0
-Setting tick function to type 1 param 0
- >> Entering stage 12: 'First Cave'.
-load_map: level size 60x45
-load_map: 'data/Stage/Cave.pxm' loaded OK! - 60x45
-load_pxa: reading in data/Stage/Cave.pxa
-load_entities: reading in data/Stage/Cave.pxe
-onspawn_spike_small: spike 0220c800 embedded in wall, deleting
-onspawn_spike_small: spike 0220c950 embedded in wall, deleting
- -- Disappearing object 400 (OBJ_LIFE_CAPSULE(32)) because flag 304 is set
-StageBossManager::SetType(0)
--- Starting on-entry script 94
-Setting pause: type 8 param 0
-Setting pause: type 9 param 0
-Setting pause: type 0 param 0
-Writing settings...
- >> Entering stage 13: 'Start Point'.
-load_map: level size 21x16
-load_map: 'data/Stage/Start.pxm' loaded OK! - 21x16
-load_pxa: reading in data/Stage/Cave.pxa
-load_entities: reading in data/Stage/Start.pxe
- -- Disappearing object 200 ([Type 0]) because flag 430 is set
-StageBossManager::SetType(0)
--- Starting on-entry script 93
-Loading profile from profile.dat...
-Loading profile from profile2.dat...
- error << profile_load: unable to open 'profile2.dat' >>
-Loading profile from profile3.dat...
- error << profile_load: unable to open 'profile3.dat' >>
-Loading profile from profile4.dat...
- error << profile_load: unable to open 'profile4.dat' >>
-Loading profile from profile5.dat...
- error << profile_load: unable to open 'profile5.dat' >>
-game_save: writing savefile 0
-Writing settings...
- >> Entering stage 12: 'First Cave'.
-load_map: level size 60x45
-load_map: 'data/Stage/Cave.pxm' loaded OK! - 60x45
-load_pxa: reading in data/Stage/Cave.pxa
-load_entities: reading in data/Stage/Cave.pxe
-onspawn_spike_small: spike 01d75700 embedded in wall, deleting
-onspawn_spike_small: spike 0220ba50 embedded in wall, deleting
- -- Disappearing object 400 (OBJ_LIFE_CAPSULE(32)) because flag 304 is set
-StageBossManager::SetType(0)
--- Starting on-entry script 91
- >> Entering stage 18: 'Shelter'.
-load_map: level size 21x16
-load_map: 'data/Stage/Shelt.pxm' loaded OK! - 21x16
-load_pxa: reading in data/Stage/Store.pxa
-load_entities: reading in data/Stage/Shelt.pxe
-StageBossManager::SetType(0)
--- Starting on-entry script 502
- >> music(21)
-./org/access.org: Org-02 detected
- >> Entering stage 11: 'Mimiga Village'.
-load_map: level size 60x60
-load_map: 'data/Stage/Mimi.pxm' loaded OK! - 60x60
-load_pxa: reading in data/Stage/Mimi.pxa
-load_entities: reading in data/Stage/Mimi.pxe
-StageBossManager::SetType(0)
--- Starting on-entry script 302
- error << FindObjectByID2: ID2 0302 found: type [Type 0]; coords: (224, 528) >>
+end_record(): wrote 775 frames
  >> music(0)
- >> music(9)
-./org/town.org: Org-02 detected
- >> Entering stage 15: 'Reservoir'.
-load_map: level size 40x20
-load_map: 'data/Stage/Pool.pxm' loaded OK! - 40x20
-load_pxa: reading in data/Stage/Mimi.pxa
-load_entities: reading in data/Stage/Pool.pxe
-StageBossManager::SetType(0)
--- Starting on-entry script 90
-HVTrigger 0400 (01b8eb00) activated
-HVTrigger 0400 (01b8eb00) activated
-HVTrigger 0400 (01b8eb00) activated
-HVTrigger 0400 (01b8eb00) activated
-HVTrigger 0400 (01b8eb00) activated
-HVTrigger 0400 (01b8eb00) activated
-HVTrigger 0400 (01b8eb00) activated
-HVTrigger 0400 (01b8eb00) activated
-HVTrigger 0400 (01b8eb00) activated
-HVTrigger 0400 (01b8eb00) activated
- >> music(10)
-./org/fanfale1.org: Org-02 detected
- >> music(9)
-./org/town.org: Org-02 detected
-end_record(): wrote 12620 frames
- >> music(0)
- >> music(3)
-./org/gameover.org: Org-02 detected
-= Loading game =
-game_load: loading savefile 0
-Loading profile from profile.dat...
- >> Entering stage 13: 'Start Point'.
-load_map: level size 21x16
-load_map: 'data/Stage/Start.pxm' loaded OK! - 21x16
-load_pxa: reading in data/Stage/Cave.pxa
-load_entities: reading in data/Stage/Start.pxe
- -- Disappearing object 200 ([Type 0]) because flag 430 is set
- >> music(8)
-./org/gestation.org: Org-02 detected
-Replay::OnGameStarting()
-begin_record_next: starting record to slot 0
-begin_record('replay/rep0.dat')
-StageBossManager::SetType(0)
- >> Entering stage 12: 'First Cave'.
-load_map: level size 60x45
-load_map: 'data/Stage/Cave.pxm' loaded OK! - 60x45
-load_pxa: reading in data/Stage/Cave.pxa
-load_entities: reading in data/Stage/Cave.pxe
-onspawn_spike_small: spike 023d57e0 embedded in wall, deleting
-onspawn_spike_small: spike 023d5930 embedded in wall, deleting
- -- Disappearing object 400 (OBJ_LIFE_CAPSULE(32)) because flag 304 is set
-StageBossManager::SetType(0)
--- Starting on-entry script 91
- >> Entering stage 18: 'Shelter'.
-load_map: level size 21x16
-load_map: 'data/Stage/Shelt.pxm' loaded OK! - 21x16
-load_pxa: reading in data/Stage/Store.pxa
-load_entities: reading in data/Stage/Shelt.pxe
-StageBossManager::SetType(0)
--- Starting on-entry script 502
- >> music(21)
-./org/access.org: Org-02 detected
 Setting pause: type 8 param 0
-end_record(): wrote 1251 frames
 Graphics::Close()

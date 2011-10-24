@@ -152,7 +152,9 @@ void ai_hvtrigger(Object *o)
 	if (GetCurrentScript() == -1 &&		// no override other scripts
 		game.switchstage.mapno == -1)	// no repeat exec after <TRA
 	{
+		#ifdef DEBUG
 		stat("HVTrigger %04d (%08x) activated", o->id2, o);
+		#endif
 		StartScript(o->id2);
 	}
 }
@@ -1189,7 +1191,9 @@ void onspawn_spike_small(Object *o)
 	int tile = map.tiles[(o->CenterX() >> CSF) / TILE_W][(o->CenterY() >> CSF) / TILE_H];
 	if (tileattr[tile] & TA_SOLID)
 	{
+		#ifdef DEBUG
 		stat("onspawn_spike_small: spike %08x embedded in wall, deleting", o);
+		#endif
 		o->Delete();
 	}
 }

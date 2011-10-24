@@ -329,71 +329,73 @@ int d;
 
 char org_load(char *fname)
 {
-static const char *magic = "Org-02";
-char buf[8];
-FILE *fp;
-int i, j;
+	static const char *magic = "Org-02";
+	char buf[8];
+	FILE *fp;
+	int i, j;
 
 	fp = fopen(fname, "rb");
 	if (!fp) { visible_warning("org_load: no such file: '%s'", fname); return 1; }
-	
+
 	for(i=0;i<6;i++) { buf[i] = fgetc(fp); } buf[i] = 0;
 	if (strcmp(buf, magic)) { visible_warning("org-load: not an org file (got '%s')", buf); fclose(fp); return 1; }
+	#ifdef DEBUG
 	stat("%s: %s detected", fname, magic);
-	
+	#endif
+
 	fseek(fp, 0x06, SEEK_SET);
-	
+
 	song.ms_per_beat = fgeti(fp);
 	song.steps_per_bar = fgetc(fp);
 	song.beats_per_step = fgetc(fp);
 	song.loop_start = fgetl(fp);
 	song.loop_end = fgetl(fp);
-	
+
 	//song.ms_per_beat = 500;
 	//song.loop_start = 64;
-	
+
 	if (song.loop_end < song.loop_start)
 	{
 		visible_warning("org_load: loop end is before loop start");
 		fclose(fp);
 		return 1;
 	}
-	
+
 	// compute how long the last beat of a note should be (it should not use up the whole beat)
 	song.ms_of_last_beat_of_note = song.ms_per_beat - (int)((double)song.ms_per_beat * 0.1);
-	
+
 	// not actually used in this module, but the larger program might want to know this
 	song.beats_per_bar = (song.beats_per_step * song.steps_per_bar);
-	
+
 	/*lprintf("tempo: %d ms/beat\n", song.ms_per_beat);
-	lprintf("beats_per_step: %d\n", song.beats_per_step);
-	lprintf("steps_per_bar: %d\n", song.steps_per_bar);
-	lprintf("loop begins on beat %d\n", song.loop_start);
-	lprintf("loop ends on beat %d\n", song.loop_end);*/
-	
+	  lprintf("beats_per_step: %d\n", song.beats_per_step);
+	  lprintf("steps_per_bar: %d\n", song.steps_per_bar);
+	  lprintf("loop begins on beat %d\n", song.loop_start);
+	  lprintf("loop ends on beat %d\n", song.loop_end);*/
+
 	for(i=0;i<16;i++)
 	{
 		song.instrument[i].pitch = fgeti(fp);
 		song.instrument[i].wave = fgetc(fp);
 		song.instrument[i].pi = fgetc(fp);
 		song.instrument[i].nnotes = fgeti(fp);
-		
+
 		if (song.instrument[i].nnotes >= MAX_SONG_LENGTH)
 		{
 			visible_warning(" * org_load: instrument %d has too many notes! (has %d, max %d)", i, song.instrument[i].nnotes, MAX_SONG_LENGTH);
 			fclose(fp);
 			return 1;
 		}
-		
+
 		/*if (song.instrument[i].nnotes)
-		{
-			lprintf("Instrument %d: ", i);
-			lprintf(" Pitch: %d, ", song.instrument[i].pitch);
-			lprintf(" Wave: %d, ", song.instrument[i].wave);
-			lprintf(" Pi: %d, ", song.instrument[i].pi);
-			lprintf(" Nnotes: %d\n", song.instrument[i].nnotes);
-		}*/
-		
+		  {
+		  lprintf("Instrument %d: ", i);
+		  lprintf(" Pitch: %d, ", song.instrument[i].pitch);
+		  lprintf(" Wave: %d, ", song.instrument[i].wave);
+		  lprintf(" Pi: %d, ", song.instrument[i].pi);
+		  lprintf(" Nnotes: %d\n", song.instrument[i].nnotes);
+		  }*/
+
 		// substitute unavailable drums
 		// credits track for one, has Per02 set which CS didn't actually have, I don't think
 		if (i >= 8)
@@ -404,7 +406,7 @@ int i, j;
 			}
 		}
 	}
-	
+
 	for(i=0;i<16;i++)
 	{
 		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].beat = fgetl(fp);
@@ -413,7 +415,7 @@ int i, j;
 		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].volume = fgetc(fp);
 		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].panning = fgetc(fp);
 	}
-	
+
 	fclose(fp);
 	return init_buffers();
 }
@@ -549,7 +551,9 @@ bool org_is_playing(void)
 
 void org_fade(void)
 {
+	#ifdef DEBUG
 	stat("org_fade");
+	#endif
 	song.fading = true;
 	song.last_fade_time = 0;
 }
@@ -909,28 +913,28 @@ void org_run(void)
 // generate a buffer's worth of music and place it in the current final buffer.
 static void generate_music(void)
 {
-int m;
-int beats_left;
-int out_position;
+	int m;
+	int beats_left;
+	int out_position;
 
 	// save beat # of the first beat in buffer for calculating current beat for TrackFuncs
 	final_buffer[current_buffer].firstbeat = song.beat;
-	
+
 	// clear all the channel buffers
 	for(m=0;m<16;m++)
 	{
 		note_channel[m].samples_so_far = 0;
 		note_channel[m].outpos = 0;
 	}
-	
+
 	//stat("generate_music: generating %d beats of music\n", buffer_beats);
 	beats_left = buffer_beats;
 	out_position = 0;
-	
+
 	while(beats_left)
 	{
 		out_position += song.samples_per_beat;
-		
+
 		// for each channel...
 		for(m=0;m<16;m++)
 		{
@@ -941,22 +945,22 @@ int out_position;
 			// example if there was no note playing on the track, of if it was the last beat of a note.
 			ForceSamplePos(m, out_position);
 		}
-		
+
 		if (++song.beat >= song.loop_end)
 		{
 			song.beat = song.loop_start;
 			song.haslooped = true;
-			
+
 			for(m=0;m<16;m++)
 			{
 				song.instrument[m].curnote = song.instrument[m].loop_note;
 				note_channel[m].length = 0;
 			}
 		}
-		
+
 		beats_left--;
 	}
-	
+
 	mix_buffers();
 }
 
@@ -965,11 +969,11 @@ int out_position;
 // it may generate less.
 static void NextBeat(int m)
 {
-stNoteChannel *chan = &note_channel[m];
-stInstrument *track = &song.instrument[m];
-//int volume, panning;
-stNote *note;
-int len;
+	stNoteChannel *chan = &note_channel[m];
+	stInstrument *track = &song.instrument[m];
+	//int volume, panning;
+	stNote *note;
+	int len;
 
 	// add notes as long as instrument has notes left to add
 	if (track->curnote < track->nnotes)
@@ -981,10 +985,10 @@ int len;
 			{
 				track->loop_note = track->curnote;
 			}
-			
+
 			// get a pointer to the note at current position in the song
 			note = &track->note[track->curnote];
-			
+
 			// skip ahead if the song got ahead of us somehow
 			if (song.beat > note->beat)
 			{
@@ -993,15 +997,15 @@ int len;
 			}
 			else break;
 		}
-		
+
 		// 1st- start notes as we arrive at their beat
 		if (song.beat == note->beat)
 		{
 			//stat(" Beat/Note: %d/%d   Chan: %d   Note: %d  length=%d vol=%d pan=%d wave=%d", song.beat, curnote, m, note->note, note->length, note->volume, note->panning, song.instrument[m].wave);
-			
+
 			if (note->volume != 0xff) chan->volume = note->volume;
 			if (note->panning != 0xff) chan->panning = note->panning;
-			
+
 			if (note->note != 0xff)
 			{
 				if (m < 8)
@@ -1015,11 +1019,11 @@ int len;
 					chan->length = drum_open(m, track->wave, note->note);
 				}
 			}
-			
+
 			track->curnote++;
 		}
 	}
-	
+
 	// 2nd- generate any notes which are running
 	if (chan->length)
 	{
@@ -1040,7 +1044,7 @@ int len;
 				{		// this one they should not run together
 					note_gen(chan, song.note_closing_samples);
 				}
-				
+
 				if (!--chan->length)
 				{
 					note_close(chan);
@@ -1055,9 +1059,9 @@ int len;
 				len = song.samples_per_beat;
 			else
 				len = chan->length;
-			
+
 			drum_gen(m, len);
-			
+
 			chan->length -= len;
 		}
 	}
