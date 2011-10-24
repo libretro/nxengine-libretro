@@ -30,35 +30,35 @@ void c------------------------------() {}
 
 bool font_init(void)
 {
-TTF_Font *font;
-bool error = false;
+	TTF_Font *font;
+	bool error = false;
 
 	// we'll be bypassing the NXSurface automatic scaling features
 	// and drawing at the real resolution so we can get better-looking fonts.
 	sdl_screen = screen->GetSDLSurface();
-	
+
 	if (TTF_Init() < 0)
 	{
 		staterr("Couldn't initialize SDL_ttf: %s", TTF_GetError());
 		return 1;
 	}
-	
+
 	font = TTF_OpenFont(fontfile, pointsize[SCALE]);
 	if (!font)
 	{
 		staterr("Couldn't open font: '%s'", fontfile);
 		return 1;
 	}
-	
+
 	error |= whitefont.InitChars(font, 0xffffff);
 	error |= greenfont.InitChars(font, 0x00ff80);
 	error |= bluefont.InitChars(font, 0xa0b5de);
 	error |= shadowfont.InitCharsShadowed(font, 0xffffff, 0x000000);
 	error |= create_shade_sfc();
-	
+
 	TTF_CloseFont(font);
 	if (error) return 1;
-	
+
 	fontheight = (whitefont.letters['M']->h / SCALE);
 	initilized = true;
 	return 0;
@@ -248,19 +248,19 @@ SDL_Rect dstrect;
 
 int GetFontWidth(const char *text, int spacing, bool is_shaded)
 {
-int wd;
+	int wd;
 
 	if (spacing)
 		return (strlen(text) * spacing);
-	
+
 	rendering = false;
 	shrink_spaces = is_shaded;
-	
+
 	wd = text_draw(0, 0, text, spacing * SCALE);
-	
+
 	rendering = true;
 	shrink_spaces = true;
-	
+
 	return (wd / SCALE);
 }
 
@@ -313,32 +313,32 @@ int font_draw(int x, int y, const char *text, int spacing, NXFont *font)
 // draw a text string with a 50% dark border around it
 int font_draw_shaded(int x, int y, const char *text, int spacing, NXFont *font)
 {
-SDL_Rect srcrect, dstrect;
-int wd;
+	SDL_Rect srcrect, dstrect;
+	int wd;
 
 	x *= SCALE;
 	y *= SCALE;
 	spacing *= SCALE;
-	
+
 	// get full-res width of final text
 	rendering = false;
 	shrink_spaces = false;
-	
+
 	srcrect.x = 0;
 	srcrect.y = 0;
 	srcrect.h = shadesfc->h;
 	srcrect.w = text_draw(0, 0, text, spacing, font);
-	
+
 	rendering = true;
-	
+
 	// shade
 	dstrect.x = x;
 	dstrect.y = y;
 	SDL_BlitSurface(shadesfc, &srcrect, sdl_screen, &dstrect);
-	
+
 	// draw the text on top as normal
 	wd = text_draw(x, y, text, spacing, font);
-	
+
 	shrink_spaces = true;
 	return (wd / SCALE);
 }

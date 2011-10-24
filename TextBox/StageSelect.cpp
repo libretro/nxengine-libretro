@@ -104,11 +104,11 @@ void c------------------------------() {}
 
 void TB_StageSelect::HandleInput()
 {
-bool button_down;
+	bool button_down;
 
 	if (textbox.YesNoPrompt.IsVisible() || fMadeSelection)
 		return;
-	
+
 	if (justpushed(LEFTKEY))
 	{
 		MoveSelection(LEFT);
@@ -117,7 +117,7 @@ bool button_down;
 	{
 		MoveSelection(RIGHT);
 	}
-	
+
 	// when user picks a location return the new script to execute
 	button_down = buttondown();
 	if (button_down && !fLastButtonDown)
@@ -132,10 +132,10 @@ bool button_down;
 		{	// dismiss "no permission to teleport"
 			StopScripts();
 		}
-		
+
 		fMadeSelection = true;
 	}
-	
+
 	fLastButtonDown = button_down;
 }
 

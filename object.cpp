@@ -7,24 +7,24 @@
 // it's not actually freed till the end of the tick.
 void Object::Delete()
 {
-Object * const &o = this;
+	Object * const &o = this;
 
 	if (o->deleted)
 		return;
-	
+
 	// make sure no pointers are pointing at us
 	DisconnectGamePointers();
-	
+
 	// show any damage waiting to be added NOW instead of later
 	if (o->DamageWaiting > 0)
 	{
 		DamageText->AddQty(o->DamageWaiting);
 		o->DamageWaiting = 0;
 	}
-	
+
 	// set it's id1 flag, required for some scripts
 	game.flags[o->id1] = true;
-	
+
 	// mark it for deletion at end of loop
 	// (can't delete now as it may invalidate pointers--we don't know where we were called from)
 	o->deleted = true;
@@ -32,13 +32,13 @@ Object * const &o = this;
 
 void Object::Destroy()
 {
-Object * const &o = this;
+	Object * const &o = this;
 
 	// make sure no pointers are pointing at us
 	DisconnectGamePointers();
 	// delete associated floaty text as soon as it's animation is done
 	DamageText->ObjectDestroyed = true;
-	
+
 	// if any objects are linked to this obj then unlink them
 	Object *link;
 	for(link = firstobject; link; link = link->next)
@@ -46,12 +46,12 @@ Object * const &o = this;
 		if (link->linkedobject == o)
 			link->linkedobject = NULL;
 	}
-	
+
 	// remove from list and free
 	LL_REMOVE(o, prev, next, firstobject, lastobject);
 	LL_REMOVE(o, lower, higher, lowestobject, highestobject);
 	if (o == player) player = NULL;
-	
+
 	delete o;
 }
 
@@ -61,7 +61,7 @@ Object * const &o = this;
 // protects against dangling pointers.
 void Object::DisconnectGamePointers()
 {
-Object * const &o = this;
+	Object * const &o = this;
 
 	if (o == player->riding) player->riding = NULL;
 	if (o == player->lastriding) player->lastriding = NULL;
@@ -79,30 +79,30 @@ void c------------------------------() {}
 
 void Object::SetType(int type)
 {
-Object * const &o = this;
+	Object * const &o = this;
 
 	o->type = type;
 	o->sprite = objprop[type].sprite;
 	o->hp = objprop[type].initial_hp;
 	o->damage = objprop[o->type].damage;
 	o->frame = 0;
-	
+
 	// apply nxflags to new object type!
 	// (did this so toroko would handle slopes properly in Gard cutscene)
 	o->nxflags = objprop[type].defaultnxflags;
-	
+
 	// apply defaultflags to new object type, but NOT ALL defaultflags.
 	// otherwise <CNP's _WILL_ get messed up.
 	const static int flags_to_keep = \
-		(FLAG_SCRIPTONTOUCH | FLAG_SCRIPTONDEATH | FLAG_SCRIPTONACTIVATE | \
-		 FLAG_APPEAR_ON_FLAGID | FLAG_DISAPPEAR_ON_FLAGID | \
-		 FLAG_FACES_RIGHT);
-	
+					 (FLAG_SCRIPTONTOUCH | FLAG_SCRIPTONDEATH | FLAG_SCRIPTONACTIVATE | \
+					  FLAG_APPEAR_ON_FLAGID | FLAG_DISAPPEAR_ON_FLAGID | \
+					  FLAG_FACES_RIGHT);
+
 	uint32_t keep = (o->flags & flags_to_keep);
 	o->flags = (objprop[type].defaultflags & ~flags_to_keep) | keep;
-	
+
 	//stat("new flags: %04x", o->flags);
-	
+
 	// setup default clipping extents, in case object turns on clip_enable
 	if (!o->clip_enable)
 		o->ResetClip();
@@ -110,19 +110,19 @@ Object * const &o = this;
 
 void Object::ChangeType(int type)
 {
-Object * const &o = this;
+	Object * const &o = this;
 
 	int oldsprite = o->sprite;
-	
+
 	o->state = 0;
 	o->substate = 0;
 	o->frame = 0;
 	o->timer = 0;
 	o->timer2 = 0;
 	o->animtimer = 0;
-	
+
 	SetType(type);
-	
+
 	// adjust position so spawn points of old object and new object line up
 	o->x >>= CSF; o->x <<= CSF;
 	o->y >>= CSF; o->y <<= CSF;
@@ -130,7 +130,7 @@ Object * const &o = this;
 	o->y += (sprites[oldsprite].spawn_point.y << CSF);
 	o->x -= (sprites[this->sprite].spawn_point.x << CSF);
 	o->y -= (sprites[this->sprite].spawn_point.y << CSF);
-	
+
 	// added this for when you pick up the puppy in the Deserted House in SZ--
 	// makes objects <CNPed during a <PRI initilize immediately instead of waiting
 	// for <PRI to be released.
@@ -139,7 +139,7 @@ Object * const &o = this;
 		OnTick();
 		OnAftermove();
 	}
-	
+
 	// Sprites appearing out of an OBJ_NULL should generally go to the top of the z-order.
 	// this was originally added so that the Doctor would appear in front of the core
 	// when he teleports in at end of Almond battle (it's since been used in a lot of
@@ -148,7 +148,7 @@ Object * const &o = this;
 	{
 		BringToFront();
 	}
-	
+
 	OnSpawn();
 }
 
@@ -640,25 +640,25 @@ void c------------------------------() {}
 // blood spatter at the correct location.
 void Object::DealDamage(int dmg, Object *shot)
 {
-Object * const &o = this;
+	Object * const &o = this;
 
 	if (o->flags & FLAG_INVULNERABLE)
 		return;
-	
+
 	o->hp -= dmg;
-	
+
 	if (o->flags & FLAG_SHOW_FLOATTEXT)
 		o->DamageWaiting += dmg;
-	
+
 	if (o->hp > 0)
 	{
 		if (o->shaketime < objprop[o->type].shaketime - 2)
 		{
 			o->shaketime = objprop[o->type].shaketime;
-			
+
 			if (objprop[o->type].hurt_sound)
 				sound(objprop[o->type].hurt_sound);
-			
+
 			if (shot)
 				effect(shot->CenterX(), shot->CenterY(), EFFECT_BLOODSPLATTER);
 		}
@@ -673,15 +673,15 @@ Object * const &o = this;
 // applicable to that, such as spawning powerups or running scripts.
 void Object::Kill()
 {
-Object * const &o = this;
+	Object * const &o = this;
 
 	o->hp = 0;
 	o->flags &= ~FLAG_SHOOTABLE;
-	
+
 	// auto disappear the bossbar if we have just killed a boss
 	if (o == game.bossbar.object)
 		game.bossbar.defeated = true;
-	
+
 	// if a script is set to run on death, run it instead of the usual explosion
 	if (o->flags & FLAG_SCRIPTONDEATH)
 	{
@@ -693,10 +693,10 @@ Object * const &o = this;
 		// should spawn the smokeclouds first, for z-order reasons
 		SmokeClouds(o, objprop[o->type].death_smoke_amt, 8, 8);
 		effect(o->CenterX(), o->CenterY(), EFFECT_BOOMFLASH);
-		
+
 		if (objprop[o->type].death_sound)
 			sound(objprop[o->type].death_sound);
-		
+
 		if (objprop[o->type].ai_routines.ondeath)
 		{
 			o->OnDeath();
@@ -705,7 +705,7 @@ Object * const &o = this;
 		{
 			if (!(o->nxflags & NXFLAG_NO_DROP_POWERUPS))
 				SpawnPowerups();
-			
+
 			o->Delete();
 		}
 	}
@@ -804,10 +804,10 @@ void c------------------------------() {}
 
 void Object::RunAI()
 {
-Object * const &o = this;
+	Object * const &o = this;
 
 	o->OnTick();
-	
+
 	// trigger touch-activated scripts.
 	// it actually only triggers once his centerline touches the object.
 	// see the passageway between the Throne Room and Kings Table for a
@@ -817,12 +817,12 @@ Object * const &o = this;
 		if (pdistlx(8<<CSF))
 		{
 			int y = player->y + (6 << CSF);
-			
+
 			// player->riding check is for fans in Final Cave
 			if ((y > o->Top() && y < o->Bottom()) || player->riding == o)
 			{
 				if (GetCurrentScript() == -1 &&		// no override other scripts
-					game.switchstage.mapno == -1)	// no repeat exec after <TRA
+						game.switchstage.mapno == -1)	// no repeat exec after <TRA
 				{
 					stat("On-touch script %d triggered", o->id2);
 					StartScript(o->id2);
@@ -873,22 +873,22 @@ Object * const &o = this;
 //	- -1	head-on or bottom attack
 int Object::GetAttackDirection()
 {
-Object * const &o = this;
-const int VARIANCE = (5 << CSF);
+	Object * const &o = this;
+	const int VARIANCE = (5 << CSF);
 
 	if (player->riding == o)
 		return UP;
-	
+
 	if (player->Bottom() <= (o->Top() + VARIANCE))
 		return UP;
-	
+
 	// (added for X treads) if the object is moving, then the "front"
 	// for purposes of this flag is the direction it's moving in.
 	// if it's still, the "front" is the actual direction it's facing.
 	int rtdir = o->dir;
 	if (o->xinertia > 0) rtdir = RIGHT;
 	if (o->xinertia < 0) rtdir = LEFT;
-	
+
 	if (rtdir == RIGHT)
 	{
 		if (player->Right() <= (o->Left() + VARIANCE))
@@ -899,7 +899,7 @@ const int VARIANCE = (5 << CSF);
 		if (player->Left() >= (o->Right() - VARIANCE))
 			return LEFT;
 	}
-	
+
 	return -1;
 }
 

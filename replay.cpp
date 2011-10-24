@@ -19,28 +19,28 @@ extern int flipacceltime;
 // creating the save-profile section from the current game state.
 bool Replay::begin_record(const char *fname)
 {
-FILE *fp;
-Profile profile;
+	FILE *fp;
+	Profile profile;
 
 	end_record();
 	memset(&rec, 0, sizeof(rec));
-	
+
 	stat("begin_record('%s')", fname);
-	
+
 	// grab a savefile record of the game state and write it at the start of the file
 	// just like a regular profile.dat.
 	if (game_save(&profile)) return 1;
 	if (profile_save(fname, &profile)) return 1;
-	
+
 	fp = fopen(fname, "r+");
 	if (!fp)
 	{
 		staterr("begin_record: failed to open file %s", fname);
 		return 1;
 	}
-	
+
 	fseek(fp, PROFILE_LENGTH, SEEK_SET);	// seek to end of profile data
-	
+
 	rec.hdr.magick = REPLAY_MAGICK;
 	rec.hdr.randseed = getrand();
 	rec.hdr.locked = false;
@@ -48,12 +48,12 @@ Profile profile;
 	rec.hdr.createstamp = (uint64_t)time(NULL);
 	rec.hdr.stageno = game.curmap;
 	memcpy(&rec.hdr.settings, &normal_settings, sizeof(Settings));
-	
+
 	fwrite(&rec.hdr, sizeof(ReplayHeader), 1, fp);
-	
+
 	rec.fp = fp;
 	seedrand(rec.hdr.randseed);
-	
+
 	return 0;
 }
 
@@ -534,23 +534,23 @@ void c------------------------------() {}
 // shoves an array of bool values up to 32 entries long into a uint32.
 static uint32_t Replay::EncodeBits(bool *values, int nvalues)
 {
-uint32_t result = 0;
-uint32_t mask = 1;
+	uint32_t result = 0;
+	uint32_t mask = 1;
 
 	for(int i=0;i<nvalues;i++)
 	{
 		if (values[i]) result |= mask;
 		mask <<= 1;
 	}
-	
+
 	return result;
 }
 
 // pulls apart a uint32 created by EncodeBits back into a bool array.
 void Replay::DecodeBits(uint32_t value, bool *array, int len)
 {
-uint32_t mask = 1;
-int i;
+	uint32_t mask = 1;
+	int i;
 
 	for(i=0;i<len;i++)
 	{
@@ -558,8 +558,3 @@ int i;
 		mask <<= 1;
 	}
 }
-
-
-
-
-

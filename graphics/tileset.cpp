@@ -30,7 +30,7 @@ void c------------------------------() {}
 // load the given tileset into memory, replacing any other tileset.
 bool Tileset::Load(int new_tileset)
 {
-char fname[MAXPATHLEN];
+	char fname[MAXPATHLEN];
 
 	if (new_tileset != current_tileset)
 	{
@@ -39,9 +39,9 @@ char fname[MAXPATHLEN];
 			delete tileset;
 			current_tileset = -1;
 		}
-		
+
 		sprintf(fname, "%s/Prt%s.pbm", stage_dir, tileset_names[new_tileset]);
-		
+
 		// always use SDL_DisplayFormat on tilesets; they need to come out of 8-bit
 		// so that we can replace the destroyable star tiles without them palletizing.
 		tileset = NXSurface::FromFile(fname, true, true);
@@ -49,10 +49,10 @@ char fname[MAXPATHLEN];
 		{
 			return 1;
 		}
-		
+
 		current_tileset = new_tileset;
 	}
-	
+
 	return 0;
 }
 
