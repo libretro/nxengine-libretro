@@ -32,7 +32,9 @@ static CommandEntry commands[] =
 	"boa", __boa, 1, 1,
 	"cre", __cre, 0, 0,
 	"reset", __reset, 0, 0,
+	#ifdef DEBUG
 	"fps", __fps, 0, 1,
+	#endif
 	
 	"instant-quit", __set_iquit, 1, 1,
 	"no-quake-in-hell", __set_noquake, 1, 1,
@@ -860,6 +862,7 @@ static void __reset(StringList *args, int num)
 	game.reset();
 }
 
+#ifdef DEBUG
 static void __fps(StringList *args, int num)
 {
 extern int fps;
@@ -868,6 +871,7 @@ extern int fps;
 	settings_save();
 	fps = 0;
 }
+#endif
 
 /*
 void c------------------------------() {}

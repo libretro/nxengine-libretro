@@ -9,9 +9,11 @@ const char *stage_dir = "data/Stage";
 const char *pic_dir = "endpic";
 const char *nxdata_dir = ".";
 
+#ifdef DEBUG
 int fps = 0;
 static int fps_so_far = 0;
 static uint32_t fpstimer = 0;
+#endif
 
 #define GAME_WAIT			(1000/GAME_FPS)	// sets framerate
 int framecount = 0;
@@ -300,10 +302,12 @@ static int frameskip = 0;
 			Replay::DrawStatus();
 		}
 		
+		#ifdef DEBUG
 		if (settings->show_fps)
 		{
 			update_fps();
 		}
+		#endif
 		
 		if (!flipacceltime)
 		{
@@ -333,6 +337,7 @@ static int frameskip = 0;
 	org_run();
 }
 
+#ifdef DEBUG
 void update_fps()
 {
 	fps_so_far++;
@@ -350,6 +355,7 @@ void update_fps()
 	int x = (SCREEN_WIDTH - 4) - GetFontWidth(fpstext, 0, true);
 	font_draw_shaded(x, 4, fpstext, 0, &greenfont);
 }
+#endif
 
 
 void InitNewGame(bool with_intro)

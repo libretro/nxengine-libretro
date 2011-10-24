@@ -816,14 +816,16 @@ char pxt_IsPlaying(int slot)
 // if cache_name is specified the pcm audio data is cached under the given filename.
 char pxt_LoadSoundFX(const char *path, const char *cache_name, int top)
 {
-char fname[80];
-int slot;
-stPXSound snd;
-FILE *fp = NULL;
+	char fname[80];
+	int slot;
+	stPXSound snd;
+	FILE *fp = NULL;
 
+	#ifdef DEBUG
 	stat("Loading Sound FX...");
+	#endif
 	load_top = top;
-	
+
 	if (cache_name)
 	{
 		// try to load the cache if we can
@@ -831,29 +833,31 @@ FILE *fp = NULL;
 		{
 			return 0;
 		}
-		
+
 		fp = fopen(cache_name, "wb");
 		if (!fp)
 		{
+			#ifdef DEBUG
 			staterr("LoadSoundFX: failed open: '%s'", cache_name);
+			#endif
 			return 1;
 		}
-		
+
 		fputl('PXC1', fp);
 		fputi(top, fp);
 	}
-	
+
 	// get ready to do synthesis
 	pxt_initsynth();
-	
+
 	for(slot=1;slot<=top;slot++)
 	{
 		sprintf(fname, "%sfx%02x.pxt", path, slot);
-		
+
 		if (pxt_load(fname, &snd)) continue;
-		
+
 		pxt_Render(&snd);
-		
+
 		// dirty hack; lower the pitch of the Stream Sounds
 		// to match the way they actually sound in the game
 		// with the SSS0400 command.
@@ -861,7 +865,7 @@ FILE *fp = NULL;
 			pxt_ChangePitch(&snd, 5.0f);
 		if (slot == 41)
 			pxt_ChangePitch(&snd, 6.0f);
-		
+
 		// save the rendered audio to cache
 		if (fp)
 		{
@@ -869,18 +873,20 @@ FILE *fp = NULL;
 			fputc(slot, fp);
 			fwrite(snd.final_buffer, snd.final_size, 1, fp);
 		}
-		
+
 		// upscale the sound to 16-bit for SDL_mixer then throw away the now unnecessary 8-bit data
 		pxt_PrepareToPlay(&snd, slot);
 		FreePXTBuf(&snd);
 	}
-	
+
 	if (fp)
 	{
+		#ifdef DEBUG
 		stat(" - created %s; %d bytes", cache_name, ftell(fp));
+		#endif
 		fclose(fp);
 	}
-	
+
 	return 0;
 }
 
@@ -896,20 +902,26 @@ stPXSound snd;
 	fp = fopen(fname, "rb");
 	if (!fp)
 	{
+		#ifdef DEBUG
 		stat("LoadFXCache: audio cache %s not exist", fname);
+		#endif
 		return 1;
 	}
 	
 	if (fgetl(fp) != 'PXC1')
 	{
+		#ifdef DEBUG
 		stat("LoadFXCache: %s is incorrect format", fname);
+		#endif
 		fclose(fp);
 		return 1;
 	}
 	
 	if (fgeti(fp) != top)
 	{
+		#ifdef DEBUG
 		stat("LoadFXCache: # of sounds has changed since cache creation");
+		#endif
 		fclose(fp);
 		return 1;
 	}
@@ -917,7 +929,9 @@ stPXSound snd;
 	int allocd_size = 0;
 	snd.final_buffer = NULL;
 	
+	#ifdef DEBUG
 	stat("LoadFXCache: restoring pxts from cache");
+	#endif
 	for(;;)
 	{
 		snd.final_size = fgetl(fp);
@@ -932,7 +946,9 @@ stPXSound snd;
 			snd.final_buffer = (signed char *)malloc(allocd_size);
 			if (!snd.final_buffer)
 			{
+				#ifdef DEBUG
 				staterr("LoadFXCache: out of memory!");
+				#endif
 				return 1;
 			}
 		}
@@ -1059,7 +1075,9 @@ char load_extended_section = 0;
 		{	// opening a new channel
 			if (cc >= PXT_NO_CHANNELS)
 			{
+				#ifdef DEBUG
 				staterr("pxt_load: sound '%s' contains too many channels!", fname);
+				#endif
 				goto error;
 			}
 			
@@ -1085,7 +1103,9 @@ char load_extended_section = 0;
 	
 	if (load_extended_section)
 	{
+		#ifdef DEBUG
 		stat("pxt_load: extended section found, loading it");
+		#endif
 		if (ReadToBracket(fp)) return 1;
 		for(cc=0;cc<PXT_NO_CHANNELS;cc++)
 		{
@@ -1158,7 +1178,9 @@ int i, j;
 	fp = fopen(fname, "wb");
 	if (!fp)
 	{
+		#ifdef DEBUG
 		stat("save_pxt: unable to open '%s'", fname);
+		#endif
 		return 1;
 	}
 	

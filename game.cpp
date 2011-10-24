@@ -142,27 +142,31 @@ bool Game::setmode(int newmode, int param, bool force)
 {
 	if (newmode == 0)
 		newmode = GM_NORMAL;
-	
+
 	if (game.mode == newmode && !force)
 		return 0;
-	
+
+#ifdef DEBUG
 	stat("Setting tick function to type %d param %d", newmode, param);
-	
+#endif
+
 	if (tickfunctions[game.mode].OnExit)
 		tickfunctions[game.mode].OnExit();
-	
+
 	game.mode = newmode;
-	
+
 	if (tickfunctions[game.mode].OnEnter)
 	{
 		if (tickfunctions[game.mode].OnEnter(param))
 		{
+#ifdef DEBUG
 			staterr("game.setmode: initilization failed for mode %d", newmode);
+#endif
 			game.mode = GM_NONE;
 			return 1;
 		}
 	}
-	
+
 	return 0;
 }
 

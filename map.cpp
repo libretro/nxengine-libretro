@@ -63,8 +63,8 @@ void c------------------------------() {}
 // load a PXM map
 bool load_map(const char *fname)
 {
-FILE *fp;
-int x, y;
+	FILE *fp;
+	int x, y;
 
 	fp = fopen(fname, "rb");
 	if (!fp)
@@ -72,44 +72,48 @@ int x, y;
 		staterr("load_map: no such file: '%s'", fname);
 		return 1;
 	}
-	
+
 	if (!fverifystring(fp, "PXM"))
 	{
 		staterr("load_map: invalid map format: '%s'", fname);
 		return 1;
 	}
-	
+
 	memset(&map, 0, sizeof(map));
-	
+
 	fgetc(fp);
 	map.xsize = fgeti(fp);
 	map.ysize = fgeti(fp);
-	
+
 	if (map.xsize > MAP_MAXSIZEX || map.ysize > MAP_MAXSIZEY)
 	{
 		staterr("load_map: map is too large -- size %dx%d but max is %dx%d", map.xsize, map.ysize, MAP_MAXSIZEX, MAP_MAXSIZEY);
 		fclose(fp);
 		return 1;
 	}
+	#ifdef DEBUG
 	else
 	{
 		stat("load_map: level size %dx%d", map.xsize, map.ysize);
 	}
-	
+	#endif
+
 	for(y=0;y<map.ysize;y++)
-	for(x=0;x<map.xsize;x++)
-	{
-		map.tiles[x][y] = fgetc(fp);
-	}
-	
+		for(x=0;x<map.xsize;x++)
+		{
+			map.tiles[x][y] = fgetc(fp);
+		}
+
 	fclose(fp);
-	
+
 	map.maxxscroll = (((map.xsize * TILE_W) - SCREEN_WIDTH) - 8) << CSF;
 	map.maxyscroll = (((map.ysize * TILE_H) - SCREEN_HEIGHT) - 8) << CSF;
 	if (map.xsize * TILE_W<SCREEN_WIDTH)
 		map.maxxscroll = (((map.xsize * TILE_W) - 360) - 8) << CSF;
-	
+
+	#ifdef DEBUG
 	stat("load_map: '%s' loaded OK! - %dx%d", fname, map.xsize, map.ysize);
+	#endif
 	return 0;
 }
 
@@ -117,15 +121,17 @@ int x, y;
 // load a PXE (entity list for a map)
 bool load_entities(const char *fname)
 {
-FILE *fp;
-int i;
-int nEntities;
+	FILE *fp;
+	int i;
+	int nEntities;
 
 	// gotta destroy all objects before creating new ones
 	Objects::DestroyAll(false);
 	FloatText::ResetAll();
-	
+
+#ifdef DEBUG
 	stat("load_entities: reading in %s", fname);
+#endif
 	// now we can load in the new objects
 	fp = fopen(fname, "rb");
 	if (!fp)
@@ -133,16 +139,16 @@ int nEntities;
 		staterr("load_entities: no such file: '%s'", fname);
 		return 1;
 	}
-	
+
 	if (!fverifystring(fp, "PXE"))
 	{
 		staterr("load_entities: not a PXE: '%s'", fname);
 		return 1;
 	}
-	
+
 	fgetc(fp);
 	nEntities = fgetl(fp);
-	
+
 	for(i=0;i<nEntities;i++)
 	{
 		int x = fgeti(fp);
@@ -151,24 +157,26 @@ int nEntities;
 		int id2 = fgeti(fp);
 		int type = fgeti(fp);
 		int flags = fgeti(fp);
-		
+
 		int dir = (flags & FLAG_FACES_RIGHT) ? RIGHT : LEFT;
-		
+
 		//lprintf(" %d:   [%d, %d]\t id1=%d\t id2=%d   Type %d   flags %04x\n", i, x, y, id1, id2, type, flags);
-		
+
 		// most maps have apparently garbage entities--invisible do-nothing objects??
 		// i dunno but no point in spawning those...
 		if (type || id1 || id2 || flags)
 		{
 			bool addobject = false;
-			
+
 			// check if object is dependent on a flag being set/not set
 			if (flags & FLAG_APPEAR_ON_FLAGID)
 			{
 				if (game.flags[id1])
 				{
 					addobject = true;
+#ifdef DEBUG
 					stat(" -- Appearing object %02d (%s) because flag %d is set", id2, DescribeObjectType(type), id1);
+#endif
 				}
 			}
 			else if (flags & FLAG_DISAPPEAR_ON_FLAGID)
@@ -177,38 +185,40 @@ int nEntities;
 				{
 					addobject = true;
 				}
+#ifdef DEBUG
 				else
 				{
 					stat(" -- Disappearing object %02d (%s) because flag %d is set", id2, DescribeObjectType(type), id1);
 				}
+#endif
 			}
 			else
 			{
 				addobject = true;
 			}
-			
+
 			if (addobject)
 			{
 				// hack for chests (can we do this elsewhere?)
 				if (type == OBJ_CHEST_OPEN) y++;
-				
+
 				Object *o = CreateObject((x * TILE_W) << CSF, \
-										 (y * TILE_H) << CSF, type,
-										 0, 0, dir, NULL, CF_NO_SPAWN_EVENT);
-				
+						(y * TILE_H) << CSF, type,
+						0, 0, dir, NULL, CF_NO_SPAWN_EVENT);
+
 				o->id1 = id1;
 				o->id2 = id2;
 				o->flags |= flags;
-				
+
 				ID2Lookup[o->id2] = o;
-				
+
 				// now that it's all set up, execute OnSpawn,
 				// since we didn't do it in CreateObject.
 				o->OnSpawn();
 			}
 		}
 	}
-	
+
 	//stat("load_entities: loaded %d objects", nEntities);
 	fclose(fp);
 	return 0;
@@ -232,83 +242,96 @@ int nEntities;
 // loads a pxa (tileattr) file
 bool load_tileattr(const char *fname)
 {
-FILE *fp;
-int i;
-unsigned char tc;
+	FILE *fp;
+	int i;
+	unsigned char tc;
 
 	map.nmotiontiles = 0;
-	
+
+#ifdef DEBUG
 	stat("load_pxa: reading in %s", fname);
+#endif
 	fp = fopen(fname, "rb");
 	if (!fp)
 	{
+#ifdef DEBUG
 		staterr("load_pxa: no such file: '%s'", fname);
+#endif
 		return 1;
 	}
-	
+
 	for(i=0;i<256;i++)
 	{
 		tc = fgetc(fp);
 		tilecode[i] = tc;
 		tileattr[i] = tilekey[tc];
 		//stat("Tile %02x   TC %02x    Attr %08x   tilekey[%02x] = %08x", i, tc, tileattr[i], tc, tilekey[tc]);
-		
+
 		if (tc == 0x43)	// destroyable block - have to replace graphics
 		{
 			CopySpriteToTile(SPR_DESTROYABLE, i, 0, 0);
 		}
-		
+
 		// add water currents to animation list
 		if (tileattr[i] & TA_CURRENT)
 		{
 			map.motiontiles[map.nmotiontiles].tileno = i;
 			map.motiontiles[map.nmotiontiles].dir = CVTDir(tc & 3);
 			map.motiontiles[map.nmotiontiles].sprite = SPR_WATER_CURRENT;
-			
+
 			map.nmotiontiles++;
+#ifdef DEBUG
 			stat("Added tile %02x to animation list, tc=%02x", i, tc);
+#endif
 		}
 	}
-	
+
 	fclose(fp);
 	return 0;
 }
 
 bool load_stages(void)
 {
-FILE *fp;
+	FILE *fp;
 
 	fp = fopen("stage.dat", "rb");
 	if (!fp)
 	{
+#ifdef DEBUG
 		staterr("%s(%d): failed to open stage.dat", __FILE__, __LINE__);
+#endif
 		num_stages = 0;
 		return 1;
 	}
-	
+
 	num_stages = fgetc(fp);
 	for(int i=0;i<num_stages;i++)
 		fread(&stages[i], sizeof(MapRecord), 1, fp);
-	
+
 	return 0;
 }
 
 
 bool initmapfirsttime(void)
 {
-FILE *fp;
-int i;
+	FILE *fp;
+	int i;
 
+#ifdef DEBUG
 	stat("initmapfirsttime: loading tilekey.dat.");
+#endif
+
 	if (!(fp = fopen("tilekey.dat", "rb")))
 	{
+#ifdef DEBUG
 		staterr("tilekey.dat is missing!");
+#endif
 		return 1;
 	}
-	
+
 	for(i=0;i<256;i++)
 		tilekey[i] = fgetl(fp);
-	
+
 	fclose(fp);
 	return load_stages();
 }
@@ -385,7 +408,9 @@ int x, y;
 		
 		default:
 			map.parscroll_x = map.parscroll_y = 0;
+			#ifdef DEBUG
 			staterr("map_draw_backdrop: unhandled map scrolling type %d", map.scrolltype);
+			#endif
 		break;
 	}
 	
@@ -406,26 +431,26 @@ int x, y;
 // blit OSide's BK_FASTLEFT_LAYERS
 static void DrawFastLeftLayered(void)
 {
-static const int layer_ys[] = { 80, 122, 145, 176, 240 };
-static const int move_spd[] = { 0,    1,   2,   4,   8 };
-int nlayers = 6;
-int y1, y2;
-int i, x;
+	static const int layer_ys[] = { 80, 122, 145, 176, 240 };
+	static const int move_spd[] = { 0,    1,   2,   4,   8 };
+	int nlayers = 6;
+	int y1, y2;
+	int i, x;
 
 	if (--map.parscroll_x <= -(SCREEN_WIDTH*2))
 		map.parscroll_x = 0;
-	
+
 	y1 = x = 0;
 	for(i=0;i<nlayers;i++)
 	{
 		y2 = layer_ys[i];
-		
+
 		if (i)	// not the static moon layer?
 		{
 			x = (map.parscroll_x * move_spd[i]) >> 1;
 			x %= SCREEN_WIDTH;
 		}
-		
+
 		BlitPatternAcross(backdrop[map.backdrop], x, y1, y1, (y2-y1)+1);
 		y1 = (y2 + 1);
 	}
@@ -448,7 +473,9 @@ char fname[MAXPATHLEN];
 		backdrop[backdrop_no] = NXSurface::FromFile(fname, use_chromakey);
 		if (!backdrop[backdrop_no])
 		{
+			#ifdef DEBUG
 			staterr("Failed to load backdrop '%s'", fname);
+			#endif
 			return 1;
 		}
 	}
@@ -901,10 +928,12 @@ Object *FindObjectByID2(int id2)
 {
 	Object *result = ID2Lookup[id2];
 	
+	#ifdef DEBUG
 	if (result)
 		staterr("FindObjectByID2: ID2 %04d found: type %s; coords: (%d, %d)", id2, DescribeObjectType(ID2Lookup[id2]->type), ID2Lookup[id2]->x>>CSF,ID2Lookup[id2]->y>>CSF);
 	else
 		staterr("FindObjectByID2: no such object %04d", id2);
+	#endif
 	
 	return result;
 }
