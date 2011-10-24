@@ -1,4 +1,4 @@
-
+#ifdef DEBUG
 #include "nx.h"
 #include <stdarg.h>
 #include <string.h>
@@ -398,3 +398,4 @@ int x1, y1, x2, y2;
 	AddDebugMark(x1, y1, x2, y2, DM_BOX, r, g, b);
 }
 
+#endif

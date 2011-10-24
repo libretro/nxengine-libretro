@@ -133,7 +133,9 @@ Dialog *dlg = opt.dlg;
 	
 	dlg->AddSeparator();
 	
+	#ifdef DEBUG
 	dlg->AddItem("Enable Debug Keys", _debug_change, _debug_get);
+	#endif
 	dlg->AddItem("Save Slots: ", _save_change, _save_get);
 	
 	dlg->AddSeparator();
@@ -205,19 +207,21 @@ int newres;
 	}
 }
 
-
+#ifdef DEBUG
 void _debug_change(ODItem *item, int dir)
 {
 	settings->enable_debug_keys ^= 1;
 	sound(SND_MENU_SELECT);
 }
+#endif
 
+#ifdef DEBUG
 void _debug_get(ODItem *item)
 {
 	static const char *strs[] = { "", " =" };
 	strcpy(item->suffix, strs[settings->enable_debug_keys]);
 }
-
+#endif
 
 void _save_change(ODItem *item, int dir)
 {

@@ -1,11 +1,13 @@
-
+#ifdef DEBUG
 #include "nx.h"
 #include <stdarg.h>
 #include "console.fdh"
 
 static CommandEntry commands[] =
 {
+	#ifdef DEBUG
 	"god", __god, 0, 1,
+	#endif
 	"script", __script, 1, 1,
 	"warp", __warp, 1, 999,
 	"sound", __sound, 1, 1,
@@ -20,7 +22,9 @@ static CommandEntry commands[] =
 	"xp", __xp, 1, 1,
 	"spawn", __spawn, 1, 999,
 	"animate", __animate, 1, 2,
+	#ifdef DEBUG
 	"infinitedamage", __infinitedamage, 0, 1,
+	#endif
 	"killall", __killall, 0, 0,
 	"movemode", __movemode, 1, 1,
 	"flag", __flag, 1, 1,
@@ -406,7 +410,7 @@ void c------------------------------() {}
 
 #define Respond		console.Print
 
-
+#ifdef DEBUG
 static void __god(StringList *args, int num)
 {
 bool enable;
@@ -418,6 +422,7 @@ bool enable;
 	
 	game.debug.god = enable;
 }
+#endif
 
 static void __script(StringList *args, int num)
 {
@@ -719,6 +724,7 @@ static void __animate(StringList *args, int num)
 		Respond("No objects found.");
 }
 
+#ifdef DEBUG
 static void __infinitedamage(StringList *args, int num)
 {
 	if (args->CountItems() > 0)
@@ -728,6 +734,7 @@ static void __infinitedamage(StringList *args, int num)
 	
 	Respond(game.debug.infinite_damage ? "My, oh my..." : "Back to normal.");
 }
+#endif
 
 static void __killall(StringList *args, int num)
 {
@@ -865,7 +872,7 @@ static void __reset(StringList *args, int num)
 #ifdef DEBUG
 static void __fps(StringList *args, int num)
 {
-extern int fps;
+	extern int fps;
 
 	settings->show_fps ^= 1;
 	settings_save();
@@ -953,3 +960,4 @@ static void __textbox_setvisible(StringList *args, int num)
 	textbox.SetVisible(num);
 }
 
+#endif

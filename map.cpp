@@ -673,7 +673,9 @@ void map_scroll_do(void)
 			{
 				scroll_normal();
 				
+				#ifdef DEBUG
 				if (!inputs[DEBUG_MOVE_KEY] || !settings->enable_debug_keys)
+				#endif
 					doing_normal_scroll = true;
 			}
 		}
@@ -776,6 +778,7 @@ void run_phase_compensator(void)
 }
 
 // debug function
+#ifdef DEBUG
 void dump_phase_data()
 {
 	int phase_offs = abs(map.real_xscroll - player->x) % 512;
@@ -789,6 +792,7 @@ void dump_phase_data()
 	debug("phase_adj: %d", map.phase_adj);
 	debug("final_phase: %d", final_phase);
 }
+#endif
 
 /*
 void c------------------------------() {}

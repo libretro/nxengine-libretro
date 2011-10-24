@@ -1,4 +1,4 @@
-
+#ifdef DEBUG
 #ifndef _DEBUG_H
 #define _DEBUG_H
 
@@ -8,4 +8,5 @@
 #define DM_YLINE			3
 #define DM_BOX				4
 
+#endif
 #endif

@@ -131,6 +131,7 @@ int key;
 			{
 				key = evt.key.keysym.sym;
 				
+				#ifdef DEBUG
 				if (console.IsVisible() && !IsNonConsoleKey(key))
 				{
 					if (key == SDLK_LSHIFT)
@@ -167,6 +168,7 @@ int key;
 				}
 				else
 				{
+				#endif
 					ino = mappings[key];
 					if (ino != 0xff) inputs[ino] = (evt.type == SDL_KEYDOWN);
 					
@@ -180,6 +182,7 @@ int key;
 							inputs[ino] = true;
 						}
 						
+						#ifdef DEBUG
 						if (key == '`')		// bring up console
 						{
 							if (!freezeframe)
@@ -190,10 +193,15 @@ int key;
 						}
 						else
 						{
+						#endif
 							last_sdl_key = key;
+						#ifdef DEBUG
 						}
+						#endif
 					}
+				#ifdef DEBUG
 				}
+				#endif
 			}
 			break;
 			
@@ -208,12 +216,12 @@ int key;
 // even if the console is up.
 static int IsNonConsoleKey(int key)
 {
-static const int nosend[] = { SDLK_LEFT, SDLK_RIGHT, 0 };
+	static const int nosend[] = { SDLK_LEFT, SDLK_RIGHT, 0 };
 
 	for(int i=0;nosend[i];i++)
 		if (key == nosend[i])
 			return true;
-	
+
 	return false;
 }
 

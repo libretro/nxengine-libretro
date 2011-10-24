@@ -468,7 +468,9 @@ void FireWeapon(void)
 			       break;
 
 		default:
+				#ifdef DEBUG
 			       console.Print("FireWeapon: cannot fire unimplemented weapon %d", player->curWeapon);
+			       #endif
 			       sound(SND_BONK_HEAD);
 			       break;
 	}
@@ -495,8 +497,10 @@ void SetupBullet(Object *shot, int x, int y, int btype, int dir)
 	shot->shot.dir = dir;
 	shot->nxflags |= NXFLAG_NO_RESET_YINERTIA;
 	
+	#ifdef DEBUG
 	if (game.debug.infinite_damage)
 		shot->shot.damage = 255;
+	#endif
 	
 	if (info->sound)
 		sound(info->sound);

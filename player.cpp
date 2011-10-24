@@ -124,8 +124,11 @@ void HandlePlayer(void)
 		PDoWeapons();	// p_arms.cpp
 		PDoHurtFlash();
 		
-		switch((inputs[DEBUG_MOVE_KEY] && settings->enable_debug_keys) ? MOVEMODE_DEBUG : \
-			   player->movementmode)
+		#ifdef DEBUG
+		switch((inputs[DEBUG_MOVE_KEY] && settings->enable_debug_keys) ? MOVEMODE_DEBUG : player->movementmode)
+		#else
+		switch(player->movementmode)
+		#endif
 		{
 			case MOVEMODE_NORMAL:
 			{
@@ -144,7 +147,7 @@ void HandlePlayer(void)
 				PHandleZeroG();
 			}
 			break;
-			
+			#ifdef DEBUG
 			case MOVEMODE_DEBUG:
 			{
 				player->xinertia = player->yinertia = 0;
@@ -160,7 +163,7 @@ void HandlePlayer(void)
 				player->frame = 2;
 			}
 			break;
-			
+			#endif
 			default:
 			{
 				player->xinertia = player->yinertia = 0;
@@ -385,7 +388,11 @@ int tile;
 			{
 				if (!player->inputs_locked) player->airleft--;
 				
+				#ifdef DEBUG
 				if (player->airleft <= 0 && !game.debug.god)
+				#else
+				if (player->airleft <= 0)
+				#endif
 				{	// player drowned
 					// if flag 4000 is set, then we do not drown, but are in the Almond
 					// level after Core battle, and should instead execute script 1100.
@@ -659,12 +666,16 @@ int i, key;
 			if (!player->walking && !player->lookaway && \
 				!pinputs[JUMPKEY] && !pinputs[FIREKEY])
 			{
+				#ifdef DEBUG
 				if (!inputs[DEBUG_MOVE_KEY] || !settings->enable_debug_keys)
 				{
+				#endif
 					player->lookaway = true;
 					player->xinertia = 0;
 					PTryActivateScript();
+				#ifdef DEBUG
 				}
+				#endif
 			}
 		}
 		
@@ -1146,7 +1157,9 @@ void hurtplayer(int damage, bool even_if_controls_locked)
 {
 	if (damage == 0) return;
 	if (!player || !player->hp) return;
+	#ifdef DEBUG
 	if (settings->enable_debug_keys && (game.debug.god || inputs[DEBUG_MOVE_KEY])) return;
+	#endif
 	
 	if (player->hurt_time)
 		return;
@@ -1332,8 +1345,10 @@ void PDoRepel(void)
 	// directly here.
 	static const int REPEL_SPEED =	(1<<CSF);
 	
+	#ifdef DEBUG
 	if (settings->enable_debug_keys && inputs[DEBUG_MOVE_KEY])
 		return;
+	#endif
 	
 	// pushes player out of walls if he become embedded in them, ala Super Mario 1.
 	// this can happen for example because his R,L block points are further out than

@@ -1,4 +1,4 @@
-
+#ifdef DEBUG
 #ifndef _CONSOLE_H
 #define _CONSOLE_H
 
@@ -58,4 +58,5 @@ private:
 
 extern DebugConsole console;
 
+#endif
 #endif

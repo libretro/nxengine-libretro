@@ -29,7 +29,9 @@ bool settings_load(Settings *setfile)
 		setfile->last_save_slot = 0;
 		setfile->multisave = true;
 		
+		#ifdef DEBUG
 		setfile->enable_debug_keys = false;
+		#endif
 		setfile->sound_enabled = true;
 		setfile->music_enabled = 1;	// both Boss and Regular music
 		
