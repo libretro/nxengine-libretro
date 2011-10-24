@@ -204,11 +204,6 @@ static void Replay::run_playback()
 		return;
 	}
 	
-	if (play.ffwdto && play.elapsed_frames < play.ffwdto)
-	{
-		game.ffwdtime = 2;
-	}
-	
 	// RLE decoding
 	if (play.runlength == 0)
 	{
@@ -286,7 +281,6 @@ int tapepos;
 	font_draw_shaded(x, y, buf, 0, &greenfont);
 	
 	const char *mode = ((play.elapsed_frames % 40) < 20) ? "PLAY" : "    ";
-	if (game.ffwdtime) mode = "FFWD";
 	sprintf(buf, "> %s : %05d", mode, play.elapsed_frames);
 	
 	y -= GetFontHeight();
