@@ -2,8 +2,6 @@
 #include <math.h>
 #include "nx.h"
 
-#include "trig.fdh"
-
 signed int sin_table[256];
 signed int tan_table[64];
 
@@ -212,12 +210,12 @@ Object *shot;
 	ThrowObjectAtPlayer(shot, rand_variance, speed);
 }
 
-
-// like EmFireAngledShot, but it's throws an already existing object
-// instead of spawning a new one
-void ThrowObjectAtPlayer(Object *o, int rand_variance, int speed)
+// toss object o along angle angle at speed speed
+void ThrowObjectAtAngle(Object *o, uint8_t angle, int speed)
 {
-	ThrowObject(o, player->x, player->y, rand_variance, speed);
+	o->yinertia = (sin_table[angle] * speed) >> CSF;
+	angle += 64;
+	o->xinertia = (sin_table[angle] * speed) >> CSF;
 }
 
 // set the x&y inertia of object o so that it travels towards [destx,desty].
@@ -229,18 +227,19 @@ void ThrowObject(Object *o, int destx, int desty, int rand_variance, int speed)
 	uint8_t angle = GetAngle(o->x, o->y, destx, desty);
 	
 	if (rand_variance)
-		angle += random(-rand_variance, rand_variance);
+		angle += random_nx(-rand_variance, rand_variance);
 	
 	ThrowObjectAtAngle(o, angle, speed);
 }
 
-// toss object o along angle angle at speed speed
-void ThrowObjectAtAngle(Object *o, uint8_t angle, int speed)
+// like EmFireAngledShot, but it's throws an already existing object
+// instead of spawning a new one
+void ThrowObjectAtPlayer(Object *o, int rand_variance, int speed)
 {
-	o->yinertia = (sin_table[angle] * speed) >> CSF;
-	angle += 64;
-	o->xinertia = (sin_table[angle] * speed) >> CSF;
+	ThrowObject(o, player->x, player->y, rand_variance, speed);
 }
+
+
 
 
 

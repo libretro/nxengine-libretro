@@ -161,8 +161,8 @@ void HeavyPress::run_defeated()
 			if ((o->timer % 16) == 0)
 			{
 				sound(SND_BLOCK_DESTROY);
-				SmokePuff(o->x + random(-60<<CSF, 60<<CSF),
-						  o->y + random(-40<<CSF, 40<<CSF));
+				SmokePuff(o->x + random_nx(-60<<CSF, 60<<CSF),
+						  o->y + random_nx(-40<<CSF, 40<<CSF));
 			}
 			
 			// eye opens
@@ -232,8 +232,8 @@ void HeavyPress::run_passageway()
 		{
 			if ((++o->timer % 16) == 0)
 			{
-				int x = random(o->Left(), o->Right());
-				int y = random(o->Top(), o->Bottom());
+				int x = random_nx(o->Left(), o->Right());
+				int y = random_nx(o->Top(), o->Bottom());
 				SmokePuff(x, y);
 				effect(x, y, EFFECT_BOOMFLASH);
 			}
@@ -262,7 +262,7 @@ void HeavyPress::run_passageway()
 				
 				o->frame = 0;
 				for(int i=0;i<5;i++)
-					SmokePuff(random(o->Left(), o->Right()), o->Bottom());
+					SmokePuff(random_nx(o->Left(), o->Right()), o->Bottom());
 				
 				o->state = 20;	// continue smoking
 			}

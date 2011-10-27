@@ -262,7 +262,7 @@ void UDCoreBoss::Run(void)
 			// fire rotators
 			if ((o->timer % 40) == 1)
 			{
-				int i = random(0, 3);
+				int i = random_nx(0, 3);
 				int x = rotator[i]->x - (16<<CSF);
 				int y = rotator[i]->y;
 				
@@ -343,7 +343,7 @@ void UDCoreBoss::Run(void)
 			if (o->timer3 == 75)
 			{
 				CreateObject(MAPX(map.xsize) + 40, \
-							 MAPY(3 + random(-3, 0)), OBJ_UDMINI_PLATFORM);
+							 MAPY(3 + random_nx(-3, 0)), OBJ_UDMINI_PLATFORM);
 			}
 			
 			// lower platforms
@@ -351,7 +351,7 @@ void UDCoreBoss::Run(void)
 			{
 				o->timer3 = 0;
 				CreateObject(MAPX(map.xsize) + 40, \
-							 MAPY(10 + random(-1, 3)), OBJ_UDMINI_PLATFORM);
+							 MAPY(10 + random_nx(-1, 3)), OBJ_UDMINI_PLATFORM);
 				
 				break;
 			}
@@ -389,11 +389,11 @@ void UDCoreBoss::SpawnFaceSmoke()
 	
 	for(int i=0;i<8;i++)
 	{
-		int x = face->x + random(-16<<CSF, 32<<CSF);
+		int x = face->x + random_nx(-16<<CSF, 32<<CSF);
 		int y = main->CenterY();
 		Object *s = SmokePuff(x, y);
-		s->xinertia = random(-0x200, 0x200);
-		s->yinertia = random(-0x100, 0x100);
+		s->xinertia = random_nx(-0x200, 0x200);
+		s->yinertia = random_nx(-0x100, 0x100);
 	}
 }
 
@@ -481,8 +481,8 @@ bool UDCoreBoss::RunDefeated()
 			if ((o->timer % 8) == 0)
 				sound(SND_MISSILE_HIT);
 			
-			int x = o->x + random(-72<<CSF, 72<<CSF);
-			int y = o->y + random(-64<<CSF, 64<<CSF);
+			int x = o->x + random_nx(-72<<CSF, 72<<CSF);
+			int y = o->y + random_nx(-64<<CSF, 64<<CSF);
 			SmokePuff(x, y);
 			effect(x, y, EFFECT_BOOMFLASH);
 			
@@ -788,7 +788,7 @@ void ai_udmini_platform(Object *o)
 			
 			o->xinertia = -0x200;
 			o->yinertia = 0x100;
-			if (random(0, 1)) o->yinertia = -o->yinertia;
+			if (random_nx(0, 1)) o->yinertia = -o->yinertia;
 		}
 		case 1:
 		{
@@ -914,7 +914,7 @@ void ai_ud_smoke(Object *o)
 	{
 		case 0:
 		{
-			o->xinertia = random(-4, 4) << CSF;
+			o->xinertia = random_nx(-4, 4) << CSF;
 			o->state = 1;
 		}
 		case 1:
@@ -992,8 +992,8 @@ void ai_ud_blast(Object *o)
 	o->xinertia = -0x1000;
 	o->frame ^= 1;
 
-	SmokePuff(o->CenterX() + (random(0, 16) << CSF), \
-			  o->CenterY() + (random(-16, 16) << CSF));
+	SmokePuff(o->CenterX() + (random_nx(0, 16) << CSF), \
+			  o->CenterY() + (random_nx(-16, 16) << CSF));
 	
 	if (o->x < -0x4000)
 		o->Delete();

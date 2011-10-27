@@ -204,11 +204,11 @@ void ai_polishbaby(Object *o)
 	if (!o->state)
 	{
 		o->state = 1;
-		if (!random(0, 1)) o->xinertia = random(0x100, 0x200);
-				  else o->xinertia = random(-0x200, -0x100);
+		if (!random_nx(0, 1)) o->xinertia = random_nx(0x100, 0x200);
+				  else o->xinertia = random_nx(-0x200, -0x100);
 		
-		if (!random(0, 1)) o->yinertia = random(0x100, 0x200);
-				  else o->yinertia = random(-0x200, -0x100);
+		if (!random_nx(0, 1)) o->yinertia = random_nx(0x100, 0x200);
+				  else o->yinertia = random_nx(-0x200, -0x100);
 	}
 	
 	if (o->xinertia > 0 && o->blockr) o->xinertia = -o->xinertia;
@@ -371,7 +371,7 @@ void ai_crow(Object *o)
 	{
 		case 0:
 		{
-			uint8_t angle = random(0, 255);
+			uint8_t angle = random_nx(0, 255);
 			vector_from_angle(angle, (1<<CSF), &o->xinertia, &o->yinertia);
 			
 			o->xmark = o->x + (o->xinertia * 8);
@@ -380,8 +380,8 @@ void ai_crow(Object *o)
 			o->state = 1;
 			o->nxflags |= NXFLAG_FOLLOW_SLOPE;
 			
-			o->animframe = random(0, 1);
-			o->animtimer = random(0, 4);
+			o->animframe = random_nx(0, 1);
+			o->animtimer = random_nx(0, 4);
 		}
 		case 1:
 		case 101:
@@ -469,15 +469,15 @@ Object *skull;
 	// create the skullhead we're carrying
 	skull = CreateObject(0, 0, OBJ_SKULLHEAD_CARRIED);
 	skull->linkedobject = o;
-	skull->timer = random(0, 50);
+	skull->timer = random_nx(0, 50);
 	o->linkedobject = skull;
 	
 	// switch over to the main crow AI, but only move up & down
-	o->yinertia = random(-0x200, -0x100);
+	o->yinertia = random_nx(-0x200, -0x100);
 	o->xmark = o->x;
-	o->ymark = o->y + random(-(28 << CSF), (10 << CSF));
-	o->animframe = random(0, 1);
-	o->animtimer = random(0, 4);
+	o->ymark = o->y + random_nx(-(28 << CSF), (10 << CSF));
+	o->animframe = random_nx(0, 1);
+	o->animtimer = random_nx(0, 4);
 	o->state = 101;
 	o->type = OBJ_CROW;
 	
@@ -498,7 +498,7 @@ void ai_skullhead(Object *o)
 		{
 			o->speed = 0x100;	// skullhead_carried shares ai but moves faster
 			o->state = 1;
-			o->timer = random(-5, 0);
+			o->timer = random_nx(-5, 0);
 		}
 		case 1:
 		{
@@ -884,7 +884,7 @@ uchar pnear;
 			o->state = 21;
 			o->frame = 1;
 			o->timer2 = 0;
-			o->yinertia = -(random(1, 3) << CSF);
+			o->yinertia = -(random_nx(1, 3) << CSF);
 			
 			// jump towards player, unless we've been hurt; in that case jump away
 			if (!o->shaketime)
@@ -979,7 +979,7 @@ static const uint8_t mimiga_walk_frames[5] = { 0, 2, 0, 3 };
 			o->hp = 1000;
 			o->state = 11;
 			
-			o->timer = random(0, 50);
+			o->timer = random_nx(0, 50);
 			o->frame = 0;
 		//fall thru to state 11
 		case 11:
@@ -989,7 +989,7 @@ static const uint8_t mimiga_walk_frames[5] = { 0, 2, 0, 3 };
 		
 		case 13:
 			o->state = 14;
-			o->timer = random(0, 50);
+			o->timer = random_nx(0, 50);
 			o->animframe = 0;
 			
 			if (o->x <= player->x) o->dir = RIGHT;
@@ -1036,7 +1036,7 @@ static const uint8_t mimiga_walk_frames[5] = { 0, 2, 0, 3 };
 				if (o->frame==6) o->frame = 7;
 							else o->frame = 8;
 				
-				o->timer = random(300, 400);
+				o->timer = random_nx(300, 400);
 			}
 		break;
 		
@@ -1049,7 +1049,7 @@ static const uint8_t mimiga_walk_frames[5] = { 0, 2, 0, 3 };
 			o->flags |= FLAG_SHOOTABLE;
 			o->hp = 1000;
 			o->state = 11;
-			o->timer = random(0, 50);
+			o->timer = random_nx(0, 50);
 			o->frame = 0;
 		break;
 	}
@@ -1058,7 +1058,7 @@ static const uint8_t mimiga_walk_frames[5] = { 0, 2, 0, 3 };
 	{	// got shot by player
 		o->state = 20;
 		o->yinertia = -0x200;
-		o->frame = random(5, 6);
+		o->frame = random_nx(5, 6);
 		
 		o->damage = 0;
 		o->flags &= ~FLAG_SHOOTABLE;

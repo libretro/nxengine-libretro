@@ -77,4 +77,7 @@ enum INVENTORY
 	ITEM_IRON_BOND
 };
 
+int RefreshInventoryScreen(void);
+void UnlockInventoryInput(void);
+
 #endif

@@ -90,7 +90,7 @@ int i;
 	mainangle = 0;
 	main->xmark = 180;
 	main->ymark = 61;
-	main->timer2 = random(700, 1200);
+	main->timer2 = random_nx(700, 1200);
 	main->hp = 500;
 	
 	main->id2 = 1000;
@@ -149,7 +149,7 @@ int i;
 			{
 				o->timer = 0;
 				o->state = STATE_CIRCLE_LEFT;
-				o->timer2 = random(400, 700);
+				o->timer2 = random_nx(400, 700);
 			}
 		}
 		break;
@@ -174,7 +174,7 @@ int i;
 				else
 				{
 					o->state = STATE_CIRCLE_RIGHT;
-					o->timer2 = random(400, 700);
+					o->timer2 = random_nx(400, 700);
 					o->timer = 0;
 				}
 			}
@@ -383,7 +383,7 @@ void SistersBoss::run_head(int index)
 		case STATE_HEAD_CLOSED:
 		{
 			o->frame = 0;
-			o->timer = random(100, 200);
+			o->timer = random_nx(100, 200);
 			o->state++;
 		}
 		case STATE_HEAD_CLOSED+1:
@@ -522,8 +522,8 @@ void SistersBoss::SpawnScreenSmoke(int count)
 {
 	for(int i=0;i<count;i++)
 	{
-		int x = random(1*TILE_W, 20*TILE_W) << CSF;
-		int y = random(2*TILE_H, 14*TILE_H) << CSF;
+		int x = random_nx(1*TILE_W, 20*TILE_W) << CSF;
+		int y = random_nx(2*TILE_H, 14*TILE_H) << CSF;
 		SmokePuff(x, y);
 	}
 }

@@ -1,4 +1,3 @@
-
 #ifndef _TSC_H
 #define _TSC_H
 
@@ -147,5 +146,10 @@ bool JumpScript(int newscriptno, int pageno=-1);
 #define OP_TEXT		0xfa		// mine, denotes start of text
 
 int CVTDir(int csdir);
+bool tsc_init(void);
+void tsc_close(void);
+bool tsc_load(const char *fname, int pageno);
+void RunScripts(void);
+int GetCurrentScript(void);
 
 #endif

@@ -18,6 +18,10 @@ struct WhimsicalStar
 	int stariter;
 };
 
-
+void init_whimstar(WhimsicalStar *wh);
+void add_whimstar(WhimsicalStar *wh);
+void run_whimstar(WhimsicalStar *wh);
+void draw_whimstars(WhimsicalStar *wh);
+void remove_whimstar(WhimsicalStar *wh);
 
 #endif

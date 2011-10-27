@@ -60,4 +60,9 @@ class Object;
 
 const char *strhex(int value);
 
+Caret *effect(int x, int y, int effectno);
+int random_nx(int min, int max);
+void stat(const char *fmt, ...);
+Object *SpawnObjectAtActionPoint(Object *o, int otype);
+
 #endif

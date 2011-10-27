@@ -20,4 +20,10 @@ struct SlopeTable
 	uint8_t table[TILE_W][TILE_H];
 };
 
+bool initslopetable(void);
+bool IsSlopeAtPointList(Object *o, SIFPointList *points);
+int CheckBoppedHeadOnSlope(Object *o);
+int CheckStandOnSlope(Object *o);
+bool movehandleslope(Object *o, int xinertia);
+
 #endif

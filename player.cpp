@@ -1,12 +1,45 @@
-
 #include "nx.h"
-#include "player.fdh"
 
 Player *player = NULL;
 static void InitWeapon(int wpn, int l1, int l2, int l3, int maxammo=0);
 
 bool pinputs[INPUT_COUNT];
 bool lastpinputs[INPUT_COUNT];
+
+void PInitRepel(void)
+{
+	const int s = SPR_MYCHAR;
+	int i;
+
+	player->nrepel_l = sprites[s].block_l.count;
+	player->nrepel_r = sprites[s].block_r.count;
+	player->nrepel_d = sprites[s].block_d.count;
+	player->nrepel_u = sprites[s].block_u.count;
+
+	for(i=0;i<player->nrepel_l;i++)
+	{
+		player->repel_l[i].x = sprites[s].block_l[i].x + 1;
+		player->repel_l[i].y = sprites[s].block_l[i].y;
+	}
+
+	for(i=0;i<player->nrepel_r;i++)
+	{
+		player->repel_r[i].x = sprites[s].block_r[i].x - 1;
+		player->repel_r[i].y = sprites[s].block_r[i].y;
+	}
+
+	for(i=0;i<player->nrepel_d;i++)
+	{
+		player->repel_d[i].x = sprites[s].block_d[i].x;
+		player->repel_d[i].y = sprites[s].block_d[i].y - 1;
+	}
+
+	for(i=0;i<player->nrepel_u;i++)
+	{
+		player->repel_u[i].x = sprites[s].block_u[i].x;
+		player->repel_u[i].y = sprites[s].block_u[i].y + 1;
+	}
+}
 
 void PInitFirstTime()
 {
@@ -102,136 +135,113 @@ Player::~Player()
 	}
 }
 
-/*
-void c------------------------------() {}
-*/
-
-void HandlePlayer(void)
+// handle "solid mushy" objects, such as bugs. These objects are solid but not 100% super
+// solid like a brick. Their solidity is more of an "it repels the player" kind of way.
+// NOTE: This is also responsible for the horizontal motion you see when hit by many kinds
+// of enemies. The hurtplayer damage routine makes you hop vertically, but it is this that
+// throws you away horizontally.
+static void PRunSolidMushy(Object *o)
 {
-	// freeze player for the split-second between <TRA to a new map and the
-	// start of the on-entry script for that map. (Fixes: player could shoot during
-	// end sequence if he holds key down).
-	if (game.switchstage.mapno != -1)
-		return;
+	// cache these, so we're not calling the same functions over and over again
+	const int p_left = player->SolidLeft();
+	const int p_right = player->SolidRight();
+	const int p_top = player->SolidTop();
+	const int p_bottom = player->SolidBottom();
 	
-	PUpdateInput();
+	const int o_left = o->SolidLeft();
+	const int o_right = o->SolidRight();
+	const int o_top = o->SolidTop();
+	const int o_bottom = o->SolidBottom();
 	
-	if (!player->dead)
+	static const int MUSHY_MARGIN = (3<<CSF);
+	static const int STAND_MARGIN = (1<<CSF);
+	static const int REPEL_FORCE = 0x200;
+	
+	// hitting sides of object
+	if ((p_top < (o_bottom - MUSHY_MARGIN)) && (p_bottom > (o_top + MUSHY_MARGIN)))
 	{
-		PHandleAttributes();			// handle special tile attributes
-		PHandleSolidMushyObjects();		// handle objects like bugs marked "solid / mushy"
-		
-		PDoWeapons();	// p_arms.cpp
-		PDoHurtFlash();
-		
-		switch(player->movementmode)
+		// left side
+		if ((p_right > o_left) && (p_right < o->CenterX()))
 		{
-			case MOVEMODE_NORMAL:
-			{
-				PDoBooster();
-				PDoBoosterEnd();
-				PDoWalking();
-				PDoLooking();
-				PDoJumping();
-				PDoFalling();
-				PSelectFrame();
-			}
-			break;
-			
-			case MOVEMODE_ZEROG:		// Ironhead battle/UNI 1
-			{
-				PHandleZeroG();
-			}
-			break;
-			default:
-			{
-				player->xinertia = player->yinertia = 0;
-			}
-			break;
+			if (player->xinertia > -REPEL_FORCE)
+				player->xinertia -= REPEL_FORCE;
 		}
 		
-		// handle some special features, like damage and bouncy, of
-		// 100% solid objects such as moving blocks. It's put at the end
-		// so that we can see the desired inertia of the player before
-		// it's canceled out by any block points that are set. That way
-		// we can tell if the player is trying to move into it.
-		PHandleSolidBrickObjects();
+		// right side
+		if ((p_left < o_right) && (p_left > o->CenterX()))
+		{
+			if (player->xinertia < REPEL_FORCE)
+				player->xinertia += REPEL_FORCE;
+		}
 	}
 	
-	// apply inertia
-	PDoPhysics();
+	// bonking head on object or standing on object
 	
-	// thud sound when land on some objects
-	if (player->riding && !player->lastriding &&
-		(player->riding->nxflags & NXFLAG_THUD_ON_RIDING))
+	// to tell if we are within horizontal bounds to be standing on the object,
+	// we will check if we have NOT FALLEN OFF the object.
+	if (p_left > (o_right - STAND_MARGIN) || p_right < (o_left + STAND_MARGIN))
+	{ }
+	else
 	{
-		sound(SND_THUD);
+		// standing on object
+		if (p_bottom >= o_top && p_bottom <= o->CenterY())
+		{
+			if (o->flags & FLAG_BOUNCY)
+			{
+				if (player->yinertia > (o->yinertia - 0x200))
+					player->yinertia = (o->yinertia - 0x200);
+			}
+			else
+			{
+				// force to top of sprite if we're REALLY far into it
+				int em_fline = o->SolidTop() + (3 << CSF);
+				if (player->SolidBottom() > em_fline)
+				{
+					int over_amt = (em_fline - player->SolidBottom());
+					int dec_amt = (3 << CSF);
+					
+					if (over_amt < dec_amt) dec_amt = over_amt;
+					if (dec_amt < (1<<CSF)) dec_amt = (1<<CSF);
+					
+					player->apply_yinertia(-dec_amt);
+				}
+				
+				player->blockd = true;
+				player->riding = o;
+			}
+		}
+		else if (p_top < o_bottom && p_top > o->CenterY())
+		{
+			// hit bottom of object with head
+			if (player->yinertia < 0)
+				player->yinertia = 0;
+		}
 	}
 }
 
-// player aftermove routine
-void HandlePlayer_am(void)
+static void PHandleSolidMushyObjects(void)
 {
-	//debug("xinertia: %s", strhex(player->xinertia));
-	//debug("yinertia: %s", strhex(player->yinertia));
-	//debug("booststate: %d", player->booststate);
-	//debug("y: %d", player->y>>CSF);
-	//debug("riding %x", player->riding);
-	
-	// if player is riding some sort of platform apply it's inertia to him
-	if (player->riding)
+	for(int i=0; i < nOnscreenObjects;i++)
 	{
-		player->apply_xinertia(player->riding->xinertia);
-		player->apply_yinertia(player->riding->yinertia);
+		Object *o = onscreen_objects[i];
+		
+		if (o->flags & FLAG_SOLID_MUSHY)
+			PRunSolidMushy(o);
 	}
-	
-	// keep player out of blocks "SMB1 style"
-	PDoRepel();
-	
-	// handle landing and bonking head
-	if (player->blockd && player->yinertia > 0)
-	{
-		if (player->yinertia > 0x400 && !player->hide)
-			sound(SND_THUD);
-		
-		player->yinertia = 0;
-		player->jumping = 0;
-	}
-	else if (player->blocku && player->yinertia < 0)
-	{
-		// he behaves a bit differently when bonking his head on a
-		// solid-brick object vs. bonking his head on the map.
-		
-		// bonk-head star effect
-		if (player->yinertia < -0x200 && !player->hide && \
-			player->blocku == BLOCKED_MAP)
-		{
-			sound(SND_BONK_HEAD);
-			effect(player->CenterX(), player->y, EFFECT_BONKPLUS);
-		}
-		
-		// bounces off ceiling with booster 0.8
-		if (player->booststate == BOOST_08)
-		{
-			player->yinertia = 0x200;
-		}
-		else if (player->blocku != BLOCKED_OBJECT)
-		{
-			player->yinertia = 0;
-		}
-		
-		player->jumping = false;
-	}
-	
-	player->lastwalking = player->walking;
-	player->lastriding = player->riding;
-	player->inputs_locked_lasttime = player->inputs_locked;
-	memcpy(lastpinputs, pinputs, sizeof(lastpinputs));
 }
 
-/*
-void c------------------------------() {}
-*/
+// does the invincibility flash when the player has recently been hurt
+static void PDoHurtFlash(void)
+{
+	// note that hurt_flash_state is NOT cleared when timer reaches 0,
+	// but this is ok because the number of blinks are and always should be even.
+	// (if not it wouldn't look right when he unhurts).
+	if (player->hurt_time)
+	{
+		player->hurt_time--;
+		player->hurt_flash_state = (player->hurt_time & 2);
+	}
+}
 
 void PDoPhysics(void)
 {
@@ -254,458 +264,35 @@ void PDoPhysics(void)
 	}
 }
 
-void PUpdateInput(void)
+// spawn a Booster smoke puff
+static void PBoosterSmokePuff()
 {
-int i;
-
-	if (player->inputs_locked || player->disabled)
+	// these are the directions the SMOKE is traveling, not the player
+	//                                 RT   LT    UP    DN
+	static const int smoke_xoffs[] = { 10,   4,   7,    7  };
+	static const int smoke_yoffs[] = { 10,  10,   0,   14  };
+	int smokedir;
+	
+	switch(player->booststate)
 	{
-		memset(pinputs, 0, sizeof(pinputs));
+		case BOOST_HOZ: smokedir = (player->dir ^ 1); break;
+		case BOOST_UP:	smokedir = DOWN; break;
+		case BOOST_DOWN:smokedir = UP; break;
+		case BOOST_08:	smokedir = DOWN; break;
+		default:		return;
 	}
-	else
-	{
-		memcpy(pinputs, inputs, sizeof(pinputs));
-		
-		// prevent jumping/shooting when leaving a messagebox
-		if (player->inputs_locked_lasttime)
-		{
-			for(i=0;i<INPUT_COUNT;i++)
-				lastpinputs[i] |= pinputs[i];
-		}
-		
-		// allow entering inventory
-		if (justpushed(INVENTORYKEY))
-		{
-			if (!game.frozen && !player->dead && GetCurrentScript() == -1)
-			{
-				game.setmode(GM_INVENTORY);
-			}
-		}
-		
-		// Map System
-		if (justpushed(MAPSYSTEMKEY))
-		{
-			if (!game.frozen && !player->dead && GetCurrentScript() == -1)
-			{
-				if (fade.getstate() == FS_NO_FADE && game.switchstage.mapno == -1)
-				{
-					game.setmode(GM_MAP_SYSTEM, game.mode);
-				}
-			}
-		}
-	}
+	
+	int x = player->x + (smoke_xoffs[smokedir] << CSF);
+	int y = player->y + (smoke_yoffs[smokedir] << CSF);
+	
+	Caret *smoke = effect(x, y, EFFECT_SMOKETRAIL_SLOW);
+	smoke->MoveAtDir(smokedir, 0x200);
+	
+	sound(SND_BOOSTER);
 }
-
-
-// handles tile attributes of tiles player is touching
-void PHandleAttributes(void)
-{
-static const Point pattrpoints[] = { {8, 8}, {8, 14} };
-unsigned int attr;
-int tile;
-
-	// get attributes of tiles player it touching.
-	// first, we'll check the top pattrpoint alone; this is the point at
-	// which you go underwater, when that point is lower than the water level.
-	// ** There is a spot in Labyrinth W just after the Shop where the positioning
-	// of this point is a minor element in the gameplay, and so it must be set
-	// correctly. If set too high you will not be underwater after climbing up the
-	// small slope and you can just jump over the wall that you shouldn't be able to.
-	attr = player->GetAttributes(&pattrpoints[0], 1, &tile);
-	
-	// water handler -- water uses only the top pattrpoint
-	if (attr & TA_WATER)
-	{
-		// check if we just entered the water
-		if (!(player->touchattr & TA_WATER))
-		{
-			// splash on entering water quick enough
-			if ((player->yinertia > 0x200 && !player->blockd) || \
-				(player->xinertia < -0x200 || player->xinertia > 0x200))
-			{
-				int x = player->CenterX();
-				int y = player->CenterY();
-				int splashtype = !(player->touchattr & TA_HURTS_PLAYER) ? \
-									OBJ_WATER_DROPLET : OBJ_LAVA_DROPLET;
-				
-				for(int i=0;i<8;i++)
-				{
-					Object *o = CreateObject(x + (random(-8, 8) << CSF), y, splashtype);
-					o->xinertia = random(-0x200, 0x200) + player->xinertia;
-					o->yinertia = random(-0x200, 0x80) - (player->yinertia >> 1);
-				}
-				
-				sound(SND_SPLASH);
-			}
-		}
-		
-		// setup physics constants for water
-		player->walkspeed = 0x196;
-		player->fallspeed = 0x2ff;
-		
-		player->fallaccel = 0x28;
-		player->jumpfallaccel = 0x10;
-		
-		player->walkaccel = 0x2a;
-		player->jumpwalkaccel = 0x10;
-		
-		player->decelspeed = 0x19;
-		// was set at 0x280 but I believe that makes it impossible to clear one of the long
-		// spike jumps in River
-		player->jumpvelocity = 0x2c0;
-		
-		// decrement air left
-		if (player->equipmask & EQUIP_AIRTANK)
-		{
-			player->airleft = 1000;
-			player->airshowtimer = 0;
-		}
-		else
-		{
-			player->airshowtimer = 60;
-			if (!player->drowned)
-			{
-				if (!player->inputs_locked) player->airleft--;
-				
-				if (player->airleft <= 0)
-				{	// player drowned
-					// if flag 4000 is set, then we do not drown, but are in the Almond
-					// level after Core battle, and should instead execute script 1100.
-					if (game.flags[4000])
-					{	// "your senses dim and the world grows dark"
-						StartScript(1100);
-					}
-					else
-					{	// nope sorry buddy, no such luck this time
-						Object *o = CreateObject(player->x, player->y, OBJ_NULL);
-						o->sprite = SPR_PDROWNED;
-						o->dir = player->dir;
-						
-						killplayer(SCRIPT_DROWNED);
-					}
-					
-					player->drowned = 1;
-				}
-			}
-		}
-	}
-	else
-	{
-		// setup normal physics constants
-		player->walkspeed = 0x32c;////0x030e;
-		player->fallspeed = 0x5ff;
-		
-		player->fallaccel = 0x50;
-		player->jumpfallaccel = 0x20;
-		
-		player->walkaccel = 0x55;
-		player->jumpwalkaccel = 0x20;
-		
-		player->decelspeed = 0x33;
-		player->jumpvelocity = 0x500;
-		
-		// reset air supply
-		player->airleft = 1000;
-		if (player->airshowtimer) player->airshowtimer--;
-	}
-	
-	// add in the bottom pattrpoint, but don't let it set the "water" bit.
-	// only the top pattrpoint can set "water".
-	attr |= (player->GetAttributes(&pattrpoints[1], 1, &tile) & ~TA_WATER);
-	
-	if (attr & TA_HURTS_PLAYER)
-		hurtplayer(10, true);
-	
-	// water current/wind:
-	// for water currents--get the sum total of several points on the player to see
-	// all the directions he's getting blown around at (support multiple directions)
-	DoWaterCurrents();
-	player->touchattr = attr;
-}
-
-// handes player being blown around by water currents
-void DoWaterCurrents(void)
-{
-static Point currentpoints[] = { {7, 8},
-								 {1, 2}, {1, 8}, {1, 14},
-								 {7, 2}, {7, 14},
-								 {15,2}, {15, 8}, {15, 14} };
-int i;
-static const int current_dir[] = { LEFTMASK, UPMASK, RIGHTMASK, DOWNMASK };
-uint8_t currentmask;
-int tile;
-
-	// check each point in currentpoints[] for a water current, and if found,
-	// add it to the list of directions we're being blown
-	currentmask = 0;
-	for(i=0;i<9;i++)
-	{
-		//DebugCrosshair(player->x+(currentpoints[i].x<<CSF),player->y+(currentpoints[i].y<<CSF), 255,0,0);
-		
-		if (player->GetAttributes(&currentpoints[i], 1, &tile) & TA_CURRENT)
-		{
-			currentmask |= current_dir[tilecode[tile] & 3];
-		}
-		
-		// if the center point (the first one) has no current, then don't
-		// bother checking the rest. as during 90% of the game you are NOT underwater.
-		if (!currentmask) return;
-	}
-	
-	// these constants are very critical for Waterway to work properly.
-	// please be careful with them.
-	if (currentmask & LEFTMASK)  player->xinertia -= 0x88;
-	if (currentmask & RIGHTMASK) player->xinertia += 0x88;
-	if (currentmask & UPMASK)    player->yinertia -= 0x80;
-	if (currentmask & DOWNMASK)  player->yinertia += 0x50;
-}
-
-
-void PDoWalking(void)
-{
-int walk_accel;
-int limit;
-	
-	walk_accel = (player->blockd) ? player->walkaccel : player->jumpwalkaccel;
-	
-	// walking/moving
-	if (pinputs[LEFTKEY] || pinputs[RIGHTKEY])
-	{
-		// we check both without an else so that both keys down=turn right & walk in place
-		if (pinputs[LEFTKEY])
-		{
-			player->walking = true;
-			player->dir = LEFT;
-			
-			if (player->xinertia > -player->walkspeed)
-			{
-				player->xinertia -= walk_accel;
-				
-				if (player->xinertia < -player->walkspeed)
-					player->xinertia = -player->walkspeed;
-			}
-		}
-		
-		if (pinputs[RIGHTKEY])
-		{
-			player->walking = true;
-			player->dir = RIGHT;
-			
-			if (player->xinertia < player->walkspeed)
-			{
-				player->xinertia += walk_accel;
-				
-				if (player->xinertia > player->walkspeed)
-					player->xinertia = player->walkspeed;
-			}
-		}
-		
-		if (player->walking && !player->lastwalking)
-			player->walkanimframe = 1;
-	}
-	else
-	{
-		player->walking = false;
-		player->walkanimframe = 0;
-		player->walkanimtimer = 0;
-		// tap sound when stopped walking
-		if (player->lastwalking && player->blockd)
-			sound(SND_PLAYER_WALK);
-	}
-	
-	// deceleration
-	if (player->blockd && player->yinertia >= 0)
-	{	// deceleration on ground...
-		// always move towards zero at decelspeed
-		if (player->xinertia > 0)
-		{
-			if (player->xinertia > player->decelspeed)
-				player->xinertia -= player->decelspeed;
-			else
-				player->xinertia = 0;
-		}
-		else if (player->xinertia < 0)
-		{
-			if (player->xinertia < -player->decelspeed)
-				player->xinertia += player->decelspeed;
-			else
-				player->xinertia = 0;
-		}
-	}
-	else		// deceleration in air...
-	{
-		// implements 2 things
-		//	1) if player partially hits a brick while in air, his inertia is lesser after he passes it
-		//	2) but, if he's trying to turn around, let him! don't "stick" him to it just because
-		//		of a high inertia when he hit it
-		if (player->blockr)
-		{
-			limit = (player->dir == RIGHT) ? 0x180 : 0;
-			if (player->xinertia > limit) player->xinertia = limit;
-		}
-		
-		if (player->blockl)
-		{
-			limit = (player->dir == LEFT) ? -0x180 : 0;
-			if (player->xinertia < limit) player->xinertia = limit;
-		}
-	}
-}
-
-void PDoFalling(void)
-{
-	if (player->disabled)
-		return;
-	
-	if (player->booststate)
-		return;
-	
-	if (game.curmap == STAGE_KINGS_TABLE && \
-		fade.getstate() == FS_FADING)
-		return;
-	
-	// needed to be able to see the falling blocks during
-	// good-ending Helicopter cutscene (otherwise your
-	// invisible character falls and the blocks spawn too low).
-	if (player->hide)
-	{
-		player->xinertia = 0;
-		player->yinertia = 0;
-		return;
-	}
-	
-	// use jump gravity as long as Jump Key is down and we're moving up,
-	// regardless of whether a jump was ever actually initiated.
-	// this is for the fans that blow up--you can push JUMP to climb higher.
-	if (player->yinertia < 0 && pinputs[JUMPKEY])
-	{	// use jump gravity
-		if (player->yinertia < player->fallspeed)
-		{
-			player->yinertia += player->jumpfallaccel;
-			if (player->yinertia > player->fallspeed) player->yinertia = player->fallspeed;
-		}
-	}
-	else
-	{	// use normal gravity
-		if (player->yinertia < player->fallspeed)
-		{
-			player->yinertia += player->fallaccel;
-			if (player->yinertia > player->fallspeed) player->yinertia = player->fallspeed;
-		}
-		
-		// if we no longer qualify for jump gravity then the jump is over
-		player->jumping = 0;
-	}
-}
-
-
-void PDoJumping(void)
-{
-	// jumping
-	if (pinputs[JUMPKEY] && !lastpinputs[JUMPKEY])
-	{
-		if (player->blockd)
-		{
-			if (!player->jumping)
-			{
-				player->jumping = true;
-				player->yinertia -= player->jumpvelocity;
-				sound(SND_PLAYER_JUMP);
-			}
-		}
-		else if ((player->equipmask & (EQUIP_BOOSTER08 | EQUIP_BOOSTER20)))
-		{
-			PStartBooster();
-		}
-	}
-}
-
-
-void PDoLooking(void)
-{
-int lookscroll_want;
-int i, key;
-
-	// looking/aiming up and down
-	player->look = lookscroll_want = 0;
-	
-	if (pinputs[DOWNKEY])
-	{
-		if (!player->blockd)
-		{
-			player->look = DOWN;
-		}
-		else if (!lastpinputs[DOWNKEY])
-		{	// activating scripts/talking to NPC's
-			
-			if (!player->walking && !player->lookaway && \
-				!pinputs[JUMPKEY] && !pinputs[FIREKEY])
-			{
-				player->lookaway = true;
-				player->xinertia = 0;
-				PTryActivateScript();
-			}
-		}
-		
-		// can still scroll screen down while standing, even though
-		// it doesn't show any different frame.
-		lookscroll_want = DOWN;
-	}
-	
-	if (pinputs[UPKEY])
-	{
-		player->look = lookscroll_want = UP;
-	}
-	
-	// when looking, pause a second to be sure they really want to do it
-	// before triggering any real screen scrolling
-	if (player->lookscroll != lookscroll_want)
-	{
-		if (player->lookscroll_timer >= 4 || !lookscroll_want)
-		{
-			player->lookscroll = lookscroll_want;
-		}
-		else
-		{
-			player->lookscroll_timer++;
-		}
-	}
-	else
-	{
-		player->lookscroll_timer = 0;
-	}
-	
-	// deactivation of lookaway
-	if (player->lookaway)
-	{
-		// keys which deactivate lookaway when you are facing away from player
-		static const char actionkeys[] = \
-			{ LEFTKEY, RIGHTKEY, UPKEY, JUMPKEY, FIREKEY, -1 };
-		
-		// stop looking away if any keys are pushed
-		for(i=0;;i++)
-		{
-			key = actionkeys[i];
-			if (key == -1) break;
-			
-			if (pinputs[key])
-			{
-				player->lookaway = false;
-				break;
-			}
-		}
-		
-		if (!player->blockd)
-			player->lookaway = false;
-	}
-}
-
-/*
-void c------------------------------() {}
-*/
 
 // called when the player has just turned on the booster
-void PStartBooster(void)
+static void PStartBooster(void)
 {
 	if (player->boosterfuel <= 0)
 		return;
@@ -763,6 +350,108 @@ void PStartBooster(void)
 	}
 	
 	PBoosterSmokePuff();
+}
+
+static void PDoJumping(void)
+{
+	// jumping
+	if (pinputs[JUMPKEY] && !lastpinputs[JUMPKEY])
+	{
+		if (player->blockd)
+		{
+			if (!player->jumping)
+			{
+				player->jumping = true;
+				player->yinertia -= player->jumpvelocity;
+				sound(SND_PLAYER_JUMP);
+			}
+		}
+		else if ((player->equipmask & (EQUIP_BOOSTER08 | EQUIP_BOOSTER20)))
+		{
+			PStartBooster();
+		}
+	}
+}
+
+void PUpdateInput(void)
+{
+	int i;
+
+	if (player->inputs_locked || player->disabled)
+	{
+		memset(pinputs, 0, sizeof(pinputs));
+	}
+	else
+	{
+		memcpy(pinputs, inputs, sizeof(pinputs));
+
+		// prevent jumping/shooting when leaving a messagebox
+		if (player->inputs_locked_lasttime)
+		{
+			for(i=0;i<INPUT_COUNT;i++)
+				lastpinputs[i] |= pinputs[i];
+		}
+
+		// allow entering inventory
+		if (justpushed(INVENTORYKEY))
+		{
+			if (!game.frozen && !player->dead && GetCurrentScript() == -1)
+				game.setmode(GM_INVENTORY);
+		}
+
+		// Map System
+		if (justpushed(MAPSYSTEMKEY))
+		{
+			if (!game.frozen && !player->dead && GetCurrentScript() == -1)
+			{
+				if (fade.getstate() == FS_NO_FADE && game.switchstage.mapno == -1)
+					game.setmode(GM_MAP_SYSTEM, game.mode);
+			}
+		}
+	}
+}
+
+static void PDoFalling(void)
+{
+	if (player->disabled || player->booststate)
+		return;
+	
+	if (game.curmap == STAGE_KINGS_TABLE && \
+		fade.getstate() == FS_FADING)
+		return;
+	
+	// needed to be able to see the falling blocks during
+	// good-ending Helicopter cutscene (otherwise your
+	// invisible character falls and the blocks spawn too low).
+	if (player->hide)
+	{
+		player->xinertia = 0;
+		player->yinertia = 0;
+		return;
+	}
+	
+	// use jump gravity as long as Jump Key is down and we're moving up,
+	// regardless of whether a jump was ever actually initiated.
+	// this is for the fans that blow up--you can push JUMP to climb higher.
+	if (player->yinertia < 0 && pinputs[JUMPKEY])
+	{	// use jump gravity
+		if (player->yinertia < player->fallspeed)
+		{
+			player->yinertia += player->jumpfallaccel;
+			if (player->yinertia > player->fallspeed) player->yinertia = player->fallspeed;
+		}
+	}
+	else
+	{	// use normal gravity
+		if (player->yinertia < player->fallspeed)
+		{
+			player->yinertia += player->fallaccel;
+			if (player->yinertia > player->fallspeed) player->yinertia = player->fallspeed;
+		}
+		
+		// if we no longer qualify for jump gravity then the jump is over
+		player->jumping = 0;
+	}
 }
 
 // called every tick to run the booster
@@ -912,287 +601,9 @@ void PDoBoosterEnd()
 	player->lastbooststate = player->booststate;
 }
 
-// spawn a Booster smoke puff
-void PBoosterSmokePuff()
-{
-	// these are the directions the SMOKE is traveling, not the player
-	//                                 RT   LT    UP    DN
-	static const int smoke_xoffs[] = { 10,   4,   7,    7  };
-	static const int smoke_yoffs[] = { 10,  10,   0,   14  };
-	int smokedir;
-	
-	switch(player->booststate)
-	{
-		case BOOST_HOZ: smokedir = (player->dir ^ 1); break;
-		case BOOST_UP:	smokedir = DOWN; break;
-		case BOOST_DOWN:smokedir = UP; break;
-		case BOOST_08:	smokedir = DOWN; break;
-		default:		return;
-	}
-	
-	int x = player->x + (smoke_xoffs[smokedir] << CSF);
-	int y = player->y + (smoke_yoffs[smokedir] << CSF);
-	
-	Caret *smoke = effect(x, y, EFFECT_SMOKETRAIL_SLOW);
-	smoke->MoveAtDir(smokedir, 0x200);
-	
-	sound(SND_BOOSTER);
-}
-
-/*
-void c------------------------------() {}
-*/
-
-// handle some special characteristics of solid-brick objects,
-// such as bouncy and damage. Unlike with FLAG_SOLID_MUSHY; the
-// block/l/r/u/d flags for these objects have already been set in
-// UpdateBlockStates, so we don't have to worry about those.
-void PHandleSolidBrickObjects(void)
-{
-int i;
-SIFSprite *sprite = player->Sprite();
-Object *o;
-
-	// calculate total inertia of player--this is needed so that
-	// the forcefields in the Monster X arena will damage you if
-	// the treads carry you into them.
-	int p_xinertia = player->xinertia;
-	int p_yinertia = player->yinertia;
-	if (player->riding)
-	{
-		p_xinertia += player->riding->xinertia;
-		p_yinertia += player->riding->yinertia;
-	}
-	
-	for(i=0;i<nOnscreenObjects;i++)
-	{
-		o = onscreen_objects[i];
-		if (!(o->flags & FLAG_SOLID_BRICK)) continue;
-		
-		// left, right, and up contact damage
-		if (o->damage > 0)
-		{
-			if (player->blockl && player->CheckSolidIntersect(o, &sprite->block_l))
-			{
-				if (p_xinertia < 0 || o->xinertia > 0)
-					o->DealContactDamage();
-			}
-			
-			if (player->blockr && player->CheckSolidIntersect(o, &sprite->block_r))
-			{
-				if (p_xinertia > 0 || o->xinertia < 0)
-					o->DealContactDamage();
-			}
-			
-			if (player->blocku && player->CheckSolidIntersect(o, &sprite->block_u))
-			{
-				if (p_yinertia < 0 || o->yinertia > 0)
-					o->DealContactDamage();
-			}
-		}
-		
-		// stuff for when you are standing on it
-		if (player->blockd && player->CheckSolidIntersect(o, &sprite->block_d))
-		{
-			if (o->damage && (player->yinertia >= 0 || o->yinertia < 0))
-				o->DealContactDamage();
-			
-			// don't do weird glitchy shit if we jump while being carried upward
-			// by an object moving faster than us. handles if you jump while flying
-			// momorin's rocket.
-			if (player->yinertia < 0 && o->yinertia < player->yinertia)
-				player->yinertia = 0;
-			
-			// handle FLAG_BOUNCY--used eg by treads on Monster X when tipped up
-			if (o->flags & FLAG_BOUNCY)
-			{
-				if (player->yinertia > (o->yinertia - 0x200))
-					player->yinertia = (o->yinertia - 0x200);
-			}
-			else if (o->yinertia <= player->yinertia)
-			{
-				// snap his Y right on top if it
-				player->y = o->SolidTop() - (sprites[player->sprite].block_d[0].y << CSF);
-			}
-		}
-	}
-}
-
-
-void PHandleSolidMushyObjects(void)
-{
-	for(int i=0;i<nOnscreenObjects;i++)
-	{
-		Object *o = onscreen_objects[i];
-		
-		if (o->flags & FLAG_SOLID_MUSHY)
-			PRunSolidMushy(o);
-	}
-}
-
-// handle "solid mushy" objects, such as bugs. These objects are solid but not 100% super
-// solid like a brick. Their solidity is more of an "it repels the player" kind of way.
-// NOTE: This is also responsible for the horizontal motion you see when hit by many kinds
-// of enemies. The hurtplayer damage routine makes you hop vertically, but it is this that
-// throws you away horizontally.
-void PRunSolidMushy(Object *o)
-{
-	// cache these, so we're not calling the same functions over and over again
-	const int p_left = player->SolidLeft();
-	const int p_right = player->SolidRight();
-	const int p_top = player->SolidTop();
-	const int p_bottom = player->SolidBottom();
-	
-	const int o_left = o->SolidLeft();
-	const int o_right = o->SolidRight();
-	const int o_top = o->SolidTop();
-	const int o_bottom = o->SolidBottom();
-	
-	static const int MUSHY_MARGIN = (3<<CSF);
-	static const int STAND_MARGIN = (1<<CSF);
-	static const int REPEL_FORCE = 0x200;
-	
-	// hitting sides of object
-	if ((p_top < (o_bottom - MUSHY_MARGIN)) && (p_bottom > (o_top + MUSHY_MARGIN)))
-	{
-		// left side
-		if ((p_right > o_left) && (p_right < o->CenterX()))
-		{
-			if (player->xinertia > -REPEL_FORCE)
-				player->xinertia -= REPEL_FORCE;
-		}
-		
-		// right side
-		if ((p_left < o_right) && (p_left > o->CenterX()))
-		{
-			if (player->xinertia < REPEL_FORCE)
-				player->xinertia += REPEL_FORCE;
-		}
-	}
-	
-	// bonking head on object or standing on object
-	
-	// to tell if we are within horizontal bounds to be standing on the object,
-	// we will check if we have NOT FALLEN OFF the object.
-	if (p_left > (o_right - STAND_MARGIN) || p_right < (o_left + STAND_MARGIN))
-	{ }
-	else
-	{
-		// standing on object
-		if (p_bottom >= o_top && p_bottom <= o->CenterY())
-		{
-			if (o->flags & FLAG_BOUNCY)
-			{
-				if (player->yinertia > (o->yinertia - 0x200))
-					player->yinertia = (o->yinertia - 0x200);
-			}
-			else
-			{
-				// force to top of sprite if we're REALLY far into it
-				int em_fline = o->SolidTop() + (3 << CSF);
-				if (player->SolidBottom() > em_fline)
-				{
-					int over_amt = (em_fline - player->SolidBottom());
-					int dec_amt = (3 << CSF);
-					
-					if (over_amt < dec_amt) dec_amt = over_amt;
-					if (dec_amt < (1<<CSF)) dec_amt = (1<<CSF);
-					
-					player->apply_yinertia(-dec_amt);
-				}
-				
-				player->blockd = true;
-				player->riding = o;
-			}
-		}
-		else if (p_top < o_bottom && p_top > o->CenterY())
-		{
-			// hit bottom of object with head
-			if (player->yinertia < 0)
-				player->yinertia = 0;
-		}
-	}
-}
-
-/*
-void c------------------------------() {}
-*/
-
-// does "damage" points of damage to the player
-// if even_if_controls_locked is true the damage is
-// dealt even if the player's input is locked.
-void hurtplayer(int damage, bool even_if_controls_locked)
-{
-	if (damage == 0) return;
-	if (!player || !player->hp) return;
-	
-	if (player->hurt_time)
-		return;
-	
-	if (player->inputs_locked && !even_if_controls_locked)
-		return;
-	
-	if (player->hide)
-		return;
-	
-	player->hp -= damage;
-	player->DamageText->AddQty(damage);
-	
-	player->lookaway = 0;
-	player->hurt_time = 128;
-	
-	if (player->equipmask & EQUIP_WHIMSTAR)
-		remove_whimstar(&player->whimstar);
-	
-	//if (player->booststate)
-		//player->hitwhileboosting = true;
-	
-	if (player->hp <= 0)
-	{
-		sound(SND_PLAYER_DIE);
-		SmokeClouds(player, 64, 16, 16);
-		
-		killplayer(SCRIPT_DIED);
-	}
-	else
-	{
-		sound(SND_PLAYER_HURT);
-		
-		// hop
-		if (player->movementmode != MOVEMODE_ZEROG)
-			player->yinertia = -0x400;
-	}
-	
-	// decrement weapon XP.
-	if (player->equipmask & EQUIP_ARMS_BARRIER)
-		SubXP(damage);
-	else
-		SubXP(damage * 2);
-}
-
-// set the player state to "dead" and execute script "script"
-void killplayer(int script)
-{
-	Replay::end_record();
-	Replay::end_playback();
-	
-	player->hp = 0;
-	player->dead = true;
-	player->hide = true;
-	player->xinertia = 0;
-	player->yinertia = 0;
-	player->riding = NULL;			// why exactly did I say this? i dunno, but not touching for safety
-	StopLoopSounds();				// important for Almond
-	StartScript(script);
-}
-
-/*
-void c------------------------------() {}
-*/
-
 // this is basically a replacement for most of the player code,
 // used when the player is in <UNI0001 (the Ironhead battle).
-void PHandleZeroG(void)
+static void PHandleZeroG(void)
 {
 	if (!player->inputs_locked)
 	{
@@ -1259,42 +670,373 @@ void PHandleZeroG(void)
 	player->frame = (player->yinertia > 0) ? 1 : 2;
 }
 
-/*
-void c------------------------------() {}
-*/
-
-void PInitRepel(void)
+static void PDoWalking(void)
 {
-const int s = SPR_MYCHAR;
-int i;
+	int walk_accel;
+	int limit;
 
-	player->nrepel_l = sprites[s].block_l.count;
-	player->nrepel_r = sprites[s].block_r.count;
-	player->nrepel_d = sprites[s].block_d.count;
-	player->nrepel_u = sprites[s].block_u.count;
-	
-	for(i=0;i<player->nrepel_l;i++)
+	walk_accel = (player->blockd) ? player->walkaccel : player->jumpwalkaccel;
+
+	// walking/moving
+	if (pinputs[LEFTKEY] || pinputs[RIGHTKEY])
 	{
-		player->repel_l[i].x = sprites[s].block_l[i].x + 1;
-		player->repel_l[i].y = sprites[s].block_l[i].y;
+		// we check both without an else so that both keys down=turn right & walk in place
+		if (pinputs[LEFTKEY])
+		{
+			player->walking = true;
+			player->dir = LEFT;
+
+			if (player->xinertia > -player->walkspeed)
+			{
+				player->xinertia -= walk_accel;
+
+				if (player->xinertia < -player->walkspeed)
+					player->xinertia = -player->walkspeed;
+			}
+		}
+
+		if (pinputs[RIGHTKEY])
+		{
+			player->walking = true;
+			player->dir = RIGHT;
+
+			if (player->xinertia < player->walkspeed)
+			{
+				player->xinertia += walk_accel;
+
+				if (player->xinertia > player->walkspeed)
+					player->xinertia = player->walkspeed;
+			}
+		}
+
+		if (player->walking && !player->lastwalking)
+			player->walkanimframe = 1;
+	}
+	else
+	{
+		player->walking = false;
+		player->walkanimframe = 0;
+		player->walkanimtimer = 0;
+		// tap sound when stopped walking
+		if (player->lastwalking && player->blockd)
+			sound(SND_PLAYER_WALK);
+	}
+
+	// deceleration
+	if (player->blockd && player->yinertia >= 0)
+	{	// deceleration on ground...
+		// always move towards zero at decelspeed
+		if (player->xinertia > 0)
+		{
+			if (player->xinertia > player->decelspeed)
+				player->xinertia -= player->decelspeed;
+			else
+				player->xinertia = 0;
+		}
+		else if (player->xinertia < 0)
+		{
+			if (player->xinertia < -player->decelspeed)
+				player->xinertia += player->decelspeed;
+			else
+				player->xinertia = 0;
+		}
+	}
+	else		// deceleration in air...
+	{
+		// implements 2 things
+		//	1) if player partially hits a brick while in air, his inertia is lesser after he passes it
+		//	2) but, if he's trying to turn around, let him! don't "stick" him to it just because
+		//		of a high inertia when he hit it
+		if (player->blockr)
+		{
+			limit = (player->dir == RIGHT) ? 0x180 : 0;
+			if (player->xinertia > limit) player->xinertia = limit;
+		}
+
+		if (player->blockl)
+		{
+			limit = (player->dir == LEFT) ? -0x180 : 0;
+			if (player->xinertia < limit) player->xinertia = limit;
+		}
+	}
+}
+
+static bool RunScriptAtLocation(int x, int y)
+{
+	// top-to-bottom scan
+	for(int i=nOnscreenObjects-1; i>=0; i--)
+	{
+		Object *o = onscreen_objects[i];
+		
+		if (o->flags & FLAG_SCRIPTONACTIVATE)
+		{
+			if (x >= o->Left() && x <= o->Right() && \
+				y >= o->Top() && y <= o->Bottom())
+			{
+				StartScript(o->id2);
+				return true;
+			}
+		}
 	}
 	
-	for(i=0;i<player->nrepel_r;i++)
+	return false;
+}
+
+static bool RunScriptAtX(int x)
+{
+	if (RunScriptAtLocation(x, player->y + (8 << CSF)) || \
+		RunScriptAtLocation(x, player->y + (14 << CSF)) || \
+		RunScriptAtLocation(x, player->y + (2 << CSF)))
 	{
-		player->repel_r[i].x = sprites[s].block_r[i].x - 1;
-		player->repel_r[i].y = sprites[s].block_r[i].y;
+		return true;
 	}
 	
-	for(i=0;i<player->nrepel_d;i++)
+	return false;
+}
+
+// called when you press down.
+// Tries to find an SCRIPTONACTIVATE object you are standing near and activate it.
+// if it can't find anything to activate, spawns the "question mark" effect.
+static void PTryActivateScript()
+{
+	if (RunScriptAtX(player->CenterX()))
+		return;
+
+	if (player->dir == RIGHT)
 	{
-		player->repel_d[i].x = sprites[s].block_d[i].x;
-		player->repel_d[i].y = sprites[s].block_d[i].y - 1;
+		if (RunScriptAtX(player->Right()) || RunScriptAtX(player->Left()))
+			return;
+	}
+	else
+	{
+		if (RunScriptAtX(player->Left()) || RunScriptAtX(player->Right()))
+			return;
+	}
+
+	// e.g. Plantation Rocket
+	if (player->riding && (player->riding->flags & FLAG_SCRIPTONACTIVATE))
+	{
+		StartScript(player->riding->id2);
+		return;
+	}
+
+	effect(player->CenterX(), player->CenterY(), EFFECT_QMARK);
+}
+
+static void PDoLooking(void)
+{
+	int lookscroll_want;
+	int i, key;
+
+	// looking/aiming up and down
+	player->look = lookscroll_want = 0;
+
+	if (pinputs[DOWNKEY])
+	{
+		if (!player->blockd)
+		{
+			player->look = DOWN;
+		}
+		else if (!lastpinputs[DOWNKEY])
+		{	// activating scripts/talking to NPC's
+
+			if (!player->walking && !player->lookaway && \
+					!pinputs[JUMPKEY] && !pinputs[FIREKEY])
+			{
+				player->lookaway = true;
+				player->xinertia = 0;
+				PTryActivateScript();
+			}
+		}
+
+		// can still scroll screen down while standing, even though
+		// it doesn't show any different frame.
+		lookscroll_want = DOWN;
+	}
+
+	if (pinputs[UPKEY])
+	{
+		player->look = lookscroll_want = UP;
+	}
+
+	// when looking, pause a second to be sure they really want to do it
+	// before triggering any real screen scrolling
+	if (player->lookscroll != lookscroll_want)
+	{
+		if (player->lookscroll_timer >= 4 || !lookscroll_want)
+		{
+			player->lookscroll = lookscroll_want;
+		}
+		else
+		{
+			player->lookscroll_timer++;
+		}
+	}
+	else
+	{
+		player->lookscroll_timer = 0;
+	}
+
+	// deactivation of lookaway
+	if (player->lookaway)
+	{
+		// keys which deactivate lookaway when you are facing away from player
+		static const char actionkeys[] = \
+		{ LEFTKEY, RIGHTKEY, UPKEY, JUMPKEY, FIREKEY, -1 };
+
+		// stop looking away if any keys are pushed
+		for(i=0;;i++)
+		{
+			key = actionkeys[i];
+			if (key == -1) break;
+
+			if (pinputs[key])
+			{
+				player->lookaway = false;
+				break;
+			}
+		}
+
+		if (!player->blockd)
+			player->lookaway = false;
+	}
+}
+
+// handle some special characteristics of solid-brick objects,
+// such as bouncy and damage. Unlike with FLAG_SOLID_MUSHY; the
+// block/l/r/u/d flags for these objects have already been set in
+// UpdateBlockStates, so we don't have to worry about those.
+void PHandleSolidBrickObjects(void)
+{
+	int i;
+	SIFSprite *sprite = player->Sprite();
+	Object *o;
+
+	// calculate total inertia of player--this is needed so that
+	// the forcefields in the Monster X arena will damage you if
+	// the treads carry you into them.
+	int p_xinertia = player->xinertia;
+	int p_yinertia = player->yinertia;
+	if (player->riding)
+	{
+		p_xinertia += player->riding->xinertia;
+		p_yinertia += player->riding->yinertia;
+	}
+
+	for(i=0;i<nOnscreenObjects;i++)
+	{
+		o = onscreen_objects[i];
+		if (!(o->flags & FLAG_SOLID_BRICK)) continue;
+
+		// left, right, and up contact damage
+		if (o->damage > 0)
+		{
+			if (player->blockl && player->CheckSolidIntersect(o, &sprite->block_l))
+			{
+				if (p_xinertia < 0 || o->xinertia > 0)
+					o->DealContactDamage();
+			}
+
+			if (player->blockr && player->CheckSolidIntersect(o, &sprite->block_r))
+			{
+				if (p_xinertia > 0 || o->xinertia < 0)
+					o->DealContactDamage();
+			}
+
+			if (player->blocku && player->CheckSolidIntersect(o, &sprite->block_u))
+			{
+				if (p_yinertia < 0 || o->yinertia > 0)
+					o->DealContactDamage();
+			}
+		}
+
+		// stuff for when you are standing on it
+		if (player->blockd && player->CheckSolidIntersect(o, &sprite->block_d))
+		{
+			if (o->damage && (player->yinertia >= 0 || o->yinertia < 0))
+				o->DealContactDamage();
+
+			// don't do weird glitchy shit if we jump while being carried upward
+			// by an object moving faster than us. handles if you jump while flying
+			// momorin's rocket.
+			if (player->yinertia < 0 && o->yinertia < player->yinertia)
+				player->yinertia = 0;
+
+			// handle FLAG_BOUNCY--used eg by treads on Monster X when tipped up
+			if (o->flags & FLAG_BOUNCY)
+			{
+				if (player->yinertia > (o->yinertia - 0x200))
+					player->yinertia = (o->yinertia - 0x200);
+			}
+			else if (o->yinertia <= player->yinertia)
+			{
+				// snap his Y right on top if it
+				player->y = o->SolidTop() - (sprites[player->sprite].block_d[0].y << CSF);
+			}
+		}
+	}
+}
+
+void HandlePlayer(void)
+{
+	// freeze player for the split-second between <TRA to a new map and the
+	// start of the on-entry script for that map. (Fixes: player could shoot during
+	// end sequence if he holds key down).
+	if (game.switchstage.mapno != -1)
+		return;
+	
+	PUpdateInput();
+	
+	if (!player->dead)
+	{
+		PHandleAttributes();			// handle special tile attributes
+		PHandleSolidMushyObjects();		// handle objects like bugs marked "solid / mushy"
+		
+		PDoWeapons();	// p_arms.cpp
+		PDoHurtFlash();
+		
+		switch(player->movementmode)
+		{
+			case MOVEMODE_NORMAL:
+			{
+				PDoBooster();
+				PDoBoosterEnd();
+				PDoWalking();
+				PDoLooking();
+				PDoJumping();
+				PDoFalling();
+				PSelectFrame();
+			}
+			break;
+			
+			case MOVEMODE_ZEROG:		// Ironhead battle/UNI 1
+			{
+				PHandleZeroG();
+			}
+			break;
+			default:
+			{
+				player->xinertia = player->yinertia = 0;
+			}
+			break;
+		}
+		
+		// handle some special features, like damage and bouncy, of
+		// 100% solid objects such as moving blocks. It's put at the end
+		// so that we can see the desired inertia of the player before
+		// it's canceled out by any block points that are set. That way
+		// we can tell if the player is trying to move into it.
+		PHandleSolidBrickObjects();
 	}
 	
-	for(i=0;i<player->nrepel_u;i++)
+	// apply inertia
+	PDoPhysics();
+	
+	// thud sound when land on some objects
+	if (player->riding && !player->lastriding &&
+		(player->riding->nxflags & NXFLAG_THUD_ON_RIDING))
 	{
-		player->repel_u[i].x = sprites[s].block_u[i].x;
-		player->repel_u[i].y = sprites[s].block_u[i].y + 1;
+		sound(SND_THUD);
 	}
 }
 
@@ -1357,88 +1099,298 @@ void PDoRepel(void)
 	*/
 }
 
-/*
-void c------------------------------() {}
-*/
-
-// called when you press down.
-// Tries to find an SCRIPTONACTIVATE object you are standing near and activate it.
-// if it can't find anything to activate, spawns the "question mark" effect.
-void PTryActivateScript()
+// player aftermove routine
+void HandlePlayer_am(void)
 {
-	if (RunScriptAtX(player->CenterX()))
-		return;
+	//debug("xinertia: %s", strhex(player->xinertia));
+	//debug("yinertia: %s", strhex(player->yinertia));
+	//debug("booststate: %d", player->booststate);
+	//debug("y: %d", player->y>>CSF);
+	//debug("riding %x", player->riding);
 	
-	if (player->dir == RIGHT)
+	// if player is riding some sort of platform apply it's inertia to him
+	if (player->riding)
 	{
-		if (RunScriptAtX(player->Right()) || RunScriptAtX(player->Left()))
-			return;
-	}
-	else
-	{
-		if (RunScriptAtX(player->Left()) || RunScriptAtX(player->Right()))
-			return;
-	}
-	
-	// e.g. Plantation Rocket
-	if (player->riding && (player->riding->flags & FLAG_SCRIPTONACTIVATE))
-	{
-		StartScript(player->riding->id2);
-		return;
+		player->apply_xinertia(player->riding->xinertia);
+		player->apply_yinertia(player->riding->yinertia);
 	}
 	
-	effect(player->CenterX(), player->CenterY(), EFFECT_QMARK);
-}
-
-static bool RunScriptAtX(int x)
-{
-	if (RunScriptAtLocation(x, player->y + (8 << CSF)) || \
-		RunScriptAtLocation(x, player->y + (14 << CSF)) || \
-		RunScriptAtLocation(x, player->y + (2 << CSF)))
-	{
-		return true;
-	}
+	// keep player out of blocks "SMB1 style"
+	PDoRepel();
 	
-	return false;
-}
-
-static bool RunScriptAtLocation(int x, int y)
-{
-	// top-to-bottom scan
-	for(int i=nOnscreenObjects-1; i>=0; i--)
+	// handle landing and bonking head
+	if (player->blockd && player->yinertia > 0)
 	{
-		Object *o = onscreen_objects[i];
+		if (player->yinertia > 0x400 && !player->hide)
+			sound(SND_THUD);
 		
-		if (o->flags & FLAG_SCRIPTONACTIVATE)
+		player->yinertia = 0;
+		player->jumping = 0;
+	}
+	else if (player->blocku && player->yinertia < 0)
+	{
+		// he behaves a bit differently when bonking his head on a
+		// solid-brick object vs. bonking his head on the map.
+		
+		// bonk-head star effect
+		if (player->yinertia < -0x200 && !player->hide && \
+			player->blocku == BLOCKED_MAP)
 		{
-			if (x >= o->Left() && x <= o->Right() && \
-				y >= o->Top() && y <= o->Bottom())
+			sound(SND_BONK_HEAD);
+			effect(player->CenterX(), player->y, EFFECT_BONKPLUS);
+		}
+		
+		// bounces off ceiling with booster 0.8
+		if (player->booststate == BOOST_08)
+		{
+			player->yinertia = 0x200;
+		}
+		else if (player->blocku != BLOCKED_OBJECT)
+		{
+			player->yinertia = 0;
+		}
+		
+		player->jumping = false;
+	}
+	
+	player->lastwalking = player->walking;
+	player->lastriding = player->riding;
+	player->inputs_locked_lasttime = player->inputs_locked;
+	memcpy(lastpinputs, pinputs, sizeof(lastpinputs));
+}
+
+// handes player being blown around by water currents
+void DoWaterCurrents(void)
+{
+static Point currentpoints[] = { {7, 8},
+								 {1, 2}, {1, 8}, {1, 14},
+								 {7, 2}, {7, 14},
+								 {15,2}, {15, 8}, {15, 14} };
+int i;
+static const int current_dir[] = { LEFTMASK, UPMASK, RIGHTMASK, DOWNMASK };
+uint8_t currentmask;
+int tile;
+
+	// check each point in currentpoints[] for a water current, and if found,
+	// add it to the list of directions we're being blown
+	currentmask = 0;
+	for(i = 0; i < 9; i++)
+	{
+		//DebugCrosshair(player->x+(currentpoints[i].x<<CSF),player->y+(currentpoints[i].y<<CSF), 255,0,0);
+
+		if (player->GetAttributes(&currentpoints[i], 1, &tile) & TA_CURRENT)
+		{
+			currentmask |= current_dir[tilecode[tile] & 3];
+		}
+
+		// if the center point (the first one) has no current, then don't
+		// bother checking the rest. as during 90% of the game you are NOT underwater.
+		if (!currentmask) return;
+	}
+	
+	// these constants are very critical for Waterway to work properly.
+	// please be careful with them.
+	if (currentmask & LEFTMASK)  player->xinertia -= 0x88;
+	if (currentmask & RIGHTMASK) player->xinertia += 0x88;
+	if (currentmask & UPMASK)    player->yinertia -= 0x80;
+	if (currentmask & DOWNMASK)  player->yinertia += 0x50;
+}
+
+// set the player state to "dead" and execute script "script"
+static void killplayer(int script)
+{
+	Replay::end_record();
+	Replay::end_playback();
+	
+	player->hp = 0;
+	player->dead = true;
+	player->hide = true;
+	player->xinertia = 0;
+	player->yinertia = 0;
+	player->riding = NULL;			// why exactly did I say this? i dunno, but not touching for safety
+	StopLoopSounds();			// important for Almond
+	StartScript(script);
+}
+
+
+// handles tile attributes of tiles player is touching
+void PHandleAttributes(void)
+{
+static const Point pattrpoints[] = { {8, 8}, {8, 14} };
+unsigned int attr;
+int tile;
+
+	// get attributes of tiles player it touching.
+	// first, we'll check the top pattrpoint alone; this is the point at
+	// which you go underwater, when that point is lower than the water level.
+	// ** There is a spot in Labyrinth W just after the Shop where the positioning
+	// of this point is a minor element in the gameplay, and so it must be set
+	// correctly. If set too high you will not be underwater after climbing up the
+	// small slope and you can just jump over the wall that you shouldn't be able to.
+	attr = player->GetAttributes(&pattrpoints[0], 1, &tile);
+	
+	// water handler -- water uses only the top pattrpoint
+	if (attr & TA_WATER)
+	{
+		// check if we just entered the water
+		if (!(player->touchattr & TA_WATER))
+		{
+			// splash on entering water quick enough
+			if ((player->yinertia > 0x200 && !player->blockd) || \
+				(player->xinertia < -0x200 || player->xinertia > 0x200))
 			{
-				StartScript(o->id2);
-				return true;
+				int x = player->CenterX();
+				int y = player->CenterY();
+				int splashtype = !(player->touchattr & TA_HURTS_PLAYER) ? \
+									OBJ_WATER_DROPLET : OBJ_LAVA_DROPLET;
+				
+				for(int i=0;i<8;i++)
+				{
+					Object *o = CreateObject(x + (random_nx(-8, 8) << CSF), y, splashtype);
+					o->xinertia = random_nx(-0x200, 0x200) + player->xinertia;
+					o->yinertia = random_nx(-0x200, 0x80) - (player->yinertia >> 1);
+				}
+				
+				sound(SND_SPLASH);
+			}
+		}
+		
+		// setup physics constants for water
+		player->walkspeed = 0x196;
+		player->fallspeed = 0x2ff;
+		
+		player->fallaccel = 0x28;
+		player->jumpfallaccel = 0x10;
+		
+		player->walkaccel = 0x2a;
+		player->jumpwalkaccel = 0x10;
+		
+		player->decelspeed = 0x19;
+		// was set at 0x280 but I believe that makes it impossible to clear one of the long
+		// spike jumps in River
+		player->jumpvelocity = 0x2c0;
+		
+		// decrement air left
+		if (player->equipmask & EQUIP_AIRTANK)
+		{
+			player->airleft = 1000;
+			player->airshowtimer = 0;
+		}
+		else
+		{
+			player->airshowtimer = 60;
+			if (!player->drowned)
+			{
+				if (!player->inputs_locked) player->airleft--;
+				
+				if (player->airleft <= 0)
+				{	// player drowned
+					// if flag 4000 is set, then we do not drown, but are in the Almond
+					// level after Core battle, and should instead execute script 1100.
+					if (game.flags[4000])
+					{	// "your senses dim and the world grows dark"
+						StartScript(1100);
+					}
+					else
+					{	// nope sorry buddy, no such luck this time
+						Object *o = CreateObject(player->x, player->y, OBJ_NULL);
+						o->sprite = SPR_PDROWNED;
+						o->dir = player->dir;
+						
+						killplayer(SCRIPT_DROWNED);
+					}
+					
+					player->drowned = 1;
+				}
 			}
 		}
 	}
-	
-	return false;
-}
-
-/*
-void c------------------------------() {}
-*/
-
-// does the invincibility flash when the player has recently been hurt
-void PDoHurtFlash(void)
-{
-	// note that hurt_flash_state is NOT cleared when timer reaches 0,
-	// but this is ok because the number of blinks are and always should be even.
-	// (if not it wouldn't look right when he unhurts).
-	if (player->hurt_time)
+	else
 	{
-		player->hurt_time--;
-		player->hurt_flash_state = (player->hurt_time & 2);
+		// setup normal physics constants
+		player->walkspeed = 0x32c;////0x030e;
+		player->fallspeed = 0x5ff;
+		
+		player->fallaccel = 0x50;
+		player->jumpfallaccel = 0x20;
+		
+		player->walkaccel = 0x55;
+		player->jumpwalkaccel = 0x20;
+		
+		player->decelspeed = 0x33;
+		player->jumpvelocity = 0x500;
+		
+		// reset air supply
+		player->airleft = 1000;
+		if (player->airshowtimer) player->airshowtimer--;
 	}
+	
+	// add in the bottom pattrpoint, but don't let it set the "water" bit.
+	// only the top pattrpoint can set "water".
+	attr |= (player->GetAttributes(&pattrpoints[1], 1, &tile) & ~TA_WATER);
+	
+	if (attr & TA_HURTS_PLAYER)
+		hurtplayer(10, true);
+	
+	// water current/wind:
+	// for water currents--get the sum total of several points on the player to see
+	// all the directions he's getting blown around at (support multiple directions)
+	DoWaterCurrents();
+	player->touchattr = attr;
 }
+
+// does "damage" points of damage to the player
+// if even_if_controls_locked is true the damage is
+// dealt even if the player's input is locked.
+void hurtplayer(int damage, bool even_if_controls_locked)
+{
+	if (damage == 0) return;
+	if (!player || !player->hp) return;
+	
+	if (player->hurt_time)
+		return;
+	
+	if (player->inputs_locked && !even_if_controls_locked)
+		return;
+	
+	if (player->hide)
+		return;
+	
+	player->hp -= damage;
+	player->DamageText->AddQty(damage);
+	
+	player->lookaway = 0;
+	player->hurt_time = 128;
+	
+	if (player->equipmask & EQUIP_WHIMSTAR)
+		remove_whimstar(&player->whimstar);
+	
+	//if (player->booststate)
+		//player->hitwhileboosting = true;
+	
+	if (player->hp <= 0)
+	{
+		sound(SND_PLAYER_DIE);
+		SmokeClouds(player, 64, 16, 16);
+		
+		killplayer(SCRIPT_DIED);
+	}
+	else
+	{
+		sound(SND_PLAYER_HURT);
+		
+		// hop
+		if (player->movementmode != MOVEMODE_ZEROG)
+			player->yinertia = -0x400;
+	}
+	
+	// decrement weapon XP.
+	if (player->equipmask & EQUIP_ARMS_BARRIER)
+		SubXP(damage);
+	else
+		SubXP(damage * 2);
+}
+
 
 // decides which player frame to show
 void PSelectFrame(void)
@@ -1494,8 +1446,7 @@ void PSelectFrame(void)
 // mimiga mask support
 void PSelectSprite(void)
 {
-	player->sprite = (player->equipmask & EQUIP_MIMIGA_MASK) ? \
-					SPR_MYCHAR_MIMIGA : SPR_MYCHAR;
+	player->sprite = (player->equipmask & EQUIP_MIMIGA_MASK) ? SPR_MYCHAR_MIMIGA : SPR_MYCHAR;
 }
 
 /*
@@ -1506,20 +1457,20 @@ void c------------------------------() {}
 // returns the sprite and frame # to be used for drawing the given weapon
 void GetSpriteForGun(int wpn, int look, int *spr, int *frame)
 {
-int s;
-	
+	int s;
+
 	switch(wpn)
 	{
 		case WPN_SUPER_MISSILE: s = SPR_SUPER_MLAUNCHER; break;
 		case WPN_NEMESIS: s = SPR_NEMESIS; break;
 		case WPN_BUBBLER: s = SPR_BUBBLER; break;
 		case WPN_SPUR: s = SPR_SPUR; break;
-		
+
 		default:
-			s = SPR_WEAPONS_START + (wpn * 2);
-		break;
+			       s = SPR_WEAPONS_START + (wpn * 2);
+			       break;
 	}
-	
+
 	if (look)
 	{
 		s++;
@@ -1529,7 +1480,7 @@ int s;
 	{
 		*frame = 0;
 	}
-	
+
 	*spr = s;
 }
 
@@ -1537,22 +1488,22 @@ int s;
 // returns the point that a player's shot should be centered on when firing
 void GetPlayerShootPoint(int *x_out, int *y_out)
 {
-int spr, frame;
-int x, y;
+	int spr, frame;
+	int x, y;
 
 	GetSpriteForGun(player->curWeapon, player->look, &spr, &frame);
-	
+
 	// we have to figure out where the gun is being carried, then figure out where the
 	// gun's sprite is drawn relative to that, then finally we can offset in the
 	// shoot point of the gun's sprite.
 	x = player->x + (sprites[player->sprite].frame[player->frame].dir[player->dir].actionpoint.x << CSF);
 	x -= sprites[spr].frame[frame].dir[player->dir].drawpoint.x << CSF;
 	x += sprites[spr].frame[frame].dir[player->dir].actionpoint.x << CSF;
-	
+
 	y = player->y + (sprites[player->sprite].frame[player->frame].dir[player->dir].actionpoint.y << CSF);
 	y -= sprites[spr].frame[frame].dir[player->dir].drawpoint.y << CSF;
 	y += sprites[spr].frame[frame].dir[player->dir].actionpoint.y << CSF;
-	
+
 	*x_out = x;
 	*y_out = y;
 }
@@ -1560,45 +1511,45 @@ int x, y;
 // draws the player
 void DrawPlayer(void)
 {
-int scr_x, scr_y;
+	int scr_x, scr_y;
 
 	if (player->hide || player->disabled)
 		return;
-	
+
 	// keep his floattext position linked--do NOT update this if he is hidden
 	// so that floattext doesn't follow him after he dies.
 	player->DamageText->UpdatePos(player);
 	player->XPText->UpdatePos(player);
-	
+
 	// get screen position to draw him at
 	scr_x = (player->x >> CSF) - (map.displayed_xscroll >> CSF);
 	scr_y = (player->y >> CSF) - (map.displayed_yscroll >> CSF);
-	
+
 	// draw his gun
 	if (player->curWeapon != WPN_NONE && player->curWeapon != WPN_BLADE)
 	{
 		int spr, frame;
 		GetSpriteForGun(player->curWeapon, player->look, &spr, &frame);
-		
+
 		// draw the gun at the player's Action Point. Since guns have their Draw Point set
 		// to point at their handle, this places the handle in the player's hand.
 		draw_sprite_at_dp(scr_x + sprites[player->sprite].frame[player->frame].dir[player->dir].actionpoint.x, \
-						  scr_y + sprites[player->sprite].frame[player->frame].dir[player->dir].actionpoint.y, \
-						  spr, frame, player->dir);
+				scr_y + sprites[player->sprite].frame[player->frame].dir[player->dir].actionpoint.y, \
+				spr, frame, player->dir);
 	}
-	
+
 	// draw the player sprite
 	if (!player->hurt_flash_state)
 	{
 		draw_sprite(scr_x, scr_y, player->sprite, player->frame, player->dir);
-		
+
 		// draw the air bubble shield if we have it on
 		if (((player->touchattr & TA_WATER) && (player->equipmask & EQUIP_AIRTANK)) || \
-			player->movementmode == MOVEMODE_ZEROG)
+				player->movementmode == MOVEMODE_ZEROG)
 		{
 			draw_sprite_at_dp(scr_x, scr_y, SPR_WATER_SHIELD, \
-							  player->water_shield_frame, player->dir);
-			
+					player->water_shield_frame, player->dir);
+
 			if (++player->water_shield_timer > 1)
 			{
 				player->water_shield_frame ^= 1;
@@ -1606,9 +1557,7 @@ int scr_x, scr_y;
 			}
 		}
 	}
-	
+
 	if (player->equipmask & EQUIP_WHIMSTAR)
 		draw_whimstars(&player->whimstar);
 }
-
-

@@ -111,4 +111,7 @@ enum
 	B_LAST
 };
 
+void PResetWeapons(void);
+void PDoWeapons(void);
+
 #endif

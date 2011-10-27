@@ -90,7 +90,7 @@ void ai_ma_pignon(Object *o)
 				o->state = MP_In_Air;
 				o->frame = 3;
 				
-				o->xinertia = random(-0x400, 0x400);
+				o->xinertia = random_nx(-0x400, 0x400);
 				o->yinertia = -0x800;
 				
 				sound(SND_ENEMY_JUMP);
@@ -206,7 +206,7 @@ void ai_ma_pignon(Object *o)
 			
 			if ((++o->timer % 6) == 0)
 			{
-				int x = (random(4, 16) * TILE_W) << CSF;
+				int x = (random_nx(4, 16) * TILE_W) << CSF;
 				CreateObject(x, (16 << CSF), OBJ_MA_PIGNON_ROCK);
 			}
 			
@@ -286,7 +286,7 @@ void ai_ma_pignon(Object *o)
 			
 			if ((++o->timer % 6) == 0)
 			{
-				int x = (random(4, 16) * TILE_W) << CSF;
+				int x = (random_nx(4, 16) * TILE_W) << CSF;
 				CreateObject(x, (16 << CSF), OBJ_MA_PIGNON_CLONE);
 			}
 			
@@ -383,7 +383,7 @@ void ai_ma_pignon_rock(Object *o)
 			o->timer3 = 0;
 			o->state = 1;
 			o->flags |= (FLAG_INVULNERABLE | FLAG_IGNORE_SOLID);
-			o->frame = random(0, 2);
+			o->frame = random_nx(0, 2);
 			o->damage = 10;
 		}
 		case 1:
@@ -407,10 +407,10 @@ void ai_ma_pignon_rock(Object *o)
 					// these smoke clouds appear BEHIND the map tiles
 					for(int i=0;i<2;i++)
 					{
-						Object *smoke = CreateObject(o->CenterX() + random(-12<<CSF, 12<<CSF),
+						Object *smoke = CreateObject(o->CenterX() + random_nx(-12<<CSF, 12<<CSF),
 													 o->Bottom()+(16<<CSF), OBJ_SMOKE_CLOUD);
-						smoke->xinertia = random(-0x155, 0x155);
-						smoke->yinertia = random(-0x600, 0);
+						smoke->xinertia = random_nx(-0x155, 0x155);
+						smoke->yinertia = random_nx(-0x600, 0);
 					}
 				}
 			}

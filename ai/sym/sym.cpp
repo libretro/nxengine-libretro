@@ -205,7 +205,7 @@ void ai_xp(Object *o)
 {
 	if (o->state == 0)
 	{
-		o->yinertia = random(-400, 0);
+		o->yinertia = random_nx(-400, 0);
 		o->state = 1;
 	}
 	
@@ -376,8 +376,8 @@ bool Handle_Falling_Left(Object *o)
 		if (o->state < 100)			// initilize
 		{
 			o->state += 100;
-			o->yinertia = random(-0x20, 0x20);
-			o->xinertia = random(127, 256);
+			o->yinertia = random_nx(-0x20, 0x20);
+			o->xinertia = random_nx(127, 256);
 			//o->nxflags |= NXFLAG_FOLLOW_SLOPE;
 		}
 		
@@ -464,13 +464,13 @@ void ai_recharge(Object *o)
 		}
 		case 1:		// flickery animation
 		{
-			int x = random(0, 30);
+			int x = random_nx(0, 30);
 			
 			if (x < 10) o->state = 2;
 			else if (x < 25) o->state = 3;
 			else o->state = 4;
 			
-			o->timer = random(16, 64);
+			o->timer = random_nx(16, 64);
 			o->animtimer = 0;
 		}
 		break;
@@ -756,9 +756,9 @@ void ai_fan_vert(Object *o)
 	// spawn droplet effects
 	if (pdistlx(SCREEN_WIDTH << CSF) && pdistly(SCREEN_HEIGHT << CSF))
 	{
-		if (!random(0, 5))
+		if (!random_nx(0, 5))
 		{
-			int x = o->x + (random(4, 12) << CSF);
+			int x = o->x + (random_nx(4, 12) << CSF);
 			int y = (blowdir == DOWN) ? o->Bottom() : o->y;
 			
 			Object *drop = CreateObject(x, y, OBJ_FAN_DROPLET);
@@ -791,10 +791,10 @@ void ai_fan_hoz(Object *o)
 	// spawn droplet effects
 	if (pdistlx(SCREEN_WIDTH << CSF) && pdistly(SCREEN_HEIGHT << CSF))
 	{
-		if (!random(0, 5))
+		if (!random_nx(0, 5))
 		{
 			int x = (blowdir == LEFT) ? o->x : o->Right();
-			int y = o->y + (random(4, 12) << CSF);
+			int y = o->y + (random_nx(4, 12) << CSF);
 			
 			Object *drop = CreateObject(x, y, OBJ_FAN_DROPLET);
 			drop->dir = blowdir;
@@ -819,7 +819,7 @@ void ai_fan_droplet(Object *o)
 	{
 		case 0:
 			o->state = 1;
-			o->frame = random(0, 2);
+			o->frame = random_nx(0, 2);
 			
 			o->xinertia = o->yinertia = 0;
 			
@@ -833,8 +833,8 @@ void ai_fan_droplet(Object *o)
 			
 			o->dir = RIGHT;		// so frame is correct
 			
-			o->xinertia *= random((2 << CSF), (4 << CSF));
-			o->yinertia *= random((2 << CSF), (4 << CSF));
+			o->xinertia *= random_nx((2 << CSF), (4 << CSF));
+			o->yinertia *= random_nx((2 << CSF), (4 << CSF));
 		case 1:
 			ANIMATE_FWD(6);
 			if (o->frame > 4) o->Delete();
@@ -863,8 +863,8 @@ void ai_sprinkler(Object *o)
 							o->CenterY() + (1<<CSF), \
 							OBJ_WATER_DROPLET);
 		
-		drop->xinertia = random(-(2 << CSF), (2 << CSF));
-		drop->yinertia = random(-(3 << CSF), 384);
+		drop->xinertia = random_nx(-(2 << CSF), (2 << CSF));
+		drop->yinertia = random_nx(-(3 << CSF), 384);
 	}
 }
 
@@ -874,9 +874,9 @@ void ai_droplet_spawner(Object *o)
 {
 	if (pdistlx(SCREEN_WIDTH << CSF) && pdistly(SCREEN_HEIGHT << CSF))
 	{
-		if (!random(0, 80))
+		if (!random_nx(0, 80))
 		{
-			CreateObject(o->x + (random(2, (TILE_W - 2)) << CSF), o->y, OBJ_WATER_DROPLET);
+			CreateObject(o->x + (random_nx(2, (TILE_W - 2)) << CSF), o->y, OBJ_WATER_DROPLET);
 		}
 	}
 }
@@ -892,7 +892,7 @@ static const Point waterattrpoint[] = { 0, -3 };
 	o->yinertia += 0x20;
 	if (o->yinertia > 0x5ff) o->yinertia = 0x5ff;
 	
-	o->frame = random(0, 4);
+	o->frame = random_nx(0, 4);
 	
 	if (++o->timer > 10)
 	{
@@ -915,17 +915,17 @@ Object *ko;
 
 	if (o->dir == LEFT)
 	{	// spawn smoke (broken motorcycle in Grass)
-		if (!random(0, 40))
+		if (!random_nx(0, 40))
 		{
-			ko = CreateObject(o->x + (random(-20, 20) << CSF), o->y, OBJ_SMOKE_CLOUD);
+			ko = CreateObject(o->x + (random_nx(-20, 20) << CSF), o->y, OBJ_SMOKE_CLOUD);
 			ko->xinertia = 0x100;
 			ko->yinertia = -0x200;
 		}
 	}
 	else
 	{	// spawn "bubbles" (IronH battle)
-		ko = CreateObject(o->x + (random(-160, 160) << CSF), \
-						  o->y + (random(-128, 128) << CSF), \
+		ko = CreateObject(o->x + (random_nx(-160, 160) << CSF), \
+						  o->y + (random_nx(-128, 128) << CSF), \
 						  OBJ_FAN_DROPLET);
 		
 		ko->dir = RIGHT;

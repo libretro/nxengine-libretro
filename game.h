@@ -163,5 +163,6 @@ bool game_load(int num);
 bool game_load(Profile *p);
 bool game_save(int num);
 bool game_save(Profile *p);
+void DrawScene(void);
 
 #endif

@@ -3,7 +3,7 @@
 
 #include "nx.h"
 #include "inventory.h"
-#include "inventory.fdh"
+#include "pause/dialog.h"
 
 #define ARMS_X		10
 #define ARMS_Y		8
@@ -48,6 +48,220 @@ bool inventory_init(int param)
 	return 0;
 }
 
+static void ExitInventory(void)
+{
+	StopScripts();
+	game.setmode(GM_NORMAL);
+	memset(inputs, 0, sizeof(inputs));
+}
+
+static void RunSelector(stSelector *selector)
+{
+	int nrows;
+	int currow, curcol;
+	char toggle = 0;
+
+	if (inv.lockinput)
+	{
+		if (GetCurrentScript()==-1) inv.lockinput = 0;
+		else return;
+	}
+
+	if (selector->nitems)
+	{
+		nrows = (selector->nitems - 1) / selector->rowlen;
+		currow = (selector->cursel / selector->rowlen);
+		curcol = (selector->cursel % selector->rowlen);
+	}
+	else
+	{
+		nrows = currow = curcol = 0;
+	}
+
+	if (justpushed(LEFTKEY))
+	{
+		sound(selector->sound);
+
+		// at beginning of row?
+		if (curcol == 0)
+		{	// wrap to end of row
+			if (currow < nrows)
+				selector->cursel += (selector->rowlen - 1);
+			else if (selector->nitems > 0)
+				selector->cursel = selector->nitems - 1;
+		}
+		else selector->cursel--;
+	}
+
+	if (justpushed(RIGHTKEY))
+	{
+		sound(selector->sound);
+
+		// at end of row?
+		if (curcol==selector->rowlen-1 || selector->cursel+1 >= selector->nitems)
+		{	// wrap to beginning of row
+			selector->cursel = (currow * selector->rowlen);
+		}
+		else selector->cursel++;
+	}
+
+	if (justpushed(DOWNKEY))
+	{
+		// on last row?
+		if (currow >= nrows) toggle = 1;
+		else
+		{
+			selector->cursel += selector->rowlen;
+
+			// don't go past last item
+			if (selector->cursel >= selector->nitems)
+				selector->cursel = (selector->nitems - 1);
+
+			sound(selector->sound);
+		}
+	}
+
+	if (justpushed(UPKEY))
+	{
+		// on top row?
+		if (currow == 0) toggle = 1;
+		else
+		{
+			selector->cursel -= selector->rowlen;
+			sound(selector->sound);
+		}
+	}
+
+	// switch to other selector
+	if (toggle)
+	{
+		if (selector == &inv.itemsel)
+		{
+			selector = &inv.armssel;
+		}
+		else
+		{
+			selector = &inv.itemsel;
+		}
+
+		inv.curselector = selector;
+
+		sound(selector->sound);
+		selector->lastsel = -9999;
+	}
+
+	// bring up scripts
+	if (selector->cursel != selector->lastsel)
+	{
+		selector->lastsel = selector->cursel;
+
+		StartScript(selector->items[selector->cursel] + selector->scriptbase, SP_ARMSITEM);
+	}
+
+
+	if (selector == &inv.armssel)		// selecting a weapon
+	{
+		if (buttonjustpushed())
+		{	// select the new weapon
+			weapon_slide(LEFT, selector->items[selector->cursel]);
+			ExitInventory();
+		}
+	}
+	else									// selecting an item
+	{
+		if (justpushed(JUMPKEY))
+		{	// bring up "more info" or "equip" script for this item
+			StartScript(selector->items[selector->cursel] + selector->scriptbase + 1000, SP_ARMSITEM);
+			inv.lockinput = 1;
+		}
+
+		if (justpushed(INVENTORYKEY) || justpushed(FIREKEY))
+			ExitInventory();
+	}
+}
+
+static void DrawSelector(stSelector *selector, int x, int y)
+{
+	int selx, sely;
+	int xsel, ysel;
+
+	if (selector == inv.curselector)
+	{
+		// flash the box
+		if (++selector->animtimer > 1)
+		{
+			selector->animtimer = 0;
+			selector->flashstate ^= 1;
+		}
+	}
+	else
+	{	// permanently dim
+		selector->flashstate = 1;
+		selector->animtimer = 99;		// light up immediately upon becoming active
+	}
+
+	if (selector->rowlen)
+	{
+		xsel = (selector->cursel % selector->rowlen);
+		ysel = (selector->cursel / selector->rowlen);
+	}
+	else xsel = ysel = 0;
+
+	selx = x + (xsel * selector->spacing_x);
+	sely = y + (ysel * selector->spacing_y);
+	draw_sprite(selx, sely, selector->sprite, selector->flashstate, 0);
+}
+
+static void DrawInventory(void)
+{
+	int x, y, w, i, c;
+
+	// draw the box
+	TextBox::DrawFrame(inv.x, inv.y, inv.w, inv.h);
+
+	// - draw the weapons ----
+	x = inv.x + ARMS_X;
+	y = inv.y + ARMS_Y;
+	draw_sprite(x, y, SPR_TEXT_ARMS, 0, 0);
+	y += sprites[SPR_TEXT_ARMS].h;
+
+	DrawSelector(&inv.armssel, x, y);
+
+	// draw the arms
+	for(w=1;w<WPN_COUNT;w++)
+	{
+		if (!player->weapons[w].hasWeapon) continue;
+
+		draw_sprite(x+1, y+1, SPR_ARMSICONS, w, 0);
+		DrawWeaponLevel(x+1, y+16, w);
+		DrawWeaponAmmo(x+1, y+16+8, w);
+
+		x += inv.armssel.spacing_x;
+	}
+
+	// - draw the items ----
+	x = inv.x + ITEMS_X;
+	y = inv.y + ITEMS_Y;
+	draw_sprite(x, y, SPR_TEXT_ITEMS, 0, 0);
+	y += sprites[SPR_TEXT_ITEMS].h;
+
+	DrawSelector(&inv.itemsel, x, y);
+
+	c = 0;
+	for(i=0;i<inv.itemsel.nitems;i++)
+	{
+		draw_sprite(x, y, SPR_ITEMIMAGE, inv.itemsel.items[i], 0);
+
+		x += inv.itemsel.spacing_x;
+
+		if (++c >= inv.itemsel.rowlen)
+		{
+			x = inv.x + ITEMS_X;
+			y += inv.itemsel.spacing_y;
+			c = 0;
+		}
+	}
+}
 
 void inventory_tick(void)
 {
@@ -125,225 +339,4 @@ void UnlockInventoryInput(void)
 		inv.lockinput = false;
 }
 
-/*
-void c------------------------------() {}
-*/
-
-
-static void DrawInventory(void)
-{
-int x, y, w, i, c;
-
-	// draw the box
-	TextBox::DrawFrame(inv.x, inv.y, inv.w, inv.h);
-	
-	// - draw the weapons ----
-	x = inv.x + ARMS_X;
-	y = inv.y + ARMS_Y;
-	draw_sprite(x, y, SPR_TEXT_ARMS, 0, 0);
-	y += sprites[SPR_TEXT_ARMS].h;
-	
-	DrawSelector(&inv.armssel, x, y);
-	
-	// draw the arms
-	for(w=1;w<WPN_COUNT;w++)
-	{
-		if (!player->weapons[w].hasWeapon) continue;
-		
-		draw_sprite(x+1, y+1, SPR_ARMSICONS, w, 0);
-		DrawWeaponLevel(x+1, y+16, w);
-		DrawWeaponAmmo(x+1, y+16+8, w);
-		
-		x += inv.armssel.spacing_x;
-	}
-	
-	// - draw the items ----
-	x = inv.x + ITEMS_X;
-	y = inv.y + ITEMS_Y;
-	draw_sprite(x, y, SPR_TEXT_ITEMS, 0, 0);
-	y += sprites[SPR_TEXT_ITEMS].h;
-	
-	DrawSelector(&inv.itemsel, x, y);
-	
-	c = 0;
-	for(i=0;i<inv.itemsel.nitems;i++)
-	{
-		draw_sprite(x, y, SPR_ITEMIMAGE, inv.itemsel.items[i], 0);
-		
-		x += inv.itemsel.spacing_x;
-		
-		if (++c >= inv.itemsel.rowlen)
-		{
-			x = inv.x + ITEMS_X;
-			y += inv.itemsel.spacing_y;
-			c = 0;
-		}
-	}
-}
-
-static void RunSelector(stSelector *selector)
-{
-int nrows;
-int currow, curcol;
-char toggle = 0;
-
-	if (inv.lockinput)
-	{
-		if (GetCurrentScript()==-1) inv.lockinput = 0;
-		else return;
-	}
-	
-	if (selector->nitems)
-	{
-		nrows = (selector->nitems - 1) / selector->rowlen;
-		currow = (selector->cursel / selector->rowlen);
-		curcol = (selector->cursel % selector->rowlen);
-	}
-	else
-	{
-		nrows = currow = curcol = 0;
-	}
-	
-	if (justpushed(LEFTKEY))
-	{
-		sound(selector->sound);
-		
-		// at beginning of row?
-		if (curcol == 0)
-		{	// wrap to end of row
-			if (currow < nrows)
-				selector->cursel += (selector->rowlen - 1);
-			else if (selector->nitems > 0)
-				selector->cursel = selector->nitems - 1;
-		}
-		else selector->cursel--;
-	}
-	
-	if (justpushed(RIGHTKEY))
-	{
-		sound(selector->sound);
-		
-		// at end of row?
-		if (curcol==selector->rowlen-1 || selector->cursel+1 >= selector->nitems)
-		{	// wrap to beginning of row
-			selector->cursel = (currow * selector->rowlen);
-		}
-		else selector->cursel++;
-	}
-	
-	if (justpushed(DOWNKEY))
-	{
-		// on last row?
-		if (currow >= nrows) toggle = 1;
-		else
-		{
-			selector->cursel += selector->rowlen;
-			
-			// don't go past last item
-			if (selector->cursel >= selector->nitems)
-				selector->cursel = (selector->nitems - 1);
-				
-			sound(selector->sound);
-		}
-	}
-	
-	if (justpushed(UPKEY))
-	{
-		// on top row?
-		if (currow == 0) toggle = 1;
-		else
-		{
-			selector->cursel -= selector->rowlen;
-			sound(selector->sound);
-		}
-	}
-	
-	// switch to other selector
-	if (toggle)
-	{
-		if (selector == &inv.itemsel)
-		{
-			selector = &inv.armssel;
-		}
-		else
-		{
-			selector = &inv.itemsel;
-		}
-		
-		inv.curselector = selector;
-		
-		sound(selector->sound);
-		selector->lastsel = -9999;
-	}
-	
-	// bring up scripts
-	if (selector->cursel != selector->lastsel)
-	{
-		selector->lastsel = selector->cursel;
-		
-		StartScript(selector->items[selector->cursel] + selector->scriptbase, SP_ARMSITEM);
-	}
-	
-	
-	if (selector == &inv.armssel)		// selecting a weapon
-	{
-		if (buttonjustpushed())
-		{	// select the new weapon
-			weapon_slide(LEFT, selector->items[selector->cursel]);
-			ExitInventory();
-		}
-	}
-	else									// selecting an item
-	{
-		if (justpushed(JUMPKEY))
-		{	// bring up "more info" or "equip" script for this item
-			StartScript(selector->items[selector->cursel] + selector->scriptbase + 1000, SP_ARMSITEM);
-			inv.lockinput = 1;
-		}
-		
-		if (justpushed(INVENTORYKEY) || justpushed(FIREKEY))
-			ExitInventory();
-	}
-}
-
-static void ExitInventory(void)
-{
-	StopScripts();
-	game.setmode(GM_NORMAL);
-	memset(inputs, 0, sizeof(inputs));
-}
-
-
-
-static void DrawSelector(stSelector *selector, int x, int y)
-{
-int selx, sely;
-int xsel, ysel;
-
-	if (selector == inv.curselector)
-	{
-		// flash the box
-		if (++selector->animtimer > 1)
-		{
-			selector->animtimer = 0;
-			selector->flashstate ^= 1;
-		}
-	}
-	else
-	{	// permanently dim
-		selector->flashstate = 1;
-		selector->animtimer = 99;		// light up immediately upon becoming active
-	}
-	
-	if (selector->rowlen)
-	{
-		xsel = (selector->cursel % selector->rowlen);
-		ysel = (selector->cursel / selector->rowlen);
-	}
-	else xsel = ysel = 0;
-	
-	selx = x + (xsel * selector->spacing_x);
-	sely = y + (ysel * selector->spacing_y);
-	draw_sprite(selx, sely, selector->sprite, selector->flashstate, 0);
-}
 

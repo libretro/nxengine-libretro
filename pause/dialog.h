@@ -72,4 +72,6 @@ struct ODItem
 
 }
 
+bool buttonjustpushed(void);
+
 #endif

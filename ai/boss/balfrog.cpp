@@ -586,8 +586,8 @@ Object *child;
 
 	for(int i=0;i<count;i++)
 	{
-		int x = random(SPAWN_RANGE_LEFT, SPAWN_RANGE_RIGHT);
-		int y = random(SPAWN_RANGE_TOP, SPAWN_RANGE_BOTTOM);
+		int x = random_nx(SPAWN_RANGE_LEFT, SPAWN_RANGE_RIGHT);
+		int y = random_nx(SPAWN_RANGE_TOP, SPAWN_RANGE_BOTTOM);
 		
 		child = CreateObject((x*TILE_W)<<CSF, (y*TILE_H)<<CSF, objtype);
 		child->dir = DOWN;	// allow fall through ceiling
@@ -602,12 +602,12 @@ Object *smoke;
 
 	for(int i=0;i<count;i++)
 	{
-		int x = random(o->Left() + (4 << CSF), o->Right() - (4<<CSF));
-		int y = o->Bottom() + random(ytop<<CSF, 4<<CSF);
+		int x = random_nx(o->Left() + (4 << CSF), o->Right() - (4<<CSF));
+		int y = o->Bottom() + random_nx(ytop<<CSF, 4<<CSF);
 		
 		smoke = CreateObject(x, y, OBJ_SMOKE_CLOUD);
-		smoke->xinertia = random(-0x155, 0x155);
-		smoke->yinertia = random(-0x600, 0);
+		smoke->xinertia = random_nx(-0x155, 0x155);
+		smoke->yinertia = random_nx(-0x600, 0);
 	}
 }
 

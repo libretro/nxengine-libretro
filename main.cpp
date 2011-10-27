@@ -1,7 +1,7 @@
-
 #include <stdarg.h>
+#include "common/misc.h"
+#include "sound/org.h"
 #include "nx.h"
-#include "main.fdh"
 
 const char *data_dir = "data";
 const char *stage_dir = "data/Stage";
@@ -12,15 +12,114 @@ const char *nxdata_dir = ".";
 #define GAME_WAIT			(1000/GAME_FPS)	// sets framerate
 int framecount = 0;
 
+static void InitNewGame(bool with_intro)
+{
+	stat("= Beginning new game =");
+	
+	memset(game.flags, 0, sizeof(game.flags));
+	memset(game.skipflags, 0, sizeof(game.skipflags));
+	textbox.StageSelect.ClearSlots();
+	
+	game.quaketime = game.megaquaketime = 0;
+	game.showmapnametime = 0;
+	game.running = true;
+	game.frozen = false;
+	
+	// fully re-init the player object
+	Objects::DestroyAll(true);
+	game.createplayer();
+	
+	player->maxHealth = 3;
+	player->hp = player->maxHealth;
+	
+	game.switchstage.mapno = STAGE_START_POINT;
+	game.switchstage.playerx = 10;
+	game.switchstage.playery = 8;
+	game.switchstage.eventonentry = (with_intro) ? 200 : 91;
+
+	fade.set_full(FADE_OUT);
+}
+
+static inline void run_tick()
+{
+	static bool last_freezekey = false;
+	static bool last_framekey = false;
+
+	input_poll();
+
+	// input handling for a few global things
+	if (justpushed(ESCKEY))
+	{
+		if (settings->instant_quit)
+		{
+			game.running = false;
+		}
+		else if (!game.paused)		// no pause from Options
+		{
+			game.pause(GP_PAUSED);
+		}
+	}
+	else if (justpushed(F3KEY))
+	{
+		game.pause(GP_OPTIONS);
+	}
+
+	// freeze frame
+
+
+	game.tick();
+
+	Replay::DrawStatus();
+
+	screen->Flip();
+
+	memcpy(lastinputs, inputs, sizeof(lastinputs));
+
+	// immediately after a game tick is when we have the most amount of time before
+	// the game needs to run again. so now's as good a time as any for some
+	// BGM audio processing, wouldn't you say?
+
+	org_run();
+}
+
+static void gameloop(void)
+{
+	uint32_t gametimer;
+
+	gametimer = -GAME_WAIT*10;
+	game.switchstage.mapno = -1;
+
+	while(game.running && game.switchstage.mapno < 0)
+	{
+		uint32_t curtime = SDL_GetTicks();
+
+		if ((curtime - gametimer >= GAME_WAIT))
+		{
+			run_tick();
+
+			// try to "catch up" if something else on the system bogs us down for a moment.
+			// but if we get really far behind, it's ok to start dropping frames
+			if ((curtime - gametimer > (GAME_WAIT * 3)))
+			{
+				gametimer = curtime;
+			}
+			else
+			{
+				gametimer += GAME_WAIT;
+			}
+		}
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	bool inhibit_loadfade = false;
 	bool error = false;
 	bool freshstart;
 
-	#ifdef USE_LOGGING
+#ifdef USE_LOGGING
 	SetLogFilename("debug.txt");
-	#endif
+#endif
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
 	{
 		staterr("ack, sdl_init failed: %s.", SDL_GetError());
@@ -169,17 +268,17 @@ int main(int argc, char *argv[])
 	}while(game.running);
 
 shutdown: ;
-	  Replay::close();
-	  game.close();
-	  Carets::close();
+	Replay::close();
+	game.close();
+	Carets::close();
 
-	  Graphics::close();
-	  input_close();
-	  font_close();
-	  sound_close();
-	  tsc_close();
-	  textbox.Deinit();
-	  return error;
+	Graphics::close();
+	input_close();
+	font_close();
+	sound_close();
+	tsc_close();
+	textbox.Deinit();
+	return error;
 
 ingame_error: ;
 	      stat("");
@@ -188,105 +287,4 @@ ingame_error: ;
 	      stat(" ************************************************");
 	      error = true;
 	      goto shutdown;
-}
-
-
-void gameloop(void)
-{
-	uint32_t gametimer;
-
-	gametimer = -GAME_WAIT*10;
-	game.switchstage.mapno = -1;
-
-	while(game.running && game.switchstage.mapno < 0)
-	{
-		uint32_t curtime = SDL_GetTicks();
-
-		if ((curtime - gametimer >= GAME_WAIT))
-		{
-			run_tick();
-
-			// try to "catch up" if something else on the system bogs us down for a moment.
-			// but if we get really far behind, it's ok to start dropping frames
-			if ((curtime - gametimer > (GAME_WAIT * 3)))
-			{
-				gametimer = curtime;
-			}
-			else
-			{
-				gametimer += GAME_WAIT;
-			}
-		}
-	}
-}
-
-
-static inline void run_tick()
-{
-	static bool last_freezekey = false;
-	static bool last_framekey = false;
-
-	input_poll();
-
-	// input handling for a few global things
-	if (justpushed(ESCKEY))
-	{
-		if (settings->instant_quit)
-		{
-			game.running = false;
-		}
-		else if (!game.paused)		// no pause from Options
-		{
-			game.pause(GP_PAUSED);
-		}
-	}
-	else if (justpushed(F3KEY))
-	{
-		game.pause(GP_OPTIONS);
-	}
-
-	// freeze frame
-
-
-	game.tick();
-
-	Replay::DrawStatus();
-
-	screen->Flip();
-
-	memcpy(lastinputs, inputs, sizeof(lastinputs));
-
-	// immediately after a game tick is when we have the most amount of time before
-	// the game needs to run again. so now's as good a time as any for some
-	// BGM audio processing, wouldn't you say?
-
-	org_run();
-}
-
-void InitNewGame(bool with_intro)
-{
-	stat("= Beginning new game =");
-	
-	memset(game.flags, 0, sizeof(game.flags));
-	memset(game.skipflags, 0, sizeof(game.skipflags));
-	textbox.StageSelect.ClearSlots();
-	
-	game.quaketime = game.megaquaketime = 0;
-	game.showmapnametime = 0;
-	game.running = true;
-	game.frozen = false;
-	
-	// fully re-init the player object
-	Objects::DestroyAll(true);
-	game.createplayer();
-	
-	player->maxHealth = 3;
-	player->hp = player->maxHealth;
-	
-	game.switchstage.mapno = STAGE_START_POINT;
-	game.switchstage.playerx = 10;
-	game.switchstage.playery = 8;
-	game.switchstage.eventonentry = (with_intro) ? 200 : 91;
-
-	fade.set_full(FADE_OUT);
 }

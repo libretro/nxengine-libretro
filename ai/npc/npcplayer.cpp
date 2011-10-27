@@ -94,8 +94,8 @@ static const int pwalkanimframes[] = { 0, 1, 0, 2 };
 		case 61:
 		{
 			o->ymark += 0x100;
-			o->x = o->xmark + (random(-1, 1) << CSF);
-			o->y = o->ymark + (random(-1, 1) << CSF);
+			o->x = o->xmark + (random_nx(-1, 1) << CSF);
+			o->y = o->ymark + (random_nx(-1, 1) << CSF);
 		}
 		break;
 		

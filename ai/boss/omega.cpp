@@ -195,9 +195,9 @@ void OmegaBoss::Run(void)
 					sound(SND_EM_FIRE);
 					
 					shot = SpawnObjectAtActionPoint(o, OBJ_OMEGA_SHOT);
-					shot->xinertia = random(-omg.shotxspd, omg.shotxspd);
+					shot->xinertia = random_nx(-omg.shotxspd, omg.shotxspd);
 					shot->yinertia = -0x333;
-					if (omg.form==2 || random(0, 9) < 8)
+					if (omg.form==2 || random_nx(0, 9) < 8)
 					{
 						shot->sprite = SPR_OMG_BULLET_NORMAL;
 						shot->flags = FLAG_SHOOTABLE;
@@ -208,7 +208,7 @@ void OmegaBoss::Run(void)
 						shot->flags = (FLAG_SHOOTABLE | FLAG_INVULNERABLE);
 					}
 					
-					shot->timer = (random(0, 7) >= 4) ? random(300, 400):0;
+					shot->timer = (random_nx(0, 7) >= 4) ? random_nx(300, 400):0;
 					shot->damage = 4;
 				}
 			}
@@ -273,7 +273,7 @@ void OmegaBoss::Run(void)
 				omg.timer = 0;
 				o->state = OMG_APPEAR;
 				
-				o->x = omg.orgx + (random(-64, 64) << CSF);
+				o->x = omg.orgx + (random_nx(-64, 64) << CSF);
 				o->y = omg.orgy;
 				omg.movetime = OMEGA_RISE_HEIGHT;
 				
@@ -361,8 +361,8 @@ void OmegaBoss::Run(void)
 			
 			o->xinertia = o->yinertia = 0;
 			
-			x = o->CenterX() + (random(-48, 48)<<CSF);
-			y = o->CenterY() + (random(-48, 24)<<CSF);
+			x = o->CenterX() + (random_nx(-48, 48)<<CSF);
+			y = o->CenterY() + (random_nx(-48, 24)<<CSF);
 			SmokePuff(x, y);
 			effect(x, y, EFFECT_BOOMFLASH);
 			

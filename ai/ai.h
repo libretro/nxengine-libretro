@@ -70,4 +70,7 @@ void SmokeXY(int x, int y, int nclouds, int rangex=0, int rangey=0, Object *push
 	debug("timer2: %d", o->timer2);	\
 }
 
+unsigned short fgeti(FILE *fp);
+bool ai_init(void);
+
 #endif

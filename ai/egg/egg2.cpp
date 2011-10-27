@@ -97,7 +97,7 @@ void ai_dragon_zombie(Object *o)
 			{
 				o->state = 1;
 				o->frame = 0;
-				o->timer = random(100, 200);	// random time till can fire again
+				o->timer = random_nx(100, 200);	// random time till can fire again
 			}
 		}
 		break;
@@ -263,7 +263,7 @@ void ai_counter_bomb(Object *o)
 			o->state = 1;
 			o->ymark = o->y;
 			
-			o->timer = random(0, 50);
+			o->timer = random_nx(0, 50);
 			o->timer2 = 0;
 		}
 		case 1:

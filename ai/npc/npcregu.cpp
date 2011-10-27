@@ -44,7 +44,7 @@ void ai_jenka(Object *o)
 	switch(o->state)
 	{
 		case 0: o->state = 1; o->frame = 0;
-		case 1: if (random(0, 120) < 10) { o->state = 2; o->timer = 0; o->frame = 1; } break;
+		case 1: if (random_nx(0, 120) < 10) { o->state = 2; o->timer = 0; o->frame = 1; } break;
 		case 2: if (++o->timer > 8) { o->state = 1; o->frame = 0; } break;
 	}
 }
@@ -758,13 +758,13 @@ void ai_npc_at_computer(Object *o)
 		{
 			ANIMATE(2, 0, 1);
 			
-			if (!random(0, 80))
+			if (!random_nx(0, 80))
 			{
 				o->state = PAUSE_SLOUCH;
 				o->frame = 1;
 				o->timer = 0;
 			}
-			else if (!random(0, 120))
+			else if (!random_nx(0, 120))
 			{
 				o->state = PAUSE_UPRIGHT;
 				o->frame = 2;

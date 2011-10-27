@@ -194,7 +194,7 @@ void ai_igor_balcony(Object *o)
 					Object *shot = SpawnObjectAtActionPoint(o, OBJ_IGOR_SHOT);
 					
 					int angle = (o->dir == LEFT) ? 136 : 248;
-					angle += random(-16, 16);
+					angle += random_nx(-16, 16);
 					ThrowObjectAtAngle(shot, angle, 0x580);
 				}
 			}
@@ -257,17 +257,17 @@ void ai_falling_block_spawner(Object *o)
 				
 				if (player->equipmask & EQUIP_BOOSTER20)
 				{
-					x += ((random(-14, 14) * TILE_W) << CSF);
+					x += ((random_nx(-14, 14) * TILE_W) << CSF);
 				}
 				else
 				{
-					x += ((random(-11, 11) * TILE_H) << CSF);
+					x += ((random_nx(-11, 11) * TILE_H) << CSF);
 				}
 				
 				block = CreateObject(x, (player->y - MAPY(14)), OBJ_FALLING_BLOCK);
-				block->dir = random(0, 1) ? LEFT : RIGHT;	// small/big blocks
+				block->dir = random_nx(0, 1) ? LEFT : RIGHT;	// small/big blocks
 				
-				o->timer = random(9, 24);
+				o->timer = random_nx(9, 24);
 			}
 		}
 		break;

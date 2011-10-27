@@ -10,7 +10,150 @@
 #include "map_system.h"
 #include "game.h"
 #include "profile.h"
-#include "game.fdh"
+#include "autogen/AssignSprites.h"
+
+void DrawScene(void)
+{
+	int scr_x, scr_y;
+
+	// sporidically-used animated tile feature,
+	// e.g. water currents in Waterway
+	if (map.nmotiontiles)
+		AnimateMotionTiles();
+
+	// draw background map tiles
+	map_draw_backdrop();
+	map_draw(false);
+
+	// draw all objects following their z-order
+	nOnscreenObjects = 0;
+
+	for(Object *o = lowestobject; o != NULL; o = o->higher)
+	{
+		if (o == player) continue;	// player drawn specially in DrawPlayer
+
+		// keep it's floattext linked with it's position
+		o->DamageText->UpdatePos(o);
+
+		// shake enemies that were just hit. when they stop shaking,
+		// start rising up how many damage they took.
+		if (o->shaketime)
+		{
+			o->display_xoff = (o->shaketime & 2) ? 1 : -1;
+			if (!--o->shaketime) o->display_xoff = 0;
+		}
+		else if (o->DamageWaiting > 0)
+		{
+			o->DamageText->AddQty(o->DamageWaiting);
+			o->DamageWaiting = 0;
+		}
+
+		// get object's onscreen position
+		scr_x = (o->x >> CSF) - (map.displayed_xscroll >> CSF);
+		scr_y = (o->y >> CSF) - (map.displayed_yscroll >> CSF);
+		scr_x -= sprites[o->sprite].frame[o->frame].dir[o->dir].drawpoint.x;
+		scr_y -= sprites[o->sprite].frame[o->frame].dir[o->dir].drawpoint.y;
+
+		// don't draw objects that are completely offscreen
+		// (+26 so floattext won't suddenly disappear on object near bottom of screen)
+		if (scr_x <= SCREEN_WIDTH && scr_y <= SCREEN_HEIGHT+26 && \
+				scr_x >= -sprites[o->sprite].w && scr_y >= -sprites[o->sprite].h)
+		{
+			if (nOnscreenObjects < MAX_OBJECTS-1)
+			{
+				onscreen_objects[nOnscreenObjects++] = o;
+				o->onscreen = true;
+			}
+			else
+			{
+				return;
+			}
+
+			if (!o->invisible && o->sprite != SPR_NULL)
+			{
+				scr_x += o->display_xoff;
+
+				if (o->clip_enable)
+				{
+					draw_sprite_clipped(scr_x, scr_y, o->sprite, o->frame, o->dir, o->clipx1, o->clipx2, o->clipy1, o->clipy2);
+				}
+				else
+				{
+					draw_sprite(scr_x, scr_y, o->sprite, o->frame, o->dir);
+				}
+			}
+		}
+		else
+		{
+			o->onscreen = false;
+		}
+	}
+
+	// draw the player
+	DrawPlayer();
+
+	// draw foreground map tiles
+	map_draw(TA_FOREGROUND);
+
+	// draw carets (always-on-top effects such as boomflash)
+	Carets::DrawAll();
+
+	// draw rising/falling water in maps like Almond
+	map_drawwaterlevel();
+
+	// draw all floattext (rising damage and XP amounts)
+	FloatText::DrawAll();
+
+	//if (game.debug.debugmode) DrawAttrPoints();
+}
+
+// standard in-game tick (as opposed to title-screen, inventory etc)
+void game_tick_normal(void)
+{
+	Object *o;
+	player->riding = NULL;
+	Objects::UpdateBlockStates();
+
+	if (!game.frozen)
+	{
+		// run AI for player and stageboss first
+		HandlePlayer();
+		game.stageboss.Run();
+
+		// now objects AI and move all objects to their new positions
+		Objects::RunAI();
+		Objects::PhysicsSim();
+
+		// run the "aftermove" AI routines
+		HandlePlayer_am();
+		game.stageboss.RunAftermove();
+
+		FOREACH_OBJECT(o)
+		{
+			if (!o->deleted)
+				o->OnAftermove();
+		}
+	}
+
+	// important to put this before and not after DrawScene(), or non-existant objects
+	// can wind up in the onscreen_objects[] array, and blow up the program on the next tick.
+	Objects::CullDeleted();
+
+	map_scroll_do();
+
+	DrawScene();
+	DrawStatusBar();
+	fade.Draw();
+
+	niku_run();
+	if (player->equipmask & EQUIP_NIKUMARU)
+		niku_draw(game.counter);
+
+	textbox.Draw();
+
+	ScreenEffects::Draw();
+	map_draw_map_name();	// stage name overlay as on entry
+}
 
 static struct TickFunctions
 {
@@ -232,53 +375,6 @@ void Game::reset()
 void c------------------------------() {}
 */
 
-// standard in-game tick (as opposed to title-screen, inventory etc)
-void game_tick_normal(void)
-{
-	Object *o;
-	player->riding = NULL;
-	Objects::UpdateBlockStates();
-
-	if (!game.frozen)
-	{
-		// run AI for player and stageboss first
-		HandlePlayer();
-		game.stageboss.Run();
-
-		// now objects AI and move all objects to their new positions
-		Objects::RunAI();
-		Objects::PhysicsSim();
-
-		// run the "aftermove" AI routines
-		HandlePlayer_am();
-		game.stageboss.RunAftermove();
-
-		FOREACH_OBJECT(o)
-		{
-			if (!o->deleted)
-				o->OnAftermove();
-		}
-	}
-
-	// important to put this before and not after DrawScene(), or non-existant objects
-	// can wind up in the onscreen_objects[] array, and blow up the program on the next tick.
-	Objects::CullDeleted();
-
-	map_scroll_do();
-
-	DrawScene();
-	DrawStatusBar();
-	fade.Draw();
-
-	niku_run();
-	if (player->equipmask & EQUIP_NIKUMARU)
-		niku_draw(game.counter);
-
-	textbox.Draw();
-
-	ScreenEffects::Draw();
-	map_draw_map_name();	// stage name overlay as on entry
-}
 
 
 // shake screen.
@@ -307,100 +403,6 @@ void megaquake(int quaketime, int snd)
 }
 
 
-void DrawScene(void)
-{
-	int scr_x, scr_y;
-
-	// sporidically-used animated tile feature,
-	// e.g. water currents in Waterway
-	if (map.nmotiontiles)
-		AnimateMotionTiles();
-
-	// draw background map tiles
-	map_draw_backdrop();
-	map_draw(false);
-
-	// draw all objects following their z-order
-	nOnscreenObjects = 0;
-
-	for(Object *o = lowestobject; o != NULL; o = o->higher)
-	{
-		if (o == player) continue;	// player drawn specially in DrawPlayer
-
-		// keep it's floattext linked with it's position
-		o->DamageText->UpdatePos(o);
-
-		// shake enemies that were just hit. when they stop shaking,
-		// start rising up how many damage they took.
-		if (o->shaketime)
-		{
-			o->display_xoff = (o->shaketime & 2) ? 1 : -1;
-			if (!--o->shaketime) o->display_xoff = 0;
-		}
-		else if (o->DamageWaiting > 0)
-		{
-			o->DamageText->AddQty(o->DamageWaiting);
-			o->DamageWaiting = 0;
-		}
-
-		// get object's onscreen position
-		scr_x = (o->x >> CSF) - (map.displayed_xscroll >> CSF);
-		scr_y = (o->y >> CSF) - (map.displayed_yscroll >> CSF);
-		scr_x -= sprites[o->sprite].frame[o->frame].dir[o->dir].drawpoint.x;
-		scr_y -= sprites[o->sprite].frame[o->frame].dir[o->dir].drawpoint.y;
-
-		// don't draw objects that are completely offscreen
-		// (+26 so floattext won't suddenly disappear on object near bottom of screen)
-		if (scr_x <= SCREEN_WIDTH && scr_y <= SCREEN_HEIGHT+26 && \
-				scr_x >= -sprites[o->sprite].w && scr_y >= -sprites[o->sprite].h)
-		{
-			if (nOnscreenObjects < MAX_OBJECTS-1)
-			{
-				onscreen_objects[nOnscreenObjects++] = o;
-				o->onscreen = true;
-			}
-			else
-			{
-				return;
-			}
-
-			if (!o->invisible && o->sprite != SPR_NULL)
-			{
-				scr_x += o->display_xoff;
-
-				if (o->clip_enable)
-				{
-					draw_sprite_clipped(scr_x, scr_y, o->sprite, o->frame, o->dir, o->clipx1, o->clipx2, o->clipy1, o->clipy2);
-				}
-				else
-				{
-					draw_sprite(scr_x, scr_y, o->sprite, o->frame, o->dir);
-				}
-			}
-		}
-		else
-		{
-			o->onscreen = false;
-		}
-	}
-
-	// draw the player
-	DrawPlayer();
-
-	// draw foreground map tiles
-	map_draw(TA_FOREGROUND);
-
-	// draw carets (always-on-top effects such as boomflash)
-	Carets::DrawAll();
-
-	// draw rising/falling water in maps like Almond
-	map_drawwaterlevel();
-
-	// draw all floattext (rising damage and XP amounts)
-	FloatText::DrawAll();
-
-	//if (game.debug.debugmode) DrawAttrPoints();
-}
 
 /*
 void c------------------------------() {}

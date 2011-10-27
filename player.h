@@ -132,6 +132,15 @@ enum BoosterState
 void hurtplayer(int damage, bool even_if_controls_locked = false);
 void AddXP(int xp, bool quiet = false);
 void SubXP(int xp, bool quiet = false);
+void GetPlayerShootPoint(int *x_out, int *y_out);
+void PSelectSprite(void);
+void PSelectFrame(void);
 
+void HandlePlayer(void);
+void HandlePlayer_am(void);
+void DrawPlayer(void);
+void InitPlayer(void);
+void PHandleAttributes(void);
+void PInitFirstTime(void);
 
 #endif

@@ -2,6 +2,8 @@
 #ifndef _ORG_H
 #define _ORG_H
 
+#include <stdint.h>
+
 // SSChannel # to play the music on
 #define ORG_CHANNEL			15
 
@@ -38,10 +40,10 @@
 struct stNote
 {
 	int beat;			// beat no. that note starts on
-	uchar note;			// 00 - 5F, starts on a C
-	uchar length;		// in beats
-	uchar volume;		// 00 - F8
-	uchar panning;		// 00 - 0C
+	unsigned char note;			// 00 - 5F, starts on a C
+	unsigned char length;		// in beats
+	unsigned char volume;		// 00 - F8
+	unsigned char panning;		// 00 - 0C
 };
 
 // keeps track of instrument settings for a track
@@ -115,6 +117,9 @@ struct stSong
 	bool fading;
 	uint32_t last_fade_time;
 };
+
+void org_run(void);
+void org_fade(void);
 
 #endif
 
