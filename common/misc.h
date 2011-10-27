@@ -15,6 +15,9 @@ void fbooleanflush(FILE * fp);
 unsigned int fgetl(FILE *fp);
 void fputi(unsigned short word,  FILE *fp);
 void fputl(unsigned int word, FILE *fp);
+unsigned short fgeti(FILE *fp);
+int fgeticsv(FILE *fp);
+double fgetfcsv(FILE *fp);
 
 uint32_t getrand();
 void seedrand(uint32_t newseed);

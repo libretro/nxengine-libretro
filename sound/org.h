@@ -120,6 +120,11 @@ struct stSong
 
 void org_run(void);
 void org_fade(void);
+int org_init(const char *wavetable_fname, const char *drum_pxt_dir, int org_volume);
+void org_stop(void);
+bool org_is_playing(void);
+char org_load(char *fname);
+bool org_start(int startbeat);
 
 #endif
 

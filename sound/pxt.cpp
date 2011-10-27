@@ -7,11 +7,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../common/misc.h"
 #include "pxt.h"
 #include "sslib.h"
 #include "../nx.h"
-
-#include "pxt.fdh"
 
 #define MODEL_SIZE			256
 
@@ -190,9 +189,9 @@ int i;
 
 char pxt_initsynth(void)
 {
-static int synth_inited = 0;
+	static int synth_inited = 0;
 	if (synth_inited) return 0; else synth_inited = 1;
-	
+
 	GenerateSineModel(wave[MOD_SINE].table);
 	GenerateTriangleModel(wave[MOD_TRI].table);
 	GenerateSawUpModel(wave[MOD_SAWUP].table);
@@ -727,16 +726,30 @@ int insize = snd->final_size;
 	snd->final_size = outsize;
 }
 
-
-// begins playing the pxt in the given slot.
-// the SSChannel is returned.
-// on error, returns -1.
-int pxt_Play(int chan, int slot, char loop)
+static void pxtSoundDone(int chan, int slot)
 {
-	return pxt_PlayWithCallback(chan, slot, loop, NULL);
+	sound_fx[slot].channel = -1;
+	if (sound_fx[slot].DoneCallback)
+	{
+		(*sound_fx[slot].DoneCallback)(chan, slot);
+	}
 }
 
-int pxt_PlayWithCallback(int chan, int slot, char loop, void (*FinishedCB)(int, int))
+static void pxtLooper(int chan, int slot)
+{
+	if (sound_fx[slot].loops_left)
+	{
+		SSEnqueueChunk(chan, sound_fx[slot].buffer, sound_fx[slot].len, slot, pxtLooper);
+	}
+	else
+	{
+		pxtSoundDone(chan, slot);
+	}
+	
+	if (sound_fx[slot].loops_left > 0) sound_fx[slot].loops_left--;
+}
+
+static int pxt_PlayWithCallback(int chan, int slot, char loop, void (*FinishedCB)(int, int))
 {
 	if (sound_fx[slot].buffer)
 	{
@@ -772,28 +785,16 @@ int pxt_PlayWithCallback(int chan, int slot, char loop, void (*FinishedCB)(int, 
 	}
 }
 
-static void pxtSoundDone(int chan, int slot)
+// begins playing the pxt in the given slot.
+// the SSChannel is returned.
+// on error, returns -1.
+int pxt_Play(int chan, int slot, char loop)
 {
-	sound_fx[slot].channel = -1;
-	if (sound_fx[slot].DoneCallback)
-	{
-		(*sound_fx[slot].DoneCallback)(chan, slot);
-	}
+	return pxt_PlayWithCallback(chan, slot, loop, NULL);
 }
 
-static void pxtLooper(int chan, int slot)
-{
-	if (sound_fx[slot].loops_left)
-	{
-		SSEnqueueChunk(chan, sound_fx[slot].buffer, sound_fx[slot].len, slot, pxtLooper);
-	}
-	else
-	{
-		pxtSoundDone(chan, slot);
-	}
-	
-	if (sound_fx[slot].loops_left > 0) sound_fx[slot].loops_left--;
-}
+
+
 
 void pxt_Stop(int slot)
 {	/// possible threading issues here? i'm not sure if it's important enough
@@ -811,6 +812,61 @@ char pxt_IsPlaying(int slot)
 	return (sound_fx[slot].channel != -1);
 }
 
+// attempts to load all the PXT's out of the given cache file.
+// if succesful, returns 0.
+static char LoadFXCache(const char *fname, int top)
+{
+	FILE *fp;
+	int slot;
+	stPXSound snd;
+
+	fp = fopen(fname, "rb");
+	if (!fp)
+	{
+		return 1;
+	}
+
+	if (fgetl(fp) != 'PXC1')
+	{
+		fclose(fp);
+		return 1;
+	}
+
+	if (fgeti(fp) != top)
+	{
+		fclose(fp);
+		return 1;
+	}
+
+	int allocd_size = 0;
+	snd.final_buffer = NULL;
+
+	for(;;)
+	{
+		snd.final_size = fgetl(fp);
+		slot = fgetc(fp);
+		if (slot == -1) break;
+
+		if (snd.final_size > allocd_size)
+		{
+			allocd_size = (snd.final_size * 10);
+
+			if (snd.final_buffer) free(snd.final_buffer);
+			snd.final_buffer = (signed char *)malloc(allocd_size);
+			if (!snd.final_buffer)
+			{
+				return 1;
+			}
+		}
+
+		fread(snd.final_buffer, snd.final_size, 1, fp);
+		pxt_PrepareToPlay(&snd, slot);
+	}
+
+	load_top = slot;
+	free(snd.final_buffer);
+	return 0;
+}
 
 // render all pxt files under "path" up to slot "top".
 // get them all ready to play in their sound slots.
@@ -883,61 +939,6 @@ char pxt_LoadSoundFX(const char *path, const char *cache_name, int top)
 }
 
 
-// attempts to load all the PXT's out of the given cache file.
-// if succesful, returns 0.
-static char LoadFXCache(const char *fname, int top)
-{
-FILE *fp;
-int slot;
-stPXSound snd;
-
-	fp = fopen(fname, "rb");
-	if (!fp)
-	{
-		return 1;
-	}
-	
-	if (fgetl(fp) != 'PXC1')
-	{
-		fclose(fp);
-		return 1;
-	}
-	
-	if (fgeti(fp) != top)
-	{
-		fclose(fp);
-		return 1;
-	}
-	
-	int allocd_size = 0;
-	snd.final_buffer = NULL;
-	
-	for(;;)
-	{
-		snd.final_size = fgetl(fp);
-		slot = fgetc(fp);
-		if (slot == -1) break;
-		
-		if (snd.final_size > allocd_size)
-		{
-			allocd_size = (snd.final_size * 10);
-			
-			if (snd.final_buffer) free(snd.final_buffer);
-			snd.final_buffer = (signed char *)malloc(allocd_size);
-			if (!snd.final_buffer)
-			{
-				return 1;
-			}
-		}
-		
-		fread(snd.final_buffer, snd.final_size, 1, fp);
-		pxt_PrepareToPlay(&snd, slot);
-	}
-	
-	load_top = slot;
-	free(snd.final_buffer);
-	return 0;
-}
 
 void pxt_freeSoundFX(void)
 {
@@ -1014,30 +1015,59 @@ void FreePXTBuf(stPXSound *snd)
 }
 
 
+static char LoadComponent(FILE *fp, stPXWave *pxw)
+{
+	if (pxt_SetModel(pxw, fgeticsv(fp))) return 1;
+	
+	pxw->repeat = fgetfcsv(fp);
+	pxw->volume = fgeticsv(fp);
+	pxw->offset = fgeticsv(fp);
+	return 0;
+}
+
+#define BRACK		'{'		// my damn IDE is borking up the Function List if i put this inline
+
+static char ReadToBracket(FILE *fp)
+{
+	unsigned char ch;
+
+	for(;;)
+	{
+		ch = fgetc(fp);
+		if (ch==BRACK) break;
+
+		if (feof(fp))
+		{
+			staterr("pxt_load: file is in incorrect file format [failed to find '{']");
+			fclose(fp);
+			return 1;
+		}
+	}
+	return 0;
+}
 
 // read a .pxt file into memory and return a stPXSound ready to be rendered.
 char pxt_load(const char *fname, stPXSound *snd)
 {
-FILE *fp;
-char ch;
-char cc;
-int i;
-char load_extended_section = 0;
+	FILE *fp;
+	char ch;
+	char cc;
+	int i;
+	char load_extended_section = 0;
 
-#define BRACK		'{'		// my damn IDE is borking up the Function List if i put this inline
 
 	fp = fopen(fname, "rb");
 	if (!fp) { staterr("pxt_load: file '%s' not found.", fname); return 1; }
-	
+
 	//lprintf("pxt_load: reading %s...\n", fname);
-	
+
 	// set all buffers to non-existant and zero-length to start
 	memset(snd, 0, sizeof(stPXSound));
-	
-	
+
+
 	// skip ahead in the file till we find the machine readable data, denoted by '{'
 	if (ReadToBracket(fp)) return 1;
-	
+
 	// load all channels we find
 	cc = 0;
 	ch = BRACK;
@@ -1054,27 +1084,27 @@ char load_extended_section = 0;
 			{
 				goto error;
 			}
-			
+
 			snd->chan[cc].enabled = fgeticsv(fp);
 			snd->chan[cc].size_blocks = fgeticsv(fp);
-			
+
 			if (LoadComponent(fp, &snd->chan[cc].main)) goto error;
 			if (LoadComponent(fp, &snd->chan[cc].pitch)) goto error;
 			if (LoadComponent(fp, &snd->chan[cc].volume)) goto error;
-			
+
 			snd->chan[cc].envelope.initial = fgeticsv(fp);
 			for(i=0;i<PXENV_NUM_VERTICES;i++)
 			{
 				snd->chan[cc].envelope.time[i] = fgeticsv(fp);
 				snd->chan[cc].envelope.val[i] = fgeticsv(fp);
 			}
-			
+
 			cc++;
 		}
-		
+
 		ch = fgetc(fp);
 	}
-	
+
 	if (load_extended_section)
 	{
 		if (ReadToBracket(fp)) return 1;
@@ -1092,53 +1122,26 @@ char load_extended_section = 0;
 			pxt_SetModel(&snd->chan[i].pitch2, 0);
 		}
 	}
-	
+
 	//stat("pxt_load: '%s' parsed ok", fname);
 	fclose(fp);
 	return 0;
-	
+
 error: ;
-	for(i=0;i<PXT_NO_CHANNELS;i++)
-	{
-		if (snd->chan[i].buffer)
-		{
-			free(snd->chan[i].buffer);
-			snd->chan[i].buffer = NULL;
-		}
-	}
-	if (fp) fclose(fp);
-	
-	return 1;
+       for(i=0;i<PXT_NO_CHANNELS;i++)
+       {
+	       if (snd->chan[i].buffer)
+	       {
+		       free(snd->chan[i].buffer);
+		       snd->chan[i].buffer = NULL;
+	       }
+       }
+       if (fp) fclose(fp);
+
+       return 1;
 }
 
-static char LoadComponent(FILE *fp, stPXWave *pxw)
-{
-	if (pxt_SetModel(pxw, fgeticsv(fp))) return 1;
-	
-	pxw->repeat = fgetfcsv(fp);
-	pxw->volume = fgeticsv(fp);
-	pxw->offset = fgeticsv(fp);
-	return 0;
-}
 
-static char ReadToBracket(FILE *fp)
-{
-uchar ch;
-
-	for(;;)
-	{
-		ch = fgetc(fp);
-		if (ch==BRACK) break;
-		
-		if (feof(fp))
-		{
-			staterr("pxt_load: file is in incorrect file format [failed to find '{']");
-			fclose(fp);
-			return 1;
-		}
-	}
-	return 0;
-}
 
 
 static void SaveComponent(FILE *fp, const char *name, stPXWave *pxw)
