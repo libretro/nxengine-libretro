@@ -13,7 +13,7 @@ void stat(const char *fmt, ...);
 
 unsigned short fgeti(FILE *fp)
 {
-unsigned short value;
+	unsigned short value;
 	fread(&value, 2, 1, fp);
 	return value;
 }

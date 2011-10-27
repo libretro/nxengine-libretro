@@ -66,5 +66,17 @@ typedef struct
 	int final_size;
 } stPXSound;
 
+char pxt_initsynth(void);
+char pxt_load(const char *fname, stPXSound *snd);
+char pxt_Render(stPXSound *snd);
+void FreePXTBuf(stPXSound *snd);
+char pxt_init(void);
+char pxt_LoadSoundFX(const char *path, const char *cache_name, int top);
+void pxt_FreeSound(int slot);
+void pxt_freeSoundFX(void);
+void pxt_Stop(int slot);
+int pxt_Play(int chan, int slot, char loop);
+char pxt_IsPlaying(int slot);
+
 #endif
 

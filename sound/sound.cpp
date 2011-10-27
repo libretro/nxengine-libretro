@@ -7,9 +7,10 @@
 
 #include "../nx.h"
 #include "../settings.h"
+#include "org.h"
 #include "pxt.h"
 #include "sound.h"
-#include "sound.fdh"
+#include "sslib.h"
 
 #define MUSIC_OFF		0
 #define MUSIC_ON		1
@@ -112,9 +113,49 @@ void StopLoopSounds(void)
 	sound_stop(SND_PROPELLOR);
 }
 
-/*
-void c------------------------------() {}
-*/
+static bool music_is_boss(int songno)
+{
+	if (strchr(bossmusic, songno))
+		return true;
+	else
+		return false;
+}
+
+static bool should_music_play(int songno, int musicmode)
+{
+	if (game.mode == GM_TITLE || game.mode == GM_CREDITS)
+		return true;
+	
+	switch(musicmode)
+	{
+		case MUSIC_OFF: return false;
+		case MUSIC_ON:  return true;
+		case MUSIC_BOSS_ONLY:
+			return music_is_boss(songno);
+	}
+	
+	return false;
+}
+
+static void start_track(int songno)
+{
+	char fname[MAXPATHLEN];
+
+	if (songno == 0)
+	{
+		org_stop();
+		return;
+	}
+
+	strcpy(fname, org_dir);
+	strcat(fname, org_names[songno]);
+	strcat(fname, ".org");
+
+	if (!org_load(fname))
+	{
+		org_start(0);
+	}
+}
 
 void music(int songno)
 {
@@ -135,29 +176,7 @@ void music(int songno)
 }
 
 
-bool should_music_play(int songno, int musicmode)
-{
-	if (game.mode == GM_TITLE || game.mode == GM_CREDITS)
-		return true;
-	
-	switch(musicmode)
-	{
-		case MUSIC_OFF: return false;
-		case MUSIC_ON:  return true;
-		case MUSIC_BOSS_ONLY:
-			return music_is_boss(songno);
-	}
-	
-	return false;
-}
 
-bool music_is_boss(int songno)
-{
-	if (strchr(bossmusic, songno))
-		return true;
-	else
-		return false;
-}
 
 void music_set_enabled(int newstate)
 {
@@ -176,25 +195,6 @@ void music_set_enabled(int newstate)
 	}
 }
 
-static void start_track(int songno)
-{
-char fname[MAXPATHLEN];
-
-	if (songno == 0)
-	{
-		org_stop();
-		return;
-	}
-	
-	strcpy(fname, org_dir);
-	strcat(fname, org_names[songno]);
-	strcat(fname, ".org");
-	
-	if (!org_load(fname))
-	{
-		org_start(0);
-	}
-}
 
 int music_cursong()		{ return cursong; }
 int music_lastsong() 	{ return lastsong; }
