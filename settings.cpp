@@ -1,12 +1,12 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #include <sys/param.h>
 #include "settings.h"
+#include "nx.h"
 #include "replay.h"
-#include "settings.fdh"
+#include "common/misc.h"
 
 const char *setfilename = "settings.dat";
 const uint16_t SETTINGS_VERSION = 0x1602;		// serves as both a version and magic
@@ -15,6 +15,30 @@ Settings normal_settings;
 Settings replay_settings;
 Settings *settings = &normal_settings;
 
+static bool tryload(Settings *setfile)
+{
+	FILE *fp;
+
+	stat("Loading settings...");
+
+	fp = fopen(setfilename, "rb");
+	if (!fp)
+	{
+		stat("Couldn't open file %s.", setfilename);
+		return 1;
+	}
+
+	uint16_t ver = fgeti(fp);
+	if (ver != SETTINGS_VERSION)
+	{
+		stat("Wrong settings version %04x.", ver);
+		return 1;
+	}
+
+	fread(setfile, sizeof(Settings), 1, fp);
+	fclose(fp);
+	return 0;
+}
 
 bool settings_load(Settings *setfile)
 {
@@ -62,30 +86,6 @@ bool settings_load(Settings *setfile)
 void c------------------------------() {}
 */
 
-static bool tryload(Settings *setfile)
-{
-FILE *fp;
-
-	stat("Loading settings...");
-	
-	fp = fopen(setfilename, "rb");
-	if (!fp)
-	{
-		stat("Couldn't open file %s.", setfilename);
-		return 1;
-	}
-	
-	uint16_t ver = fgeti(fp);
-	if (ver != SETTINGS_VERSION)
-	{
-		stat("Wrong settings version %04x.", ver);
-		return 1;
-	}
-	
-	fread(setfile, sizeof(Settings), 1, fp);
-	fclose(fp);
-	return 0;
-}
 
 
 bool settings_save(Settings *setfile)

@@ -15,7 +15,7 @@ void c------------------------------() {}
 Object *SmokePuff(int x, int y)
 {
 	Object *o = CreateObject(x, y, OBJ_SMOKE_CLOUD);
-	vector_from_angle(random(0,255), random(0x200,0x5ff), &o->xinertia, &o->yinertia);
+	vector_from_angle(random_nx(0,255), random_nx(0x200,0x5ff), &o->xinertia, &o->yinertia);
 	return o;
 }
 
@@ -32,8 +32,8 @@ Object *s;
 
 	for(int i=0;i<nclouds;i++)
 	{
-		s = SmokePuff(x + (random(-rangex, rangex) << CSF), \
-			 	      y + (random(-rangey, rangey) << CSF));
+		s = SmokePuff(x + (random_nx(-rangex, rangex) << CSF), \
+			 	      y + (random_nx(-rangey, rangey) << CSF));
 		
 		if (push_behind)
 			s->PushBehind(push_behind);
@@ -114,11 +114,11 @@ static const int SFAST = 0x600;
 	
 	for(int i=0;i<nclouds;i++)
 	{
-		CreateObject(o->x + random(xmin, xmax),
-					 o->y + random(ymin, ymax),
+		CreateObject(o->x + random_nx(xmin, xmax),
+					 o->y + random_nx(ymin, ymax),
 					 OBJ_SMOKE_CLOUD,
-					 random(xi_min, xi_max),
-					 random(yi_min, yi_max));
+					 random_nx(xi_min, xi_max),
+					 random_nx(yi_min, yi_max));
 	}
 }
 
@@ -127,8 +127,8 @@ void SmokeCloudsSlow(int x, int y, int nclouds)
 	for(int i=0;i<nclouds;i++)
 	{
 		CreateObject(x, y, OBJ_SMOKE_CLOUD,
-					random(-0x200, 0x200),
-					random(-0x200, 0x200));
+					random_nx(-0x200, 0x200),
+					random_nx(-0x200, 0x200));
 	}
 }
 
@@ -136,11 +136,11 @@ void SmokeBoomUp(Object *o)
 {
 	for(int i=0;i<8;i++)
 	{
-		CreateObject(o->CenterX() + random(-16<<CSF, 16<<CSF),
-					 o->CenterY() + random(-16<<CSF, 16<<CSF),
+		CreateObject(o->CenterX() + random_nx(-16<<CSF, 16<<CSF),
+					 o->CenterY() + random_nx(-16<<CSF, 16<<CSF),
 					 OBJ_SMOKE_CLOUD,
-					 random(-0x155, 0x155),
-					 random(-0x600, 0));
+					 random_nx(-0x155, 0x155),
+					 random_nx(-0x600, 0));
 	}
 }
 
@@ -152,7 +152,7 @@ void ai_smokecloud(Object *o)
 {
 	if (!o->state)
 	{
-		if (!random(0, 1)) o->frame = 1;
+		if (!random_nx(0, 1)) o->frame = 1;
 		o->state = 1;
 	}
 	

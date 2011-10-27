@@ -1,7 +1,8 @@
 
 #include "nx.h"
 #include "profile.h"
-#include "profile.fdh"
+#include "common/misc.h"
+#include "siflib/sifloader.h"
 
 #define PF_WEAPONS_OFFS		0x38
 #define PF_CURWEAPON_OFFS	0x24

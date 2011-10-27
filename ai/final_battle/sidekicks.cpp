@@ -168,13 +168,13 @@ void ai_misery_frenzied(Object *o)
 				
 				if (o->timer3 == OBJ_MISERY_CRITTER)
 				{
-					x = o->x + (random(-64, 64) << CSF);
-					y = o->y + (random(-32, 32) << CSF);
+					x = o->x + (random_nx(-64, 64) << CSF);
+					y = o->y + (random_nx(-32, 32) << CSF);
 				}
 				else
 				{
-					x = o->x + (random(-32, 32) << CSF);
-					y = o->y + (random(-64, 64) << CSF);
+					x = o->x + (random_nx(-32, 32) << CSF);
+					y = o->y + (random_nx(-64, 64) << CSF);
 				}
 				
 				if (x < MAPX(2)) x = MAPX(2);

@@ -210,8 +210,8 @@ static void run_teleport(Object *o)
 				// we don't actually move until the last possible second
 				// in order not to bring the floattext/damage numbers with us,
 				// which gives away our position.
-				o->xmark = (random(9, 31) * TILE_W) << CSF;
-				o->ymark = (random(5, 7) * TILE_H) << CSF;
+				o->xmark = (random_nx(9, 31) * TILE_W) << CSF;
+				o->ymark = (random_nx(5, 7) * TILE_H) << CSF;
 				
 				CreateObject(o->xmark + 0x2000, o->ymark, OBJ_MISERY_PHASE)->dir = LEFT;
 				CreateObject(o->xmark - 0x2000, o->ymark, OBJ_MISERY_PHASE)->dir = RIGHT;

@@ -107,4 +107,20 @@ void map_ChangeTileWithSmoke(int x, int y, int newtile, int nclouds=4, bool boom
 // backdrop and tileset names
 #include "stagedata.h"
 
+bool load_stage(int stage_no);
+void map_scroll_lock(bool lockstate);
+void map_show_map_name(void);
+void map_scroll_do(void);
+
+Object *FindObjectByID2(int id2);
+
+void map_draw_backdrop(void);
+void map_draw(uint8_t foreground);
+void map_drawwaterlevel(void);
+void map_draw_map_name(void);
+
+bool initmapfirsttime(void);
+void initmap(void);
+void map_scroll_jump(int x, int y);
+
 #endif

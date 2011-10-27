@@ -9,6 +9,7 @@
 
 #include "pxt.h"
 #include "sslib.h"
+#include "../nx.h"
 
 #include "pxt.fdh"
 
@@ -155,7 +156,7 @@ int i;
 	seedrand(0xa42c1911);
 	
 	for(i=0;i<WHITE_LEN;i++)
-		white[i] = random(-63, 63);
+		white[i] = random_nx(-63, 63);
 }
 
 static void GeneratePulseModel(unsigned char *table)

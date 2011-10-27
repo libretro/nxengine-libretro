@@ -1,6 +1,5 @@
 
 #include "nx.h"
-#include "floattext.fdh"
 
 FloatText *FloatText::first = NULL;
 FloatText *FloatText::last = NULL;

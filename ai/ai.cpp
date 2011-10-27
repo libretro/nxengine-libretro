@@ -136,7 +136,7 @@ void randblink(Object *o, int blinkframe, int blinktime, int prob)
 		o->blinktimer--;
 		o->frame = blinkframe;
 	}
-	else if (random(0, prob) == 0)
+	else if (random_nx(0, prob) == 0)
 	{
 		o->frame = blinkframe;
 		o->blinktimer = 8;
@@ -227,7 +227,7 @@ bool DoTeleportOut(Object *o, int slowness)
 // returns true when teleport is complete
 static bool teleffect(Object *o, int slowness, bool teleporting_out)
 {
-	o->display_xoff = random(-1, 1);
+	o->display_xoff = random_nx(-1, 1);
 	
 	if (!o->timer)
 	{

@@ -3,7 +3,8 @@
 #include "nx.h"
 #include "replay.h"
 #include "profile.h"
-#include "replay.fdh"
+#include "common/misc.h"
+
 using namespace Replay;
 
 #define REPLAY_MAGICK		0xC321

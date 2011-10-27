@@ -51,22 +51,22 @@ int type;
 	
 	if (--o->timer < 0)
 	{
-		o->timer = random(0, 16);
-		type = random(0, 3);
+		o->timer = random_nx(0, 16);
+		type = random_nx(0, 3);
 		
 		cloud = CreateObject(0, 0, OBJ_CLOUD);
 		cloud->sprite = cloud_sprites[type];
 		
 		if (o->dir == LEFT)		// vertical clouds (falling)
 		{
-			cloud->x = o->x + MAPY(random(-10, 10));
+			cloud->x = o->x + MAPY(random_nx(-10, 10));
 			cloud->y = o->y;
 			cloud->yinertia = -(0x1000 >> type);	// each type half as fast as the last
 		}
 		else					// horizontal clouds (flying with Kazuma)
 		{
 			cloud->x = o->x;
-			cloud->y = o->y + MAPY(random(-7, 7));
+			cloud->y = o->y + MAPY(random_nx(-7, 7));
 			cloud->xinertia = -(0x400 >> type);
 		}
 		
@@ -251,7 +251,7 @@ void ai_baby_puppy(Object *o)
 	{
 		case 0:
 		{
-			o->animtimer = random(0, 6);	// desync with other puppies
+			o->animtimer = random_nx(0, 6);	// desync with other puppies
 			o->state = 1;
 		}
 		case 1:
@@ -409,8 +409,8 @@ void ai_ahchoo(Object *o)
 		{
 			if (o->timer < 48)
 			{	// shake
-				o->x = o->xmark + (random(-1, 1) << CSF);
-				o->y = o->ymark + (random(-1, 1) << CSF);
+				o->x = o->xmark + (random_nx(-1, 1) << CSF);
+				o->y = o->ymark + (random_nx(-1, 1) << CSF);
 			}
 			else
 			{	// return to original pos

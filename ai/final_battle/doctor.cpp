@@ -190,8 +190,8 @@ void ai_boss_doctor(Object *o)
 				// can start moving towards it. But, it's important not to
 				// actually move until the last possible second, or we could
 				// drag our floattext along with us (and give away our position).
-				o->xmark = (random(5, 35) * TILE_W) << CSF;
-				o->ymark = (random(5, 7) * TILE_H) << CSF;
+				o->xmark = (random_nx(5, 35) * TILE_W) << CSF;
+				o->ymark = (random_nx(5, 7) * TILE_H) << CSF;
 			}
 		}
 		break;

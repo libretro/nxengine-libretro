@@ -127,13 +127,13 @@ static void ai_oc_controller(Object *o)
 			/*if (o->timer < 175)
 			{
 				if ((o->timer % 6) == 1)
-					create_object(-16<<CSF, random(-16, SCREEN_HEIGHT) << CSF, OC_CURRENT);
+					create_object(-16<<CSF, random_nx(-16, SCREEN_HEIGHT) << CSF, OC_CURRENT);
 			}*/
 			
 			if (o->timer <= 150)
 			{
 				if ((o->timer % 10) == 1)
-					create_object(-16<<CSF, random(-16, SCREEN_HEIGHT) << CSF, OC_IKACHAN);
+					create_object(-16<<CSF, random_nx(-16, SCREEN_HEIGHT) << CSF, OC_IKACHAN);
 			}
 			
 			if (o->timer > 300)
@@ -225,7 +225,7 @@ static void ai_oc_ikachan(Object *o)
 		case 0:
 		{
 			o->state = 1;
-			o->timer = random(3, 20);
+			o->timer = random_nx(3, 20);
 			o->sprite = SPR_IKACHAN;
 		}
 		case 1:		// he pushes ahead
@@ -233,7 +233,7 @@ static void ai_oc_ikachan(Object *o)
 			if (--o->timer <= 0)
 			{
 				o->state = 2;
-				o->timer = random(10, 50);
+				o->timer = random_nx(10, 50);
 				o->frame = 1;
 				o->xinertia = 0x600;
 			}
@@ -245,9 +245,9 @@ static void ai_oc_ikachan(Object *o)
 			if (--o->timer <= 0)
 			{
 				o->state = 3;
-				o->timer = random(40, 50);
+				o->timer = random_nx(40, 50);
 				o->frame = 2;
-				o->yinertia = random(-0x100, 0x100);
+				o->yinertia = random_nx(-0x100, 0x100);
 			}
 		}
 		break;
@@ -274,7 +274,7 @@ static void ai_oc_ikachan(Object *o)
 static void ai_oc_current(Object *o)
 {
 	o->sprite = SPR_WATER_DROPLET;
-	o->frame = random(0, 4);
+	o->frame = random_nx(0, 4);
 	
 	o->xinertia = 0x400;
 	

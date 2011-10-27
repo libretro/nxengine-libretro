@@ -30,5 +30,6 @@ private:
 	int fAnswer;
 };
 
+bool justpushed(int k);
 
 #endif

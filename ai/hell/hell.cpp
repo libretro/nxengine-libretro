@@ -414,7 +414,7 @@ void ai_bute_archer(Object *o)
 			{
 				o->state = 40;
 				o->frame = 0;
-				o->timer = random(50, 150);
+				o->timer = random_nx(50, 150);
 			}
 		}
 		break;
@@ -975,7 +975,7 @@ void ai_puppy_ghost(Object *o)
 	
 	if ((o->timer % 8) == 1)
 	{
-		effect(random(o->Left(), o->Right()), o->Bottom(), EFFECT_GHOST_SPARKLE);
+		effect(random_nx(o->Left(), o->Right()), o->Bottom(), EFFECT_GHOST_SPARKLE);
 	}
 }
 

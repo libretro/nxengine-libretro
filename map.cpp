@@ -1,7 +1,6 @@
-
 #include "nx.h"
 #include "map.h"
-#include "map.fdh"
+#include "common/misc.h"
 
 stMap map;
 
@@ -18,49 +17,8 @@ unsigned char tilecode[MAX_TILES];			// tile codes for every tile in current til
 unsigned int tileattr[MAX_TILES];			// tile attribute bits for every tile in current tileset
 unsigned int tilekey[MAX_TILES];			// mapping from tile codes -> tile attributes
 
-
-// load stage "stage_no", this entails loading the map (pxm), enemies (pxe), tileset (pbm),
-// tile attributes (pxa), and script (tsc).
-bool load_stage(int stage_no)
-{
-	char stage[MAXPATHLEN];
-	char fname[MAXPATHLEN];
-
-	game.curmap = stage_no;		// do it now so onspawn events will have it
-
-	if (Tileset::Load(stages[stage_no].tileset))
-		return 1;
-
-	// get the base name of the stage without extension
-	const char *mapname = stages[stage_no].filename;
-	if (!strcmp(mapname, "lounge")) mapname = "Lounge";
-	sprintf(stage, "%s/%s", stage_dir, mapname);
-
-	sprintf(fname, "%s.pxm", stage);
-	if (load_map(fname)) return 1;
-
-	sprintf(fname, "%s/%s.pxa", stage_dir, tileset_names[stages[stage_no].tileset]);
-	if (load_tileattr(fname)) return 1;
-
-	sprintf(fname, "%s.pxe", stage);
-	if (load_entities(fname)) return 1;
-
-	sprintf(fname, "%s.tsc", stage);
-	if (tsc_load(fname, SP_MAP) == -1) return 1;
-
-	map_set_backdrop(stages[stage_no].bg_no);
-	map.scrolltype = stages[stage_no].scroll_type;
-	map.motionpos = 0;
-
-	return 0;
-}
-
-/*
-void c------------------------------() {}
-*/
-
 // load a PXM map
-bool load_map(const char *fname)
+static bool load_map(const char *fname)
 {
 	FILE *fp;
 	int x, y;
@@ -107,9 +65,50 @@ bool load_map(const char *fname)
 	return 0;
 }
 
+// loads a pxa (tileattr) file
+static bool load_tileattr(const char *fname)
+{
+	FILE *fp;
+	int i;
+	unsigned char tc;
+
+	map.nmotiontiles = 0;
+
+	fp = fopen(fname, "rb");
+	if (!fp)
+	{
+		return 1;
+	}
+
+	for(i=0;i<256;i++)
+	{
+		tc = fgetc(fp);
+		tilecode[i] = tc;
+		tileattr[i] = tilekey[tc];
+		//stat("Tile %02x   TC %02x    Attr %08x   tilekey[%02x] = %08x", i, tc, tileattr[i], tc, tilekey[tc]);
+
+		if (tc == 0x43)	// destroyable block - have to replace graphics
+		{
+			CopySpriteToTile(SPR_DESTROYABLE, i, 0, 0);
+		}
+
+		// add water currents to animation list
+		if (tileattr[i] & TA_CURRENT)
+		{
+			map.motiontiles[map.nmotiontiles].tileno = i;
+			map.motiontiles[map.nmotiontiles].dir = CVTDir(tc & 3);
+			map.motiontiles[map.nmotiontiles].sprite = SPR_WATER_CURRENT;
+
+			map.nmotiontiles++;
+		}
+	}
+
+	fclose(fp);
+	return 0;
+}
 
 // load a PXE (entity list for a map)
-bool load_entities(const char *fname)
+static bool load_entities(const char *fname)
 {
 	FILE *fp;
 	int i;
@@ -202,6 +201,77 @@ bool load_entities(const char *fname)
 	return 0;
 }
 
+// loads a backdrop into memory, if it hasn't already been loaded
+static bool LoadBackdropIfNeeded(int backdrop_no)
+{
+	char fname[MAXPATHLEN];
+
+	// load backdrop now if it hasn't already been loaded
+	if (!backdrop[backdrop_no])
+	{
+		// use chromakey (transparency) on bkwater, all others don't
+		bool use_chromakey = (backdrop_no == 8);
+
+		sprintf(fname, "%s/%s.pbm", data_dir, backdrop_names[backdrop_no]);
+
+		backdrop[backdrop_no] = NXSurface::FromFile(fname, use_chromakey);
+		if (!backdrop[backdrop_no])
+		{
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+// backdrop_no 	- backdrop # to switch to
+static void map_set_backdrop(int backdrop_no)
+{
+	if (!LoadBackdropIfNeeded(backdrop_no))
+		map.backdrop = backdrop_no;
+}
+
+// load stage "stage_no", this entails loading the map (pxm), enemies (pxe), tileset (pbm),
+// tile attributes (pxa), and script (tsc).
+bool load_stage(int stage_no)
+{
+	char stage[MAXPATHLEN];
+	char fname[MAXPATHLEN];
+
+	game.curmap = stage_no;		// do it now so onspawn events will have it
+
+	if (Tileset::Load(stages[stage_no].tileset))
+		return 1;
+
+	// get the base name of the stage without extension
+	const char *mapname = stages[stage_no].filename;
+	if (!strcmp(mapname, "lounge")) mapname = "Lounge";
+	sprintf(stage, "%s/%s", stage_dir, mapname);
+
+	sprintf(fname, "%s.pxm", stage);
+	if (load_map(fname))
+		return 1;
+
+	sprintf(fname, "%s/%s.pxa", stage_dir, tileset_names[stages[stage_no].tileset]);
+	if (load_tileattr(fname))
+		return 1;
+
+	sprintf(fname, "%s.pxe", stage);
+	if (load_entities(fname))
+		return 1;
+
+	sprintf(fname, "%s.tsc", stage);
+	if (tsc_load(fname, SP_MAP) == -1)
+		return 1;
+
+	map_set_backdrop(stages[stage_no].bg_no);
+	map.scrolltype = stages[stage_no].scroll_type;
+	map.motionpos = 0;
+
+	return 0;
+}
+
+
 /*const int ta[] =
 { 0, TA_SOLID, TA_SOLID, TA_SOLID, TA_SOLID,
   TA_SLOPE_BACK1|TA_FOREGROUND, TA_SLOPE_BACK2|TA_FOREGROUND, TA_SLOPE_FWD1|TA_FOREGROUND, TA_SLOPE_FWD2|TA_FOREGROUND,
@@ -217,47 +287,6 @@ bool load_entities(const char *fname)
 	memcpy(&tileattr, &ta, sizeof(ta));
 */
 
-// loads a pxa (tileattr) file
-bool load_tileattr(const char *fname)
-{
-	FILE *fp;
-	int i;
-	unsigned char tc;
-
-	map.nmotiontiles = 0;
-
-	fp = fopen(fname, "rb");
-	if (!fp)
-	{
-		return 1;
-	}
-
-	for(i=0;i<256;i++)
-	{
-		tc = fgetc(fp);
-		tilecode[i] = tc;
-		tileattr[i] = tilekey[tc];
-		//stat("Tile %02x   TC %02x    Attr %08x   tilekey[%02x] = %08x", i, tc, tileattr[i], tc, tilekey[tc]);
-
-		if (tc == 0x43)	// destroyable block - have to replace graphics
-		{
-			CopySpriteToTile(SPR_DESTROYABLE, i, 0, 0);
-		}
-
-		// add water currents to animation list
-		if (tileattr[i] & TA_CURRENT)
-		{
-			map.motiontiles[map.nmotiontiles].tileno = i;
-			map.motiontiles[map.nmotiontiles].dir = CVTDir(tc & 3);
-			map.motiontiles[map.nmotiontiles].sprite = SPR_WATER_CURRENT;
-
-			map.nmotiontiles++;
-		}
-	}
-
-	fclose(fp);
-	return 0;
-}
 
 bool load_stages(void)
 {
@@ -302,15 +331,32 @@ void initmap(void)
 	map.parscroll_x = map.parscroll_y = 0;
 }
 
-/*
-void c------------------------------() {}
-*/
-
-// backdrop_no 	- backdrop # to switch to
-void map_set_backdrop(int backdrop_no)
+// blit OSide's BK_FASTLEFT_LAYERS
+static void DrawFastLeftLayered(void)
 {
-	if (!LoadBackdropIfNeeded(backdrop_no))
-		map.backdrop = backdrop_no;
+	static const int layer_ys[] = { 80, 122, 145, 176, 240 };
+	static const int move_spd[] = { 0,    1,   2,   4,   8 };
+	int nlayers = 6;
+	int y1, y2;
+	int i, x;
+
+	if (--map.parscroll_x <= -(SCREEN_WIDTH*2))
+		map.parscroll_x = 0;
+
+	y1 = x = 0;
+	for(i=0;i<nlayers;i++)
+	{
+		y2 = layer_ys[i];
+
+		if (i)	// not the static moon layer?
+		{
+			x = (map.parscroll_x * move_spd[i]) >> 1;
+			x %= SCREEN_WIDTH;
+		}
+
+		BlitPatternAcross(backdrop[map.backdrop], x, y1, y1, (y2-y1)+1);
+		y1 = (y2 + 1);
+	}
 }
 
 
@@ -385,58 +431,6 @@ int x, y;
 	}
 }
 
-// blit OSide's BK_FASTLEFT_LAYERS
-static void DrawFastLeftLayered(void)
-{
-	static const int layer_ys[] = { 80, 122, 145, 176, 240 };
-	static const int move_spd[] = { 0,    1,   2,   4,   8 };
-	int nlayers = 6;
-	int y1, y2;
-	int i, x;
-
-	if (--map.parscroll_x <= -(SCREEN_WIDTH*2))
-		map.parscroll_x = 0;
-
-	y1 = x = 0;
-	for(i=0;i<nlayers;i++)
-	{
-		y2 = layer_ys[i];
-
-		if (i)	// not the static moon layer?
-		{
-			x = (map.parscroll_x * move_spd[i]) >> 1;
-			x %= SCREEN_WIDTH;
-		}
-
-		BlitPatternAcross(backdrop[map.backdrop], x, y1, y1, (y2-y1)+1);
-		y1 = (y2 + 1);
-	}
-}
-
-
-// loads a backdrop into memory, if it hasn't already been loaded
-static bool LoadBackdropIfNeeded(int backdrop_no)
-{
-char fname[MAXPATHLEN];
-
-	// load backdrop now if it hasn't already been loaded
-	if (!backdrop[backdrop_no])
-	{
-		// use chromakey (transparency) on bkwater, all others don't
-		bool use_chromakey = (backdrop_no == 8);
-		
-		sprintf(fname, "%s/%s.pbm", data_dir, backdrop_names[backdrop_no]);
-		
-		backdrop[backdrop_no] = NXSurface::FromFile(fname, use_chromakey);
-		if (!backdrop[backdrop_no])
-		{
-			return 1;
-		}
-	}
-	
-	return 0;
-}
-
 void map_flush_graphics()
 {
 int i;
@@ -456,11 +450,6 @@ int i;
 		}
 	}
 }
-
-
-/*
-void c------------------------------() {}
-*/
 
 // draw rising/falling water from eg Almond etc
 void map_drawwaterlevel(void)
@@ -587,6 +576,54 @@ const int scroll_adj_rate = (0x2000 / map.scrollspeed);
 	map.target_y = (player->CenterY() + map.scrollcenter_y) - ((SCREEN_HEIGHT / 2) << CSF);
 }
 
+// this attempts to prevent jitter most visible when the player is walking on a
+// long straight stretch. the jitter occurs because map.xscroll and player->x
+// tend to be out-of-phase, and thus cross over pixel boundaries at different times.
+// what we do here is try to tweak/fudge the displayed xscroll value by up to 512 subpixels
+// (1 real pixel), so that it crosses pixel boundaries on exactly the same frame as
+// the player does.
+void run_phase_compensator(void)
+{
+	int displayed_phase_offs = (map.displayed_xscroll - player->x) % 512;
+	
+	if (displayed_phase_offs != 0)
+	{
+		int phase_offs = abs(map.real_xscroll - player->x) % 512;
+		//debug("%d", phase_offs);
+		
+		// move phase_adj towards phase_offs; phase_offs is how far
+		// out of sync we are with the player and so once we reach it
+		// we will compensating exactly.
+		if (map.phase_adj < phase_offs)
+		{
+			map.phase_adj += MAP_PHASE_ADJ_SPEED;
+			if (map.phase_adj > phase_offs)
+				map.phase_adj = phase_offs;
+		}
+		else
+		{
+			map.phase_adj -= MAP_PHASE_ADJ_SPEED;
+			if (map.phase_adj < phase_offs)
+				map.phase_adj = phase_offs;
+		}
+	}
+}
+
+// scroll position sanity checking
+static void map_sanitycheck(void)
+{
+	#define MAP_BORDER_AMT		(8<<CSF)
+	if (map.real_xscroll < MAP_BORDER_AMT) map.real_xscroll = MAP_BORDER_AMT;
+	if (map.real_yscroll < MAP_BORDER_AMT) map.real_yscroll = MAP_BORDER_AMT;
+	if (map.real_xscroll > map.maxxscroll) map.real_xscroll = map.maxxscroll;
+	if (map.real_yscroll > map.maxyscroll) map.real_yscroll = map.maxyscroll;
+	
+	if (map.displayed_xscroll < MAP_BORDER_AMT) map.displayed_xscroll = MAP_BORDER_AMT;
+	if (map.displayed_yscroll < MAP_BORDER_AMT) map.displayed_yscroll = MAP_BORDER_AMT;
+	if (map.displayed_xscroll > map.maxxscroll) map.displayed_xscroll = map.maxxscroll;
+	if (map.displayed_yscroll > map.maxyscroll) map.displayed_yscroll = map.maxyscroll;
+}
+
 void map_scroll_do(void)
 {
 	bool doing_normal_scroll = false;
@@ -660,13 +697,13 @@ void map_scroll_do(void)
 			if (game.megaquaketime)		// Ballos fight
 			{
 				game.megaquaketime--;
-				pushx = random(-5, 5) << CSF;
-				pushy = random(-3, 3) << CSF;
+				pushx = random_nx(-5, 5) << CSF;
+				pushy = random_nx(-3, 3) << CSF;
 			}
 			else
 			{
-				pushx = random(-1, 1) << CSF;
-				pushy = random(-1, 1) << CSF;
+				pushx = random_nx(-1, 1) << CSF;
+				pushy = random_nx(-1, 1) << CSF;
 			}
 			
 			map.real_xscroll += pushx;
@@ -678,7 +715,7 @@ void map_scroll_do(void)
 		{
 			// quake after IronH battle...special case cause we don't
 			// want to show the walls of the arena.
-			int pushy = random(-0x500, 0x500);
+			int pushy = random_nx(-0x500, 0x500);
 			
 			map.real_yscroll += pushy;
 			if (map.real_yscroll < 0) map.real_yscroll = 0;
@@ -693,53 +730,7 @@ void map_scroll_do(void)
 	}
 }
 
-// this attempts to prevent jitter most visible when the player is walking on a
-// long straight stretch. the jitter occurs because map.xscroll and player->x
-// tend to be out-of-phase, and thus cross over pixel boundaries at different times.
-// what we do here is try to tweak/fudge the displayed xscroll value by up to 512 subpixels
-// (1 real pixel), so that it crosses pixel boundaries on exactly the same frame as
-// the player does.
-void run_phase_compensator(void)
-{
-	int displayed_phase_offs = (map.displayed_xscroll - player->x) % 512;
-	
-	if (displayed_phase_offs != 0)
-	{
-		int phase_offs = abs(map.real_xscroll - player->x) % 512;
-		//debug("%d", phase_offs);
-		
-		// move phase_adj towards phase_offs; phase_offs is how far
-		// out of sync we are with the player and so once we reach it
-		// we will compensating exactly.
-		if (map.phase_adj < phase_offs)
-		{
-			map.phase_adj += MAP_PHASE_ADJ_SPEED;
-			if (map.phase_adj > phase_offs)
-				map.phase_adj = phase_offs;
-		}
-		else
-		{
-			map.phase_adj -= MAP_PHASE_ADJ_SPEED;
-			if (map.phase_adj < phase_offs)
-				map.phase_adj = phase_offs;
-		}
-	}
-}
 
-// scroll position sanity checking
-void map_sanitycheck(void)
-{
-	#define MAP_BORDER_AMT		(8<<CSF)
-	if (map.real_xscroll < MAP_BORDER_AMT) map.real_xscroll = MAP_BORDER_AMT;
-	if (map.real_yscroll < MAP_BORDER_AMT) map.real_yscroll = MAP_BORDER_AMT;
-	if (map.real_xscroll > map.maxxscroll) map.real_xscroll = map.maxxscroll;
-	if (map.real_yscroll > map.maxyscroll) map.real_yscroll = map.maxyscroll;
-	
-	if (map.displayed_xscroll < MAP_BORDER_AMT) map.displayed_xscroll = MAP_BORDER_AMT;
-	if (map.displayed_yscroll < MAP_BORDER_AMT) map.displayed_yscroll = MAP_BORDER_AMT;
-	if (map.displayed_xscroll > map.maxxscroll) map.displayed_xscroll = map.maxxscroll;
-	if (map.displayed_yscroll > map.maxyscroll) map.displayed_yscroll = map.maxyscroll;
-}
 
 
 void map_scroll_jump(int x, int y)

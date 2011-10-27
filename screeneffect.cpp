@@ -1,7 +1,6 @@
 
 #include "nx.h"
 #include "screeneffect.h"
-#include "screeneffect.fdh"
 
 SE_FlashScreen flashscreen;
 SE_Starflash starflash;

@@ -1,8 +1,6 @@
-
 #include "nx.h"
 #include "common/llist.h"
 #include "ObjManager.h"
-#include "ObjManager.fdh"
 
 static Object ZERO_OBJECT;
 static Player ZERO_PLAYER;

@@ -4,6 +4,7 @@
 
 #include "StringList.h"
 #include "StringList.fdh"
+#include "../nx.h"
 
 
 StringList::~StringList()
@@ -21,7 +22,7 @@ int i, count = CountItems();
 
 	for(i=0;i<count;i++)
 	{
-		int swap = random(0, count - 1);
+		int swap = random_nx(0, count - 1);
 		if (swap != i)
 		{
 			SwapItems(i, swap);

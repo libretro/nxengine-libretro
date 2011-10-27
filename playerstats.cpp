@@ -1,7 +1,5 @@
-
 #include "nx.h"
-#include "playerstats.fdh"
-
+#include "inventory.h"
 
 void AddHealth(int hp)
 {
@@ -103,25 +101,16 @@ void AddInventory(int item)
 	RefreshInventoryScreen();
 }
 
-// remove an item from the inventory list (does nothing if it's not in there)
-void DelInventory(int item)
+// checks if the inventory list given contains the given item.
+// if so, returns the index of the item. if not, returns -1.
+int CheckInventoryList(int item, int *list, int nitems)
 {
-int slot;
-int i;
+	int i;
 
-	for(;;)
-	{
-		slot = FindInventory(item);
-		if (slot == -1) break;
-		
-		for(i=slot;i<player->ninventory-1;i++)
-		{
-			player->inventory[i] = player->inventory[i+1];
-		}
-		player->ninventory--;
-	}
-	
-	RefreshInventoryScreen();
+	for(i=0;i<nitems;i++)
+		if (list[i] == item) return i;
+
+	return -1;
 }
 
 // find which slot an item is in (returns -1 if player does not have it)
@@ -130,22 +119,35 @@ int FindInventory(int item)
 	return CheckInventoryList(item, player->inventory, player->ninventory);
 }
 
-// checks if the inventory list given contains the given item.
-// if so, returns the index of the item. if not, returns -1.
-int CheckInventoryList(int item, int *list, int nitems)
+// remove an item from the inventory list (does nothing if it's not in there)
+void DelInventory(int item)
 {
-int i;
+	int slot;
+	int i;
 
-	for(i=0;i<nitems;i++)
-		if (list[i] == item) return i;
-	
-	return -1;
+	for(;;)
+	{
+		slot = FindInventory(item);
+		if (slot == -1)
+			break;
+
+		for(i=slot;i<player->ninventory-1;i++)
+		{
+			player->inventory[i] = player->inventory[i+1];
+		}
+		player->ninventory--;
+	}
+
+	RefreshInventoryScreen();
 }
 
-
-/*
-void c------------------------------() {}
-*/
+// adds "ammo" ammo to the specified weapon, but doesn't go over the limit.
+void AddAmmo(int wpn, int ammo)
+{
+	player->weapons[wpn].ammo += ammo;
+	if (player->weapons[wpn].ammo > player->weapons[wpn].maxammo)
+		player->weapons[wpn].ammo = player->weapons[wpn].maxammo;
+}
 
 // AM+ command.
 // adds "ammo" ammo to the specified weapons ammo and maxammo,
@@ -213,13 +215,6 @@ int oldcurwpn = player->curWeapon;
 		player->curWeapon = oldcurwpn;
 }
 
-// adds "ammo" ammo to the specified weapon, but doesn't go over the limit.
-void AddAmmo(int wpn, int ammo)
-{
-	player->weapons[wpn].ammo += ammo;
-	if (player->weapons[wpn].ammo > player->weapons[wpn].maxammo)
-		player->weapons[wpn].ammo = player->weapons[wpn].maxammo;
-}
 
 // sets all weapons to max ammo. AE+ command.
 void RefillAllAmmo(void)

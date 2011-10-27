@@ -1,6 +1,4 @@
-
 #include "nx.h"
-#include "slope.fdh"
 
 //#define DEBUG_SLOPE
 static SlopeTable slopetable[SLOPE_LAST+1];

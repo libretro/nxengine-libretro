@@ -303,8 +303,8 @@ int i;
 			if ((o->timer % 8) == 0)
 				sound(SND_ENEMY_HURT_BIG);
 			
-			SmokePuff(o->CenterX() + (random(-72, 72) << CSF),
-					  o->CenterY() + (random(-64, 64) << CSF));
+			SmokePuff(o->CenterX() + (random_nx(-72, 72) << CSF),
+					  o->CenterY() + (random_nx(-64, 64) << CSF));
 			
 			if (o->timer > 100)
 			{

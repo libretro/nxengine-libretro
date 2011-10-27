@@ -1,6 +1,5 @@
 
 #include "nx.h"
-#include "stageboss.fdh"
 
 #include "ai/boss/omega.h"
 #include "ai/boss/balfrog.h"

@@ -210,8 +210,8 @@ int i;
 			{
 				if ((o->timer % 20)==0)
 				{
-					CreateObject(o->x + (random(-48, -16) << CSF), \
-						     	 o->y + (random(-64, 64) << CSF), \
+					CreateObject(o->x + (random_nx(-48, -16) << CSF), \
+						     	 o->y + (random_nx(-64, 64) << CSF), \
 							 	 OBJ_CORE_GHOSTIE);
 				}
 			}
@@ -237,8 +237,8 @@ int i;
 		case CORE_GUST+1:
 		{
 			// spawn water droplet effects and push player
-			Object *droplet = CreateObject(player->x + ((random(-50, 150)<<CSF)*2), \
-								   		   player->y + (random(-160, 160)<<CSF),
+			Object *droplet = CreateObject(player->x + ((random_nx(-50, 150)<<CSF)*2), \
+								   		   player->y + (random_nx(-160, 160)<<CSF),
 								   		   OBJ_FAN_DROPLET);
 			droplet->dir = LEFT;
 			player->xinertia -= 0x20;
@@ -316,7 +316,7 @@ int i;
 		}
 		case 601:
 		{
-			pieces[CFRONT]->display_xoff = pieces[CBACK]->display_xoff = random(-8, 8);
+			pieces[CFRONT]->display_xoff = pieces[CBACK]->display_xoff = random_nx(-8, 8);
 			
 			pieces[CFRONT]->clipy2 = o->timer;
 			pieces[CBACK]->clipy2 = o->timer;
@@ -491,8 +491,8 @@ void ai_minicore(Object *o)
 			o->state = MC_THRUST+1;
 			o->frame = 2;
 			o->timer = 0;
-			o->xmark = core->x + (random(-128, 32) << CSF);
-			o->ymark = core->y + (random(-64, 64) << CSF);
+			o->xmark = core->x + (random_nx(-128, 32) << CSF);
+			o->ymark = core->y + (random_nx(-64, 64) << CSF);
 		case MC_THRUST+1:
 			if (++o->timer > 50)
 			{
@@ -516,8 +516,8 @@ void ai_minicore(Object *o)
 			o->state = MC_FIRE+1;
 			o->frame = 2;	// close mouth again
 			o->timer = 0;
-			o->xmark = o->x + (random(24, 48) << CSF);
-			o->ymark = o->y + (random(-4, 4) << CSF);
+			o->xmark = o->x + (random_nx(24, 48) << CSF);
+			o->ymark = o->y + (random_nx(-4, 4) << CSF);
 		case MC_FIRE+1:
 			if (++o->timer > 50)
 			{

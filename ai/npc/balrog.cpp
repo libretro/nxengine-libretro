@@ -247,7 +247,7 @@ bool fall = true;
 	
 	if (o->balrog.smoking)
 	{
-		if (++o->balrog.smoketimer > 20 || !random(0, 16))
+		if (++o->balrog.smoketimer > 20 || !random_nx(0, 16))
 		{
 			SmokeClouds(o, 1, 4, 4);
 			o->balrog.smoketimer = 0;

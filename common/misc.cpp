@@ -196,10 +196,10 @@ void c------------------------------() {}
 static uint32_t seed = 0;
 
 // return a random number between min and max inclusive
-int random(int min, int max)
+int random_nx(int min, int max)
 {
-int range, val;
-	
+	int range, val;
+
 	if (max < min)
 	{
 		staterr("random(): warning: max < min [%d, %d]", min, max);
@@ -207,15 +207,15 @@ int range, val;
 		max ^= min;
 		min ^= max;
 	}
-	
+
 	range = (max - min);
-	
+
 	if (range >= RAND_MAX)
 	{
 		staterr("random(): range > RAND_MAX", min, max);
 		return 0;
 	}
-	
+
 	val = getrand() % (range + 1);
 	return val + min;
 }

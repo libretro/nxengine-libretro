@@ -229,8 +229,8 @@ void ai_missile_boom_spawner(Object *o)
 	}
 	
 	int range = o->shot.boomspawner.range;
-	o->x = o->xmark + (random(-range, range) << CSF);
-	o->y = o->ymark + (random(-range, range) << CSF);
+	o->x = o->xmark + (random_nx(-range, range) << CSF);
+	o->y = o->ymark + (random_nx(-range, range) << CSF);
 	
 	effect(o->x, o->y, EFFECT_BOOMFLASH);
 	missilehitsmoke(o);
@@ -251,7 +251,7 @@ static void missilehitsmoke(Object *o)
 	{
 		smoke = CreateObject(smokex, smokey, OBJ_SMOKE_CLOUD);
 		smoke->sprite = SPR_MISSILEHITSMOKE;
-		vector_from_angle(random(0,255), random(0x100,0x3ff), &smoke->xinertia, &smoke->yinertia);
+		vector_from_angle(random_nx(0,255), random_nx(0x100,0x3ff), &smoke->xinertia, &smoke->yinertia);
 	}
 }
 

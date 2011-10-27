@@ -25,7 +25,7 @@ void ai_snake(Object *o)
 		o->state = 1;
 		o->flags |= FLAG_IGNORE_SOLID;
 		
-		o->frame = random(0, 2);
+		o->frame = random_nx(0, 2);
 	}
 	
 	if (--o->shot.ttl < 0)
@@ -105,7 +105,7 @@ static int wave_dir = 0;
 	
 	// spawn trails
 	Object *trail = create_fire_trail(o, OBJ_SNAKE_TRAIL, o->shot.level);
-	trail->frame = random(0, 2);
+	trail->frame = random_nx(0, 2);
 	trail->animtimer = 0;
 	trail->yinertia = -0x200;
 	

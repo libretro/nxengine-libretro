@@ -2,7 +2,6 @@
 // the Map System
 #include "nx.h"
 #include "map_system.h"
-#include "map_system.fdh"
 
 #define MS_EXPANDING		0
 #define MS_DISPLAYED		1
@@ -69,10 +68,92 @@ void ms_close(void)
 	delete ms.sfc;
 }
 
+// expand/contract effect
+static void draw_expand(void)
+{
+	int x1, y1, x2, y2;
 
-/*
-void c------------------------------() {}
-*/
+	int wd = (map.xsize * ms.expandframe) / EXPAND_LENGTH;
+	int ht = (map.ysize * ms.expandframe) / EXPAND_LENGTH;
+
+	x1 = (SCREEN_WIDTH / 2)  - (wd / 2);
+	y1 = (SCREEN_HEIGHT / 2) - (ht / 2);
+	x2 = (SCREEN_WIDTH / 2)  + (wd / 2);
+	y2 = (SCREEN_HEIGHT / 2) + (ht / 2);
+
+	FillRect(x1, y1, x2, y2, DK_BLUE);
+}
+
+static void draw_banner(void)
+{
+	FillRect(0, BANNER_TOP, SCREEN_WIDTH, BANNER_BTM, NXColor(0, 0, 0));
+	font_draw(ms.textx, ms.texty, ms.bannertext, 0);
+}
+
+static int get_color(int tilecode)
+{
+	switch(tilecode)
+	{
+		case 0:
+			return 0;
+		
+		case 0x01:
+		case 0x02:
+		case 0x40:
+		case 0x44:
+		case 0x51:
+		case 0x52:
+		case 0x55:
+		case 0x56:
+		case 0x60:
+		case 0x71:
+		case 0x72:
+		case 0x75:
+		case 0x76:
+		case 0x80:
+		case 0x81:
+		case 0x82:
+		case 0x83:
+		case 0xA0:
+		case 0xA1:
+		case 0xA2:
+		case 0xA3:
+			return 1;
+		
+		case 0x43:
+		case 0x50:
+		case 0x53:
+		case 0x54:
+		case 0x57:
+		case 0x63:
+		case 0x70:
+		case 0x73:
+		case 0x74:
+		case 0x77:
+			return 2;
+		
+		default:
+			return 3;
+	}
+}
+
+// draw the specified row of map onto the spritesheet
+// the colors for the map system are not actually plotted as pixels,
+// but exist as 1x1 sprites on the TextBox spritesheet.
+static void draw_row(int y)
+{
+	int x;
+
+	Graphics::SetDrawTarget(ms.sfc);
+
+	for(x=0;x<map.xsize;x++)
+	{
+		int tc = tilecode[map.tiles[x][y]];
+		draw_sprite(x, y, SPR_MAP_PIXELS, get_color(tc));
+	}
+
+	Graphics::SetDrawTarget(screen);
+}
 
 void ms_tick(void)
 {
@@ -137,28 +218,8 @@ void ms_tick(void)
 
 
 
-// expand/contract effect
-static void draw_expand(void)
-{
-int x1, y1, x2, y2;
-
-	int wd = (map.xsize * ms.expandframe) / EXPAND_LENGTH;
-	int ht = (map.ysize * ms.expandframe) / EXPAND_LENGTH;
-	
-	x1 = (SCREEN_WIDTH / 2)  - (wd / 2);
-	y1 = (SCREEN_HEIGHT / 2) - (ht / 2);
-	x2 = (SCREEN_WIDTH / 2)  + (wd / 2);
-	y2 = (SCREEN_HEIGHT / 2) + (ht / 2);
-	
-	FillRect(x1, y1, x2, y2, DK_BLUE);
-}
 
 
-static void draw_banner(void)
-{
-	FillRect(0, BANNER_TOP, SCREEN_WIDTH, BANNER_BTM, NXColor(0, 0, 0));
-	font_draw(ms.textx, ms.texty, ms.bannertext, 0);
-}
 
 
 /*
@@ -166,70 +227,7 @@ void c------------------------------() {}
 */
 
 
-// draw the specified row of map onto the spritesheet
-// the colors for the map system are not actually plotted as pixels,
-// but exist as 1x1 sprites on the TextBox spritesheet.
-static void draw_row(int y)
-{
-int x;
-
-	Graphics::SetDrawTarget(ms.sfc);
-	
-	for(x=0;x<map.xsize;x++)
-	{
-		int tc = tilecode[map.tiles[x][y]];
-		draw_sprite(x, y, SPR_MAP_PIXELS, get_color(tc));
-	}
-	
-	Graphics::SetDrawTarget(screen);
-}
 
 
-static int get_color(int tilecode)
-{
-	switch(tilecode)
-	{
-		case 0:
-			return 0;
-		
-		case 0x01:
-		case 0x02:
-		case 0x40:
-		case 0x44:
-		case 0x51:
-		case 0x52:
-		case 0x55:
-		case 0x56:
-		case 0x60:
-		case 0x71:
-		case 0x72:
-		case 0x75:
-		case 0x76:
-		case 0x80:
-		case 0x81:
-		case 0x82:
-		case 0x83:
-		case 0xA0:
-		case 0xA1:
-		case 0xA2:
-		case 0xA3:
-			return 1;
-		
-		case 0x43:
-		case 0x50:
-		case 0x53:
-		case 0x54:
-		case 0x57:
-		case 0x63:
-		case 0x70:
-		case 0x73:
-		case 0x74:
-		case 0x77:
-			return 2;
-		
-		default:
-			return 3;
-	}
-}
 
 

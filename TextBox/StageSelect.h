@@ -43,5 +43,6 @@ private:
 	bool fMadeSelection;
 };
 
+void StopScripts(void);
 
 #endif

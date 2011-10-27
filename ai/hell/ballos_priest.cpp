@@ -668,7 +668,7 @@ void ai_ballos_bone_spawner(Object *o)
 			
 			if ((o->timer % 6) == 1)
 			{
-				int xi = (random(4, 16) << CSF) / 8;
+				int xi = (random_nx(4, 16) << CSF) / 8;
 				
 				if (o->dir == LEFT)
 					xi = -xi;

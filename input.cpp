@@ -1,7 +1,5 @@
-
 #include "SDL.h"
 #include "nx.h"
-#include "input.fdh"
 
 uint8_t mappings[SDLK_LAST];
 

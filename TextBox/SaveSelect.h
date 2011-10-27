@@ -1,4 +1,3 @@
-
 #ifndef _SAVESELECT_H
 #define _SAVESELECT_H
 
@@ -30,5 +29,6 @@ private:
 	struct { int x, y, w, h; } fCoords;
 };
 
+const char *GetProfileName(int num);
 
 #endif

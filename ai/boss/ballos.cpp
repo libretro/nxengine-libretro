@@ -616,8 +616,8 @@ void BallosBoss::RunForm3(Object *o)
 					{
 						// give some granularity to the coords,
 						// so that they can't overlap too closely.
-						int x = (random(-TILE_W, TILE_W) & ~3) << CSF;
-						int y = (random(2 * TILE_H, 17 * TILE_H) & ~3) << CSF;
+						int x = (random_nx(-TILE_W, TILE_W) & ~3) << CSF;
+						int y = (random_nx(2 * TILE_H, 17 * TILE_H) & ~3) << CSF;
 						if (dir == LEFT) x += MAPX(map.xsize - 1);
 						
 						CreateObject(x, y, OBJ_BUTE_ARCHER_RED)->dir = dir;
@@ -628,10 +628,10 @@ void BallosBoss::RunForm3(Object *o)
 			
 			// spawn blood
 			int prob = (o->hp <= 500) ? 4 : 10;
-			if (!random(0, prob))
+			if (!random_nx(0, prob))
 			{
-				CreateObject(o->x + random(-40<<CSF, 40<<CSF), \
-							 o->y + random(0, 40<<CSF),
+				CreateObject(o->x + random_nx(-40<<CSF, 40<<CSF), \
+							 o->y + random_nx(0, 40<<CSF),
 							 OBJ_RED_ENERGY)->angle = DOWN;
 			}
 		}
@@ -663,8 +663,8 @@ void BallosBoss::RunDefeated(Object *o)
 		}
 		case 1001:
 		{
-			int x = o->x + random(-60<<CSF, 60<<CSF);
-			int y = o->y + random(-60<<CSF, 60<<CSF);
+			int x = o->x + random_nx(-60<<CSF, 60<<CSF);
+			int y = o->y + random_nx(-60<<CSF, 60<<CSF);
 			SmokePuff(x, y);
 			effect(x, y, EFFECT_BOOMFLASH);
 			

@@ -113,7 +113,7 @@ void ai_misery_float(Object *o)
 		else
 		{
 			o->frame = 0;
-			if (random(0, 100) == 1)
+			if (random_nx(0, 100) == 1)
 			{
 				o->animtimer = 30;
 			}
@@ -275,7 +275,7 @@ void ai_misery_stand(Object *o)
 			{
 				Object *shot = CreateObject(o->x+(16<<CSF), o->y, OBJ_IGOR_SHOT);
 				shot->xinertia = 0x600;
-				shot->yinertia = random(-0x200, 0);
+				shot->yinertia = random_nx(-0x200, 0);
 				
 				sound(SND_SNAKE_FIRE);
 			}

@@ -1,7 +1,5 @@
-
 #include "nx.h"
 #include "common/llist.h"
-#include "object.fdh"
 
 // deletes the specified object, or well, marks it to be deleted.
 // it's not actually freed till the end of the tick.
@@ -286,14 +284,14 @@ SIFSprite *s2 = other->Sprite();
 // updatemask specifies which states are in need of updating.
 void Object::UpdateBlockStates(uint8_t updatemask)
 {
-Object * const &o = this;
-SIFSprite *sprite = Sprite();
-int mask = GetBlockingType();
+	Object * const &o = this;
+	SIFSprite *sprite = Sprite();
+	int mask = GetBlockingType();
 
 	if (updatemask & LEFTMASK)
 	{
 		o->blockl = CheckAttribute(&sprite->block_l, mask);
-		
+
 		// for objects which don't follow slope, have them see the slope as a wall so they
 		// won't just go right through it (looks really weird)
 		if (!(o->nxflags & NXFLAG_FOLLOW_SLOPE))
@@ -302,11 +300,11 @@ int mask = GetBlockingType();
 				o->blockl = IsSlopeAtPointList(o, &sprite->block_l);
 		}
 	}
-	
+
 	if (updatemask & RIGHTMASK)
 	{
 		o->blockr = CheckAttribute(&sprite->block_r, mask);
-		
+
 		// for objects which don't follow slope, have them see the slope as a wall so they
 		// won't just go right through it (looks really weird).
 		if (!(o->nxflags & NXFLAG_FOLLOW_SLOPE))
@@ -315,19 +313,19 @@ int mask = GetBlockingType();
 				o->blockr = IsSlopeAtPointList(o, &sprite->block_r);
 		}
 	}
-	
+
 	if (updatemask & UPMASK)
 	{
 		o->blocku = CheckAttribute(&sprite->block_u, mask);
 		if (!o->blocku) o->blocku = CheckBoppedHeadOnSlope(o);
 	}
-	
+
 	if (updatemask & DOWNMASK)
 	{
 		o->blockd = CheckAttribute(&sprite->block_d, mask);
 		if (!o->blockd) o->blockd = CheckStandOnSlope(o);
 	}
-	
+
 	// have player be blocked by objects with FLAG_SOLID_BRICK set
 	if (o == player)
 		o->SetBlockForSolidBrick(updatemask);
@@ -716,7 +714,7 @@ void Object::SpawnPowerups()
 Object * const &o = this;
 int objectType, bonusType;
 
-	bonusType = random(1, 5);
+	bonusType = random_nx(1, 5);
 	if (bonusType >= 3)
 	{
 		SpawnXP(objprop[o->type].xponkill);
@@ -770,7 +768,7 @@ Object * const &o = this;
 	while(amt > 0)
 	{
 		Object *xp = CreateObject(x, y, OBJ_XP);
-		xp->xinertia = random(-0x200, 0x200);
+		xp->xinertia = random_nx(-0x200, 0x200);
 		
 		if (amt >= XP_LARGE_AMT)
 		{
@@ -945,7 +943,7 @@ Object * const &o = this;
 
 	game.curlytarget.x = o->CenterX();
 	game.curlytarget.y = o->CenterY();
-	game.curlytarget.timeleft = random(mintime, maxtime);
+	game.curlytarget.timeleft = random_nx(mintime, maxtime);
 }
 
 // reset the objects clip-extent fields (tp effects etc) to their defaults.

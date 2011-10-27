@@ -117,7 +117,7 @@ void ai_intro_crown(Object *o)
 		{
 			if ((++o->timer % 8) == 1)
 			{
-				effect(o->x + random(-8<<CSF, 8<<CSF),
+				effect(o->x + random_nx(-8<<CSF, 8<<CSF),
 						o->y + (8<<CSF),
 						   EFFECT_GHOST_SPARKLE);
 			}

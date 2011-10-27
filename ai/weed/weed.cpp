@@ -244,7 +244,7 @@ void ai_bat_hang(Object *o)
 		case 0:
 			o->state = 1;
 		case 1:		// hanging and waiting
-			if (!random(0, 100))
+			if (!random_nx(0, 100))
 			{
 				o->state = 2;
 				o->timer = 0;
@@ -321,13 +321,13 @@ void ai_bat_circle(Object *o)
 			o->state = 1;
 			
 			// set up initial direction and target x,y
-			angle = random(0, 255);
+			angle = random_nx(0, 255);
 			o->xinertia = sin_table[angle];
 			
 			angle += 64;
 			o->xmark = (o->x + (sin_table[angle] * 8));
 			
-			angle = random(0, 255);
+			angle = random_nx(0, 255);
 			o->yinertia = sin_table[angle];
 			
 			angle += 64;
@@ -381,7 +381,7 @@ void ai_jelly(Object *o)
 		case 0:
 		{
 			o->nxflags |= NXFLAG_SLOW_WHEN_HURT;
-			o->timer = random(0, 20);
+			o->timer = random_nx(0, 20);
 			o->xmark = o->x;
 			o->ymark = o->y;
 			
@@ -644,7 +644,7 @@ void ai_frog(Object *o)
 			// spawned by balfrog: we are falling out of ceiling during fight
 			if (o->dir != LEFT && o->dir != RIGHT)
 			{
-				o->dir = random(0, 1) ? LEFT : RIGHT;
+				o->dir = random_nx(0, 1) ? LEFT : RIGHT;
 				o->flags |= FLAG_IGNORE_SOLID;
 				
 				o->state = 3;
@@ -660,7 +660,7 @@ void ai_frog(Object *o)
 		{
 			o->timer++;
 			
-			if (!random(0, 50))
+			if (!random_nx(0, 50))
 			{	// mouth-flitter animation
 				o->state = 2;
 				o->frame = 0;
@@ -731,7 +731,7 @@ void ai_frog(Object *o)
 		}
 		else if (pdistlx(0x14000) && pdistly(0x8000))
 		{
-			if (!random(0, 50))
+			if (!random_nx(0, 50))
 			{
 				dojump = true;
 			}
@@ -793,8 +793,8 @@ void ai_motorbike(Object *o)
 		}
 		case 21:
 		{
-			o->x = o->xmark + (random(-1, 1) << CSF);
-			o->y = o->ymark + (random(-1, 1) << CSF);
+			o->x = o->xmark + (random_nx(-1, 1) << CSF);
+			o->y = o->ymark + (random_nx(-1, 1) << CSF);
 			
 			if (++o->timer > 30)
 				o->state = 30;
@@ -816,7 +816,7 @@ void ai_motorbike(Object *o)
 			o->xinertia += 0x20;
 			o->timer++;
 			
-			o->y = o->ymark + (random(-1, 1) << CSF);
+			o->y = o->ymark + (random_nx(-1, 1) << CSF);
 			
 			if (o->timer > 10)  o->dir = RIGHT;
 			if (o->timer > 200) o->state = 40;

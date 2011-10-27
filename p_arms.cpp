@@ -1,6 +1,4 @@
-
 #include "nx.h"
-#include "p_arms.fdh"
 
 static int empty_timer = 0;
 
@@ -130,53 +128,88 @@ void RunWeapon(bool firing)
 	}
 }
 
-void PDoWeapons(void)
+// set up the specified bullet to be a shot of type btype
+// (note: shared by Curly sand-zone boss)
+void SetupBullet(Object *shot, int x, int y, int btype, int dir)
 {
-	// switching weapons. have to check for inputs_frozen since justpushed
-	// reads inputs[] directly, not pinputs[].
-	if (!player->inputs_locked)
+	const BulletInfo *info = &bullet_table[btype];
+	
+	shot->sprite = info->sprite;
+	shot->frame = info->frame;
+	shot->shot.ttl = info->timetolive;
+	shot->shot.damage = info->damage;
+	shot->shot.level = info->level;
+	shot->shot.btype = btype;
+	shot->shot.dir = dir;
+	shot->nxflags |= NXFLAG_NO_RESET_YINERTIA;
+	
+	if (info->sound)
+		sound(info->sound);
+	
+	if (info->makes_star == 1)
+		effect(x, y, EFFECT_STARPOOF);
+	
+	if (info->manualsetup != 1)
 	{
-		if (justpushed(PREVWPNKEY)) stat_PrevWeapon();
-		if (justpushed(NEXTWPNKEY)) stat_NextWeapon();
+		switch(dir)
+		{
+			case LEFT:
+				shot->xinertia = -info->speed;
+				shot->dir = LEFT;
+			break;
+			
+			case RIGHT:
+				shot->xinertia = info->speed;
+				shot->dir = RIGHT;
+			break;
+			
+			case UP:
+				shot->yinertia = -info->speed;
+				shot->dir = RIGHT;
+				if (info->manualsetup != 2) { shot->sprite++; }
+			break;
+			
+			case DOWN:
+				shot->yinertia = info->speed;
+				shot->dir = LEFT;
+				if (info->manualsetup != 2) { shot->sprite++; }
+			break;
+		}
+		
+		if (info->makes_star == 2)
+			effect(x+shot->xinertia/2, y, EFFECT_STARPOOF);
+		
+		// have to do this because inertia will get applied later in the tick before the first
+		// time it's drawn so it won't actually appear where we put it if we don't
+		x -= shot->xinertia;
+		y -= shot->yinertia;
 	}
 	
-	// firing weapon
-	if (pinputs[FIREKEY])
-	{
-		FireWeapon();
-		RunWeapon(true);
-	}
-	else
-	{
-		RunWeapon(false);
-	}
-	
-	PHandleSpur();
-	run_whimstar(&player->whimstar);
-	
-	if (empty_timer)
-		empty_timer--;
+	// put shot center at [x,y],
+	// this also centers it within starpoof
+	shot->x = x - (shot->Width() / 2);
+	shot->y = y - (shot->Height() / 2);
 }
 
 // fire a basic, single bullet
 static Object *FireSimpleBullet(int otype, int btype, int xoff=0, int yoff=0)
 {
-int x, y, dir;
+	int x, y, dir;
 
 	// get location to fire from
 	GetPlayerShootPoint(&x, &y);
 	x += xoff;
 	y += yoff;
-	
+
 	// create the shot
 	Object *shot = CreateObject(0, 0, otype);
-	
+
 	// set up the shot
 	if (player->look)
 		dir = player->look;
 	else
 		dir = player->dir;
-	
+
 	SetupBullet(shot, x, y, btype, dir);
 	return shot;
 }
@@ -216,35 +249,6 @@ static Object *FireSimpleBulletOffset(int otype, int btype, int xoff, int yoff)
 	shot->y += yoff;
 
 	return shot;
-}
-
-// Spur fires an initial shot of Polar Star L3, then charges
-// as long as key is down. Fires when key released.
-// Released at L1: nothing
-// Released at L2: thin beam
-// Released at L3: dual beam
-// Released at Max: thick beam
-//
-// Initial shot is not fired if key is held on a different weapon
-// and then weapon is switched to spur.
-
-// fires the regular Polar Star shot when you first push button
-#define PFireSpur() \
-	if (!CountObjectsOfType(OBJ_SPUR_SHOT)) \
-		FireSimpleBulletOffset(OBJ_POLAR_SHOT, B_PSTAR_L3, -4<<CSF, 0);
-
-static void PFireBubbler(int level)
-{
-	static const int max_bubbles[] = { 4, 16, 16 };
-
-	int count = CountObjectsOfType(OBJ_BUBBLER12_SHOT) + \
-		    CountObjectsOfType(OBJ_BUBBLER3_SHOT);
-
-	if (count >= max_bubbles[level])
-		return;
-
-	int objtype = (level != 2) ? OBJ_BUBBLER12_SHOT : OBJ_BUBBLER3_SHOT;
-	FireSimpleBulletOffset(objtype, B_BUBBLER_L1+level, -4<<CSF, 0);
 }
 
 static void PFirePolarStar(int level)
@@ -300,6 +304,70 @@ static void PFireFireball(int level)
 			break;
 	}
 
+}
+
+// fire a level 2 or level 3 MGun blast from position x,y.
+// Broken out here into a seperate sub so OBJ_CURLY_AI can use it also.
+void FireLevel23MGun(int x, int y, int level, int dir)
+{
+	static const uchar no_layers[] = { 1, 3, 5 };
+	static const int bultype_table[] = { 0, B_MGUN_L2, B_MGUN_L3 };
+	Object *shot;
+
+	// note: this relies on the player AI running before the entity AI...which it does...
+	// so leave it that way, else he wouldn't actually fire for 1 additional frame
+	shot = CreateObject(x, y, OBJ_MGUN_SPAWNER);
+
+	shot->dir = dir;
+	shot->mgun.bultype = bultype_table[level];
+	shot->mgun.nlayers = no_layers[level];
+	shot->mgun.wave_amt = random_nx(-0xAA, 0xAA);
+	shot->invisible = true;
+}
+
+// handles flying when shooting down using Machine Gun at Level 3
+static void PMgunFly(void)
+{
+	if (player->yinertia > 0)
+		player->yinertia >>= 1;
+	
+	if (player->yinertia > -0x400)
+	{
+		player->yinertia -= 0x200;
+		if (player->yinertia < -0x400) player->yinertia = -0x400;
+	}
+}
+
+// handles firing the Machine Gun
+static void PFireMachineGun(int level)
+{
+	Object *shot;
+	int x, y;
+
+	int dir = (player->look) ? player->look : player->dir;
+
+	if (level == 0)
+	{	// level 1 is real easy! no frickin' layers!!
+		shot = FireSimpleBullet(OBJ_POLAR_SHOT, B_MGUN_L1, 0, 0);
+		shot->dir = dir;
+
+		if (player->look)
+			shot->xinertia = random_nx(-0xAA, 0xAA);
+		else
+			shot->yinertia = random_nx(-0xAA, 0xAA);
+	}
+	else
+	{
+		// drop an OBJ_MGUN_SHOOTER object to fire the layers (trail) of the MGun blast.
+		GetPlayerShootPoint(&x, &y);
+		FireLevel23MGun(x, y, level, dir);
+	}
+
+	// do machine-gun flying
+	if (player->look==DOWN && level==2)
+	{
+		PMgunFly();
+	}
 }
 
 // fire the missile launcher.
@@ -363,6 +431,40 @@ static void PFireMissile(int level, bool is_super)
 	}
 }
 
+static void PFireBlade(int level)
+{
+	int numblades = CountObjectsOfType(OBJ_BLADE12_SHOT) + CountObjectsOfType(OBJ_BLADE3_SHOT);
+	if (numblades >= 1)
+		return;
+	
+	int dir = (player->look) ? player->look : player->dir;
+	
+	int x = player->CenterX();
+	int y = player->CenterY();
+	
+	if (level == 2)
+	{
+		if (dir == RIGHT || dir == LEFT)
+		{
+			y -= (3 << CSF);
+			x += (dir == LEFT) ? (3 << CSF) : -(3 << CSF);
+		}
+	}
+	else
+	{
+		switch(dir)
+		{
+			case RIGHT: x -= (6 << CSF); y -= (3 << CSF); break;
+			case LEFT:  x += (6 << CSF); y -= (3 << CSF); break;
+			case UP:    y += (6 << CSF); break;
+			case DOWN:  y -= (6 << CSF); break;
+		}
+	}
+	
+	Object *shot = CreateObject(x, y, (level != 2) ? OBJ_BLADE12_SHOT : OBJ_BLADE3_SHOT);
+	SetupBullet(shot, x, y, B_BLADE_L1+level, dir);
+}
+
 static void PFireSnake(int level)
 {
 	if (level == 2)
@@ -386,9 +488,38 @@ static void PFireNemesis(int level)
 	FireSimpleBullet(OBJ_NEMESIS_SHOT, B_NEMESIS_L1+level);
 }
 
+static void PFireBubbler(int level)
+{
+	static const int max_bubbles[] = { 4, 16, 16 };
+
+	int count = CountObjectsOfType(OBJ_BUBBLER12_SHOT) + \
+		    CountObjectsOfType(OBJ_BUBBLER3_SHOT);
+
+	if (count >= max_bubbles[level])
+		return;
+
+	int objtype = (level != 2) ? OBJ_BUBBLER12_SHOT : OBJ_BUBBLER3_SHOT;
+	FireSimpleBulletOffset(objtype, B_BUBBLER_L1+level, -4<<CSF, 0);
+}
+
+// Spur fires an initial shot of Polar Star L3, then charges
+// as long as key is down. Fires when key released.
+// Released at L1: nothing
+// Released at L2: thin beam
+// Released at L3: dual beam
+// Released at Max: thick beam
+//
+// Initial shot is not fired if key is held on a different weapon
+// and then weapon is switched to spur.
+
+// fires the regular Polar Star shot when you first push button
+#define PFireSpur() \
+	if (!CountObjectsOfType(OBJ_SPUR_SHOT)) \
+		FireSimpleBulletOffset(OBJ_POLAR_SHOT, B_PSTAR_L3, -4<<CSF, 0);
+
 // called when player is trying to fire the current weapon
 // i.e. the fire button is down.
-void FireWeapon(void)
+static void FireWeapon(void)
 {
 	Weapon *curweapon = &player->weapons[player->curWeapon];
 	int level = curweapon->level;
@@ -473,179 +604,11 @@ void FireWeapon(void)
 	}
 }
 
-
-
-/*
-void c------------------------------() {}
-*/
-
-// set up the specified bullet to be a shot of type btype
-// (note: shared by Curly sand-zone boss)
-void SetupBullet(Object *shot, int x, int y, int btype, int dir)
+// returns true if the current weapon has full xp at level 3 (is showing "Max")
+static bool IsWeaponMaxed(void)
 {
-	const BulletInfo *info = &bullet_table[btype];
-	
-	shot->sprite = info->sprite;
-	shot->frame = info->frame;
-	shot->shot.ttl = info->timetolive;
-	shot->shot.damage = info->damage;
-	shot->shot.level = info->level;
-	shot->shot.btype = btype;
-	shot->shot.dir = dir;
-	shot->nxflags |= NXFLAG_NO_RESET_YINERTIA;
-	
-	if (info->sound)
-		sound(info->sound);
-	
-	if (info->makes_star == 1)
-		effect(x, y, EFFECT_STARPOOF);
-	
-	if (info->manualsetup != 1)
-	{
-		switch(dir)
-		{
-			case LEFT:
-				shot->xinertia = -info->speed;
-				shot->dir = LEFT;
-			break;
-			
-			case RIGHT:
-				shot->xinertia = info->speed;
-				shot->dir = RIGHT;
-			break;
-			
-			case UP:
-				shot->yinertia = -info->speed;
-				shot->dir = RIGHT;
-				if (info->manualsetup != 2) { shot->sprite++; }
-			break;
-			
-			case DOWN:
-				shot->yinertia = info->speed;
-				shot->dir = LEFT;
-				if (info->manualsetup != 2) { shot->sprite++; }
-			break;
-		}
-		
-		if (info->makes_star == 2)
-			effect(x+shot->xinertia/2, y, EFFECT_STARPOOF);
-		
-		// have to do this because inertia will get applied later in the tick before the first
-		// time it's drawn so it won't actually appear where we put it if we don't
-		x -= shot->xinertia;
-		y -= shot->yinertia;
-	}
-	
-	// put shot center at [x,y],
-	// this also centers it within starpoof
-	shot->x = x - (shot->Width() / 2);
-	shot->y = y - (shot->Height() / 2);
-}
-
-
-
-
-/*
-void c------------------------------() {}
-*/
-
-// handles firing the Machine Gun
-static void PFireMachineGun(int level)
-{
-	Object *shot;
-	int x, y;
-
-	int dir = (player->look) ? player->look : player->dir;
-
-	if (level == 0)
-	{	// level 1 is real easy! no frickin' layers!!
-		shot = FireSimpleBullet(OBJ_POLAR_SHOT, B_MGUN_L1, 0, 0);
-		shot->dir = dir;
-
-		if (player->look)
-			shot->xinertia = random(-0xAA, 0xAA);
-		else
-			shot->yinertia = random(-0xAA, 0xAA);
-	}
-	else
-	{
-		// drop an OBJ_MGUN_SHOOTER object to fire the layers (trail) of the MGun blast.
-		GetPlayerShootPoint(&x, &y);
-		FireLevel23MGun(x, y, level, dir);
-	}
-
-	// do machine-gun flying
-	if (player->look==DOWN && level==2)
-	{
-		PMgunFly();
-	}
-}
-
-// fire a level 2 or level 3 MGun blast from position x,y.
-// Broken out here into a seperate sub so OBJ_CURLY_AI can use it also.
-void FireLevel23MGun(int x, int y, int level, int dir)
-{
-	static const uchar no_layers[] = { 1, 3, 5 };
-	static const int bultype_table[] = { 0, B_MGUN_L2, B_MGUN_L3 };
-	Object *shot;
-
-	// note: this relies on the player AI running before the entity AI...which it does...
-	// so leave it that way, else he wouldn't actually fire for 1 additional frame
-	shot = CreateObject(x, y, OBJ_MGUN_SPAWNER);
-
-	shot->dir = dir;
-	shot->mgun.bultype = bultype_table[level];
-	shot->mgun.nlayers = no_layers[level];
-	shot->mgun.wave_amt = random(-0xAA, 0xAA);
-	shot->invisible = true;
-}
-
-
-// handles flying when shooting down using Machine Gun at Level 3
-void PMgunFly(void)
-{
-	if (player->yinertia > 0)
-		player->yinertia >>= 1;
-	
-	if (player->yinertia > -0x400)
-	{
-		player->yinertia -= 0x200;
-		if (player->yinertia < -0x400) player->yinertia = -0x400;
-	}
-}
-
-static void PFireBlade(int level)
-{
-	int numblades = CountObjectsOfType(OBJ_BLADE12_SHOT) + CountObjectsOfType(OBJ_BLADE3_SHOT);
-	if (numblades >= 1)
-		return;
-	
-	int dir = (player->look) ? player->look : player->dir;
-	
-	int x = player->CenterX();
-	int y = player->CenterY();
-	
-	if (level == 2)
-	{
-		if (dir == RIGHT || dir == LEFT)
-		{
-			y -= (3 << CSF);
-			x += (dir == LEFT) ? (3 << CSF) : -(3 << CSF);
-		}
-	}
-	else
-	{
-		switch(dir)
-		{
-			case RIGHT: x -= (6 << CSF); y -= (3 << CSF); break;
-			case LEFT:  x += (6 << CSF); y -= (3 << CSF); break;
-			case UP:    y += (6 << CSF); break;
-			case DOWN:  y -= (6 << CSF); break;
-		}
-	}
-	
-	Object *shot = CreateObject(x, y, (level != 2) ? OBJ_BLADE12_SHOT : OBJ_BLADE3_SHOT);
-	SetupBullet(shot, x, y, B_BLADE_L1+level, dir);
+	Weapon *wpn = &player->weapons[player->curWeapon];
+	return (wpn->level == 2) && (wpn->xp == wpn->max_xp[2]);
 }
 
 // fires and handles charged shots
@@ -709,6 +672,34 @@ static void PHandleSpur(void)
 
 }
 
+void PDoWeapons(void)
+{
+	// switching weapons. have to check for inputs_frozen since justpushed
+	// reads inputs[] directly, not pinputs[].
+	if (!player->inputs_locked)
+	{
+		if (justpushed(PREVWPNKEY)) stat_PrevWeapon();
+		if (justpushed(NEXTWPNKEY)) stat_NextWeapon();
+	}
+	
+	// firing weapon
+	if (pinputs[FIREKEY])
+	{
+		FireWeapon();
+		RunWeapon(true);
+	}
+	else
+	{
+		RunWeapon(false);
+	}
+	
+	PHandleSpur();
+	run_whimstar(&player->whimstar);
+	
+	if (empty_timer)
+		empty_timer--;
+}
+
 #if 0
 static bool can_fire_spur(void)
 {
@@ -718,25 +709,3 @@ static bool can_fire_spur(void)
 	return true;
 }
 #endif
-
-// returns true if the current weapon has full xp at level 3 (is showing "Max")
-static bool IsWeaponMaxed(void)
-{
-	Weapon *wpn = &player->weapons[player->curWeapon];
-	return (wpn->level == 2) && (wpn->xp == wpn->max_xp[2]);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

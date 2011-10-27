@@ -6,7 +6,6 @@
 #include "nx.h"
 #include <math.h>
 #include "common/llist.h"
-#include "caret.fdh"
 
 Caret *firstcaret = NULL;
 Caret *lastcaret = NULL;
@@ -149,9 +148,128 @@ void Carets::DestroyAll(void)
 		firstcaret->Destroy();
 }
 
-/*
-void c------------------------------() {}
-*/
+static void caret_animate3(Caret *c)
+{
+	c->animdie(2);
+}
+
+static void caret_fishy(Caret *c)
+{
+	c->yinertia -= 16;
+	c->animdie(4);
+}
+
+static void caret_spur_hit(Caret *c)
+{
+	c->timer++;
+	c->frame = (c->timer / 2) % 3;
+	
+	if (c->timer > 24)
+		c->Delete();
+}
+
+static void caret_zzzz(Caret *c)
+{
+	c->animdie(5);
+	
+	c->x += 0x80;
+	c->y -= 0x80;
+}
+
+// "Level Up", "Level Down", and "Empty" texts
+static void caret_playertext(Caret *c)
+{
+	int spd, stop;
+
+	c->anim(1);
+
+	// "EMPTY" text goes twice as fast as "Level" text
+	if (c->sprite == SPR_EMPTY)
+	{
+		spd = 2;
+		stop = 18;
+	}
+	else
+	{
+		spd = 1;
+		stop = 20;
+	}
+
+	c->timer += spd;
+	if (c->timer < 80)
+	{
+		if (c->timer < stop)
+		{
+			c->y -= (spd << CSF);
+		}
+	}
+	else
+	{
+		c->Delete();
+	}
+}
+
+static void caret_bonusflash(Caret *c)
+{
+	if (++c->timer == 4)
+		c->Delete();
+}
+
+static void caret_hey(Caret *c)
+{
+	if (++c->timer > 30) c->Delete();
+	if (c->timer < 5) c->y -= (1<<CSF);
+}
+
+static void caret_animate2(Caret *c)
+{
+	c->animdie(1);
+}
+
+static void caret_gunfish_bubble(Caret *c)
+{
+	c->animdie(5);
+	
+	c->yinertia += 0x40;
+	if (c->yinertia >= 0x5ff) c->yinertia = 0x5ff;
+}
+
+static void caret_ghost_sparkle(Caret *c)
+{
+	c->invisible = (++c->timer & 2);
+	
+	if (c->timer > 20)
+		c->Delete();
+}
+
+// flickers rapidly and decels at exponential speed.
+// used for the "bonkplus" effect when you bonk your head
+static void caret_bonkplus(Caret *c)
+{
+	c->xinertia *= 4; c->xinertia /= 5;
+	c->yinertia *= 4; c->yinertia /= 5;
+	
+	c->invisible = (++c->timer & 2);
+	
+	if (c->timer > 20)
+		c->Delete();
+}
+
+// ? effect when you press down with no object around to activate
+static void caret_qmark(Caret *c)
+{
+	if (++c->timer < 40)
+	{
+		if (c->timer < 7)
+		{
+			c->y -= (3 << CSF);
+		}
+	}
+	else
+	{
+		c->Delete();
+	}
+}
 
 // generates a caret-based effect at x, y. Most sprites used for carets have the
 // drawpoint at their center so the effect is generally centered at that position.
@@ -202,7 +320,7 @@ int i;
 		case EFFECT_GHOST_SPARKLE:
 		{
 			c = CreateCaret(x, y, SPR_GHOST_SPARKLE, caret_ghost_sparkle);
-			c->yinertia = random(-0x600, -0x200);
+			c->yinertia = random_nx(-0x600, -0x200);
 		}
 		break;
 		
@@ -212,7 +330,7 @@ int i;
 			for(i=0;i<3;i++)
 			{
 				c = CreateCaret(x, y, SPR_BLOODHIT, caret_animate3);
-				vector_from_angle(random(0, 255), (2<<CSF), &c->xinertia, &c->yinertia);
+				vector_from_angle(random_nx(0, 255), (2<<CSF), &c->xinertia, &c->yinertia);
 			}
 		}
 		break;
@@ -224,11 +342,11 @@ int i;
 			{
 				c = CreateCaret(x, y, SPR_BONKHEADPLUS, caret_bonkplus);
 				
-				c->xinertia = random(-0x600, 0x600);
-				c->yinertia = random(-0x200, 0x200);
-				//uint8_t angle = random(-14, 14);
-				//if (random(0, 1)) angle += 128;
-				//vector_from_angle(angle, random(0x200, 0x384), &c->xinertia, &c->yinertia);
+				c->xinertia = random_nx(-0x600, 0x600);
+				c->yinertia = random_nx(-0x200, 0x200);
+				//uint8_t angle = random_nx(-14, 14);
+				//if (random_nx(0, 1)) angle += 128;
+				//vector_from_angle(angle, random_nx(0x200, 0x384), &c->xinertia, &c->yinertia);
 			}
 		}
 		break;
@@ -259,15 +377,7 @@ void caret_animate1(Caret *c)
 	c->animdie(0);
 }
 
-void caret_animate2(Caret *c)
-{
-	c->animdie(1);
-}
 
-void caret_animate3(Caret *c)
-{
-	c->animdie(2);
-}
 
 void Caret::anim(int speed)
 {
@@ -298,142 +408,5 @@ Caret * const &c = this;
 /*
 void c------------------------------() {}
 */
-
-// flickers rapidly and decels at exponential speed.
-// used for the "bonkplus" effect when you bonk your head
-void caret_bonkplus(Caret *c)
-{
-	c->xinertia *= 4; c->xinertia /= 5;
-	c->yinertia *= 4; c->yinertia /= 5;
-	
-	c->invisible = (++c->timer & 2);
-	
-	if (c->timer > 20)
-		c->Delete();
-}
-
-
-void caret_fishy(Caret *c)
-{
-	c->yinertia -= 16;
-	c->animdie(4);
-}
-
-
-void caret_spur_hit(Caret *c)
-{
-	c->timer++;
-	c->frame = (c->timer / 2) % 3;
-	
-	if (c->timer > 24)
-		c->Delete();
-}
-
-
-// "Level Up", "Level Down", and "Empty" texts
-void caret_playertext(Caret *c)
-{
-int spd, stop;
-
-	c->anim(1);
-	
-	// "EMPTY" text goes twice as fast as "Level" text
-	if (c->sprite == SPR_EMPTY)
-	{
-		spd = 2;
-		stop = 18;
-	}
-	else
-	{
-		spd = 1;
-		stop = 20;
-	}
-	
-	c->timer += spd;
-	if (c->timer < 80)
-	{
-		if (c->timer < stop)
-		{
-			c->y -= (spd << CSF);
-		}
-	}
-	else
-	{
-		c->Delete();
-	}
-}
-
-
-// ? effect when you press down with no object around to activate
-void caret_qmark(Caret *c)
-{
-	if (++c->timer < 40)
-	{
-		if (c->timer < 7)
-		{
-			c->y -= (3 << CSF);
-		}
-	}
-	else
-	{
-		c->Delete();
-	}
-}
-
-
-void caret_bonusflash(Caret *c)
-{
-	if (++c->timer == 4)
-		c->Delete();
-}
-
-
-void caret_hey(Caret *c)
-{
-	if (++c->timer > 30) c->Delete();
-	if (c->timer < 5) c->y -= (1<<CSF);
-}
-
-
-void caret_gunfish_bubble(Caret *c)
-{
-	c->animdie(5);
-	
-	c->yinertia += 0x40;
-	if (c->yinertia >= 0x5ff) c->yinertia = 0x5ff;
-}
-
-
-void caret_ghost_sparkle(Caret *c)
-{
-	c->invisible = (++c->timer & 2);
-	
-	if (c->timer > 20)
-		c->Delete();
-}
-
-
-void caret_zzzz(Caret *c)
-{
-	c->animdie(5);
-	
-	c->x += 0x80;
-	c->y -= 0x80;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

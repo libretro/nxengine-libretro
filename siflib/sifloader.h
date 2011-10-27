@@ -87,6 +87,8 @@ private:
 	uint32_t fTotalDataAdded;	// for saving
 };
 
+unsigned int fgetl(FILE *fp);
+void fputl(unsigned int word, FILE *fp);
 
 #endif
 

@@ -78,5 +78,6 @@ struct ObjProp
 extern ObjProp objprop[OBJ_LAST];
 extern Object *firstobject, *lastobject;
 extern Object *lowestobject, *highestobject;
+bool solidhitdetect(Object *o1, Object *o2);
 
 #endif
