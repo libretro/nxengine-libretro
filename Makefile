@@ -13,7 +13,7 @@ endif
 ifeq ($(platform), unix)
    TARGET := nx.so
    fpic := -fPIC
-   SHARED := -shared -Wl,--version-script=link.T
+   SHARED := -shared -Wl,--version-script=link.T -Wl,--no-undefined
 else ifeq ($(platform), osx)
    TARGET := nx.dylib
    fpic := -fPIC
@@ -22,7 +22,7 @@ else
    TARGET := nx.dll
    CC = gcc
    CXX = g++
-   SHARED := -shared -static-libgcc -static-libstdc++ -Wl,--version-script=link.T
+   SHARED := -shared -static-libgcc -static-libstdc++ -Wl,--version-script=link.T -Wl,--no-undefined
 endif
 
 RM       = rm -f
@@ -32,7 +32,7 @@ OBJS    := $(patsubst %.cpp,%.o,$(SRCS))
 TARGETS := nx.so
 
 ifeq ($(platform), win)
-   SDL_CFLAGS := -I.
+   SDL_CFLAGS := -ISDL
    SDL_LIBS := -L. -lSDL
 else
    SDL_CFLAGS := $(shell pkg-config sdl --cflags)
@@ -41,7 +41,7 @@ endif
 
 # Add SDL dependency
 CXXFLAGS += $(SDL_CFLAGS) -O3 -Wreturn-type -Wunused-variable -Wno-multichar $(fpic)
-LDFLAGS += -lm $(SDL_LIBS) $(SHARED) -Wl,--no-undefined
+LDFLAGS += -lm $(SDL_LIBS) $(SHARED)
 
 all: $(TARGET)
 
