@@ -226,7 +226,7 @@ void post_main()
 // Dirty, but reasonable given that we're making a do_while loop iterative, I suppose ...
 static bool in_gameloop = false;
 
-void run_main()
+bool run_main()
 {
    // :D
    if (in_gameloop)
@@ -250,7 +250,7 @@ void run_main()
       stat("= Loading game =");
       if (game_load(settings->last_save_slot))
       {
-         return;
+         return false;
       }
 
       Replay::OnGameStarting();
@@ -265,7 +265,7 @@ void run_main()
       StopScripts();
       if (Replay::begin_playback(GetReplayName(game.switchstage.param)))
       {
-         return;
+         return false;
       }
    }
    else
@@ -285,14 +285,14 @@ void run_main()
       }
 
       // switch maps
-      if (load_stage(game.switchstage.mapno)) return;
+      if (load_stage(game.switchstage.mapno)) return false;
 
       player->x = (game.switchstage.playerx * TILE_W) << CSF;
       player->y = (game.switchstage.playery * TILE_H) << CSF;
    }
 
    // start the level
-   if (game.initlevel()) return;
+   if (game.initlevel()) return false;
 
    if (freshstart)
       weapon_introslide();
@@ -302,11 +302,12 @@ void run_main()
 loop:
    in_gameloop = true;
    if (gameloop())
-      return;
+      return true;
    in_gameloop = false;
 
    game.stageboss.OnMapExit();
    freshstart = false;
+   return false;
 }
 
 #if 0
