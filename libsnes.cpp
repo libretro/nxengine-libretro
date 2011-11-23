@@ -32,6 +32,11 @@ void snes_init(void)
 
    snes_geometry geom = { SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT };
    snes_environ_cb(SNES_ENVIRONMENT_SET_GEOMETRY, &geom);
+
+   snes_system_timing timing;
+   timing.fps = 50.0;
+   timing.sample_rate = 22050.0;
+   snes_environ_cb(SNES_ENVIRONMENT_SET_TIMING, &timing);
 }
 
 void snes_term(void)
