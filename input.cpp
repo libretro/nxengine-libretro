@@ -1,5 +1,6 @@
 #include "SDL.h"
 #include "nx.h"
+#include "libsnes.hpp"
 
 uint8_t mappings[SDLK_LAST];
 
@@ -13,7 +14,20 @@ bool input_init(void)
 	memset(inputs, 0, sizeof(inputs));
 	memset(lastinputs, 0, sizeof(lastinputs));
 	memset(mappings, 0xff, sizeof(mappings));
+
+   mappings[SNES_DEVICE_ID_JOYPAD_LEFT]   = LEFTKEY;  
+   mappings[SNES_DEVICE_ID_JOYPAD_RIGHT]  = RIGHTKEY;  
+   mappings[SNES_DEVICE_ID_JOYPAD_UP]     = UPKEY;  
+   mappings[SNES_DEVICE_ID_JOYPAD_DOWN]   = DOWNKEY;  
+   
+   mappings[SNES_DEVICE_ID_JOYPAD_B] = JUMPKEY;
+   mappings[SNES_DEVICE_ID_JOYPAD_A] = FIREKEY;
+   mappings[SNES_DEVICE_ID_JOYPAD_L] = PREVWPNKEY;
+   mappings[SNES_DEVICE_ID_JOYPAD_R] = NEXTWPNKEY;
+   mappings[SNES_DEVICE_ID_JOYPAD_X] = INVENTORYKEY;
+   mappings[SNES_DEVICE_ID_JOYPAD_Y] = MAPSYSTEMKEY;
 	
+#if 0
 	// default mappings
 	mappings[SDLK_LEFT] = LEFTKEY;
 	mappings[SDLK_RIGHT] = RIGHTKEY;
@@ -54,6 +68,7 @@ bool input_init(void)
 	mappings[SDLK_SPACE] = FREEZE_FRAME_KEY;
 	mappings[SDLK_c] = FRAME_ADVANCE_KEY;
 	mappings[SDLK_v] = DEBUG_FLY_KEY;
+#endif
 	
 	return 0;
 }
@@ -62,11 +77,11 @@ bool input_init(void)
 void input_remap(int keyindex, int sdl_key)
 {
 	stat("input_remap(%d => %d)", keyindex, sdl_key);
-	int old_mapping = input_get_mapping(keyindex);
-	if (old_mapping != -1)
-		mappings[old_mapping] = 0xff;
-	
-	mappings[sdl_key] = keyindex;
+	//int old_mapping = input_get_mapping(keyindex);
+	//if (old_mapping != -1)
+	//	mappings[old_mapping] = 0xff;
+	//
+	//mappings[sdl_key] = keyindex;
 }
 
 // get which SDL key triggers a given input
@@ -103,9 +118,9 @@ static const char *input_names[] =
 
 void input_set_mappings(int *array)
 {
-	memset(mappings, 0xff, sizeof(mappings));
-	for(int i=0;i<INPUT_COUNT;i++)
-		mappings[array[i]] = i;
+	//memset(mappings, 0xff, sizeof(mappings));
+	//for(int i=0;i<INPUT_COUNT;i++)
+	//	mappings[array[i]] = i;
 }
 
 /*
@@ -114,6 +129,19 @@ void c------------------------------() {}
 
 void input_poll(void)
 {
+   extern snes_input_poll_t snes_input_poll_cb;
+   extern snes_input_state_t snes_input_state_cb;
+
+   snes_input_poll_cb();
+
+   for (unsigned i = 0; i < 12; i++)
+   {
+      int ino = mappings[i];
+      if (ino != 0xff) inputs[ino] = snes_input_state_cb(0,
+            SNES_DEVICE_JOYPAD, 0, i);
+   }
+
+#if 0
 	//static uint8_t shiftstates = 0;
 	SDL_Event evt;
 	int ino;
@@ -151,6 +179,7 @@ void input_poll(void)
 				break;
 		}
 	}
+#endif
 }
 
 // keys that we don't want to send to the console
