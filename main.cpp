@@ -82,13 +82,14 @@ static inline void run_tick()
 	org_run();
 }
 
-static void gameloop(void)
+static bool gameloop(void)
 {
 	uint32_t gametimer;
 
 	gametimer = -GAME_WAIT*10;
-	game.switchstage.mapno = -1;
+	//game.switchstage.mapno = -1;
 
+#if 0
 	while(game.running && game.switchstage.mapno < 0)
 	{
 		uint32_t curtime = SDL_GetTicks();
@@ -109,6 +110,15 @@ static void gameloop(void)
 			}
 		}
 	}
+#endif
+
+   if (game.switchstage.mapno < 0)
+   {
+      run_tick();
+      return true;
+   }
+   else
+      return false;
 }
 
 static bool inhibit_loadfade = false;
@@ -210,8 +220,15 @@ void post_main()
    textbox.Deinit();
 }
 
+// Dirty, but reasonable given that we're making a do_while loop iterative, I suppose ...
+static bool in_gameloop = false;
+
 void run_main()
 {
+   // :D
+   if (in_gameloop)
+      goto loop;
+
    // SSS/SPS persists across stage transitions until explicitly
    // stopped, or you die & reload. It seems a bit risky to me,
    // but that's the spec.
@@ -253,7 +270,7 @@ void run_main()
       if (game.switchstage.mapno == NEW_GAME || \
             game.switchstage.mapno == NEW_GAME_FROM_MENU)
       {
-         bool show_intro = (game.switchstage.mapno == NEW_GAME_FROM_MENU);
+         static bool show_intro = (game.switchstage.mapno == NEW_GAME_FROM_MENU);
          InitNewGame(show_intro);
       }
 
@@ -277,7 +294,14 @@ void run_main()
    if (freshstart)
       weapon_introslide();
 
-   gameloop();
+
+	game.switchstage.mapno = -1;
+loop:
+   in_gameloop = true;
+   if (gameloop())
+      return;
+   in_gameloop = false;
+
    game.stageboss.OnMapExit();
    freshstart = false;
 }
