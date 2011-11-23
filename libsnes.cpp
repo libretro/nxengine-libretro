@@ -1,5 +1,8 @@
 #include "libsnes.hpp"
 #include "graphics/graphics.h"
+#include <unistd.h>
+#include <string>
+#include <assert.h>
 
 bool pre_main();
 void post_main();
@@ -23,11 +26,29 @@ void snes_set_audio_sample(snes_audio_sample_t cb)   { snes_audio_cb       = cb;
 void snes_set_input_poll(snes_input_poll_t cb)       { snes_input_poll_cb  = cb; }
 void snes_set_input_state(snes_input_state_t cb)     { snes_input_state_cb = cb; }
 
+static std::string g_dir;
 void snes_set_controller_port_device(bool port, unsigned device) {}
-void snes_set_cartridge_basename(const char *basename) {}
+void snes_set_cartridge_basename(const char *basename)
+{
+   g_dir = basename;
+   size_t pos = g_dir.find_last_of('/');
+   if (pos == std::string::npos)
+      pos = g_dir.find_last_of('\\');
+   if (pos != std::string::npos)
+   {
+      g_dir = g_dir.substr(0, pos);
+
+      fprintf(stderr, "[NX]: Setting working directory to: %s\n", g_dir.c_str());
+      chdir(g_dir.c_str());
+   }
+}
 
 void snes_init(void)
 {
+   const char *fullpath;
+   if (snes_environ_cb(SNES_ENVIRONMENT_GET_FULLPATH, &fullpath))
+      snes_set_cartridge_basename(fullpath);
+
    pre_main();
 
    snes_geometry geom = { SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH, SCREEN_HEIGHT };
