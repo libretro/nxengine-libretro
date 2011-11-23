@@ -23,7 +23,7 @@ NXFont shadowfont;		// white letters w/ drop shadow
 
 // point sizes for each valid scaling factor
 //int pointsize[] = { -1,  8, 17, 26 };
-int pointsize[] = { -1,  15, 17, 26 };
+int pointsize[] = { -1,  16, 17, 26 };
 
 /*
 void c------------------------------() {}
