@@ -11,15 +11,15 @@ endif
 endif
 
 ifeq ($(platform), unix)
-   TARGET := libsnes.so
+   TARGET := nx.so
    fpic := -fPIC
    SHARED := -shared -Wl,--version-script=link.T
 else ifeq ($(platform), osx)
-   TARGET := libsnes.dylib
+   TARGET := nx.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
 else
-   TARGET := snes.dll
+   TARGET := nx.dll
    CC = gcc
    CXX = g++
    SHARED := -shared -static-libgcc -static-libstdc++ -Wl,--version-script=link.T
@@ -43,9 +43,9 @@ endif
 CXXFLAGS += $(SDL_CFLAGS) -O3 -Wreturn-type -Wunused-variable -Wno-multichar $(fpic)
 LDFLAGS += -lm $(SDL_LIBS) $(SHARED) -Wl,--no-undefined
 
-all: $(TARGETS)
+all: $(TARGET)
 
-nx.so: $(OBJS)
+$(TARGET): $(OBJS)
 	$(CXX) $(OBJS) $(LDFLAGS) -o $@
 
 %.o: %.cpp
