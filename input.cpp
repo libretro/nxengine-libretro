@@ -132,8 +132,6 @@ void input_poll(void)
    extern snes_input_poll_t snes_input_poll_cb;
    extern snes_input_state_t snes_input_state_cb;
 
-   snes_input_poll_cb();
-
    for (unsigned i = 0; i < 12; i++)
    {
       int ino = mappings[i];

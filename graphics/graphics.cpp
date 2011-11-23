@@ -8,6 +8,7 @@
 #include "sprites.h"
 #include "../dirnames.h"
 #include "graphics.fdh"
+#include "../libsnes.hpp"
 
 NXSurface *screen = NULL;			// created from SDL's screen
 static NXSurface *drawtarget = NULL;		// target of DrawRect etc; almost always screen
@@ -46,6 +47,7 @@ void Graphics::close()
 void c------------------------------() {}
 */
 
+extern snes_environment_t snes_environ_cb;
 bool Graphics::InitVideo()
 {
 	SDL_Surface *sdl_screen;
@@ -56,6 +58,9 @@ bool Graphics::InitVideo()
 
 	sdl_screen = SDL_CreateRGBSurface(0, SCREEN_WIDTH*SCALE, SCREEN_HEIGHT*SCALE, screen_bpp,
          0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
+
+   unsigned pitch = sdl_screen->pitch;
+   snes_environ_cb(SNES_ENVIRONMENT_SET_PITCH, &pitch);
 
 	if (!sdl_screen)
 	{

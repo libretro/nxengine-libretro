@@ -51,12 +51,14 @@ static int AddBuffer(SSChannel *chan, int bytes)
 	return bytes;
 }
 
-static void mixaudio(void *unused, Uint8 *stream, int len)
+void game_mixaudio(int16_t *stream, size_t len_samples)
 {
 	int bytes_copied;
 	int bytestogo;
 	int c;
 	int i;
+
+   size_t len = len_samples * sizeof(int16_t);
 
 	// get data for all channels and add it to the mix
 	for(c=0;c<SS_NUM_CHANNELS;c++)
@@ -82,7 +84,21 @@ static void mixaudio(void *unused, Uint8 *stream, int len)
 			}
 		}
 
-		SDL_MixAudio(stream, mixbuffer, len, channel[c].volume);
+		//SDL_MixAudio(stream, mixbuffer, len, channel[c].volume); <-- MixAudio sucks
+
+      // This is also crappy, but hey ;D
+      const int16_t *mixbuf = (const int16_t*)mixbuffer;
+      for (unsigned i = 0; i < len_samples; i++)
+      {
+         int32_t current = stream[i];
+         current += (int32_t)mixbuf[i] * channel[c].volume / SDL_MIX_MAXVOLUME;
+         if (current > 0x7fff)
+            stream[i] = 0x7fff;
+         else if (current < -0x8000)
+            stream[i] = -0x8000;
+         else
+            stream[i] = current;
+      }
 	}
 
 	// tell any callbacks that had a chunk finish, that their chunk finished
@@ -103,6 +119,7 @@ static void mixaudio(void *unused, Uint8 *stream, int len)
 
 char SSInit(void)
 {
+#if 0
 	SDL_AudioSpec fmt, obtained;
 
 	// Set 16-bit stereo audio at 22Khz
@@ -126,8 +143,10 @@ char SSInit(void)
 		staterr("SS: Failed to obtain the audio format I wanted");
 		return 1;
 	}
-
 	mixbuffer = (uint8_t *)malloc(obtained.samples * obtained.channels * 2);
+#endif
+
+	mixbuffer = (uint8_t *)malloc(4096 * 2);
 
 	// zero everything in all channels
 	memset(channel, 0, sizeof(channel));
@@ -137,13 +156,17 @@ char SSInit(void)
 	stat("sslib: initilization was successful.");
 
 	lockcount = 0;
+#if 0
 	SDL_PauseAudio(0);
+#endif
 	return 0;
 }
 
 void SSClose(void)
 {
+#if 0
 	SDL_CloseAudio();
+#endif
 	if (mixbuffer) free(mixbuffer);
 }
 
@@ -356,14 +379,18 @@ void c------------------------------() {}
 // the audio "more", and you have to call it the same numbers of times before it will unlock.
 void SSLockAudio(void)
 {
+#if 0
 	if (lockcount==0) SDL_LockAudio();
 	lockcount++;
+#endif
 }
 
 void SSUnlockAudio(void)
 {
+#if 0
 	lockcount--;
 	if (!lockcount) SDL_UnlockAudio();
+#endif
 }
 
 /*

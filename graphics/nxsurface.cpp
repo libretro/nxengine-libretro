@@ -226,11 +226,6 @@ void NXSurface::Flip()
 {
 	//SDL_Flip(fSurface);
    extern snes_video_refresh_t snes_video_cb;
-   extern snes_environment_t snes_environ_cb;
-
-   unsigned pitch = fSurface->pitch;
-   snes_environ_cb(SNES_ENVIRONMENT_SET_PITCH, &pitch);
-
    snes_video_cb((const uint16_t*)fSurface->pixels, fSurface->w, fSurface->h);
 }
 

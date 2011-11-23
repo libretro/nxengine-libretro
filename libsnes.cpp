@@ -34,8 +34,8 @@ void snes_init(void)
    snes_environ_cb(SNES_ENVIRONMENT_SET_GEOMETRY, &geom);
 
    snes_system_timing timing;
-   timing.fps = 50.0;
-   timing.sample_rate = 22050.0;
+   timing.fps = 60.0;
+   timing.sample_rate = ((2 * 22050) / 60 + 1) * 30;
    snes_environ_cb(SNES_ENVIRONMENT_SET_TIMING, &timing);
 }
 
@@ -47,10 +47,17 @@ void snes_term(void)
 void snes_power(void) {}
 void snes_reset(void) {}
 
+void game_mixaudio(int16_t *stream, size_t len);
+
 void snes_run(void)
 {
    snes_input_poll_cb();
    run_main();
+
+   int16_t samples[(2 * 22050) / 60 + 1] = {0};
+   game_mixaudio(samples, sizeof(samples) / sizeof(int16_t));
+   for (unsigned i = 0; i < sizeof(samples) / sizeof(int16_t); i += 2)
+      snes_audio_cb(samples[i + 0], samples[i + 1]);
 }
 
 void snes_unload_cartridge(void) {}
