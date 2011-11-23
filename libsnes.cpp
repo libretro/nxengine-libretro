@@ -6,7 +6,7 @@
 
 bool pre_main();
 void post_main();
-void run_main();
+bool run_main();
 
 
 unsigned snes_library_revision_major(void) { return 1; }
@@ -73,7 +73,7 @@ void game_mixaudio(int16_t *stream, size_t len);
 void snes_run(void)
 {
    snes_input_poll_cb();
-   run_main();
+   while (!run_main());
 
    int16_t samples[(2 * 22050) / 60 + 1] = {0};
    game_mixaudio(samples, sizeof(samples) / sizeof(int16_t));
