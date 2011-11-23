@@ -114,7 +114,7 @@ void c------------------------------() {}
 
 void input_poll(void)
 {
-	static uint8_t shiftstates = 0;
+	//static uint8_t shiftstates = 0;
 	SDL_Event evt;
 	int ino;
 	int key;

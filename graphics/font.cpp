@@ -127,8 +127,9 @@ SDL_Surface *letter;
 			return 1;
 		}
 		
-		letters[i] = SDL_DisplayFormat(letter);
-		SDL_FreeSurface(letter);
+		//letters[i] = SDL_DisplayFormat(letter);
+      letters[i] = letter;
+		//SDL_FreeSurface(letter);
 	}
 	
 	return 0;
