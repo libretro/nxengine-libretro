@@ -59,7 +59,7 @@ struct stMap
 	int motionpos;
 	
 	unsigned char tiles[MAP_MAXSIZEX][MAP_MAXSIZEY];
-} __attribute__((packed));
+};
 
 extern stMap map;
 
