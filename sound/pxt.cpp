@@ -424,6 +424,7 @@ int output;
 	}
 }
 
+#undef main
 
 // renders a sound channel.
 // call GenerateEnvelope first.
