@@ -1,13 +1,13 @@
 
 #include <SDL/SDL.h>
-#include <SDL/SDL_ttf.h>
 #include "../nx.h"
 #include "font.h"
 #include "font.fdh"
 
 static int text_draw(int x, int y, const char *text, int spacing=0, NXFont *font=&whitefont);
 
-const char *fontfile = "font.ttf";
+//const char *fontfile = "font.ttf";
+const char *fontfile = "font.bmp";
 static SDL_Surface *sdl_screen = NULL;
 static SDL_Surface *shadesfc = NULL;
 
@@ -21,35 +21,16 @@ NXFont greenfont;
 NXFont bluefont;		// used for "F3:Options" text on pause screen
 NXFont shadowfont;		// white letters w/ drop shadow
 
-// point sizes for each valid scaling factor
-//int pointsize[] = { -1,  8, 17, 26 };
-int pointsize[] = { -1,  16, 17, 26 };
-
-/*
-void c------------------------------() {}
-*/
-
 bool font_init(void)
 {
-	TTF_Font *font;
 	bool error = false;
 
 	// we'll be bypassing the NXSurface automatic scaling features
 	// and drawing at the real resolution so we can get better-looking fonts.
 	sdl_screen = screen->GetSDLSurface();
 
-	if (TTF_Init() < 0)
-	{
-		staterr("Couldn't initialize SDL_ttf: %s", TTF_GetError());
-		return 1;
-	}
-
-	font = TTF_OpenFont(fontfile, pointsize[SCALE]);
-	if (!font)
-	{
-		staterr("Couldn't open font: '%s'", fontfile);
-		return 1;
-	}
+   SDL_Surface *font = SDL_LoadBMP(fontfile);
+   SDL_SetColorKey(font, SDL_SRCCOLORKEY, SDL_MapRGB(font->format, 0, 0, 255));
 
 	error |= whitefont.InitChars(font, 0xffffff);
 	error |= greenfont.InitChars(font, 0x00ff80);
@@ -57,7 +38,9 @@ bool font_init(void)
 	error |= shadowfont.InitCharsShadowed(font, 0xffffff, 0x000000);
 	error |= create_shade_sfc();
 
-	TTF_CloseFont(font);
+	//TTF_CloseFont(font);
+   SDL_FreeSurface(font);
+
 	if (error) return 1;
 
    fontheight = 0;
@@ -117,10 +100,23 @@ void NXFont::free()
 	}
 }
 
-bool NXFont::InitChars(TTF_Font *font, uint32_t color)
+static void set_color(SDL_Surface *font, uint16_t color, uint16_t key)
 {
-SDL_Color fgcolor;
-SDL_Surface *letter;
+   for (unsigned h = 0; h < font->h; h++)
+   {
+      uint16_t *pixels = (uint16_t*)font->pixels + h * (font->pitch / 2);
+      for (unsigned w = 0; w < font->w; w++)
+      {
+         if (pixels[w] != key)
+            pixels[w] = color;
+      }
+   }
+}
+
+bool NXFont::InitChars(SDL_Surface *font, uint32_t color)
+{
+   SDL_Color fgcolor;
+   SDL_Surface *letter;
 
 	fgcolor.r = (uint8_t)(color >> 16);
 	fgcolor.g = (uint8_t)(color >> 8);
@@ -128,33 +124,46 @@ SDL_Surface *letter;
 	
 	char str[2];
 	str[1] = 0;
+   uint16_t blue = 0x1f;
 	
 	for(int i=1;i<NUM_LETTERS_RENDERED;i++)
 	{
 		str[0] = i;
 		
-		letter = TTF_RenderText_Solid(font, str, fgcolor);
-		if (!letter)
-		{
-			staterr("Font::InitChars: failed to render character %d: %s", i, TTF_GetError());
-			return 1;
-		}
-		
-		//letters[i] = SDL_DisplayFormat(letter);
+      letter = SDL_CreateRGBSurface(0, 5, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
+            0);
+
+      SDL_Rect src = {0};
+
+      src.w = 5;
+      src.h = 10;
+      src.x = (i % 16) * 16;
+      src.y = (i / 16) * 16;
+
+      SDL_Rect dst = {0};
+      dst.w = letter->w;
+      dst.h = letter->h;
+
+      SDL_SetColorKey(letter, SDL_SRCCOLORKEY, 0x1f);
+      SDL_FillRect(letter, NULL, 0x1f);
+	
+      SDL_BlitSurface(font, &src, letter, &dst);
+      set_color(letter,
+            SDL_MapRGB(letter->format, fgcolor.r, fgcolor.g, fgcolor.b), blue);
+
       letters[i] = letter;
-		//SDL_FreeSurface(letter);
 	}
 	
 	return 0;
 }
 
 // create a font with a drop-shadow (used for "MNA" stage-name displays)
-bool NXFont::InitCharsShadowed(TTF_Font *font, uint32_t color, uint32_t shadowcolor)
+bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shadowcolor)
 {
-SDL_Color fgcolor, bgcolor;
-SDL_Surface *top, *bottom;
-SDL_Rect dstrect;
-const int offset = 2;
+   SDL_Color fgcolor, bgcolor;
+   SDL_Surface *top, *bottom;
+   SDL_Rect dstrect;
+   const int offset = 2;
 
 	fgcolor.r = (uint8_t)(color >> 16);
 	fgcolor.g = (uint8_t)(color >> 8);
@@ -167,32 +176,50 @@ const int offset = 2;
 	char str[2];
 	str[1] = 0;
 	
-	SDL_PixelFormat *format = sdl_screen->format;
-	uint32_t transp = SDL_MapRGB(format, 255, 0, 255);
 	
 	for(int i=1;i<NUM_LETTERS_RENDERED;i++)
 	{
 		str[0] = i;
 		
-		top = TTF_RenderText_Solid(font, str, fgcolor);
-		bottom = TTF_RenderText_Solid(font, str, bgcolor);
-		if (!top || !bottom)
-		{
-			staterr("Font::InitCharsShadowed: failed to render character %d: %s", i, TTF_GetError());
-			return 1;
-		}
-		
-		letters[i] = SDL_CreateRGBSurface(SDL_SRCCOLORKEY, top->w, top->h+offset,
+      uint16_t blue = 0x1f;
+
+      top = SDL_CreateRGBSurface(0, 5, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
+            0);
+      bottom = SDL_CreateRGBSurface(0, 5, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
+            0);
+
+      SDL_FillRect(top, NULL, blue);
+      SDL_FillRect(bottom, NULL, blue);
+      SDL_SetColorKey(top, SDL_SRCCOLORKEY, blue);
+      SDL_SetColorKey(bottom, SDL_SRCCOLORKEY, blue);
+
+      SDL_PixelFormat *format = top->format;
+
+      SDL_Rect src = {0};
+      src.w = 5;
+      src.h = 10;
+      src.x = (i % 16) * 16;
+      src.y = (i / 16) * 16;
+
+      SDL_Rect dst = {0};
+      dst.w = top->w;
+      dst.h = top->h;
+	
+      SDL_BlitSurface(font, &src, top, &dst);
+      SDL_BlitSurface(font, &src, bottom, &dst);
+
+      set_color(top,
+            SDL_MapRGB(top->format, fgcolor.r, fgcolor.g, fgcolor.b), blue);
+
+      set_color(bottom,
+            SDL_MapRGB(bottom->format, bgcolor.r, bgcolor.g, bgcolor.b), blue);
+
+		letters[i] = SDL_CreateRGBSurface(0, top->w, top->h+offset,
 							format->BitsPerPixel, format->Rmask, format->Gmask,
 							format->Bmask, format->Amask);
-		if (!letters[i])
-		{
-			staterr("Font::InitCharsShadowed: failed to create surface for character %d: %s", i, SDL_GetError());
-			return 1;
-		}
 		
-		SDL_FillRect(letters[i], NULL, transp);
-		SDL_SetColorKey(letters[i], SDL_SRCCOLORKEY, transp);
+      SDL_SetColorKey(letters[i], SDL_SRCCOLORKEY, blue);
+      SDL_FillRect(letters[i], NULL, blue);
 		
 		dstrect.x = 0;
 		dstrect.y = offset;
@@ -298,7 +325,7 @@ static bool create_shade_sfc(void)
 	int ht = whitefont.letters['M']->h;
 	
 	SDL_PixelFormat *format = sdl_screen->format;
-	shadesfc = SDL_CreateRGBSurface(SDL_SRCALPHA | SDL_HWSURFACE, wd, ht,
+	shadesfc = SDL_CreateRGBSurface(SDL_SRCALPHA | SDL_SWSURFACE, wd, ht,
 							format->BitsPerPixel, format->Rmask, format->Gmask,
 							format->Bmask, format->Amask);
 	
