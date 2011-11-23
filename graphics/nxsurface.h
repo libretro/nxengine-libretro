@@ -2,7 +2,7 @@
 #ifndef _NXSURFACE_H
 #define _NXSURFACE_H
 
-#include <SDL/SDL.h>
+#include "SDL/SDL.h"
 #include "../common/basics.h"
 
 // how much to scale the graphics

@@ -1,7 +1,6 @@
 
 // graphics routines
-#include <SDL/SDL.h>
-#include <SDL/SDL_getenv.h>
+#include "SDL/SDL.h"
 #include <stdlib.h>
 #include "graphics.h"
 #include "tileset.h"
