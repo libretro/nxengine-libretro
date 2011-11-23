@@ -235,8 +235,8 @@ static void map_set_backdrop(int backdrop_no)
 // tile attributes (pxa), and script (tsc).
 bool load_stage(int stage_no)
 {
-	char stage[MAXPATHLEN];
-	char fname[MAXPATHLEN];
+	char stage[1024];
+	char fname[1024];
 
 	game.curmap = stage_no;		// do it now so onspawn events will have it
 
@@ -246,21 +246,21 @@ bool load_stage(int stage_no)
 	// get the base name of the stage without extension
 	const char *mapname = stages[stage_no].filename;
 	if (!strcmp(mapname, "lounge")) mapname = "Lounge";
-	sprintf(stage, "%s/%s", stage_dir, mapname);
+	snprintf(stage, sizeof(stage), "%s/%s", stage_dir, mapname);
 
-	sprintf(fname, "%s.pxm", stage);
+	snprintf(fname, sizeof(fname), "%s.pxm", stage);
 	if (load_map(fname))
 		return 1;
 
-	sprintf(fname, "%s/%s.pxa", stage_dir, tileset_names[stages[stage_no].tileset]);
+	snprintf(fname, sizeof(fname), "%s/%s.pxa", stage_dir, tileset_names[stages[stage_no].tileset]);
 	if (load_tileattr(fname))
 		return 1;
 
-	sprintf(fname, "%s.pxe", stage);
+	snprintf(fname, sizeof(fname), "%s.pxe", stage);
 	if (load_entities(fname))
 		return 1;
 
-	sprintf(fname, "%s.tsc", stage);
+	snprintf(fname, sizeof(fname), "%s.tsc", stage);
 	if (tsc_load(fname, SP_MAP) == -1)
 		return 1;
 

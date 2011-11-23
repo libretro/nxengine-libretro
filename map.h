@@ -16,7 +16,7 @@
 #define MAPX(X)		( ( (X) * TILE_W ) << CSF )
 #define MAPY(Y)		( ( (Y) * TILE_H ) << CSF )
 
-struct stMap
+struct stMap 
 {
 	int xsize, ysize;
 	int displayed_xscroll, displayed_yscroll;
@@ -59,7 +59,7 @@ struct stMap
 	int motionpos;
 	
 	unsigned char tiles[MAP_MAXSIZEX][MAP_MAXSIZEY];
-};
+} __attribute__((packed));
 
 extern stMap map;
 
