@@ -130,7 +130,7 @@ bool NXFont::InitChars(SDL_Surface *font, uint32_t color)
 	{
 		str[0] = i;
 		
-      letter = SDL_CreateRGBSurface(0, 5, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
+      letter = SDL_CreateRGBSurface(0, 6, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
             0);
 
       SDL_Rect src = {0};
@@ -183,9 +183,9 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 		
       uint16_t blue = 0x1f;
 
-      top = SDL_CreateRGBSurface(0, 5, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
+      top = SDL_CreateRGBSurface(0, 6, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
             0);
-      bottom = SDL_CreateRGBSurface(0, 5, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
+      bottom = SDL_CreateRGBSurface(0, 6, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
             0);
 
       SDL_FillRect(top, NULL, blue);
@@ -271,7 +271,7 @@ SDL_Rect dstrect;
 		{	// variable spacing
 			if (ch == ' ' && shrink_spaces)
 			{	// 10.5 px for spaces - make smaller than they really are - the default
-				x += (SCALE == 1) ? 5 : 10;
+				x += (SCALE == 1) ? 6 : 10;
 				if (i & 1) x++;
 			}
 			else
