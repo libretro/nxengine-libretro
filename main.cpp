@@ -42,8 +42,8 @@ static void InitNewGame(bool with_intro)
 
 static inline void run_tick()
 {
-	static bool last_freezekey = false;
-	static bool last_framekey = false;
+	//static bool last_freezekey = false;
+	//static bool last_framekey = false;
 
 	input_poll();
 
@@ -111,6 +111,178 @@ static void gameloop(void)
 	}
 }
 
+static bool inhibit_loadfade = false;
+//static bool error = false;
+static bool freshstart;
+
+bool pre_main()
+{
+#ifdef USE_LOGGING
+   SetLogFilename("debug.txt");
+#endif
+   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
+   {
+      staterr("ack, sdl_init failed: %s.", SDL_GetError());
+      return false;
+   }
+
+   // start up inputs first thing because settings_load may remap them
+   input_init();
+
+   // load settings, or at least get the defaults,
+   // so we know the initial screen resolution.
+   settings_load();
+
+   if (Graphics::init(settings->resolution))
+   {
+      staterr("Failed to initilize graphics.");
+      return false;
+   }
+   if (font_init())
+   {
+      staterr("Failed to load font.");
+      return false;
+   }
+
+   //Graphics::ShowLoadingScreen();
+   if (sound_init())
+   {
+      return false;
+   }
+   if (trig_init())
+   {
+      return false;
+   }
+   if (tsc_init())
+   {
+      return false;
+   }
+   if (textbox.Init())
+   {
+      return false;
+   }
+   if (Carets::init())
+   {
+      return false;
+   }
+
+   if (game.init()) return 1;
+   game.setmode(GM_NORMAL);
+   // set null stage just to have something to do while we go to intro
+   game.switchstage.mapno = 0;
+
+   //#define REPLAY
+#ifdef REPLAY
+   game.switchstage.mapno = START_REPLAY;
+   Replay::set_ffwd(23400);
+   //Replay::set_stopat(3500);
+#else
+   //game.switchstage.mapno = LOAD_GAME;
+   //game.pause(GP_OPTIONS);
+
+   if (settings->skip_intro && file_exists(GetProfileName(settings->last_save_slot)))
+      game.switchstage.mapno = LOAD_GAME;
+   else
+      game.setmode(GM_INTRO);
+#endif
+
+   // for debug
+   if (game.paused) { game.switchstage.mapno = 0; game.switchstage.eventonentry = 0; }
+   if (game.switchstage.mapno == LOAD_GAME) inhibit_loadfade = true;
+
+   game.running = true;
+   freshstart = true;
+
+   return true;
+}
+
+void post_main()
+{
+   Replay::close();
+   game.close();
+   Carets::close();
+
+   Graphics::close();
+   input_close();
+   font_close();
+   sound_close();
+   tsc_close();
+   textbox.Deinit();
+}
+
+void run_main()
+{
+   // SSS/SPS persists across stage transitions until explicitly
+   // stopped, or you die & reload. It seems a bit risky to me,
+   // but that's the spec.
+   if (game.switchstage.mapno >= MAPNO_SPECIALS)
+   {
+      StopLoopSounds();
+   }
+
+   // enter next stage, whatever it may be
+   if (game.switchstage.mapno == LOAD_GAME || \
+         game.switchstage.mapno == LOAD_GAME_FROM_MENU)
+   {
+      if (game.switchstage.mapno == LOAD_GAME_FROM_MENU)
+         freshstart = true;
+
+      stat("= Loading game =");
+      if (game_load(settings->last_save_slot))
+      {
+         return;
+      }
+
+      Replay::OnGameStarting();
+
+      if (!inhibit_loadfade) fade.Start(FADE_IN, FADE_CENTER);
+      else inhibit_loadfade = false;
+   }
+   else if (game.switchstage.mapno == START_REPLAY)
+   {
+      stat(">> beginning replay '%s'", GetReplayName(game.switchstage.param));
+
+      StopScripts();
+      if (Replay::begin_playback(GetReplayName(game.switchstage.param)))
+      {
+         return;
+      }
+   }
+   else
+   {
+      if (game.switchstage.mapno == NEW_GAME || \
+            game.switchstage.mapno == NEW_GAME_FROM_MENU)
+      {
+         bool show_intro = (game.switchstage.mapno == NEW_GAME_FROM_MENU);
+         InitNewGame(show_intro);
+      }
+
+      // slide weapon bar on first intro to Start Point
+      if (game.switchstage.mapno == STAGE_START_POINT && \
+            game.switchstage.eventonentry == 91)
+      {
+         freshstart = true;
+      }
+
+      // switch maps
+      if (load_stage(game.switchstage.mapno)) return;
+
+      player->x = (game.switchstage.playerx * TILE_W) << CSF;
+      player->y = (game.switchstage.playery * TILE_H) << CSF;
+   }
+
+   // start the level
+   if (game.initlevel()) return;
+
+   if (freshstart)
+      weapon_introslide();
+
+   gameloop();
+   game.stageboss.OnMapExit();
+   freshstart = false;
+}
+
+#if 0
 int main(int argc, char *argv[])
 {
 	bool inhibit_loadfade = false;
@@ -288,3 +460,5 @@ ingame_error: ;
 	      error = true;
 	      goto shutdown;
 }
+#endif
+
