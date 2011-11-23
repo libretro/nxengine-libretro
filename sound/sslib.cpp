@@ -91,7 +91,7 @@ void game_mixaudio(int16_t *stream, size_t len_samples)
       for (unsigned i = 0; i < len_samples; i++)
       {
          int32_t current = stream[i];
-         current += (int32_t)mixbuf[i] * channel[c].volume / SDL_MIX_MAXVOLUME;
+         current += (int32_t)mixbuf[i] * channel[c].volume / (2 * SDL_MIX_MAXVOLUME);
          if (current > 0x7fff)
             stream[i] = 0x7fff;
          else if (current < -0x8000)
