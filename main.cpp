@@ -130,11 +130,14 @@ bool pre_main()
 #ifdef USE_LOGGING
    SetLogFilename("debug.txt");
 #endif
+
+#if 0
    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
    {
       staterr("ack, sdl_init failed: %s.", SDL_GetError());
       return false;
    }
+#endif
 
    // start up inputs first thing because settings_load may remap them
    input_init();

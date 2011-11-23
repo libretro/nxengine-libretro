@@ -22,7 +22,8 @@ NXFont bluefont;		// used for "F3:Options" text on pause screen
 NXFont shadowfont;		// white letters w/ drop shadow
 
 // point sizes for each valid scaling factor
-int pointsize[] = { -1,  8, 17, 26 };
+//int pointsize[] = { -1,  8, 17, 26 };
+int pointsize[] = { -1,  15, 17, 26 };
 
 /*
 void c------------------------------() {}
@@ -59,7 +60,19 @@ bool font_init(void)
 	TTF_CloseFont(font);
 	if (error) return 1;
 
-	fontheight = (whitefont.letters['M']->h / SCALE);
+   fontheight = 0;
+   for (char c = 'A'; c <= 'Z'; c++)
+   {
+      if (whitefont.letters[c]->h / SCALE > fontheight)
+         fontheight = whitefont.letters[c]->h / SCALE;
+   }
+
+   for (char c = 'a'; c <= 'z'; c++)
+   {
+      if (whitefont.letters[c]->h / SCALE > fontheight)
+         fontheight = whitefont.letters[c]->h / SCALE;
+   }
+
 	initilized = true;
 	return 0;
 }
@@ -237,7 +250,7 @@ SDL_Rect dstrect;
 			else
 			{
 				if (letter)
-					x += letter->w;
+               x += letter->w;
 			}
 		}
 	}
