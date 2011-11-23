@@ -37,7 +37,7 @@ NXSurface::~NXSurface()
 // static function, and requires a reload of all surfaces
 void NXSurface::SetScale(int factor)
 {
-	SCALE = factor;
+	//SCALE = factor;
 }
 
 /*
@@ -65,6 +65,10 @@ bool NXSurface::AllocNew(int wd, int ht, NXFormat *format)
 // load the surface from a .pbm or bitmap file
 bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey, int use_display_format)
 {
+   // HACK
+   use_display_format = 0;
+   ///////
+
 	SDL_Surface *image;
 
 	Free();
@@ -88,6 +92,10 @@ bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey, int use_displ
 
 NXSurface *NXSurface::FromFile(const char *pbm_name, bool use_colorkey, int use_display_format)
 {
+   // HACK
+   use_display_format = 0;
+   ///////
+
 	NXSurface *sfc = new NXSurface;
 	if (sfc->LoadImage(pbm_name, use_colorkey, use_display_format))
 	{
@@ -256,6 +264,10 @@ void c------------------------------() {}
 // internal function which scales the given SDL surface by the given factor.
 SDL_Surface *NXSurface::Scale(SDL_Surface *original, int factor, bool use_colorkey, bool free_original, bool use_display_format)
 {
+   // Hack
+   use_display_format = false;
+   ///////
+
 	SDL_Surface *scaled;
 
 	if (factor == 1 && free_original)

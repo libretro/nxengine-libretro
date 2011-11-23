@@ -23,7 +23,7 @@ static int current_res = -1;
 
 bool Graphics::init(int resolution)
 {
-   screen_bpp = 16;
+   screen_bpp = 15;
 
 	if (SetResolution(resolution, false))
 		return 1;
