@@ -6,7 +6,7 @@ TARGETS := nx.so
 
 # Add SDL dependency
 CFLAGS  = $(shell pkg-config sdl --cflags) -O3 -Wreturn-type -Wunused-variable -Wno-multichar -fPIC
-LDFLAGS += -lSDL_ttf -lm  $(shell pkg-config sdl --libs) -shared -Wl,--no-undefined
+LDFLAGS += -lm  $(shell pkg-config sdl --libs) -shared -Wl,--no-undefined
 
 all: $(TARGETS)
 
