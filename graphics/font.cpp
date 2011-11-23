@@ -238,7 +238,7 @@ SDL_Rect dstrect;
 		
 		if (spacing != 0)
 		{	// fixed spacing
-			x += spacing;
+			x += spacing + 1;
 		}
 		else
 		{	// variable spacing
