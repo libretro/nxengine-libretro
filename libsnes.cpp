@@ -19,6 +19,7 @@ snes_video_refresh_t snes_video_cb;
 snes_audio_sample_t snes_audio_cb;
 snes_input_poll_t snes_input_poll_cb;
 snes_input_state_t snes_input_state_cb;
+bool snes_60hz = true;
 
 void snes_set_environment(snes_environment_t cb)     { snes_environ_cb     = cb; }
 void snes_set_video_refresh(snes_video_refresh_t cb) { snes_video_cb       = cb; }
@@ -73,7 +74,16 @@ void game_mixaudio(int16_t *stream, size_t len);
 void snes_run(void)
 {
    snes_input_poll_cb();
-   while (!run_main());
+
+   static unsigned frame_cnt = 0;
+   if (snes_60hz)
+      while (!run_main());
+   else
+   {
+      frame_cnt = (frame_cnt + 1) % 6;
+      if (frame_cnt)
+         while (!run_main());
+   }
 
    int16_t samples[(2 * 22050) / 60 + 1] = {0};
    game_mixaudio(samples, sizeof(samples) / sizeof(int16_t));
