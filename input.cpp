@@ -25,6 +25,8 @@ bool input_init(void)
    mappings[SNES_DEVICE_ID_JOYPAD_R] = NEXTWPNKEY;
    mappings[SNES_DEVICE_ID_JOYPAD_A] = INVENTORYKEY;
    mappings[SNES_DEVICE_ID_JOYPAD_X] = MAPSYSTEMKEY;
+
+   mappings[SNES_DEVICE_ID_JOYPAD_SELECT] = F3KEY;
 	
 	return 0;
 }
@@ -80,8 +82,19 @@ void input_poll(void)
    for (unsigned i = 0; i < 12; i++)
    {
       int ino = mappings[i];
-      if (ino != 0xff) inputs[ino] = snes_input_state_cb(0,
-            SNES_DEVICE_JOYPAD, 0, i);
+
+      if (ino != F3KEY)
+      {
+         if (ino != 0xff)
+            inputs[ino] = snes_input_state_cb(0, SNES_DEVICE_JOYPAD, 0, i);
+      }
+      else
+      {
+         static bool old;
+         bool input = snes_input_state_cb(0, SNES_DEVICE_JOYPAD, 0, i);
+         inputs[ino] = input && !old;
+         old = input;
+      }
    }
 }
 

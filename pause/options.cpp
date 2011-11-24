@@ -121,15 +121,20 @@ void DialogDismissed()
 void c------------------------------() {}
 */
 
+void _60hz_change(ODItem *, int);
+void _60hz_get(ODItem *);
+
 static void EnterMainMenu()
 {
 Dialog *dlg = opt.dlg;
 
 	dlg->Clear();
 	
-	dlg->AddItem("Resolution: ", _res_change, _res_get);
-	dlg->AddItem("Controls", EnterControlsMenu);
-	dlg->AddItem("Replay", EnterReplayMenu);
+	//dlg->AddItem("Resolution: ", _res_change, _res_get);
+	//dlg->AddItem("Controls", EnterControlsMenu);
+	//dlg->AddItem("Replay", EnterReplayMenu);
+
+   dlg->AddItem("60 Hz: ", _60hz_change, _60hz_get);
 	
 	dlg->AddSeparator();
 	
@@ -260,6 +265,19 @@ void _music_get(ODItem *item)
 {
 	static const char *strs[] = { "Off", "On", "Boss Only" };
 	strcpy(item->suffix, strs[settings->music_enabled]);
+}
+
+void _60hz_change(ODItem *item, int dir)
+{
+   extern bool snes_60hz;
+   snes_60hz ^= 1;
+}
+
+void _60hz_get(ODItem *item)
+{
+   extern bool snes_60hz;
+   static const char *strs[] = { "Off", "On" };
+   strcpy(item->suffix, strs[snes_60hz]);
 }
 
 /*
