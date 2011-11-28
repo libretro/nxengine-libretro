@@ -17,7 +17,6 @@ const NXColor DK_BLUE(0, 0, 0x21);		// the popular dk blue backdrop color
 const NXColor BLACK(0, 0, 0);			// pure black, only works if no colorkey
 const NXColor CLEAR(0, 0, 0);			// the transparent/colorkey color
 
-static bool is_fullscreen = false;
 static int current_res = -1;
 
 bool Graphics::init(int resolution)
@@ -86,23 +85,8 @@ bool Graphics::SetResolution(int r)
 	if (r == current_res)
 		return 0;
 	
-	int old_res = current_res;
-	int factor;
-	
-	if (r == 0)
-	{
-		is_fullscreen = true;
-		factor = 2;
-	}
-	else
-	{
-		is_fullscreen = false;
-		factor = r;
-	}
-	
 	if (Graphics::InitVideo())
 	{
-		staterr("Switch to resolution %d failed!", r);
 		return 1;
 	}
 	
@@ -120,26 +104,26 @@ void c------------------------------() {}
 // and for animated motion tiles in Waterway.
 void Graphics::CopySpriteToTile(int spr, int tileno, int offset_x, int offset_y)
 {
-NXRect srcrect, dstrect;
+	NXRect srcrect, dstrect;
 
 	srcrect.x = (sprites[spr].frame[0].dir[0].sheet_offset.x + offset_x);
 	srcrect.y = (sprites[spr].frame[0].dir[0].sheet_offset.y + offset_y);
 	srcrect.w = TILE_W;
 	srcrect.h = TILE_H;
-	
+
 	dstrect.x = (tileno % 16) * TILE_W;
 	dstrect.y = (tileno / 16) * TILE_H;
 	dstrect.w = TILE_W;
 	dstrect.h = TILE_H;
-	
+
 	NXSurface *tileset = Tileset::GetSurface();
 	NXSurface *spritesheet = Sprites::get_spritesheet(sprites[spr].spritesheet);
-	
+
 	if (tileset && spritesheet)
 	{
 		// blank out the old tile data with clear
 		tileset->FillRect(&dstrect, CLEAR);
-		
+
 		// copy the sprite over
 		BlitSurface(spritesheet, &srcrect, tileset, &dstrect);
 	}
@@ -148,16 +132,16 @@ NXRect srcrect, dstrect;
 
 void Graphics::ShowLoadingScreen()
 {
-NXSurface loading;
-char fname[MAXPATHLEN];
-	
+	NXSurface loading;
+	char fname[MAXPATHLEN];
+
 	sprintf(fname, "%s/Loading.pbm", data_dir);
 	if (loading.LoadImage(fname))
 		return;
-	
+
 	int x = (SCREEN_WIDTH / 2) - (loading.Width() / 2);
 	int y = (SCREEN_HEIGHT / 2) - loading.Height();
-	
+
 	FillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0);
 	DrawSurface(&loading, x, y);
 	drawtarget->Flip();

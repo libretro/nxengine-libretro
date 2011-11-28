@@ -403,7 +403,6 @@ int i;
 		}
 	}
 	
-	input_remap(inputno, new_sdl_key);
 	sound(SND_MENU_SELECT);
 	opt.dlg->Refresh();
 }

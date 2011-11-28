@@ -74,10 +74,6 @@ bool settings_load(Settings *setfile)
 		
 		return 1;
 	}
-	else
-	{
-		input_set_mappings(settings->input_mappings);
-	}
 	
 	return 0;
 }
@@ -86,15 +82,13 @@ bool settings_load(Settings *setfile)
 void c------------------------------() {}
 */
 
-
-
 bool settings_save(Settings *setfile)
 {
-FILE *fp;
+	FILE *fp;
 
 	if (!setfile)
 		setfile = &normal_settings;
-	
+
 	stat("Writing settings...");
 	fp = fopen(setfilename, "wb");
 	if (!fp)
@@ -102,13 +96,13 @@ FILE *fp;
 		stat("Couldn't open file %s.", setfilename);
 		return 1;
 	}
-	
+
 	for(int i=0;i<INPUT_COUNT;i++)
 		setfile->input_mappings[i] = input_get_mapping(i);
-	
+
 	fputi(SETTINGS_VERSION, fp);
 	fwrite(setfile, sizeof(Settings), 1, fp);
-	
+
 	fclose(fp);
 	return 0;
 }

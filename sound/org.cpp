@@ -1113,12 +1113,10 @@ int org_GetCurrentBeat(void)
 		
 		// if we don't lockout the audio over both these calls, it's possible
 		// for the first variable to be from one buffer and the second from another.
-		SSLockAudio();
 		{
 			curbuffer = SSGetCurUserData(ORG_CHANNEL);
 			sample_pos = SSGetSamplePos(ORG_CHANNEL);
 		}
-		SSUnlockAudio();
 		
 		elapsed = SamplesToMS(sample_pos);
 		

@@ -14,39 +14,35 @@ bool input_init(void)
 	memset(lastinputs, 0, sizeof(lastinputs));
 	memset(mappings, 0xff, sizeof(mappings));
 
-   mappings[SNES_DEVICE_ID_JOYPAD_LEFT]   = LEFTKEY;  
-   mappings[SNES_DEVICE_ID_JOYPAD_RIGHT]  = RIGHTKEY;  
-   mappings[SNES_DEVICE_ID_JOYPAD_UP]     = UPKEY;  
-   mappings[SNES_DEVICE_ID_JOYPAD_DOWN]   = DOWNKEY;  
-   
-   mappings[SNES_DEVICE_ID_JOYPAD_B] = JUMPKEY;
-   mappings[SNES_DEVICE_ID_JOYPAD_Y] = FIREKEY;
-   mappings[SNES_DEVICE_ID_JOYPAD_L] = PREVWPNKEY;
-   mappings[SNES_DEVICE_ID_JOYPAD_R] = NEXTWPNKEY;
-   mappings[SNES_DEVICE_ID_JOYPAD_X] = MAPSYSTEMKEY;
+	mappings[SNES_DEVICE_ID_JOYPAD_LEFT]   = LEFTKEY;  
+	mappings[SNES_DEVICE_ID_JOYPAD_RIGHT]  = RIGHTKEY;  
+	mappings[SNES_DEVICE_ID_JOYPAD_UP]     = UPKEY;  
+	mappings[SNES_DEVICE_ID_JOYPAD_DOWN]   = DOWNKEY;  
 
-   mappings[SNES_DEVICE_ID_JOYPAD_SELECT] = F3KEY;
-   mappings[SNES_DEVICE_ID_JOYPAD_START] = INVENTORYKEY;
-	
+	mappings[SNES_DEVICE_ID_JOYPAD_B] = JUMPKEY;
+	mappings[SNES_DEVICE_ID_JOYPAD_Y] = FIREKEY;
+	mappings[SNES_DEVICE_ID_JOYPAD_L] = PREVWPNKEY;
+	mappings[SNES_DEVICE_ID_JOYPAD_R] = NEXTWPNKEY;
+	mappings[SNES_DEVICE_ID_JOYPAD_X] = MAPSYSTEMKEY;
+
+	mappings[SNES_DEVICE_ID_JOYPAD_SELECT] = F3KEY;
+	mappings[SNES_DEVICE_ID_JOYPAD_START] = INVENTORYKEY;
+
 	return 0;
 }
-
-// set the SDL key that triggers an input
-void input_remap(int keyindex, int sdl_key)
-{}
 
 // get which SDL key triggers a given input
 int input_get_mapping(int keyindex)
 {
-   int i;
+	int i;
 
-   for(i=0;i<=SDLK_LAST;i++)
-   {
-      if (mappings[i] == keyindex)
-         return i;
-   }
+	for(i=0;i<=SDLK_LAST;i++)
+	{
+		if (mappings[i] == keyindex)
+			return i;
+	}
 
-   return -1;
+	return -1;
 }
 
 const char *input_get_name(int index)
@@ -65,10 +61,6 @@ const char *input_get_name(int index)
       return "invalid";
 
    return input_names[index];
-}
-
-void input_set_mappings(int *array)
-{
 }
 
 /*
@@ -110,10 +102,6 @@ static int IsNonConsoleKey(int key)
 
 	return false;
 }
-
-
-void input_close(void)
-{}
 
 static const int buttons[] = { JUMPKEY, FIREKEY, 0 };
 

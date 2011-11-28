@@ -89,7 +89,6 @@ public:
 	
 	int Width();
 	int Height();
-	void EnableColorKey();
 	NXFormat *Format();
 	
 	void Flip();

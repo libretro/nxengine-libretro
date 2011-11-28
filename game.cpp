@@ -332,19 +332,12 @@ void Game::tick(void)
 {
 
 	if (game.paused)
-	{
 		tickfunctions[game.paused].OnTick();
-	}
 	else
 	{
-		// record/playback replays
-		Replay::run();
-
-		// run scripts
-		RunScripts();
-
-		// call the tick function for the current game mode
-		tickfunctions[game.mode].OnTick();
+		Replay::run();				// record/playback replays
+		RunScripts();				// run scripts
+		tickfunctions[game.mode].OnTick();	// call the tick function for the current game mode
 	}
 }
 
@@ -477,7 +470,6 @@ bool game_load(Profile *p)
 bool game_save(int num)
 {
 	Profile p;
-
 
 	if (game_save(&p))
 		return 1;

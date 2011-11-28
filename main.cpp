@@ -207,7 +207,6 @@ void post_main()
    game.close();
    Carets::close();
 
-   input_close();
    sound_close();
    tsc_close();
    textbox.Deinit();
@@ -463,7 +462,6 @@ shutdown: ;
 	Carets::close();
 
 	Graphics::close();
-	input_close();
 	sound_close();
 	tsc_close();
 	textbox.Deinit();
