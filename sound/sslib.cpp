@@ -2,7 +2,6 @@
 // Sound System
 // more or less, my own version of SDL_mixer
 
-#include "SDL.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -10,6 +9,8 @@
 #include "../common/basics.h"
 
 #include "sslib.h"
+
+#define SDL_MIX_MAXVOLUME 128
 
 SSChannel channel[SS_NUM_CHANNELS];
 
@@ -118,33 +119,6 @@ void game_mixaudio(int16_t *stream, size_t len_samples)
 
 char SSInit(void)
 {
-#if 0
-	SDL_AudioSpec fmt, obtained;
-
-	// Set 16-bit stereo audio at 22Khz
-	fmt.freq = 22050;
-	fmt.format = AUDIO_S16;
-	fmt.channels = 2;
-	fmt.samples = 512;
-	fmt.callback = mixaudio;
-	fmt.userdata = NULL;
-
-	// Open the audio device and start playing sound!
-	if (SDL_OpenAudio(&fmt, &obtained) < 0)
-	{
-		staterr("SS: Unable to open audio: %s", SDL_GetError());
-		return 1;
-	}
-
-	if (obtained.format != fmt.format || \
-			obtained.channels != fmt.channels)
-	{
-		staterr("SS: Failed to obtain the audio format I wanted");
-		return 1;
-	}
-	mixbuffer = (uint8_t *)malloc(obtained.samples * obtained.channels * 2);
-#endif
-
 	mixbuffer = (uint8_t *)malloc(4096 * 2);
 
 	// zero everything in all channels
@@ -155,18 +129,13 @@ char SSInit(void)
 	stat("sslib: initilization was successful.");
 
 	lockcount = 0;
-#if 0
-	SDL_PauseAudio(0);
-#endif
 	return 0;
 }
 
 void SSClose(void)
 {
-#if 0
-	SDL_CloseAudio();
-#endif
-	if (mixbuffer) free(mixbuffer);
+	if (mixbuffer)
+		free(mixbuffer);
 }
 
 /*
@@ -214,13 +183,10 @@ int SSEnqueueChunk(int c, signed short *buffer, int len, int userdata, void(*Fin
 		return -1;
 	}
 
-	SSLockAudio();
-
 	if (c < 0) c = SSFindFreeChannel();
 	if (c==-1)
 	{
 		staterr("SSEnqueueChunk: no available sound channels!");
-		SSUnlockAudio();
 		return -1;
 	}
 
@@ -244,10 +210,8 @@ int SSEnqueueChunk(int c, signed short *buffer, int len, int userdata, void(*Fin
 	if (chan->tail==chan->head)
 	{
 		staterr("SS: overqueued channel %d; Bad Things about to happen", c);
-		SSUnlockAudio();
 		return -1;
 	}
-	SSUnlockAudio();
 
 	//stat("SSEnqueued buffer %d: %08x of %d bytes to channel %d (containing %d samples); UD %d", loc, buffer, chunk->bytelength, c, len, chunk->userdata);
 	return c;
@@ -270,9 +234,7 @@ char SSChannelPlaying(int c)
 {
 	int result;
 
-	SSLockAudio();
 	result = (channel[c].head != channel[c].tail);
-	SSUnlockAudio();
 
 	return result;
 }
@@ -282,8 +244,6 @@ char SSChannelPlaying(int c)
 int SSGetCurUserData(int c)
 {
 	int result;
-
-	SSLockAudio();
 
 	if (channel[c].head != channel[c].tail)
 	{
@@ -295,7 +255,6 @@ int SSGetCurUserData(int c)
 		result = -1;
 	}
 
-	SSUnlockAudio();
 	return result;
 }
 
@@ -307,8 +266,6 @@ int SSGetSamplePos(int c)
 {
 	int result;
 
-	SSLockAudio();
-
 	if (channel[c].head != channel[c].tail)
 	{
 		result = (channel[c].chunks[channel[c].head].bytepos / 4);
@@ -319,7 +276,6 @@ int SSGetSamplePos(int c)
 		result = -1;
 	}
 
-	SSUnlockAudio();
 	return result;
 }
 
@@ -328,8 +284,6 @@ int SSGetSamplePos(int c)
 // if not, does nothing.
 void SSAbortChannel(int c)
 {
-	SSLockAudio();
-	
 	/*if (c >= 0 && c < SS_NUM_CHANNELS)
 	{
 		while(channel[c].head != channel[c].tail)
@@ -342,8 +296,6 @@ void SSAbortChannel(int c)
 		}
 	}*/
 	channel[c].head = channel[c].tail;
-	
-	SSUnlockAudio();
 }
 
 
@@ -351,13 +303,11 @@ void SSAbortChannel(int c)
 void SSAbortChannelByUserData(int ud)
 {
 	int c;
-	SSLockAudio();
 	for(c=0;c<SS_NUM_CHANNELS;c++)
 	{
 		if (SSChannelPlaying(c) && SSGetCurUserData(c)==ud)
 			SSAbortChannel(c);
 	}
-	SSUnlockAudio();
 }
 
 // changes the volume of a channel.
@@ -365,36 +315,5 @@ void SSAbortChannelByUserData(int ud)
 // will have the new volume setting, until the SSSetVolume function is removed.
 void SSSetVolume(int c, int newvol)
 {
-	SSLockAudio();
 	channel[c].volume = newvol;
-	SSUnlockAudio();
 }
-
-/*
-void c------------------------------() {}
-*/
-
-// the effects of SSLockAudio are cumulative--calling it more than once will lock
-// the audio "more", and you have to call it the same numbers of times before it will unlock.
-void SSLockAudio(void)
-{
-#if 0
-	if (lockcount==0) SDL_LockAudio();
-	lockcount++;
-#endif
-}
-
-void SSUnlockAudio(void)
-{
-#if 0
-	lockcount--;
-	if (!lockcount) SDL_UnlockAudio();
-#endif
-}
-
-/*
-void c------------------------------() {}
-*/
-
-
-

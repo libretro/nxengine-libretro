@@ -10,8 +10,6 @@
 #include "niku.h"
 #include "endgame/credits.h"
 
-#define TRACE_SCRIPT
-
 // which textbox options are enabled by the "<TUR" script command.
 #define TUR_PARAMS		(TB_LINE_AT_ONCE | TB_VARIABLE_WIDTH_CHARS | TB_CURSOR_NEVER_SHOWN)
 
@@ -390,12 +388,6 @@ void SetCSDir(Object *o, int csdir)
 
 static void DoANP(Object *o, int p1, int p2)		// ANIMATE (set) object's state to p1 and set dir to p2
 {
-	/*
-#ifdef TRACE_SCRIPT
-stat("ANP: Obj %08x (%s): setting state: %d and dir: %s", \
-o, DescribeObjectType(o->type), p1, DescribeCSDir(p2));
-#endif
-	 */	
 	o->state = p1;
 	SetCSDir(o, p2);
 }
@@ -425,12 +417,6 @@ static void NPCDo(int id2, int p1, int p2, void (*action_function)(Object *o, in
 
 static void DoCNP(Object *o, int p1, int p2)		// CHANGE object to p1 and set dir to p2
 {
-	/*
-#ifdef TRACE_SCRIPT
-stat("CNP: Obj %08x changing from %s to %s, new dir = %s",
-o, DescribeObjectType(o->type), DescribeObjectType(p1), DescribeCSDir(p2));
-#endif
-	 */	
 	// Must set direction BEFORE changing type, so that the Carried Puppy object
 	// gets priority over the direction to use while the game is <PRI'd.
 	SetCSDir(o, p2);
@@ -439,10 +425,6 @@ o, DescribeObjectType(o->type), DescribeObjectType(p1), DescribeCSDir(p2));
 
 static void DoDNP(Object *o, int p1, int p2)		// DELETE object
 {
-#ifdef TRACE_SCRIPT
-	//		stat("DNP: %08x (%s) deleted", o, DescribeObjectType(o->type));
-#endif
-
 	o->Delete();
 }
 
@@ -600,20 +582,6 @@ void ExecScript(ScriptInstance *s)
 				sprintf(debugbuffer, "%s %04d", debugbuffer, val);
 			}
 		}
-#ifdef TRACE_SCRIPT
-		else
-		{
-			char debugbuffer2[10000];
-			crtoslashn((char *)&s->program[s->ip], debugbuffer2);
-			sprintf(debugbuffer, "TEXT  '%s'", debugbuffer2);
-		}
-
-		if (cmd == OP_TEXT && !textbox.IsVisible() && !strcmp(debugbuffer, "TEXT  '\n'")) { }
-		else
-		{
-			//stat("%04d:%d  %s", s->scriptno, cmdip, debugbuffer);
-		}
-#endif
 
 		switch(cmd)
 		{

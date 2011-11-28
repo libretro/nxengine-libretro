@@ -43,8 +43,6 @@ extern int last_sdl_key;
 
 bool input_init(void);
 void input_poll(void);
-void input_close(void);
-void input_set_mappings(int *array);
 int input_get_mapping(int keyindex);
 bool buttondown(void);
 

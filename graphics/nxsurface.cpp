@@ -329,11 +329,6 @@ void NXSurface::Scale8(SDL_Surface *src, SDL_Surface *dst, int factor)
 	}
 }
 
-void NXSurface::EnableColorKey()
-{
-	SDL_SetColorKey(fSurface, SDL_SRCCOLORKEY, SDL_MapRGB(fSurface->format, 0, 0, 0));
-}
-
 void NXSurface::Free()
 {
 	if (fSurface)
