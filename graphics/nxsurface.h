@@ -95,7 +95,7 @@ public:
 	SDL_Surface *GetSDLSurface() { return fSurface; }
 private:
 	static SDL_Surface *Scale(SDL_Surface *original, int factor, bool use_colorkey, bool free_original, bool use_display_format);
-	static void Scale8(SDL_Surface *src, SDL_Surface *dst, int factor);
+	static void Scale8(SDL_Surface *src, SDL_Surface *dst);
 	void Free();
 	
 	SDL_Surface *fSurface;

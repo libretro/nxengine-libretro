@@ -281,7 +281,7 @@ SDL_Surface *NXSurface::Scale(SDL_Surface *original, int factor, bool use_colork
 		switch(original->format->BitsPerPixel)
 		{
 			case 8:
-				Scale8(original, scaled, factor);
+				Scale8(original, scaled);
 				break;
 
 			default:
@@ -305,27 +305,19 @@ SDL_Surface *NXSurface::Scale(SDL_Surface *original, int factor, bool use_colork
 	return scaled;
 }
 
-void NXSurface::Scale8(SDL_Surface *src, SDL_Surface *dst, int factor)
+void NXSurface::Scale8(SDL_Surface *src, SDL_Surface *dst)
 {
 	int x, y, i;
 	for(y=0;y<src->h;y++)
 	{
 		uint8_t *srcline = (uint8_t *)src->pixels + (y * src->pitch);
-		uint8_t *dstline = (uint8_t *)dst->pixels + (y * factor * dst->pitch);
+		uint8_t *dstline = (uint8_t *)dst->pixels + (y * dst->pitch);
 		uint8_t *dstptr = dstline;
 
 		for(x=0;x<src->w;x++)
-		{
-			for(i=0;i<factor;i++)
-				*(dstptr++) = srcline[x];
-		}
+			*(dstptr++) = srcline[x];
 
 		dstptr = dstline;
-		for(i=1;i<factor;i++)
-		{
-			dstptr += dst->pitch;
-			memcpy(dstptr, dstline, dst->pitch);
-		}
 	}
 }
 
