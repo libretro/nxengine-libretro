@@ -131,14 +131,6 @@ bool pre_main()
    SetLogFilename("debug.txt");
 #endif
 
-#if 0
-   if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
-   {
-      staterr("ack, sdl_init failed: %s.", SDL_GetError());
-      return false;
-   }
-#endif
-
    // start up inputs first thing because settings_load may remap them
    input_init();
 
@@ -215,9 +207,7 @@ void post_main()
    game.close();
    Carets::close();
 
-   Graphics::close();
    input_close();
-   font_close();
    sound_close();
    tsc_close();
    textbox.Deinit();
@@ -474,7 +464,6 @@ shutdown: ;
 
 	Graphics::close();
 	input_close();
-	font_close();
 	sound_close();
 	tsc_close();
 	textbox.Deinit();

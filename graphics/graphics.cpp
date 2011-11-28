@@ -11,7 +11,7 @@
 
 NXSurface *screen = NULL;			// created from SDL's screen
 static NXSurface *drawtarget = NULL;		// target of DrawRect etc; almost always screen
-int screen_bpp = 15;				// the default if we can't get video info
+#define SCREEN_BPP 15				// the default if we can't get video info
 
 const NXColor DK_BLUE(0, 0, 0x21);		// the popular dk blue backdrop color
 const NXColor BLACK(0, 0, 0);			// pure black, only works if no colorkey
@@ -22,9 +22,7 @@ static int current_res = -1;
 
 bool Graphics::init(int resolution)
 {
-   screen_bpp = 15;
-
-	if (SetResolution(resolution, false))
+	if (SetResolution(resolution))
 		return 1;
 
 	if (Tileset::Init())
@@ -34,12 +32,6 @@ bool Graphics::init(int resolution)
 		return 1;
 
 	return 0;
-}
-
-void Graphics::close()
-{
-	stat("Graphics::Close()");
-	//SDL_ShowCursor(true);
 }
 
 /*
@@ -52,14 +44,15 @@ bool Graphics::InitVideo()
 	SDL_Surface *sdl_screen;
 
 	stat("Graphics::InitVideo");
-	if (drawtarget == screen) drawtarget = NULL;
-	if (screen) delete screen;
+	if (drawtarget == screen)
+		drawtarget = NULL;
+	if (screen)
+		delete screen;
 
-	sdl_screen = SDL_CreateRGBSurface(0, SCREEN_WIDTH*SCALE, SCREEN_HEIGHT*SCALE, screen_bpp,
-         0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
+	sdl_screen = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
 
-   unsigned pitch = sdl_screen->pitch;
-   snes_environ_cb(SNES_ENVIRONMENT_SET_PITCH, &pitch);
+	unsigned pitch = sdl_screen->pitch;
+	snes_environ_cb(SNES_ENVIRONMENT_SET_PITCH, &pitch);
 
 	if (!sdl_screen)
 	{
@@ -68,7 +61,8 @@ bool Graphics::InitVideo()
 	}
 
 	screen = new NXSurface(sdl_screen, false);
-	if (!drawtarget) drawtarget = screen;
+	if (!drawtarget)
+		drawtarget = screen;
 	return 0;
 }
 
@@ -81,22 +75,12 @@ bool Graphics::FlushAll()
 	return font_reload();
 }
 
-void Graphics::SetFullscreen(bool enable)
-{
-	if (is_fullscreen != enable)
-	{
-		is_fullscreen = enable;
-		InitVideo();
-		Graphics::FlushAll();
-	}
-}
-
 // change the video mode to one of the available resolution codes, currently:
 // 0 - 640x480, Fullscreen
 // 1 - Windowed scale x1 (320x240)
 // 2 - Windowed scale x2 (640x480)
 // 3 - Windowed scale x3 (960x720)
-bool Graphics::SetResolution(int r, bool restoreOnFailure)
+bool Graphics::SetResolution(int r)
 {
 	stat("Graphics::SetResolution(%d)", r);
 	if (r == current_res)
@@ -116,42 +100,15 @@ bool Graphics::SetResolution(int r, bool restoreOnFailure)
 		factor = r;
 	}
 	
-	stat("Setting scaling %d and fullscreen=%s", factor, is_fullscreen ? "yes":"no");
-	NXSurface::SetScale(factor);
-	
 	if (Graphics::InitVideo())
 	{
 		staterr("Switch to resolution %d failed!", r);
-		
-		if (restoreOnFailure)
-		{
-			staterr("Trying to recover old mode %d.", r, old_res);
-			if (Graphics::SetResolution(old_res, false))
-			{
-				staterr("Fatal error: vidmode recovery failed!!!");
-			}
-		}
-		
 		return 1;
 	}
 	
-	if (Graphics::FlushAll()) return 1;
+	if (Graphics::FlushAll())
+		return 1;
 	return 0;
-}
-
-// return a pointer to a null-terminated list of available resolutions.
-const char **Graphics::GetResolutions()
-{
-static const char *res_str[]   =
-{
-   "Fullscreen",
-   "320x240",
-	"640x480",
-   "960x720",
-	NULL
-};
-
-	return res_str;
 }
 
 /*
@@ -213,8 +170,7 @@ void c------------------------------() {}
 // blit from one surface to another, just like SDL_BlitSurface.
 void Graphics::BlitSurface(NXSurface *src, NXRect *srcrect, NXSurface *dst, NXRect *dstrect)
 {
-	dst->DrawSurface(src, dstrect->x, dstrect->y, \
-					 srcrect->x, srcrect->y, srcrect->w, srcrect->h);
+	dst->DrawSurface(src, dstrect->x, dstrect->y, srcrect->x, srcrect->y, srcrect->w, srcrect->h);
 }
 
 /*
@@ -229,8 +185,7 @@ void Graphics::DrawSurface(NXSurface *src, int x, int y)
 
 
 // blit the specified portion of the surface to the screen
-void Graphics::DrawSurface(NXSurface *src, \
-						   int dstx, int dsty, int srcx, int srcy, int wd, int ht)
+void Graphics::DrawSurface(NXSurface *src, int dstx, int dsty, int srcx, int srcy, int wd, int ht)
 {
 	drawtarget->DrawSurface(src, dstx, dsty, srcx, srcy, wd, ht);
 }

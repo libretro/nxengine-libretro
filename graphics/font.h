@@ -31,6 +31,4 @@ int font_draw_shaded(int x, int y, const char *text, int spacing=0, NXFont *font
 int GetFontWidth(const char *text, int spacing=0, bool is_shaded=false);
 int GetFontHeight();
 
-void font_close(void);
-
 #endif

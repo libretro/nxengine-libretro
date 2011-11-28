@@ -94,14 +94,9 @@ public:
 	
 	void Flip();
 	SDL_Surface *GetSDLSurface() { return fSurface; }
-	
-	static void SetScale(int factor);
-	
 private:
 	static SDL_Surface *Scale(SDL_Surface *original, int factor, bool use_colorkey, bool free_original, bool use_display_format);
 	static void Scale8(SDL_Surface *src, SDL_Surface *dst, int factor);
-	
-	inline uint32_t MapColor(uint8_t r, uint8_t g, uint8_t b);
 	void Free();
 	
 	SDL_Surface *fSurface;

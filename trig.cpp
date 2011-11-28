@@ -23,7 +23,6 @@ int degrees;
 		tan_table[degrees] = (int)(tan((double)degrees * PIBT) * (1 << 13));
 	}
 	
-	//SetFullscreen(1);
 	return 0;
 }
 
