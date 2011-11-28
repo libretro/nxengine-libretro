@@ -11,7 +11,7 @@ const char *fontfile = "font.bmp";
 static SDL_Surface *sdl_screen = NULL;
 static SDL_Surface *shadesfc = NULL;
 
-static bool initilized = false;
+static bool initialized = false;
 static bool rendering = true;
 static bool shrink_spaces = true;
 static int fontheight = 0;
@@ -29,8 +29,8 @@ bool font_init(void)
 	// and drawing at the real resolution so we can get better-looking fonts.
 	sdl_screen = screen->GetSDLSurface();
 
-   SDL_Surface *font = SDL_LoadBMP(fontfile);
-   SDL_SetColorKey(font, SDL_SRCCOLORKEY, SDL_MapRGB(font->format, 0, 0, 255));
+	SDL_Surface *font = SDL_LoadBMP(fontfile);
+	SDL_SetColorKey(font, SDL_SRCCOLORKEY, SDL_MapRGB(font->format, 0, 0, 255));
 
 	error |= whitefont.InitChars(font, 0xffffff);
 	error |= greenfont.InitChars(font, 0x00ff80);
@@ -38,36 +38,31 @@ bool font_init(void)
 	error |= shadowfont.InitCharsShadowed(font, 0xffffff, 0x000000);
 	error |= create_shade_sfc();
 
-	//TTF_CloseFont(font);
-   SDL_FreeSurface(font);
+	SDL_FreeSurface(font);
 
 	if (error) return 1;
 
-   fontheight = 0;
-   for (char c = 'A'; c <= 'Z'; c++)
-   {
-      if (whitefont.letters[c]->h / SCALE > fontheight)
-         fontheight = whitefont.letters[c]->h / SCALE;
-   }
+	fontheight = 0;
+	for (char c = 'A'; c <= 'Z'; c++)
+	{
+		if (whitefont.letters[c]->h > fontheight)
+			fontheight = whitefont.letters[c]->h;
+	}
 
-   for (char c = 'a'; c <= 'z'; c++)
-   {
-      if (whitefont.letters[c]->h / SCALE > fontheight)
-         fontheight = whitefont.letters[c]->h / SCALE;
-   }
+	for (char c = 'a'; c <= 'z'; c++)
+	{
+		if (whitefont.letters[c]->h > fontheight)
+			fontheight = whitefont.letters[c]->h;
+	}
 
-	initilized = true;
+	initialized = true;
 	return 0;
-}
-
-void font_close(void)
-{
-	
 }
 
 bool font_reload()
 {
-	if (!initilized) return 0;
+	if (!initialized)
+		return 0;
 	
 	whitefont.free();
 	greenfont.free();
@@ -95,141 +90,139 @@ void NXFont::free()
 {
 	for(int i=0;i<NUM_LETTERS_RENDERED;i++)
 	{
-		if (letters[i]) SDL_FreeSurface(letters[i]);
+		if (letters[i])
+			SDL_FreeSurface(letters[i]);
 		letters[i] = NULL;
 	}
 }
 
 static void set_color(SDL_Surface *font, uint16_t color, uint16_t key)
 {
-   for (unsigned h = 0; h < font->h; h++)
-   {
-      uint16_t *pixels = (uint16_t*)font->pixels + h * (font->pitch / 2);
-      for (unsigned w = 0; w < font->w; w++)
-      {
-         if (pixels[w] != key)
-            pixels[w] = color;
-      }
-   }
+	for (unsigned h = 0; h < font->h; h++)
+	{
+		uint16_t *pixels = (uint16_t*)font->pixels + h * (font->pitch / 2);
+		for (unsigned w = 0; w < font->w; w++)
+		{
+			if (pixels[w] != key)
+				pixels[w] = color;
+		}
+	}
 }
 
 bool NXFont::InitChars(SDL_Surface *font, uint32_t color)
 {
-   SDL_Color fgcolor;
-   SDL_Surface *letter;
+	SDL_Color fgcolor;
+	SDL_Surface *letter;
 
 	fgcolor.r = (uint8_t)(color >> 16);
 	fgcolor.g = (uint8_t)(color >> 8);
 	fgcolor.b = (uint8_t)(color);
-	
+
 	char str[2];
 	str[1] = 0;
-   uint16_t blue = 0x1f;
-	
+	uint16_t blue = 0x1f;
+
 	for(int i=1;i<NUM_LETTERS_RENDERED;i++)
 	{
 		str[0] = i;
-		
-      letter = SDL_CreateRGBSurface(0, 6, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
-            0);
 
-      SDL_Rect src = {0};
+		letter = SDL_CreateRGBSurface(0, 6, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
+				0);
 
-      src.w = 5;
-      src.h = 10;
-      src.x = (i % 16) * 16;
-      src.y = (i / 16) * 16;
+		SDL_Rect src = {0};
 
-      SDL_Rect dst = {0};
-      dst.w = letter->w;
-      dst.h = letter->h;
+		src.w = 5;
+		src.h = 10;
+		src.x = (i % 16) * 16;
+		src.y = (i / 16) * 16;
 
-      SDL_SetColorKey(letter, SDL_SRCCOLORKEY, 0x1f);
-      SDL_FillRect(letter, NULL, 0x1f);
-	
-      SDL_BlitSurface(font, &src, letter, &dst);
-      set_color(letter,
-            SDL_MapRGB(letter->format, fgcolor.r, fgcolor.g, fgcolor.b), blue);
+		SDL_Rect dst = {0};
+		dst.w = letter->w;
+		dst.h = letter->h;
 
-      letters[i] = letter;
+		SDL_SetColorKey(letter, SDL_SRCCOLORKEY, 0x1f);
+		SDL_FillRect(letter, NULL, 0x1f);
+
+		SDL_BlitSurface(font, &src, letter, &dst);
+		set_color(letter,
+				SDL_MapRGB(letter->format, fgcolor.r, fgcolor.g, fgcolor.b), blue);
+
+		letters[i] = letter;
 	}
-	
+
 	return 0;
 }
 
 // create a font with a drop-shadow (used for "MNA" stage-name displays)
 bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shadowcolor)
 {
-   SDL_Color fgcolor, bgcolor;
-   SDL_Surface *top, *bottom;
-   SDL_Rect dstrect;
-   const int offset = 2;
+	SDL_Color fgcolor, bgcolor;
+	SDL_Surface *top, *bottom;
+	SDL_Rect dstrect;
+	const int offset = 2;
 
 	fgcolor.r = (uint8_t)(color >> 16);
 	fgcolor.g = (uint8_t)(color >> 8);
 	fgcolor.b = (uint8_t)(color);
-	
+
 	bgcolor.r = (uint8_t)(shadowcolor >> 16);
 	bgcolor.g = (uint8_t)(shadowcolor >> 8);
 	bgcolor.b = (uint8_t)(shadowcolor);
-	
+
 	char str[2];
 	str[1] = 0;
-	
-	
+
+
 	for(int i=1;i<NUM_LETTERS_RENDERED;i++)
 	{
 		str[0] = i;
-		
-      uint16_t blue = 0x1f;
 
-      top = SDL_CreateRGBSurface(0, 6, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
-            0);
-      bottom = SDL_CreateRGBSurface(0, 6, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
-            0);
+		uint16_t blue = 0x1f;
 
-      SDL_FillRect(top, NULL, blue);
-      SDL_FillRect(bottom, NULL, blue);
-      SDL_SetColorKey(top, SDL_SRCCOLORKEY, blue);
-      SDL_SetColorKey(bottom, SDL_SRCCOLORKEY, blue);
+		top = SDL_CreateRGBSurface(0, 6, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
+				0);
+		bottom = SDL_CreateRGBSurface(0, 6, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
+				0);
 
-      SDL_PixelFormat *format = top->format;
+		SDL_FillRect(top, NULL, blue);
+		SDL_FillRect(bottom, NULL, blue);
+		SDL_SetColorKey(top, SDL_SRCCOLORKEY, blue);
+		SDL_SetColorKey(bottom, SDL_SRCCOLORKEY, blue);
 
-      SDL_Rect src = {0};
-      src.w = 5;
-      src.h = 10;
-      src.x = (i % 16) * 16;
-      src.y = (i / 16) * 16;
+		SDL_PixelFormat *format = top->format;
 
-      SDL_Rect dst = {0};
-      dst.w = top->w;
-      dst.h = top->h;
-	
-      SDL_BlitSurface(font, &src, top, &dst);
-      SDL_BlitSurface(font, &src, bottom, &dst);
+		SDL_Rect src = {0};
+		src.w = 5;
+		src.h = 10;
+		src.x = (i % 16) * 16;
+		src.y = (i / 16) * 16;
 
-      set_color(top,
-            SDL_MapRGB(top->format, fgcolor.r, fgcolor.g, fgcolor.b), blue);
+		SDL_Rect dst = {0};
+		dst.w = top->w;
+		dst.h = top->h;
 
-      set_color(bottom,
-            SDL_MapRGB(bottom->format, bgcolor.r, bgcolor.g, bgcolor.b), blue);
+		SDL_BlitSurface(font, &src, top, &dst);
+		SDL_BlitSurface(font, &src, bottom, &dst);
+
+		set_color(top, SDL_MapRGB(top->format, fgcolor.r, fgcolor.g, fgcolor.b), blue);
+		set_color(bottom, SDL_MapRGB(bottom->format, bgcolor.r, bgcolor.g, bgcolor.b), blue);
 
 		letters[i] = SDL_CreateRGBSurface(0, top->w, top->h+offset,
-							format->BitsPerPixel, format->Rmask, format->Gmask,
-							format->Bmask, format->Amask);
-		
-      SDL_SetColorKey(letters[i], SDL_SRCCOLORKEY, blue);
-      SDL_FillRect(letters[i], NULL, blue);
-		
+				format->BitsPerPixel, format->Rmask, format->Gmask,
+				format->Bmask, format->Amask);
+
+		SDL_SetColorKey(letters[i], SDL_SRCCOLORKEY, blue);
+		SDL_FillRect(letters[i], NULL, blue);
+
 		dstrect.x = 0;
 		dstrect.y = offset;
 		SDL_BlitSurface(bottom, NULL, letters[i], &dstrect);
-		
+
 		dstrect.x = 0;
 		dstrect.y = 0;
 		SDL_BlitSurface(top, NULL, letters[i], &dstrect);
 	}
-	
+
 	return 0;
 }
 
@@ -240,19 +233,19 @@ void c------------------------------() {}
 // draw a text string
 static int text_draw(int x, int y, const char *text, int spacing, NXFont *font)
 {
-int orgx = x;
-int i;
-SDL_Rect dstrect;
-	
+	int orgx = x;
+	int i;
+	SDL_Rect dstrect;
+
 	for(i=0;text[i];i++)
 	{
 		char ch = text[i];
 		SDL_Surface *letter = font->letters[ch];
-		
+
 		if (ch == '=' && game.mode != GM_CREDITS)
 		{
 			if (rendering)
-				draw_sprite((x/SCALE), (y/SCALE)+2, SPR_TEXTBULLET);
+				draw_sprite((x), (y)+2, SPR_TEXTBULLET);
 		}
 		else if (rendering && ch != ' ' && letter)
 		{
@@ -262,7 +255,7 @@ SDL_Rect dstrect;
 			dstrect.y = y;
 			SDL_BlitSurface(letter, NULL, sdl_screen, &dstrect);
 		}
-		
+
 		if (spacing != 0)
 		{	// fixed spacing
 			x += spacing;
@@ -271,17 +264,17 @@ SDL_Rect dstrect;
 		{	// variable spacing
 			if (ch == ' ' && shrink_spaces)
 			{	// 10.5 px for spaces - make smaller than they really are - the default
-				x += (SCALE == 1) ? 6 : 10;
+				x += 6;
 				if (i & 1) x++;
 			}
 			else
 			{
 				if (letter)
-               x += letter->w;
+					x += letter->w;
 			}
 		}
 	}
-	
+
 	// return the final width of the text drawn
 	return (x - orgx);
 }
@@ -297,12 +290,12 @@ int GetFontWidth(const char *text, int spacing, bool is_shaded)
 	rendering = false;
 	shrink_spaces = is_shaded;
 
-	wd = text_draw(0, 0, text, spacing * SCALE);
+	wd = text_draw(0, 0, text, spacing);
 
 	rendering = true;
 	shrink_spaces = true;
 
-	return (wd / SCALE);
+	return (wd);
 }
 
 int GetFontHeight()
@@ -321,19 +314,16 @@ static bool create_shade_sfc(void)
 	if (shadesfc)
 		SDL_FreeSurface(shadesfc);
 	
-	int wd = (SCREEN_WIDTH * SCALE);
+	int wd = (SCREEN_WIDTH);
 	int ht = whitefont.letters['M']->h;
 	
 	SDL_PixelFormat *format = sdl_screen->format;
 	shadesfc = SDL_CreateRGBSurface(SDL_SRCALPHA | SDL_SWSURFACE, wd, ht,
-							format->BitsPerPixel, format->Rmask, format->Gmask,
-							format->Bmask, format->Amask);
+	format->BitsPerPixel, format->Rmask, format->Gmask,
+	format->Bmask, format->Amask);
 	
 	if (!shadesfc)
-	{
-		staterr("create_shade_sfc: failed to create surface");
 		return 1;
-	}
 	
 	SDL_FillRect(shadesfc, NULL, SDL_MapRGB(format, 0, 0, 0));
 	SDL_SetAlpha(shadesfc, SDL_SRCALPHA, 128);
@@ -344,11 +334,7 @@ static bool create_shade_sfc(void)
 
 int font_draw(int x, int y, const char *text, int spacing, NXFont *font)
 {
-	x *= SCALE;
-	y *= SCALE;
-	spacing *= SCALE;
-	
-	return (text_draw(x, y, text, spacing, font) / SCALE);
+	return (text_draw(x, y, text, spacing, font));
 }
 
 // draw a text string with a 50% dark border around it
@@ -356,10 +342,6 @@ int font_draw_shaded(int x, int y, const char *text, int spacing, NXFont *font)
 {
 	SDL_Rect srcrect, dstrect;
 	int wd;
-
-	x *= SCALE;
-	y *= SCALE;
-	spacing *= SCALE;
 
 	// get full-res width of final text
 	rendering = false;
@@ -381,7 +363,7 @@ int font_draw_shaded(int x, int y, const char *text, int spacing, NXFont *font)
 	wd = text_draw(x, y, text, spacing, font);
 
 	shrink_spaces = true;
-	return (wd / SCALE);
+	return (wd);
 }
 
 

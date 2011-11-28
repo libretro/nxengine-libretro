@@ -15,12 +15,9 @@ extern const NXColor CLEAR;
 namespace Graphics
 {
 	bool init(int resolution);
-	void close();
 	
 	bool InitVideo();
-	void SetFullscreen(bool enable);
-	bool SetResolution(int factor, bool restoreOnFailure=true);
-	const char **GetResolutions();
+	bool SetResolution(int factor);
 	bool FlushAll();
 	
 	// ---------------------------------------
