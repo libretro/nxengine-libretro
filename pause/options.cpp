@@ -133,7 +133,7 @@ Dialog *dlg = opt.dlg;
 	//dlg->AddItem("Controls", EnterControlsMenu);
 	//dlg->AddItem("Replay", EnterReplayMenu);
 
-   dlg->AddItem("60 Hz: ", _60hz_change, _60hz_get);
+   dlg->AddItem("Framerate: ", _60hz_change, _60hz_get);
 	
 	dlg->AddSeparator();
 	
@@ -226,7 +226,7 @@ void _60hz_change(ODItem *item, int dir)
 void _60hz_get(ODItem *item)
 {
    extern bool snes_60hz;
-   static const char *strs[] = { "Off", "On" };
+   static const char *strs[] = { "50fps", "60fps" };
    strcpy(item->suffix, strs[snes_60hz]);
 }
 
