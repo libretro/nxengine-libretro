@@ -60,8 +60,8 @@ public:
 	~NXSurface();
 	
 	bool AllocNew(int wd, int ht, NXFormat *format = screen->Format());
-	bool LoadImage(const char *pbm_name, bool use_colorkey=false, int use_display_format=-1);
-	static NXSurface *FromFile(const char *pbm_name, bool use_colorkey=false, int use_display_format=-1);
+	bool LoadImage(const char *pbm_name, bool use_colorkey=false);
+	static NXSurface *FromFile(const char *pbm_name, bool use_colorkey);
 	
 	// blitting
 	void DrawSurface(NXSurface *src, int dstx, int dsty);
@@ -94,7 +94,7 @@ public:
 	void Flip();
 	SDL_Surface *GetSDLSurface() { return fSurface; }
 private:
-	static SDL_Surface *Scale(SDL_Surface *original, int factor, bool use_colorkey, bool free_original, bool use_display_format);
+	static SDL_Surface *Scale(SDL_Surface *original, int factor, bool use_colorkey, bool free_original);
 	static void Scale8(SDL_Surface *src, SDL_Surface *dst);
 	void Free();
 	
@@ -103,34 +103,12 @@ private:
 };
 
 void inline
-NXSurface::DrawRect(int x1, int y1, int x2, int y2, NXColor color)
-{ DrawRect(x1, y1, x2, y2, color.r, color.g, color.b); }
-
-void inline
-NXSurface::DrawRect(NXRect *rect, uint8_t r, uint8_t g, uint8_t b)
-{ DrawRect(rect->x, rect->y, rect->x + (rect->w - 1), rect->y + (rect->h - 1), r, g, b); }
-
-void inline
-NXSurface::DrawRect(NXRect *rect, NXColor color)
-{ DrawRect(rect->x, rect->y, rect->x + (rect->w - 1), rect->y + (rect->h - 1), color.r, color.g, color.b); }
-
-
-void inline
-NXSurface::FillRect(int x1, int y1, int x2, int y2, NXColor color)
-{ FillRect(x1, y1, x2, y2, color.r, color.g, color.b); }
-
-void inline
-NXSurface::FillRect(NXRect *rect, uint8_t r, uint8_t g, uint8_t b)
-{ FillRect(rect->x, rect->y, rect->x + (rect->w - 1), rect->y + (rect->h - 1), r, g, b); }
-
-void inline
-NXSurface::FillRect(NXRect *rect, NXColor color)
-{ FillRect(rect->x, rect->y, rect->x + (rect->w - 1), rect->y + (rect->h - 1), color.r, color.g, color.b); }
-
-
-void inline
-NXSurface::DrawPixel(int x, int y, NXColor color)
-{ DrawPixel(x, y, color.r, color.g, color.b); }
+NXSurface::DrawRect(int x1, int y1, int x2, int y2, NXColor color) { DrawRect(x1, y1, x2, y2, color.r, color.g, color.b); }
+void inline NXSurface::DrawRect(NXRect *rect, uint8_t r, uint8_t g, uint8_t b) { DrawRect(rect->x, rect->y, rect->x + (rect->w - 1), rect->y + (rect->h - 1), r, g, b); }
+void inline NXSurface::DrawRect(NXRect *rect, NXColor color) { DrawRect(rect->x, rect->y, rect->x + (rect->w - 1), rect->y + (rect->h - 1), color.r, color.g, color.b); }
+void inline NXSurface::FillRect(int x1, int y1, int x2, int y2, NXColor color) { FillRect(x1, y1, x2, y2, color.r, color.g, color.b); }
+void inline NXSurface::FillRect(NXRect *rect, uint8_t r, uint8_t g, uint8_t b) { FillRect(rect->x, rect->y, rect->x + (rect->w - 1), rect->y + (rect->h - 1), r, g, b); }
+void inline NXSurface::FillRect(NXRect *rect, NXColor color) { FillRect(rect->x, rect->y, rect->x + (rect->w - 1), rect->y + (rect->h - 1), color.r, color.g, color.b); }
 
 
 #endif

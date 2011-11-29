@@ -1,4 +1,3 @@
-
 #include "../nx.h"
 #include "../replay.h"
 #include "options.h"
@@ -332,53 +331,6 @@ void _play_replay(ODItem *item, int dir)
 /*
 void c------------------------------() {}
 */
-
-static void EnterControlsMenu(ODItem *item, int dir)
-{
-Dialog *dlg = opt.dlg;
-
-	dlg->Clear();
-	sound(SND_MENU_MOVE);
-	
-	dlg->AddItem("Left", _edit_control, _upd_control, LEFTKEY);
-	dlg->AddItem("Right", _edit_control, _upd_control, RIGHTKEY);
-	dlg->AddItem("Up", _edit_control, _upd_control, UPKEY);
-	dlg->AddItem("Down", _edit_control, _upd_control, DOWNKEY);
-	
-	dlg->AddSeparator();
-	
-	dlg->AddItem("Jump", _edit_control, _upd_control, JUMPKEY);
-	dlg->AddItem("Fire", _edit_control, _upd_control,  FIREKEY);
-	dlg->AddItem("Wpn Prev", _edit_control, _upd_control, PREVWPNKEY);
-	dlg->AddItem("Wpn Next", _edit_control, _upd_control, NEXTWPNKEY);
-	dlg->AddItem("Inventory", _edit_control, _upd_control, INVENTORYKEY);
-	dlg->AddItem("Map", _edit_control, _upd_control, MAPSYSTEMKEY);
-
-	dlg->AddSeparator();
-	dlg->AddDismissalItem();
-}
-
-static void _upd_control(ODItem *item)
-{
-	int keysym = input_get_mapping(item->id);
-	const char *keyname = SDL_GetKeyName((SDLKey)keysym);
-	
-	maxcpy(item->righttext, keyname, sizeof(item->righttext) - 1);
-}
-
-static void _edit_control(ODItem *item, int dir)
-{
-Message *msg;
-
-	opt.remapping_key = item->id;
-	opt.new_sdl_key = -1;
-	
-	msg = new Message("Press new key for:", input_get_name(opt.remapping_key));
-	msg->rawKeyReturn = &opt.new_sdl_key;
-	msg->on_dismiss = _finish_control_edit;
-	
-	sound(SND_DOOR);
-}
 
 static void _finish_control_edit(Message *msg)
 {

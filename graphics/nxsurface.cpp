@@ -54,12 +54,8 @@ bool NXSurface::AllocNew(int wd, int ht, NXFormat *format)
 
 
 // load the surface from a .pbm or bitmap file
-bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey, int use_display_format)
+bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey)
 {
-   // HACK
-   use_display_format = 0;
-   ///////
-
 	SDL_Surface *image;
 
 	Free();
@@ -71,19 +67,15 @@ bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey, int use_displ
 		return 1;
 	}
 
-	fSurface = Scale(image, 1, use_colorkey, true, use_display_format);
+	fSurface = Scale(image, 1, use_colorkey, true);
 	return (fSurface == NULL);
 }
 
 
-NXSurface *NXSurface::FromFile(const char *pbm_name, bool use_colorkey, int use_display_format)
+NXSurface *NXSurface::FromFile(const char *pbm_name, bool use_colorkey)
 {
-   // HACK
-   use_display_format = 0;
-   ///////
-
 	NXSurface *sfc = new NXSurface;
-	if (sfc->LoadImage(pbm_name, use_colorkey, use_display_format))
+	if (sfc->LoadImage(pbm_name, use_colorkey))
 	{
 		delete sfc;
 		return NULL;
@@ -243,57 +235,10 @@ void NXSurface::clear_clip_rect()
 	SDL_SetClipRect(fSurface, NULL);
 }
 
-/*
-void c------------------------------() {}
-*/
-
 // internal function which scales the given SDL surface by the given factor.
-SDL_Surface *NXSurface::Scale(SDL_Surface *original, int factor, bool use_colorkey, bool free_original, bool use_display_format)
+SDL_Surface *NXSurface::Scale(SDL_Surface *original, int factor, bool use_colorkey, bool free_original)
 {
-   // Hack
-   use_display_format = false;
-   ///////
-
-	SDL_Surface *scaled;
-
-	if (free_original)
-		scaled = original;
-	else
-	{
-		scaled = SDL_CreateRGBSurface(SDL_SRCCOLORKEY, \
-				original->w, \
-				original->h, \
-				original->format->BitsPerPixel, \
-				original->format->Rmask, original->format->Gmask,
-				original->format->Bmask, original->format->Amask);
-
-		if (original->format->BitsPerPixel == 8)
-		{	// copy the palette from the old surface to the new surface
-			SDL_Color palette[256];
-			for(int i=0;i<256;i++)
-				SDL_GetRGB(i, original->format, &palette[i].r, &palette[i].g, &palette[i].b);
-
-			SDL_SetColors(scaled, palette, 0, 256);
-		}
-
-		// all the .pbm files are 8bpp, so I haven't had a reason
-		// to write any other scalers.
-		switch(original->format->BitsPerPixel)
-		{
-			case 8:
-				Scale8(original, scaled);
-				break;
-
-			default:
-				staterr("NXSurface::Scale: unsupported bpp %d", original->format->BitsPerPixel);
-				SDL_FreeSurface(scaled);
-				return NULL;
-		}
-
-		// can get rid of original now if they wanted us to
-		if (free_original)
-			SDL_FreeSurface(original);
-	}
+	SDL_Surface *scaled = original;
 
 	// set colorkey to black if requested
 	if (use_colorkey)
@@ -307,14 +252,13 @@ SDL_Surface *NXSurface::Scale(SDL_Surface *original, int factor, bool use_colork
 
 void NXSurface::Scale8(SDL_Surface *src, SDL_Surface *dst)
 {
-	int x, y, i;
-	for(y=0;y<src->h;y++)
+	for(int y=0;y<src->h;y++)
 	{
 		uint8_t *srcline = (uint8_t *)src->pixels + (y * src->pitch);
 		uint8_t *dstline = (uint8_t *)dst->pixels + (y * dst->pitch);
 		uint8_t *dstptr = dstline;
 
-		for(x=0;x<src->w;x++)
+		for(int x=0;x<src->w;x++)
 			*(dstptr++) = srcline[x];
 
 		dstptr = dstline;

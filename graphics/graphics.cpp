@@ -197,7 +197,7 @@ void Graphics::FillRect(int x1, int y1, int x2, int y2, NXColor color)
 
 void Graphics::DrawPixel(int x, int y, NXColor color)
 {
-	drawtarget->DrawPixel(x, y, color);
+	drawtarget->DrawPixel(x, y, color.r, color.g, color.b);
 }
 
 /*
