@@ -111,11 +111,10 @@ bool pre_main()
    // start up inputs first thing because settings_load may remap them
    input_init();
 
-   // load settings, or at least get the defaults,
-   // so we know the initial screen resolution.
+   // load settings, or at least get the defaults
    settings_load();
 
-   if (Graphics::init(settings->resolution))
+   if (Graphics::init())
    {
       staterr("Failed to initilize graphics.");
       return false;

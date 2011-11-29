@@ -19,9 +19,9 @@ const NXColor CLEAR(0, 0, 0);			// the transparent/colorkey color
 
 static int current_res = -1;
 
-bool Graphics::init(int resolution)
+bool Graphics::init()
 {
-	if (SetResolution(resolution))
+	if (SetResolution())
 		return 1;
 
 	if (Tileset::Init())
@@ -74,24 +74,14 @@ bool Graphics::FlushAll()
 	return font_reload();
 }
 
-// change the video mode to one of the available resolution codes, currently:
-// 0 - 640x480, Fullscreen
-// 1 - Windowed scale x1 (320x240)
-// 2 - Windowed scale x2 (640x480)
-// 3 - Windowed scale x3 (960x720)
-bool Graphics::SetResolution(int r)
+bool Graphics::SetResolution()
 {
-	stat("Graphics::SetResolution(%d)", r);
-	if (r == current_res)
-		return 0;
-	
 	if (Graphics::InitVideo())
-	{
 		return 1;
-	}
-	
+
 	if (Graphics::FlushAll())
 		return 1;
+
 	return 0;
 }
 

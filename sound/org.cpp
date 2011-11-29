@@ -242,10 +242,6 @@ signed short *abuf;
 	Mix_FreeChunk(chunk);
 	return 0;
 }
-
-#else
-
-
 #endif
 
 
@@ -991,19 +987,6 @@ bool org_is_playing(void)
 	return song.playing;
 }
 
-// resume a song paused with org_stop
-/*void org_resume(void)
-{
-	if (!song.playing)
-	{
-/*		lprintf("restarting buffer %d\n", last_played_buffer);
-		//StartOrgBuffer(last_played_buffer, &final_buffer[last_played_buffer].chunk);
-		song.playing = 1;
-		song.volume = ORG_VOLUME;*/
-/*	}
-}*/
-
-
 void org_fade(void)
 {
 	#ifdef DEBUG
@@ -1042,35 +1025,6 @@ static void runfade()
 	}
 }
 
-/*
-void c------------------------------() {}
-*/
-
-
-
-
-
-
-/*
-void c------------------------------() {}
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void org_run(void)
 {
 	if (!song.playing)
@@ -1083,7 +1037,7 @@ void org_run(void)
 		//stat("-- Buffering %d beats", buffer_beats);
 		
 		/*
-		generate_music();				// generate more music into current_buffer
+		generate_music();			// generate more music into current_buffer
 		queue_final_buffer();			// enqueue current_buffer and switch buffers
 		*/
 		SDL_WaitThread(thread, NULL);
@@ -1093,14 +1047,6 @@ void org_run(void)
 	
 	if (song.fading) runfade();
 }
-
-
-
-
-
-/*
-void c------------------------------() {}
-*/
 
 int org_GetCurrentBeat(void)
 {
