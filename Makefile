@@ -40,8 +40,9 @@ else
 endif
 
 # Add SDL dependency
-CXXFLAGS += $(SDL_CFLAGS) -O3 -Wreturn-type -Wunused-variable -Wno-multichar $(fpic)
-LDFLAGS += -lm $(SDL_LIBS) $(SHARED)
+DEFINES += -D__LIBSNES__
+CXXFLAGS += $(SDL_CFLAGS) $(DEFINES) -O3 -Wreturn-type -Wunused-variable -Wno-multichar $(fpic)
+LDFLAGS += -lm $(SDL_LIBS) $(DEFINES) $(SHARED)
 
 all: $(TARGET)
 

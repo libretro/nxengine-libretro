@@ -1,16 +1,14 @@
-
 #include <string.h>
 #include "../settings.h"
+#include "../libsnes.hpp"
 #include "nxsurface.h"
 #include "nxsurface.fdh"
-#include "../libsnes.hpp"
 
 NXSurface::NXSurface()
 {
 	fSurface = NULL;
 	fFreeSurface = true;
 }
-
 
 NXSurface::NXSurface(int wd, int ht, NXFormat *format)
 {
@@ -139,12 +137,6 @@ void NXSurface::BlitPatternAcross(NXSurface *src, int x_dst, int y_dst, int y_sr
 	while(x < destwd);
 }
 
-
-/*
-void c------------------------------() {}
-*/
-
-
 void NXSurface::DrawRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 {
 	SDL_Rect rect;
@@ -189,10 +181,6 @@ void NXSurface::DrawPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b)
 	DrawRect(x, y, x, y, r, g, b);
 }
 
-/*
-void c------------------------------() {}
-*/
-
 int NXSurface::Width()
 {
 	return fSurface->w;
@@ -210,9 +198,10 @@ NXFormat *NXSurface::Format()
 
 void NXSurface::Flip()
 {
-	//SDL_Flip(fSurface);
-   extern snes_video_refresh_t snes_video_cb;
-   snes_video_cb((const uint16_t*)fSurface->pixels, fSurface->w, fSurface->h);
+#ifdef __LIBSNES__
+	extern snes_video_refresh_t snes_video_cb;
+	snes_video_cb((const uint16_t*)fSurface->pixels, fSurface->w, fSurface->h);
+#endif
 }
 
 /*
@@ -238,31 +227,14 @@ void NXSurface::clear_clip_rect()
 // internal function which scales the given SDL surface by the given factor.
 SDL_Surface *NXSurface::Scale(SDL_Surface *original, int factor, bool use_colorkey, bool free_original)
 {
-	SDL_Surface *scaled = original;
-
 	// set colorkey to black if requested
 	if (use_colorkey)
 	{	// don't use SDL_RLEACCEL--it seems to actually make things a lot slower,
 		// especially on maps with motion tiles.
-		SDL_SetColorKey(scaled, SDL_SRCCOLORKEY, SDL_MapRGB(scaled->format, 0, 0, 0));
+		SDL_SetColorKey(original, SDL_SRCCOLORKEY, SDL_MapRGB(original->format, 0, 0, 0));
 	}
 
-	return scaled;
-}
-
-void NXSurface::Scale8(SDL_Surface *src, SDL_Surface *dst)
-{
-	for(int y=0;y<src->h;y++)
-	{
-		uint8_t *srcline = (uint8_t *)src->pixels + (y * src->pitch);
-		uint8_t *dstline = (uint8_t *)dst->pixels + (y * dst->pitch);
-		uint8_t *dstptr = dstline;
-
-		for(int x=0;x<src->w;x++)
-			*(dstptr++) = srcline[x];
-
-		dstptr = dstline;
-	}
+	return original;
 }
 
 void NXSurface::Free()

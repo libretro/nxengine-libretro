@@ -5,9 +5,6 @@
 #include "SDL.h"
 #include "../common/basics.h"
 
-// how much to scale the graphics
-extern int SCALE;
-
 struct NXSurface;
 extern NXSurface *screen;
 
@@ -95,7 +92,6 @@ public:
 	SDL_Surface *GetSDLSurface() { return fSurface; }
 private:
 	static SDL_Surface *Scale(SDL_Surface *original, int factor, bool use_colorkey, bool free_original);
-	static void Scale8(SDL_Surface *src, SDL_Surface *dst);
 	void Free();
 	
 	SDL_Surface *fSurface;
