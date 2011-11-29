@@ -14,10 +14,10 @@ extern const NXColor CLEAR;
 
 namespace Graphics
 {
-	bool init(int resolution);
+	bool init();
 	
 	bool InitVideo();
-	bool SetResolution(int factor);
+	bool SetResolution();
 	bool FlushAll();
 	
 	// ---------------------------------------

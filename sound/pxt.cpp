@@ -675,32 +675,32 @@ int bufsize;
 }
 
 
-// get an already-rendered pxt 'snd' ready for sending to SDL_mixer.
-// converts the 8-bit signed audio to SDL_mixer's 16-bit stereo format and
+// get an already-rendered pxt 'snd' ready for sending to the sound mixer.
+// converts the 8-bit signed audio to 16-bit stereo format and
 // sets up the Mix_Chunk.
 void pxt_PrepareToPlay(stPXSound *snd, int slot)
 {
-int value;
-int ap;
-int i;
-signed char *buffer = snd->final_buffer;
-signed short *outbuffer;
-int malc_size;
+	int value;
+	int ap;
+	int i;
+	signed char *buffer = snd->final_buffer;
+	signed short *outbuffer;
+	int malc_size;
 
 	// convert the buffer from 8-bit mono signed to 16-bit stereo signed
 	malc_size = (snd->final_size * 2 * 2);
 	outbuffer = (signed short *)malloc(malc_size);
-	
+
 	for(i=ap=0;i<snd->final_size;i++)
 	{
 		value = buffer[i];
 		value *= 200;
-		
+
 		outbuffer[ap++] = value;		// left ch
 		outbuffer[ap++] = value;		// right ch
 	}
-	
-	
+
+
 	sound_fx[slot].buffer = outbuffer;
 	sound_fx[slot].len = snd->final_size;
 	//lprintf("pxt ready to play in slot %d\n", slot);
@@ -924,7 +924,7 @@ char pxt_LoadSoundFX(const char *path, const char *cache_name, int top)
 			fwrite(snd.final_buffer, snd.final_size, 1, fp);
 		}
 
-		// upscale the sound to 16-bit for SDL_mixer then throw away the now unnecessary 8-bit data
+		// upscale the sound to 16-bit then throw away the now unnecessary 8-bit data
 		pxt_PrepareToPlay(&snd, slot);
 		FreePXTBuf(&snd);
 	}
@@ -960,33 +960,6 @@ void pxt_FreeSound(int slot)
 		sound_fx[slot].buffer = NULL;
 	}
 }
-
-/*
-char pxt_init(void)
-{
-int start;
-
-	//lprintf("Loading sound FX...\n");
-	start = SDL_GetTicks();
-	if (LoadSoundFX("pxt/", "fx.pcm", 0xa0)) return 1;
-	lprintf("time = %d\n", SDL_GetTicks() - start);
-	
-	pxt_Play(0x1e);
-	
-	snd = pxt_load("pxt/fx11.pxt");
-	if (snd)
-	{
-		render_pxt(snd);
-		
-		pxt_PrepareToPlay(snd, 4);
-		pxt_Play(4);
-		
-		debugshowsound(snd);
-	}
-	
-	return 0;
-}*/
-
 
 // free all the internal buffers of a PXSound
 void FreePXTBuf(stPXSound *snd)

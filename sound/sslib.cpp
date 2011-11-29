@@ -1,6 +1,5 @@
 
 // Sound System
-// more or less, my own version of SDL_mixer
 
 #include <stdio.h>
 #include <stdint.h>
@@ -83,8 +82,6 @@ void game_mixaudio(int16_t *stream, size_t len_samples)
 				break;
 			}
 		}
-
-		//SDL_MixAudio(stream, mixbuffer, len, channel[c].volume); <-- MixAudio sucks
 
       // This is also crappy, but hey ;D
       const int16_t *mixbuf = (const int16_t*)mixbuffer;
