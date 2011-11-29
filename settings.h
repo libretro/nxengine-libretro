@@ -16,7 +16,6 @@ struct Settings
 	bool sound_enabled;
 	int music_enabled;
 	
-	bool instant_quit;
 	bool emulate_bugs;
 	bool no_quake_in_hell;
 	bool inhibit_fullscreen;

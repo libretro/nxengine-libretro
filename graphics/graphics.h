@@ -3,7 +3,6 @@
 #define _GRAPHICS_H
 
 #include "nxsurface.h"
-// (unscaled) screen size/video mode
 #define SCREEN_WIDTH		320
 #define SCREEN_HEIGHT		240
 

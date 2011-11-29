@@ -1,4 +1,3 @@
-
 // graphics routines
 #include "SDL.h"
 #include <stdlib.h>
@@ -16,8 +15,6 @@ static NXSurface *drawtarget = NULL;		// target of DrawRect etc; almost always s
 const NXColor DK_BLUE(0, 0, 0x21);		// the popular dk blue backdrop color
 const NXColor BLACK(0, 0, 0);			// pure black, only works if no colorkey
 const NXColor CLEAR(0, 0, 0);			// the transparent/colorkey color
-
-static int current_res = -1;
 
 bool Graphics::init()
 {
@@ -37,7 +34,9 @@ bool Graphics::init()
 void c------------------------------() {}
 */
 
+#ifdef __LIBSNES__
 extern snes_environment_t snes_environ_cb;
+#endif
 bool Graphics::InitVideo()
 {
 	SDL_Surface *sdl_screen;
@@ -50,8 +49,10 @@ bool Graphics::InitVideo()
 
 	sdl_screen = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
 
+	#ifdef __LIBSNES__
 	unsigned pitch = sdl_screen->pitch;
 	snes_environ_cb(SNES_ENVIRONMENT_SET_PITCH, &pitch);
+	#endif
 
 	if (!sdl_screen)
 	{

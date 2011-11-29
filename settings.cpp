@@ -59,7 +59,6 @@ bool settings_load(Settings *setfile)
 		setfile->sound_enabled = true;
 		setfile->music_enabled = 1;	// both Boss and Regular music
 		
-		setfile->instant_quit = false;
 		setfile->emulate_bugs = false;
 		setfile->no_quake_in_hell = false;
 		setfile->inhibit_fullscreen = false;

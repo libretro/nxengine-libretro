@@ -4,7 +4,6 @@
 #include "endgame/credits.h"
 #include "intro/intro.h"
 #include "intro/title.h"
-#include "pause/pause.h"
 #include "pause/options.h"
 #include "inventory.h"
 #include "map_system.h"
@@ -168,12 +167,11 @@ tickfunctions[] =
 	inventory_tick,		inventory_init,		NULL,			// GM_INVENTORY
 	ms_tick,		ms_init,		ms_close,		// GM_MAP_SYSTEM
 	island_tick,		island_init,		NULL,			// GM_ISLAND
-	credit_tick,		credit_init,		credit_close,	// GM_CREDITS
+	credit_tick,		credit_init,		credit_close,		// GM_CREDITS
 	intro_tick,		intro_init,		NULL,			// GM_INTRO
 	title_tick,		title_init,		NULL,			// GM_TITLE
-	pause_tick,		pause_init,		NULL,			// GP_PAUSED
-	options_tick,		options_init,		options_close	// GP_OPTIONS
-	//old_options_tick,		old_options_init,	old_options_close	// GP_OPTIONS
+	NULL,			NULL,			NULL,			// GP_PAUSED
+	options_tick,		options_init,		options_close		// GP_OPTIONS
 };
 
 Object *onscreen_objects[MAX_OBJECTS];
