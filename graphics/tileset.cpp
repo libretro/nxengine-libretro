@@ -44,7 +44,7 @@ bool Tileset::Load(int new_tileset)
 
 		// always use SDL_DisplayFormat on tilesets; they need to come out of 8-bit
 		// so that we can replace the destroyable star tiles without them palletizing.
-		tileset = NXSurface::FromFile(fname, true, true);
+		tileset = NXSurface::FromFile(fname, true);
 		if (!tileset)
 		{
 			return 1;
