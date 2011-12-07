@@ -18,6 +18,15 @@ else ifeq ($(platform), osx)
    TARGET := nx.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
+else ifeq ($(platform), xenon)
+   TARGET := libsnes.a
+   SHARED := -shared -Wl,--version-script=link.T -Wl,--no-undefined
+   CC = xenon-gcc
+   CXX = xenon-g++
+   AR = xenon-ar
+   ENDIANNESS_DEFINES = 
+   CFLAGS += -D__LIBXENON__
+   CXXFLAGS += -D__LIBXENON__
 else
    TARGET := nx.dll
    CC = gcc
@@ -34,6 +43,9 @@ TARGETS := nx.so
 ifeq ($(platform), win)
    SDL_CFLAGS := -ISDL
    SDL_LIBS := -L. -lSDL
+else ifeq($(platform), xenon)
+   SDL_CFLAGS := -I$(DEVKITXENON)/usr/include -I$(DEVKITXENON)/usr/include/SDL
+   SDL_LIBS := -L. -L$(DEVKITXENON)/usr/lib -lSDL
 else
    SDL_CFLAGS := $(shell pkg-config sdl --cflags)
    SDL_LIBS := $(shell pkg-config sdl --libs)
