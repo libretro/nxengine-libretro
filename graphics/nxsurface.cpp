@@ -1,6 +1,6 @@
 #include <string.h>
 #include "../settings.h"
-#include "../libsnes.hpp"
+#include "../libretro/libretro.h"
 #include "nxsurface.h"
 #include "nxsurface.fdh"
 
@@ -198,9 +198,9 @@ NXFormat *NXSurface::Format()
 
 void NXSurface::Flip()
 {
-#ifdef __LIBSNES__
-	extern snes_video_refresh_t snes_video_cb;
-	snes_video_cb((const uint16_t*)fSurface->pixels, fSurface->w, fSurface->h);
+#ifdef __LIBRETRO__
+	extern retro_video_refresh_t video_cb;
+	video_cb((const uint16_t*)fSurface->pixels, fSurface->w, fSurface->h, fSurface->pitch);
 #endif
 }
 

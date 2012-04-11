@@ -6,7 +6,7 @@
 #include "sprites.h"
 #include "../dirnames.h"
 #include "graphics.fdh"
-#include "../libsnes.hpp"
+#include "../libretro/libretro.h"
 
 NXSurface *screen = NULL;			// created from SDL's screen
 static NXSurface *drawtarget = NULL;		// target of DrawRect etc; almost always screen
@@ -34,9 +34,10 @@ bool Graphics::init()
 void c------------------------------() {}
 */
 
-#ifdef __LIBSNES__
-extern snes_environment_t snes_environ_cb;
+#ifdef __LIBRETRO__
+extern unsigned pitch;
 #endif
+
 bool Graphics::InitVideo()
 {
 	SDL_Surface *sdl_screen;
@@ -49,9 +50,8 @@ bool Graphics::InitVideo()
 
 	sdl_screen = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
 
-	#ifdef __LIBSNES__
-	unsigned pitch = sdl_screen->pitch;
-	snes_environ_cb(SNES_ENVIRONMENT_SET_PITCH, &pitch);
+	#ifdef __LIBRETRO__
+	pitch = sdl_screen->pitch;
 	#endif
 
 	if (!sdl_screen)
