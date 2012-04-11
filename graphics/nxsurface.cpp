@@ -105,7 +105,7 @@ void NXSurface::DrawSurface(NXSurface *src, int dstx, int dsty, int srcx, int sr
 
 void NXSurface::DrawSurface(NXSurface *src, int dstx, int dsty)
 {
-	DrawSurface(src, dstx, dsty, 0, 0, src->Width(), src->Height());
+	DrawSurface(src, dstx, dsty, 0, 0, src->fSurface->w, src->fSurface->h);
 }
 
 // draw the given source surface in a repeating pattern across the entire width of the surface.
@@ -179,29 +179,6 @@ void NXSurface::FillRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, u
 void NXSurface::DrawPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b)
 {
 	DrawRect(x, y, x, y, r, g, b);
-}
-
-int NXSurface::Width()
-{
-	return fSurface->w;
-}
-
-int NXSurface::Height()
-{
-	return fSurface->h;
-}
-
-NXFormat *NXSurface::Format()
-{
-	return fSurface->format;
-}
-
-void NXSurface::Flip()
-{
-#ifdef __LIBRETRO__
-	extern retro_video_refresh_t video_cb;
-	video_cb((const uint16_t*)fSurface->pixels, fSurface->w, fSurface->h, fSurface->pitch);
-#endif
 }
 
 /*

@@ -40,6 +40,10 @@ static void InitNewGame(bool with_intro)
 	fade.set_full(FADE_OUT);
 }
 
+#include "libretro/libretro.h"
+
+extern retro_video_refresh_t video_cb;
+
 static inline void run_tick()
 {
 	//static bool last_freezekey = false;
@@ -60,7 +64,7 @@ static inline void run_tick()
 
 	Replay::DrawStatus();
 
-	screen->Flip();
+	video_cb((const uint16_t*)screen->fSurface->pixels, screen->fSurface->w, screen->fSurface->h, screen->fSurface->pitch);
 
 	memcpy(lastinputs, inputs, sizeof(lastinputs));
 
