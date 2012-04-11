@@ -1,7 +1,5 @@
 
 #include "SDL.h"
-#include "SDL_thread.h"
-#include "SDL_mutex.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,10 +26,7 @@ static stNoteChannel note_channel[16];
 
 static stSong song;
 
-//static int cache_ahead_time = 2000;		// approximate number of ms to cache ahead (is rounded to a # of beats)
 static int cache_ahead_time = 500;		// approximate number of ms to cache ahead (is rounded to a # of beats)
-
-SDL_Thread *thread;
 
 static int buffer_beats;				// # of beats to cache ahead in each buffer
 static int buffer_samples;				// how many samples are in each outbuffer
@@ -719,15 +714,9 @@ static void queue_final_buffer(void)
 	current_buffer ^= 1;
 }
 
-int org_thread(void *data) {
-	generate_music();				// generate more music into current_buffer
-	queue_final_buffer();			// enqueue current_buffer and switch buffers
-	return 0;
-}
-
 int org_init(const char *wavetable_fname, const char *drum_pxt_dir, int org_volume)
 {
-int i;
+	int i;
 	
 	SSReserveChannel(ORG_CHANNEL);
 	OrgVolume = org_volume;
@@ -971,10 +960,8 @@ bool org_start(int startbeat)
 	
 	// kickstart the first buffer
 	current_buffer = 0;
-	SDL_WaitThread(thread, NULL);
-	thread = SDL_CreateThread(org_thread, NULL);
-	//generate_music();
-	//queue_final_buffer();
+	generate_music();
+	queue_final_buffer();
 	buffers_full = 0;				// tell org_run to generate the other buffer right away
 	
 	return 0;
@@ -1034,14 +1021,8 @@ void org_run(void)
 	// generate more music for it and queue it back on.
 	if (!buffers_full)
 	{
-		//stat("-- Buffering %d beats", buffer_beats);
-		
-		/*
 		generate_music();			// generate more music into current_buffer
 		queue_final_buffer();			// enqueue current_buffer and switch buffers
-		*/
-		SDL_WaitThread(thread, NULL);
-		thread = SDL_CreateThread(org_thread, NULL);
 		buffers_full = true;			// both buffers full again until OrgBufferFinished called
 	}
 	
