@@ -317,7 +317,7 @@ void BigImage::Set(int num)
 	if (images[num])
 	{
 		imgno = num;
-		imagex = -images[num]->Width();
+		imagex = -images[num]->fSurface->w;
 		state = BI_SLIDE_IN;
 	}
 	else
@@ -352,7 +352,7 @@ void BigImage::Draw()
 		case BI_SLIDE_OUT:
 		{
 			imagex -= IMAGE_SPEED;
-			if (imagex < -images[imgno]->Width())
+			if (imagex < -images[imgno]->fSurface->w)
 				state = BI_CLEAR;
 		}
 	}

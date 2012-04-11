@@ -417,10 +417,10 @@ int x, y;
 		break;
 	}
 	
-	map.parscroll_x %= backdrop[map.backdrop]->Width();
-	map.parscroll_y %= backdrop[map.backdrop]->Height();
-	int w = backdrop[map.backdrop]->Width();
-	int h = backdrop[map.backdrop]->Height();
+	map.parscroll_x %= backdrop[map.backdrop]->fSurface->w;
+	map.parscroll_y %= backdrop[map.backdrop]->fSurface->h;
+	int w = backdrop[map.backdrop]->fSurface->w;
+	int h = backdrop[map.backdrop]->fSurface->h;
 	
 	for(y=0;y<SCREEN_HEIGHT+map.parscroll_y; y+=h)
 	{

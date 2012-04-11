@@ -52,11 +52,11 @@ class NXSurface
 {
 public:
 	NXSurface();
-	NXSurface(int wd, int ht, NXFormat *format = screen->Format());
+	NXSurface(int wd, int ht, NXFormat *format = screen->fSurface->format);
 	NXSurface(SDL_Surface *from_sfc, bool freesurface=true);
 	~NXSurface();
 	
-	bool AllocNew(int wd, int ht, NXFormat *format = screen->Format());
+	bool AllocNew(int wd, int ht, NXFormat *format = screen->fSurface->format);
 	bool LoadImage(const char *pbm_name, bool use_colorkey=false);
 	static NXSurface *FromFile(const char *pbm_name, bool use_colorkey);
 	
@@ -84,17 +84,11 @@ public:
 	void set_clip_rect(NXRect *rect);
 	void clear_clip_rect();
 	
-	int Width();
-	int Height();
-	NXFormat *Format();
-	
-	void Flip();
 	SDL_Surface *GetSDLSurface() { return fSurface; }
+	SDL_Surface *fSurface;
 private:
 	static SDL_Surface *Scale(SDL_Surface *original, int factor, bool use_colorkey, bool free_original);
 	void Free();
-	
-	SDL_Surface *fSurface;
 	bool fFreeSurface;
 };
 

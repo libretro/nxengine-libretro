@@ -115,6 +115,7 @@ void Graphics::CopySpriteToTile(int spr, int tileno, int offset_x, int offset_y)
 	}
 }
 
+extern retro_video_refresh_t video_cb;
 
 void Graphics::ShowLoadingScreen()
 {
@@ -125,12 +126,12 @@ void Graphics::ShowLoadingScreen()
 	if (loading.LoadImage(fname))
 		return;
 
-	int x = (SCREEN_WIDTH / 2) - (loading.Width() / 2);
-	int y = (SCREEN_HEIGHT / 2) - loading.Height();
+	int x = (SCREEN_WIDTH / 2) - (loading.fSurface->w / 2);
+	int y = (SCREEN_HEIGHT / 2) - loading.fSurface->h;
 
 	FillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, 0);
 	DrawSurface(&loading, x, y);
-	screen->Flip();
+	video_cb((const uint16_t*)screen->fSurface->pixels, screen->fSurface->w, screen->fSurface->h, screen->fSurface->pitch);
 }
 
 /*
