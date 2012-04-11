@@ -11,7 +11,6 @@
 #include "pxt.h"			// for loading drums
 #include "sslib.h"
 
-//#define QUIET
 #define DRUM_PXT
 
 #ifdef DRUM_PXT
@@ -117,10 +116,6 @@ static bool load_drum_pxt(char *fname, int d)
 	drumtable[d].nsamples = snd.final_size;
 	drumtable[d].samples = (signed short *)malloc(snd.final_size * 2);		// *2 - it is 16-bit
 
-#ifndef QUIET
-	stat("drum0%X [%s]: %d samples", d, fname, drumtable[d].nsamples);
-#endif
-
 	// read data out of pxt's render result and put it into our drum sample table
 	for(i=0;i<drumtable[d].nsamples;i++)
 	{
@@ -219,10 +214,6 @@ signed short *abuf;
 	//stat("chunk: %d bytes in chunk", chunk->alen);
 	drumtable[d].nsamples = chunk->alen / 2 / 2;	// 16-bit stereo sound
 	drumtable[d].samples = malloc(drumtable[d].nsamples * 2);
-	
-	#ifndef QUIET
-		stat("drum0%X [%s]: %d samples", d, fname, drumtable[d].nsamples);
-	#endif
 	
 	read_pt = 0;
 	abuf = (signed short *)chunk->abuf;

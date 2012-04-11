@@ -48,7 +48,7 @@ bool sound_init(void)
 	
 	if (org_init(org_wavetable, pxt_dir, ORG_VOLUME))
 	{
-		staterr("Music failed to initilize");
+		staterr("Music failed to initialize");
 		return 1;
 	}
 	
