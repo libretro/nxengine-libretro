@@ -123,7 +123,7 @@ char SSInit(void)
 	for(int i=0;i<SS_NUM_CHANNELS;i++)
 		channel[i].volume = SDL_MIX_MAXVOLUME;
 
-	stat("sslib: initilization was successful.");
+	stat("sslib: initialization was successful.");
 
 	lockcount = 0;
 	return 0;
