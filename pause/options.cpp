@@ -218,15 +218,15 @@ void _music_get(ODItem *item)
 
 void _60hz_change(ODItem *item, int dir)
 {
-   extern bool snes_60hz;
-   snes_60hz ^= 1;
+   extern bool retro_60hz;
+   retro_60hz ^= 1;
 }
 
 void _60hz_get(ODItem *item)
 {
-   extern bool snes_60hz;
+   extern bool retro_60hz;
    static const char *strs[] = { "50fps", "60fps" };
-   strcpy(item->suffix, strs[snes_60hz]);
+   strcpy(item->suffix, strs[retro_60hz]);
 }
 
 /*

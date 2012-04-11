@@ -1,5 +1,7 @@
 #include "nx.h"
-#include "libsnes.hpp"
+#ifdef __LIBRETRO__
+#include "libretro/libretro.h"
+#endif
 
 uint8_t mappings[SDLK_LAST];
 
@@ -14,19 +16,21 @@ bool input_init(void)
 	memset(lastinputs, 0, sizeof(lastinputs));
 	memset(mappings, 0xff, sizeof(mappings));
 
-	mappings[SNES_DEVICE_ID_JOYPAD_LEFT]   = LEFTKEY;  
-	mappings[SNES_DEVICE_ID_JOYPAD_RIGHT]  = RIGHTKEY;  
-	mappings[SNES_DEVICE_ID_JOYPAD_UP]     = UPKEY;  
-	mappings[SNES_DEVICE_ID_JOYPAD_DOWN]   = DOWNKEY;  
+#ifdef __LIBRETRO__
+	mappings[RETRO_DEVICE_ID_JOYPAD_LEFT]   = LEFTKEY;  
+	mappings[RETRO_DEVICE_ID_JOYPAD_RIGHT]  = RIGHTKEY;  
+	mappings[RETRO_DEVICE_ID_JOYPAD_UP]     = UPKEY;  
+	mappings[RETRO_DEVICE_ID_JOYPAD_DOWN]   = DOWNKEY;  
 
-	mappings[SNES_DEVICE_ID_JOYPAD_B] = JUMPKEY;
-	mappings[SNES_DEVICE_ID_JOYPAD_Y] = FIREKEY;
-	mappings[SNES_DEVICE_ID_JOYPAD_L] = PREVWPNKEY;
-	mappings[SNES_DEVICE_ID_JOYPAD_R] = NEXTWPNKEY;
-	mappings[SNES_DEVICE_ID_JOYPAD_X] = MAPSYSTEMKEY;
+	mappings[RETRO_DEVICE_ID_JOYPAD_B] = JUMPKEY;
+	mappings[RETRO_DEVICE_ID_JOYPAD_Y] = FIREKEY;
+	mappings[RETRO_DEVICE_ID_JOYPAD_L] = PREVWPNKEY;
+	mappings[RETRO_DEVICE_ID_JOYPAD_R] = NEXTWPNKEY;
+	mappings[RETRO_DEVICE_ID_JOYPAD_X] = MAPSYSTEMKEY;
 
-	mappings[SNES_DEVICE_ID_JOYPAD_SELECT] = F3KEY;
-	mappings[SNES_DEVICE_ID_JOYPAD_START] = INVENTORYKEY;
+	mappings[RETRO_DEVICE_ID_JOYPAD_SELECT] = F3KEY;
+	mappings[RETRO_DEVICE_ID_JOYPAD_START] = INVENTORYKEY;
+#endif
 
 	return 0;
 }
@@ -69,7 +73,9 @@ void c------------------------------() {}
 
 void input_poll(void)
 {
-   extern snes_input_state_t snes_input_state_cb;
+#ifdef __LIBRETRO__
+   extern retro_input_state_t input_cb;
+#endif
 
    for (unsigned i = 0; i < 12; i++)
    {
@@ -78,12 +84,16 @@ void input_poll(void)
       if (ino != F3KEY)
       {
          if (ino != 0xff)
-            inputs[ino] = snes_input_state_cb(0, SNES_DEVICE_JOYPAD, 0, i);
+#ifdef __LIBRETRO__
+            inputs[ino] = input_cb(0, RETRO_DEVICE_JOYPAD, 0, i);
+#endif
       }
       else
       {
          static bool old;
-         bool input = snes_input_state_cb(0, SNES_DEVICE_JOYPAD, 0, i);
+#ifdef __LIBRETRO__
+         bool input = input_cb(0, RETRO_DEVICE_JOYPAD, 0, i);
+#endif
          inputs[ino] = input && !old;
          old = input;
       }

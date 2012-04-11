@@ -11,16 +11,16 @@ endif
 endif
 
 ifeq ($(platform), unix)
-   TARGET := nx.so
+   TARGET := libretro.so
    fpic := -fPIC
-   SHARED := -shared -Wl,--version-script=link.T -Wl,--no-undefined
+   SHARED := -shared -Wl,--version-script=libretro/link.T -Wl,--no-undefined
 else ifeq ($(platform), osx)
-   TARGET := nx.dylib
+   TARGET := libretro.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
 else ifeq ($(platform), xenon)
-   TARGET := libsnes.a
-   SHARED := -shared -Wl,--version-script=link.T -Wl,--no-undefined
+   TARGET := libretro.a
+   SHARED := -shared -Wl,--version-script=libretro/link.T -Wl,--no-undefined
    CC = xenon-gcc
    CXX = xenon-g++
    AR = xenon-ar
@@ -28,22 +28,22 @@ else ifeq ($(platform), xenon)
    CFLAGS += -D__LIBXENON__
    CXXFLAGS += -D__LIBXENON__
 else
-   TARGET := nx.dll
+   TARGET := libretro.dll
    CC = gcc
    CXX = g++
-   SHARED := -shared -static-libgcc -static-libstdc++ -Wl,--version-script=link.T -Wl,--no-undefined
+   SHARED := -shared -static-libgcc -static-libstdc++ -Wl,--version-script=libretro/link.T -Wl,--no-undefined
 endif
 
 RM       = rm -f
 JUNK    := $(shell find . -name '*~')
 SRCS    := $(shell find . -name '*.cpp')
 OBJS    := $(patsubst %.cpp,%.o,$(SRCS))
-TARGETS := nx.so
+TARGETS := libretro.so
 
 ifeq ($(platform), win)
    SDL_CFLAGS := -ISDL
    SDL_LIBS := -L. -lSDL
-else ifeq($(platform), xenon)
+else ifeq ($(platform), xenon)
    SDL_CFLAGS := -I$(DEVKITXENON)/usr/include -I$(DEVKITXENON)/usr/include/SDL
    SDL_LIBS := -L. -L$(DEVKITXENON)/usr/lib -lSDL
 else
@@ -52,8 +52,8 @@ else
 endif
 
 # Add SDL dependency
-DEFINES += -D__LIBSNES__
-CXXFLAGS += $(SDL_CFLAGS) $(DEFINES) -O3 -Wreturn-type -Wunused-variable -Wno-multichar $(fpic)
+DEFINES += -D__LIBRETRO__
+CXXFLAGS += $(SDL_CFLAGS) $(DEFINES) -O3 -Wreturn-type -Wunused-variable -Wno-multichar -Wl,--no-undefined $(fpic)
 LDFLAGS += -lm $(SDL_LIBS) $(DEFINES) $(SHARED)
 
 all: $(TARGET)
