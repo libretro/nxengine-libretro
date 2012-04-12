@@ -31,7 +31,7 @@ bool font_init(void)
 	sdl_screen = screen->GetSDLSurface();
 
 	SDL_Surface *font = SDL_LoadBMP(fontfile);
-	SSNES_SetColorKey(font, SDL_SRCCOLORKEY, 0);
+	SDL_SetColorKey(font, SDL_SRCCOLORKEY, 0);
 
 	error |= whitefont.InitChars(font, 0xffffff);
 	error |= greenfont.InitChars(font, 0x00ff80);
@@ -141,14 +141,14 @@ bool NXFont::InitChars(SDL_Surface *font, uint32_t color)
 		dst.w = letter->w;
 		dst.h = letter->h;
 
-		SSNES_SetColorKey(letter, SDL_SRCCOLORKEY, 0x1f);
+		SDL_SetColorKey(letter, SDL_SRCCOLORKEY, 0x1f);
 		SSNES_FillRect(letter, NULL, 0x1f);
 
 		SDL_BlitSurface(font, &src, letter, &dst);
 
-		uint16 color = fgcolor.r << RED_SHIFT
-		| fgcolor.g << GREEN_SHIFT
-		| fgcolor.b << BLUE_SHIFT;
+		uint16 color = (fgcolor.r >>letter->format->Rloss) << RED_SHIFT
+		| (fgcolor.g >> letter->format->Gloss) << GREEN_SHIFT
+		| (fgcolor.b >> letter->format->Bloss) << BLUE_SHIFT;
 
 		set_color(letter, color, blue);
 
@@ -191,8 +191,8 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 
 		SSNES_FillRect(top, NULL, blue);
 		SSNES_FillRect(bottom, NULL, blue);
-		SSNES_SetColorKey(top, SDL_SRCCOLORKEY, blue);
-		SSNES_SetColorKey(bottom, SDL_SRCCOLORKEY, blue);
+		SDL_SetColorKey(top, SDL_SRCCOLORKEY, blue);
+		SDL_SetColorKey(bottom, SDL_SRCCOLORKEY, blue);
 
 		SDL_PixelFormat *format = top->format;
 
@@ -209,12 +209,12 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 		SDL_BlitSurface(font, &src, top, &dst);
 		SDL_BlitSurface(font, &src, bottom, &dst);
 
-		uint16_t color_fg = fgcolor.r << RED_SHIFT
-		| fgcolor.g << GREEN_SHIFT
-		| fgcolor.b << BLUE_SHIFT;
-		uint16_t color_bg = bgcolor.r << RED_SHIFT
-		| bgcolor.g << GREEN_SHIFT
-		| bgcolor.b << BLUE_SHIFT;
+		uint16_t color_fg = (fgcolor.r >> top->format->Rloss) << RED_SHIFT
+		| (fgcolor.g >> top->format->Gloss) << GREEN_SHIFT
+		| (fgcolor.b >> top->format->Bloss) << BLUE_SHIFT;
+		uint16_t color_bg = (bgcolor.r >> bottom->format->Rloss) << RED_SHIFT
+		| (bgcolor.g >> top->format->Gloss) << GREEN_SHIFT
+		| (bgcolor.b >> top->format->Bloss) << BLUE_SHIFT;
 
 		set_color(top, color_fg, blue);
 		set_color(bottom, color_bg, blue);
@@ -223,7 +223,7 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 				format->BitsPerPixel, format->Rmask, format->Gmask,
 				format->Bmask, format->Amask);
 
-		SSNES_SetColorKey(letters[i], SDL_SRCCOLORKEY, blue);
+		SDL_SetColorKey(letters[i], SDL_SRCCOLORKEY, blue);
 		SSNES_FillRect(letters[i], NULL, blue);
 
 		dstrect.x = 0;

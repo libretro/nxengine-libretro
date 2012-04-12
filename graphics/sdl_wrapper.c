@@ -36,7 +36,7 @@ static __inline__ SDL_bool SDL_IntersectRect(const SDL_Rect *A, const SDL_Rect *
  */
 int SSNES_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 {
-	int y;
+	int x, y;
 	Uint8 *row;
 
 	/* If 'dstrect' == NULL, then fill the whole surface */
@@ -72,19 +72,5 @@ int SSNES_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 	SDL_UnlockSurface(dst);
 
 	/* We're done! */
-	return(0);
-}
-
-int SSNES_SetColorKey (SDL_Surface *surface, Uint32 flag, Uint32 key)
-{
-	/* Optimize away operations that don't change anything */
-	if ( (flag == (surface->flags & (SDL_SRCCOLORKEY))) &&
-	     (key == surface->format->colorkey) ) {
-		return(0);
-	}
-
-	surface->flags |= SDL_SRCCOLORKEY;
-	surface->format->colorkey = key;
-	surface->flags &= ~SDL_RLEACCELOK;
 	return(0);
 }
