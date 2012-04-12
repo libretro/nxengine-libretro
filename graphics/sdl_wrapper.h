@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 int SSNES_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color);
+int SSNES_SetColorKey (SDL_Surface *surface, Uint32 flag, Uint32 key);
 
 #ifdef __cplusplus
 }
