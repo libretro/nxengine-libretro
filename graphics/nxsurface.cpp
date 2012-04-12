@@ -190,17 +190,17 @@ void c------------------------------() {}
 void NXSurface::set_clip_rect(int x, int y, int w, int h)
 {
 	NXRect rect(x, y, w, h);
-	SSNES_SetClipRect(fSurface, &rect);
+	SDL_SetClipRect(fSurface, &rect);
 }
 
 void NXSurface::set_clip_rect(NXRect *rect)
 {
-	SSNES_SetClipRect(fSurface, rect);
+	SDL_SetClipRect(fSurface, rect);
 }
 
 void NXSurface::clear_clip_rect()
 {
-	SSNES_SetClipRect(fSurface, NULL);
+	SDL_SetClipRect(fSurface, NULL);
 }
 
 // internal function which scales the given SDL surface by the given factor.
