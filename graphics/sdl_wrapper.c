@@ -1,6 +1,6 @@
 #include "SDL.h"
 
-static __inline__ SDL_bool SDL_IntersectRect(const SDL_Rect *A, const SDL_Rect *B, SDL_Rect *intersection)
+static __inline__ SDL_bool SSNES_IntersectRect(const SDL_Rect *A, const SDL_Rect *B, SDL_Rect *intersection)
 {
 	int Amin, Amax, Bmin, Bmax;
 
@@ -31,6 +31,24 @@ static __inline__ SDL_bool SDL_IntersectRect(const SDL_Rect *A, const SDL_Rect *
 	return (intersection->w && intersection->h);
 }
 
+SDL_bool SSNES_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect)
+{
+	SDL_Rect full_rect;
+
+	/* Set up the full surface rectangle */
+	full_rect.x = 0;
+	full_rect.y = 0;
+	full_rect.w = surface->w;
+	full_rect.h = surface->h;
+
+	/* Set the clipping rectangle */
+	if ( ! rect ) {
+		surface->clip_rect = full_rect;
+		return 1;
+	}
+	return SSNES_IntersectRect(rect, &full_rect, &surface->clip_rect);
+}
+
 /* 
  * This function performs a fast fill of the given rectangle with 'color'
  */
@@ -42,7 +60,7 @@ int SSNES_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 	/* If 'dstrect' == NULL, then fill the whole surface */
 	if ( dstrect ) {
 		/* Perform clipping */
-		if ( !SDL_IntersectRect(dstrect, &dst->clip_rect, dstrect) ) {
+		if ( !SSNES_IntersectRect(dstrect, &dst->clip_rect, dstrect) ) {
 			return(0);
 		}
 	} else {
