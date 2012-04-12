@@ -140,7 +140,9 @@ void NXSurface::BlitPatternAcross(NXSurface *src, int x_dst, int y_dst, int y_sr
 void NXSurface::DrawRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 {
 	SDL_Rect rect;
-	uint32_t color = SDL_MapRGB(fSurface->format, r, g, b);
+	uint32_t color = (r >> fSurface->format->Rloss) << RED_SHIFT
+	| (g >> fSurface->format->Gloss) << GREEN_SHIFT
+	| (b >> fSurface->format->Bloss) << BLUE_SHIFT;
 
 	// top and bottom
 	rect.x = x1;
@@ -166,13 +168,16 @@ void NXSurface::DrawRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, u
 void NXSurface::FillRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 {
 	SDL_Rect rect;
+	uint32_t color = (r >> fSurface->format->Rloss) << RED_SHIFT
+	| (g >> fSurface->format->Gloss) << GREEN_SHIFT
+	| (b >> fSurface->format->Bloss) << BLUE_SHIFT;
 
 	rect.x = x1;
 	rect.y = y1;
 	rect.w = ((x2 - x1) + 1);
 	rect.h = ((y2 - y1) + 1);
 
-	SDL_FillRect(fSurface, &rect, SDL_MapRGB(fSurface->format, r, g, b));
+	SDL_FillRect(fSurface, &rect, color);
 }
 
 

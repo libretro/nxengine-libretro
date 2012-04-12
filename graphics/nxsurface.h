@@ -5,6 +5,10 @@
 #include "SDL.h"
 #include "../common/basics.h"
 
+#define RED_SHIFT   10
+#define GREEN_SHIFT 5
+#define BLUE_SHIFT  0
+
 struct NXSurface;
 extern NXSurface *screen;
 

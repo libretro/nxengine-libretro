@@ -30,7 +30,7 @@ bool font_init(void)
 	sdl_screen = screen->GetSDLSurface();
 
 	SDL_Surface *font = SDL_LoadBMP(fontfile);
-	SDL_SetColorKey(font, SDL_SRCCOLORKEY, SDL_MapRGB(font->format, 0, 0, 255));
+	SDL_SetColorKey(font, SDL_SRCCOLORKEY, 0);
 
 	error |= whitefont.InitChars(font, 0xffffff);
 	error |= greenfont.InitChars(font, 0x00ff80);
@@ -325,7 +325,7 @@ static bool create_shade_sfc(void)
 	if (!shadesfc)
 		return 1;
 	
-	SDL_FillRect(shadesfc, NULL, SDL_MapRGB(format, 0, 0, 0));
+	SDL_FillRect(shadesfc, NULL, 0);
 	SDL_SetAlpha(shadesfc, SDL_SRCALPHA, 128);
 	
 	return 0;
