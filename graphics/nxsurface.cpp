@@ -209,11 +209,14 @@ void NXSurface::clear_clip_rect()
 // internal function which scales the given SDL surface by the given factor.
 SDL_Surface *NXSurface::Scale(SDL_Surface *original, int factor, bool use_colorkey, bool free_original)
 {
+	uint8_t color = SDL_MapRGB(original->format, 0, 0, 0);
+
 	// set colorkey to black if requested
+
 	if (use_colorkey)
 	{	// don't use SDL_RLEACCEL--it seems to actually make things a lot slower,
 		// especially on maps with motion tiles.
-		SDL_SetColorKey(original, SDL_SRCCOLORKEY, SDL_MapRGB(original->format, 0, 0, 0));
+		SDL_SetColorKey(original, SDL_SRCCOLORKEY, color);
 	}
 
 	return original;
