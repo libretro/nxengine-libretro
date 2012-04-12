@@ -9,6 +9,7 @@
 #include "../libretro/libretro.h"
 
 NXSurface *screen = NULL;			// created from SDL's screen
+static NXSurface *drawtarget = NULL;
 #define SCREEN_BPP 15				// the default if we can't get video info
 
 const NXColor DK_BLUE(0, 0, 0x21);		// the popular dk blue backdrop color
@@ -42,6 +43,8 @@ bool Graphics::InitVideo()
 	SDL_Surface *sdl_screen;
 
 	stat("Graphics::InitVideo");
+	if (drawtarget == screen)
+		drawtarget = NULL;
 	if (screen)
 		delete screen;
 
@@ -58,6 +61,8 @@ bool Graphics::InitVideo()
 	}
 
 	screen = new NXSurface(sdl_screen, false);
+	if (!drawtarget)
+		drawtarget = screen;
 	return 0;
 }
 
@@ -150,21 +155,21 @@ void c------------------------------() {}
 // draw the entire surface to the screen at the given coordinates.
 void Graphics::DrawSurface(NXSurface *src, int x, int y)
 {
-	screen->DrawSurface(src, x, y);
+	drawtarget->DrawSurface(src, x, y);
 }
 
 
 // blit the specified portion of the surface to the screen
 void Graphics::DrawSurface(NXSurface *src, int dstx, int dsty, int srcx, int srcy, int wd, int ht)
 {
-	screen->DrawSurface(src, dstx, dsty, srcx, srcy, wd, ht);
+	drawtarget->DrawSurface(src, dstx, dsty, srcx, srcy, wd, ht);
 }
 
 
 // blit the specified surface across the screen in a repeating pattern
 void Graphics::BlitPatternAcross(NXSurface *sfc, int x_dst, int y_dst, int y_src, int height)
 {
-	screen->BlitPatternAcross(sfc, x_dst, y_dst, y_src, height);
+	drawtarget->BlitPatternAcross(sfc, x_dst, y_dst, y_src, height);
 }
 
 /*
@@ -173,17 +178,17 @@ void c------------------------------() {}
 
 void Graphics::DrawRect(int x1, int y1, int x2, int y2, NXColor color)
 {
-	screen->DrawRect(x1, y1, x2, y2, color);
+	drawtarget->DrawRect(x1, y1, x2, y2, color);
 }
 
 void Graphics::FillRect(int x1, int y1, int x2, int y2, NXColor color)
 {
-	screen->FillRect(x1, y1, x2, y2, color);
+	drawtarget->FillRect(x1, y1, x2, y2, color);
 }
 
 void Graphics::DrawPixel(int x, int y, NXColor color)
 {
-	screen->DrawPixel(x, y, color.r, color.g, color.b);
+	drawtarget->DrawPixel(x, y, color.r, color.g, color.b);
 }
 
 /*
@@ -192,17 +197,17 @@ void c------------------------------() {}
 
 void Graphics::DrawRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 {
-	screen->DrawRect(x1, y1, x2, y2, r, g, b);
+	drawtarget->DrawRect(x1, y1, x2, y2, r, g, b);
 }
 
 void Graphics::FillRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 {
-	screen->FillRect(x1, y1, x2, y2, r, g, b);
+	drawtarget->FillRect(x1, y1, x2, y2, r, g, b);
 }
 
 void Graphics::DrawPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b)
 {
-	screen->DrawPixel(x, y, r, g, b);
+	drawtarget->DrawPixel(x, y, r, g, b);
 }
 
 /*
@@ -211,17 +216,17 @@ void c------------------------------() {}
 
 void Graphics::set_clip_rect(int x, int y, int w, int h)
 {
-	screen->set_clip_rect(x, y, w, h);
+	drawtarget->set_clip_rect(x, y, w, h);
 }
 
 void Graphics::set_clip_rect(NXRect *rect)
 {
-	screen->set_clip_rect(rect);
+	drawtarget->set_clip_rect(rect);
 }
 
 void Graphics::clear_clip_rect()
 {
-	screen->clear_clip_rect();
+	drawtarget->clear_clip_rect();
 }
 
 /*
@@ -232,7 +237,7 @@ void c------------------------------() {}
 // other than the screen.
 void Graphics::SetDrawTarget(NXSurface *surface)
 {
-	screen = surface;
+	drawtarget = surface;
 }
 
 
