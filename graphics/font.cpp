@@ -144,8 +144,12 @@ bool NXFont::InitChars(SDL_Surface *font, uint32_t color)
 		SDL_FillRect(letter, NULL, 0x1f);
 
 		SDL_BlitSurface(font, &src, letter, &dst);
-		set_color(letter,
-				SDL_MapRGB(letter->format, fgcolor.r, fgcolor.g, fgcolor.b), blue);
+
+		uint16 color = (fgcolor.r >>letter->format->Rloss) << RED_SHIFT
+		| (fgcolor.g >> letter->format->Gloss) << GREEN_SHIFT
+		| (fgcolor.b >> letter->format->Bloss) << BLUE_SHIFT;
+
+		set_color(letter, color, blue);
 
 		letters[i] = letter;
 	}
@@ -204,8 +208,15 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 		SDL_BlitSurface(font, &src, top, &dst);
 		SDL_BlitSurface(font, &src, bottom, &dst);
 
-		set_color(top, SDL_MapRGB(top->format, fgcolor.r, fgcolor.g, fgcolor.b), blue);
-		set_color(bottom, SDL_MapRGB(bottom->format, bgcolor.r, bgcolor.g, bgcolor.b), blue);
+		uint16_t color_fg = (fgcolor.r >> top->format->Rloss) << RED_SHIFT
+		| (fgcolor.g >> top->format->Gloss) << GREEN_SHIFT
+		| (fgcolor.b >> top->format->Bloss) << BLUE_SHIFT;
+		uint16_t color_bg = (bgcolor.r >> bottom->format->Rloss) << RED_SHIFT
+		| (bgcolor.g >> top->format->Gloss) << GREEN_SHIFT
+		| (bgcolor.b >> top->format->Bloss) << BLUE_SHIFT;
+
+		set_color(top, color_fg, blue);
+		set_color(bottom, color_bg, blue);
 
 		letters[i] = SDL_CreateRGBSurface(0, top->w, top->h+offset,
 				format->BitsPerPixel, format->Rmask, format->Gmask,
