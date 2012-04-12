@@ -37,7 +37,8 @@ endif
 RM       = rm -f
 JUNK    := $(shell find . -name '*~')
 SRCS    := $(shell find . -name '*.cpp')
-OBJS    := $(patsubst %.cpp,%.o,$(SRCS))
+SRCS_C  := $(shell find . -name '*.c')
+OBJS    := $(patsubst %.cpp,%.o,$(SRCS)) $(patsubst %.c,%.o,$(SRCS_C))
 TARGETS := libretro.so
 
 ifeq ($(platform), win)
@@ -54,6 +55,7 @@ endif
 # Add SDL dependency
 DEFINES += -D__LIBRETRO__
 CXXFLAGS += $(SDL_CFLAGS) $(DEFINES) -O3 -Wreturn-type -Wunused-variable -Wno-multichar -Wl,--no-undefined $(fpic)
+CFLAGS += $(SDL_CFLAGS) $(DEFINES) -O3 -Wreturn-type -Wunused-variable -Wno-multichar -Wl,--no-undefined $(fpic)
 LDFLAGS += -lm $(SDL_LIBS) $(DEFINES) $(SHARED)
 
 all: $(TARGET)
