@@ -141,7 +141,9 @@ void NXSurface::BlitPatternAcross(NXSurface *src, int x_dst, int y_dst, int y_sr
 void NXSurface::DrawRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 {
 	SDL_Rect rect;
-	uint32_t color = r << RED_SHIFT | g << GREEN_SHIFT | b << BLUE_SHIFT;
+	uint32_t color = (r >> fSurface->format->Rloss) << RED_SHIFT
+	| (g >> fSurface->format->Gloss) << GREEN_SHIFT
+	| (b >> fSurface->format->Bloss) << BLUE_SHIFT;
 
 	// top and bottom
 	rect.x = x1;
@@ -167,7 +169,9 @@ void NXSurface::DrawRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, u
 void NXSurface::FillRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 {
 	SDL_Rect rect;
-	uint32_t color = r << RED_SHIFT | g << GREEN_SHIFT | b << BLUE_SHIFT;
+	uint32_t color = (r >> fSurface->format->Rloss) << RED_SHIFT
+	| (g >> fSurface->format->Gloss) << GREEN_SHIFT
+	| (b >> fSurface->format->Bloss) << BLUE_SHIFT;
 
 	rect.x = x1;
 	rect.y = y1;
@@ -211,10 +215,9 @@ SDL_Surface *NXSurface::Scale(SDL_Surface *original, int factor, bool use_colork
 	// set colorkey to black if requested
 
 	if (use_colorkey)
-	{	
-		// don't use SDL_RLEACCEL--it seems to actually make things a lot slower,
+	{	// don't use SDL_RLEACCEL--it seems to actually make things a lot slower,
 		// especially on maps with motion tiles.
-		SSNES_SetColorKey(original, SDL_SRCCOLORKEY, color);
+		SDL_SetColorKey(original, SDL_SRCCOLORKEY, color);
 	}
 
 	return original;
