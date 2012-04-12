@@ -3,6 +3,7 @@
 #include "../nx.h"
 #include "font.h"
 #include "font.fdh"
+#include "sdl_wrapper.h"
 
 static int text_draw(int x, int y, const char *text, int spacing=0, NXFont *font=&whitefont);
 
@@ -141,7 +142,7 @@ bool NXFont::InitChars(SDL_Surface *font, uint32_t color)
 		dst.h = letter->h;
 
 		SDL_SetColorKey(letter, SDL_SRCCOLORKEY, 0x1f);
-		SDL_FillRect(letter, NULL, 0x1f);
+		SSNES_FillRect(letter, NULL, 0x1f);
 
 		SDL_BlitSurface(font, &src, letter, &dst);
 
@@ -188,8 +189,8 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 		bottom = SDL_CreateRGBSurface(0, 6, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
 				0);
 
-		SDL_FillRect(top, NULL, blue);
-		SDL_FillRect(bottom, NULL, blue);
+		SSNES_FillRect(top, NULL, blue);
+		SSNES_FillRect(bottom, NULL, blue);
 		SDL_SetColorKey(top, SDL_SRCCOLORKEY, blue);
 		SDL_SetColorKey(bottom, SDL_SRCCOLORKEY, blue);
 
@@ -223,7 +224,7 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 				format->Bmask, format->Amask);
 
 		SDL_SetColorKey(letters[i], SDL_SRCCOLORKEY, blue);
-		SDL_FillRect(letters[i], NULL, blue);
+		SSNES_FillRect(letters[i], NULL, blue);
 
 		dstrect.x = 0;
 		dstrect.y = offset;
@@ -336,7 +337,7 @@ static bool create_shade_sfc(void)
 	if (!shadesfc)
 		return 1;
 	
-	SDL_FillRect(shadesfc, NULL, 0);
+	SSNES_FillRect(shadesfc, NULL, 0);
 	SDL_SetAlpha(shadesfc, SDL_SRCALPHA, 128);
 	
 	return 0;

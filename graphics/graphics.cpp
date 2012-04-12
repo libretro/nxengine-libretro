@@ -138,7 +138,6 @@ void Graphics::ShowLoadingScreen()
 void c------------------------------() {}
 */
 
-// blit from one surface to another, just like SDL_BlitSurface.
 void Graphics::BlitSurface(NXSurface *src, NXRect *srcrect, NXSurface *dst, NXRect *dstrect)
 {
 	dst->DrawSurface(src, dstrect->x, dstrect->y, srcrect->x, srcrect->y, srcrect->w, srcrect->h);

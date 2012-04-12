@@ -1,4 +1,5 @@
 #include "nx.h"
+#include "graphics/sdl_wrapper.h"
 
 //#define DEBUG_SLOPE
 static SlopeTable slopetable[SLOPE_LAST+1];
@@ -354,12 +355,7 @@ extern SDL_Surface *tileset;
 			dstrect.y += y*2;
 			
 			if (slopetable[table].table[x][y])
-			{
-				if (table > 4)	// floor slopes
-					SDL_FillRect(tileset, &dstrect, 0);
-				else
-					SDL_FillRect(tileset, &dstrect, 0);
-			}
+				SSNES_FillRect(tileset, &dstrect, 0);
 		}
 	}
 }

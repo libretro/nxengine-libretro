@@ -3,6 +3,7 @@
 #include "../libretro/libretro.h"
 #include "nxsurface.h"
 #include "nxsurface.fdh"
+#include "sdl_wrapper.h"
 
 NXSurface::NXSurface()
 {
@@ -131,7 +132,7 @@ void NXSurface::BlitPatternAcross(NXSurface *src, int x_dst, int y_dst, int y_sr
 		dstrect.x = x;
 		dstrect.y = y;
 
-		SDL_BlitSurface(src->fSurface, &srcrect, fSurface, &dstrect);
+		SDL_LowerBlit(src->fSurface, &srcrect, fSurface, &dstrect);
 		x += src->fSurface->w;
 	}
 	while(x < destwd);
@@ -149,19 +150,19 @@ void NXSurface::DrawRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, u
 	rect.y = y1;
 	rect.w = ((x2 - x1) + 1);
 	rect.h = 1;
-	SDL_FillRect(fSurface, &rect, color);
+	SSNES_FillRect(fSurface, &rect, color);
 
 	rect.y = y2;
-	SDL_FillRect(fSurface, &rect, color);
+	SSNES_FillRect(fSurface, &rect, color);
 
 	// left and right
 	rect.y = y1;
 	rect.w = 1;
 	rect.h = ((y2 - y1) + 1);
-	SDL_FillRect(fSurface, &rect, color);
+	SSNES_FillRect(fSurface, &rect, color);
 
 	rect.x = x2;
-	SDL_FillRect(fSurface, &rect, color);
+	SSNES_FillRect(fSurface, &rect, color);
 }
 
 
@@ -177,7 +178,7 @@ void NXSurface::FillRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, u
 	rect.w = ((x2 - x1) + 1);
 	rect.h = ((y2 - y1) + 1);
 
-	SDL_FillRect(fSurface, &rect, color);
+	SSNES_FillRect(fSurface, &rect, color);
 }
 
 
