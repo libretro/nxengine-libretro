@@ -174,10 +174,7 @@ int SDL_CalculateBlit(SDL_Surface *surface)
 		        surface->map->sw_data->blit = SDL_BlitCopyOverlap;
 		}
 	} else {
-		if ( surface->format->BitsPerPixel < 8 ) {
-			surface->map->sw_data->blit =
-			    SDL_CalculateBlit0(surface, blit_index);
-		} else {
+		{
 			switch ( surface->format->BytesPerPixel ) {
 			    case 1:
 				surface->map->sw_data->blit =
