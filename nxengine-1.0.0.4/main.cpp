@@ -22,11 +22,13 @@ int flipacceltime = 0;
 
 int main(int argc, char *argv[])
 {
-bool inhibit_loadfade = false;
-bool error = false;
-bool freshstart;
+	bool inhibit_loadfade = false;
+	bool error = false;
+	bool freshstart;
 	
-	SetLogFilename("debug.txt");
+#ifdef DEBUG_LOG
+SetLogFilename("debug.txt");
+#endif
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
 	{
 		staterr("ack, sdl_init failed: %s.", SDL_GetError());

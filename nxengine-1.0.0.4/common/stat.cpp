@@ -38,8 +38,8 @@ void c------------------------------() {}
 
 void stat(const char *fmt, ...)
 {
-va_list ar;
-char buffer[MAXBUFSIZE];
+	va_list ar;
+	char buffer[MAXBUFSIZE];
 
 	va_start(ar, fmt);
 	vsnprintf(buffer, sizeof(buffer), fmt, ar);

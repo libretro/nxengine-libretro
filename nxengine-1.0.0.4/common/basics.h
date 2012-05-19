@@ -4,18 +4,13 @@
 
 #include <stdint.h>
 
-#ifdef __clang__
-	#define MAXPATHLEN	256
-#else
-	#include <sys/param.h>	// MAXPATHLEN
-#endif
+#define MAXPATHLEN	256
 
 #ifndef PATH_MAX
-	#define PATH_MAX	259
+#define PATH_MAX	259
 #endif
 
 typedef unsigned char		uchar;
-
 
 void stat(const char *fmt, ...);
 void staterr(const char *fmt, ...);
