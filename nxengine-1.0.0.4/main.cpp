@@ -18,7 +18,9 @@ static uint32_t fpstimer = 0;
 #define VISFLAGS			(SDL_APPACTIVE | SDL_APPINPUTFOCUS)
 int framecount = 0;
 bool freezeframe = false;
+#ifdef USE_FRAMESKIP
 int flipacceltime = 0;
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -256,7 +258,9 @@ static inline void run_tick()
 static bool can_tick = true;
 static bool last_freezekey = false;
 static bool last_framekey = false;
+#ifdef USE_FRAMESKIP
 static int frameskip = 0;
+#endif
 
 	input_poll();
 	
@@ -328,10 +332,13 @@ static int frameskip = 0;
 			update_fps();
 		}
 		
+		#ifdef USE_FRAMESKIP
 		if (!flipacceltime)
 		{
+		#endif
 			//platform_sync_to_vblank();
 			screen->Flip();
+		#ifdef USE_FRAMESKIP
 		}
 		else
 		{
@@ -342,6 +349,7 @@ static int frameskip = 0;
 				frameskip = 256;
 			}
 		}
+		#endif
 		
 		memcpy(lastinputs, inputs, sizeof(lastinputs));
 	}
