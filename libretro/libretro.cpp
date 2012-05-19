@@ -8,14 +8,6 @@ typedef unsigned char bool;
 #include <unistd.h>
 #include <string>
 
-#define LIBRETRO_CORE 1
-
-#if defined(_MSC_VER) && defined(LIBRETRO_CORE)
-#define EXPORT __declspec(dllexport)
-#else
-#define EXPORT
-#endif
-
 #include "libretro.h"
 #include "../graphics/graphics.h"
 
@@ -45,7 +37,7 @@ void retro_set_environment(retro_environment_t cb)
    environ_cb = cb;
 }
 
-EXPORT unsigned retro_api_version(void)
+unsigned retro_api_version(void)
 {
    return RETRO_API_VERSION;
 }
@@ -58,7 +50,7 @@ void retro_set_video_refresh(retro_video_refresh_t cb)
 void retro_set_audio_sample(retro_audio_sample_t cb)
 { }
 
-EXPORT void retro_set_audio_sample_batch(retro_audio_sample_batch_t cb)
+void retro_set_audio_sample_batch(retro_audio_sample_batch_t cb)
 {
    audio_batch_cb = cb;
 }
@@ -73,7 +65,7 @@ void retro_set_input_state(retro_input_state_t cb)
    input_cb = cb;
 }
 
-EXPORT void retro_get_system_info(struct retro_system_info *info)
+void retro_get_system_info(struct retro_system_info *info)
 {
    info->need_fullpath = false;
    info->valid_extensions = "bin|BIN|zip|ZIP";
@@ -82,11 +74,11 @@ EXPORT void retro_get_system_info(struct retro_system_info *info)
    info->block_extract = false;
 }
 
-static std::string g_dir;
+char g_dir[1024];
 
 void retro_set_controller_port_device(unsigned port, unsigned device) {}
 
-EXPORT void retro_get_system_av_info(struct retro_system_av_info *info)
+void retro_get_system_av_info(struct retro_system_av_info *info)
 {
    info->geometry.base_width = SCREEN_WIDTH;
    info->geometry.base_height = SCREEN_HEIGHT;
@@ -96,40 +88,48 @@ EXPORT void retro_get_system_av_info(struct retro_system_av_info *info)
    info->timing.sample_rate = ((2 * 22050) / 60 + 1) * 30;
 }
 
-EXPORT void retro_init(void)
+void retro_init(void)
 { }
 
-EXPORT bool retro_load_game(const struct retro_game_info *game)
+static void extract_directory(char *buf, const char *path, size_t size)
 {
-   g_dir = game->path;
-   size_t pos = g_dir.find_last_of('/');
-   if (pos == std::string::npos)
-      pos = g_dir.find_last_of('\\');
-   if (pos != std::string::npos)
-   {
-      g_dir = g_dir.substr(0, pos);
+   char *base;
+   strncpy(buf, path, size - 1);
+   buf[size - 1] = '\0';
 
-      fprintf(stderr, "[NX]: Setting working directory to: %s\n", g_dir.c_str());
-#ifndef __CELLOS_LV2__
-      chdir(g_dir.c_str());
-#endif
+   base = strrchr(buf, '/');
+   if (!base)
+      base = strrchr(buf, '\\');
+
+   if (base)
+      *base = '\0';
+   else
+   {
+      buf[0] = '.';
+      buf[1] = '\0';
    }
+}
+
+bool retro_load_game(const struct retro_game_info *game)
+{
+   extract_directory(g_dir, game->path, sizeof(g_dir));
+   stat("g_dir: %s\n", g_dir);
 
    pre_main();
 
    return 1;
 }
 
-EXPORT void retro_deinit(void)
+void retro_deinit(void)
 {
    post_main();
 }
 
-EXPORT void retro_reset(void) {}
+void retro_reset(void) {}
 
 void game_mixaudio(int16_t *stream, size_t len);
 
-EXPORT void retro_run(void)
+void retro_run(void)
 {
    poll_cb();
 
@@ -151,12 +151,12 @@ EXPORT void retro_run(void)
 
 void retro_unload_cartridge(void) {}
 
-EXPORT size_t retro_serialize_size(void)
+size_t retro_serialize_size(void)
 {
    return 0;
 }
 
-EXPORT bool retro_serialize(void *data, size_t size)
+bool retro_serialize(void *data, size_t size)
 {
    return false;
 }
@@ -169,13 +169,13 @@ bool retro_unserialize(const void *data, size_t size)
 void retro_cheat_reset(void) {}
 void retro_cheat_set(unsigned index, bool enabled, const char *code) {}
 
-EXPORT bool retro_load_game_special(
+bool retro_load_game_special(
   unsigned game_type,
   const struct retro_game_info *info, size_t num_info
 )
 { return false; }
 
-EXPORT void retro_unload_game (void)
+void retro_unload_game (void)
 { }
 
 unsigned retro_get_region(void)
