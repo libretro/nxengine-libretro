@@ -50,9 +50,7 @@ bool Graphics::InitVideo()
 
 	sdl_screen = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
 
-	#ifdef __LIBRETRO__
-	pitch = sdl_screen->pitch;
-	#endif
+	pitch = 320 << 1;
 
 	if (!sdl_screen)
 	{

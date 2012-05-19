@@ -40,7 +40,7 @@ bool NXSurface::AllocNew(int wd, int ht, NXFormat *format)
 	Free();
 	
 	fSurface = SDL_CreateRGBSurface(SDL_SRCCOLORKEY, wd, ht, \
-			format->BitsPerPixel, format->Rmask, format->Gmask, format->Bmask, format->Amask);
+	SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
 	
 	if (!fSurface)
 	{

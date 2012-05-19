@@ -127,7 +127,7 @@ bool NXFont::InitChars(SDL_Surface *font, uint32_t color)
 	{
 		str[0] = i;
 
-		letter = SDL_CreateRGBSurface(0, 6, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
+		letter = SDL_CreateRGBSurface(0, 6, 10, SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0,
 				0);
 
 		SDL_Rect src = {0};
@@ -184,9 +184,9 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 
 		uint16_t blue = 0x1f;
 
-		top = SDL_CreateRGBSurface(0, 6, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
+		top = SDL_CreateRGBSurface(0, 6, 10, SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0,
 				0);
-		bottom = SDL_CreateRGBSurface(0, 6, 10, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0,
+		bottom = SDL_CreateRGBSurface(0, 6, 10, SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0,
 				0);
 
 		SSNES_FillRect(top, NULL, blue);
@@ -220,8 +220,8 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 		set_color(bottom, color_bg, blue);
 
 		letters[i] = SDL_CreateRGBSurface(0, top->w, top->h+offset,
-				format->BitsPerPixel, format->Rmask, format->Gmask,
-				format->Bmask, format->Amask);
+				SCREEN_BPP, 0x1f << 10, 0x1f << 5,
+				0x1f << 0, 0);
 
 		SSNES_SetColorKey(letters[i], SDL_SRCCOLORKEY, blue);
 		SSNES_FillRect(letters[i], NULL, blue);
@@ -326,13 +326,11 @@ static bool create_shade_sfc(void)
 	if (shadesfc)
 		SDL_FreeSurface(shadesfc);
 	
-	int wd = (SCREEN_WIDTH);
 	int ht = whitefont.letters['M']->h;
 	
 	SDL_PixelFormat *format = sdl_screen->format;
-	shadesfc = SDL_CreateRGBSurface(SDL_SRCALPHA | SDL_SWSURFACE, wd, ht,
-	format->BitsPerPixel, format->Rmask, format->Gmask,
-	format->Bmask, format->Amask);
+	shadesfc = SDL_CreateRGBSurface(SDL_SRCALPHA | SDL_SWSURFACE, SCREEN_WIDTH, ht,
+	SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
 	
 	if (!shadesfc)
 		return 1;
