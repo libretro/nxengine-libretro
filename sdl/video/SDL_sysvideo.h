@@ -182,18 +182,6 @@ struct SDL_VideoDevice {
 	/* Swap the current buffers in double buffer mode. */
 	void (*GL_SwapBuffers)(_THIS);
 
-  	/* OpenGL functions for SDL_OPENGLBLIT */
-#if SDL_VIDEO_OPENGL
-#if !defined(__WIN32__)
-#define WINAPI
-#endif
-#define SDL_PROC(ret,func,params) ret (WINAPI *func) params;
-#include "SDL_glfuncs.h"
-#undef SDL_PROC
-
-	/* Texture id */
-	GLuint texture;
-#endif
 	int is_32bit;
  
 	/* * * */
