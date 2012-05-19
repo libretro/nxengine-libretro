@@ -4,7 +4,6 @@
 /* located in main.cpp */
 
 //---------------------[referenced from main.cpp]--------------------//
-static bool  gameloop(void);
 static inline void run_tick();
 void update_fps();
 void InitNewGame(bool with_intro);
