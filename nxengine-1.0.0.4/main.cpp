@@ -223,14 +223,20 @@ int32_t nexttick = 0;
 		int32_t curtime = SDL_GetTicks();
 		int32_t timeRemaining = nexttick - curtime;
 		
+		#ifdef USE_FRAMESKIP
 		if (timeRemaining <= 0 || game.ffwdtime)
+		#else
+		if (timeRemaining <= 0)
+		#endif
 		{
 			run_tick();
 			
+			#ifdef USE_FRAMESKIP
 			// try to "catch up" if something else on the system bogs us down for a moment.
 			// but if we get really far behind, it's ok to start dropping frames
 			if (game.ffwdtime)
 				game.ffwdtime--;
+			#endif
 			
 			nexttick = curtime + GAME_WAIT;
 			
@@ -305,11 +311,13 @@ static int frameskip = 0;
 		last_framekey = inputs[FRAME_ADVANCE_KEY];
 	}
 	
+	#ifdef USE_FRAMESKIP
 	// fast-forward key (F5)
 	if (inputs[FFWDKEY] && (settings->enable_debug_keys || Replay::IsPlaying()))
 	{
 		game.ffwdtime = 2;
 	}
+	#endif
 	
 	if (can_tick)
 	{
