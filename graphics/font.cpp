@@ -1,13 +1,13 @@
 
-#include "SDL.h"
+#include "SDL_video.h"
 #include "../nx.h"
 #include "font.h"
 #include "font.fdh"
-#include "sdl_wrapper.h"
 
 static int text_draw(int x, int y, const char *text, int spacing=0, NXFont *font=&whitefont);
 
-//const char *fontfile = "font.ttf";
+#define SCREEN_BPP 15
+
 const char *fontfile = "font.bmp";
 static SDL_Surface *sdl_screen = NULL;
 static SDL_Surface *shadesfc = NULL;
@@ -31,7 +31,7 @@ bool font_init(void)
 	sdl_screen = screen->GetSDLSurface();
 
 	SDL_Surface *font = SDL_LoadBMP(fontfile);
-	SSNES_SetColorKey(font, SDL_SRCCOLORKEY, 0);
+	SDL_SetColorKey(font, SDL_SRCCOLORKEY, 0);
 
 	error |= whitefont.InitChars(font, 0xffffff);
 	error |= greenfont.InitChars(font, 0x00ff80);
@@ -141,8 +141,8 @@ bool NXFont::InitChars(SDL_Surface *font, uint32_t color)
 		dst.w = letter->w;
 		dst.h = letter->h;
 
-		SSNES_SetColorKey(letter, SDL_SRCCOLORKEY, 0x1f);
-		SSNES_FillRect(letter, NULL, 0x1f);
+		SDL_SetColorKey(letter, SDL_SRCCOLORKEY, 0x1f);
+		SDL_FillRect(letter, NULL, 0x1f);
 
 		SDL_BlitSurface(font, &src, letter, &dst);
 
@@ -189,10 +189,10 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 		bottom = SDL_CreateRGBSurface(0, 6, 10, SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0,
 				0);
 
-		SSNES_FillRect(top, NULL, blue);
-		SSNES_FillRect(bottom, NULL, blue);
-		SSNES_SetColorKey(top, SDL_SRCCOLORKEY, blue);
-		SSNES_SetColorKey(bottom, SDL_SRCCOLORKEY, blue);
+		SDL_FillRect(top, NULL, blue);
+		SDL_FillRect(bottom, NULL, blue);
+		SDL_SetColorKey(top, SDL_SRCCOLORKEY, blue);
+		SDL_SetColorKey(bottom, SDL_SRCCOLORKEY, blue);
 
 		SDL_PixelFormat *format = top->format;
 
@@ -223,8 +223,8 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 				SCREEN_BPP, 0x1f << 10, 0x1f << 5,
 				0x1f << 0, 0);
 
-		SSNES_SetColorKey(letters[i], SDL_SRCCOLORKEY, blue);
-		SSNES_FillRect(letters[i], NULL, blue);
+		SDL_SetColorKey(letters[i], SDL_SRCCOLORKEY, blue);
+		SDL_FillRect(letters[i], NULL, blue);
 
 		dstrect.x = 0;
 		dstrect.y = offset;
@@ -335,7 +335,7 @@ static bool create_shade_sfc(void)
 	if (!shadesfc)
 		return 1;
 	
-	SSNES_FillRect(shadesfc, NULL, 0);
+	SDL_FillRect(shadesfc, NULL, 0);
 	SDL_SetAlpha(shadesfc, SDL_SRCALPHA, 128);
 	
 	return 0;

@@ -3,7 +3,8 @@
 #include "../libretro/libretro.h"
 #include "nxsurface.h"
 #include "nxsurface.fdh"
-#include "sdl_wrapper.h"
+
+#define SCREEN_BPP 15
 
 NXSurface::NXSurface()
 {
@@ -148,19 +149,19 @@ void NXSurface::DrawRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, u
 	rect.y = y1;
 	rect.w = ((x2 - x1) + 1);
 	rect.h = 1;
-	SSNES_FillRect(fSurface, &rect, color);
+	SDL_FillRect(fSurface, &rect, color);
 
 	rect.y = y2;
-	SSNES_FillRect(fSurface, &rect, color);
+	SDL_FillRect(fSurface, &rect, color);
 
 	// left and right
 	rect.y = y1;
 	rect.w = 1;
 	rect.h = ((y2 - y1) + 1);
-	SSNES_FillRect(fSurface, &rect, color);
+	SDL_FillRect(fSurface, &rect, color);
 
 	rect.x = x2;
-	SSNES_FillRect(fSurface, &rect, color);
+	SDL_FillRect(fSurface, &rect, color);
 }
 
 
@@ -174,7 +175,7 @@ void NXSurface::FillRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, u
 	rect.w = ((x2 - x1) + 1);
 	rect.h = ((y2 - y1) + 1);
 
-	SSNES_FillRect(fSurface, &rect, color);
+	SDL_FillRect(fSurface, &rect, color);
 }
 
 
@@ -190,17 +191,17 @@ void c------------------------------() {}
 void NXSurface::set_clip_rect(int x, int y, int w, int h)
 {
 	NXRect rect(x, y, w, h);
-	SSNES_SetClipRect(fSurface, &rect);
+	SDL_SetClipRect(fSurface, &rect);
 }
 
 void NXSurface::set_clip_rect(NXRect *rect)
 {
-	SSNES_SetClipRect(fSurface, rect);
+	SDL_SetClipRect(fSurface, rect);
 }
 
 void NXSurface::clear_clip_rect()
 {
-	SSNES_SetClipRect(fSurface, NULL);
+	SDL_SetClipRect(fSurface, NULL);
 }
 
 // internal function which scales the given SDL surface by the given factor.
@@ -214,7 +215,7 @@ SDL_Surface *NXSurface::Scale(SDL_Surface *original, int factor, bool use_colork
 	{	
 		// don't use SDL_RLEACCEL--it seems to actually make things a lot slower,
 		// especially on maps with motion tiles.
-		SSNES_SetColorKey(original, SDL_SRCCOLORKEY, color);
+		SDL_SetColorKey(original, SDL_SRCCOLORKEY, color);
 	}
 
 	return original;

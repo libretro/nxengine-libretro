@@ -3,6 +3,8 @@
 #include "libretro/libretro.h"
 #endif
 
+#define SDLK_LAST 12
+
 uint8_t mappings[SDLK_LAST];
 
 bool inputs[INPUT_COUNT];
@@ -34,6 +36,7 @@ bool input_init(void)
 
 	return 0;
 }
+
 
 // get which SDL key triggers a given input
 int input_get_mapping(int keyindex)
