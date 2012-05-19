@@ -3,7 +3,9 @@
 #define _BASICS_H
 
 #include <stdint.h>
-#include <sys/param.h>	// MAXPATHLEN
+
+#define MAXPATHLEN 1024
+
 typedef unsigned char		uchar;
 
 void stat(const char *fmt, ...);

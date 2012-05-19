@@ -76,7 +76,7 @@ void retro_set_input_state(retro_input_state_t cb)
 EXPORT void retro_get_system_info(struct retro_system_info *info)
 {
    info->need_fullpath = false;
-   info->valid_extensions = "zip|ZIP";
+   info->valid_extensions = "bin|BIN|zip|ZIP";
    info->library_version = "10.0.3";
    info->library_name = "NXEngine (Cave Story)";
    info->block_extract = false;
@@ -110,7 +110,9 @@ EXPORT bool retro_load_game(const struct retro_game_info *game)
       g_dir = g_dir.substr(0, pos);
 
       fprintf(stderr, "[NX]: Setting working directory to: %s\n", g_dir.c_str());
+#ifndef __CELLOS_LV2__
       chdir(g_dir.c_str());
+#endif
    }
 
    pre_main();

@@ -33,10 +33,6 @@
    This is designed to be easily converted to C++ in the future.
  */
 
-#if SDL_VIDEO_OPENGL
-#include "SDL_opengl.h"
-#endif /* SDL_VIDEO_OPENGL */
-
 /* The SDL video driver */
 typedef struct SDL_VideoDevice SDL_VideoDevice;
 
