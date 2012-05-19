@@ -1,8 +1,9 @@
-#include "nx.h"
+
+#include "../nx.h"
 #include <stdarg.h>
 #include <unistd.h>
-#include "graphics/safemode.h"
-#include "main.fdh"
+#include "../graphics/safemode.h"
+#include "../main.fdh"
 
 const char *data_dir = "data";
 const char *stage_dir = "data/Stage";
@@ -17,9 +18,6 @@ static uint32_t fpstimer = 0;
 #define VISFLAGS			(SDL_APPACTIVE | SDL_APPINPUTFOCUS)
 int framecount = 0;
 bool freezeframe = false;
-#ifdef USE_FRAMESKIP
-int flipacceltime = 0;
-#endif
 
 static bool inhibit_loadfade = false;
 static bool error = false;
@@ -135,56 +133,27 @@ void post_main(void)
 	textbox.Deinit();
 }
 
-void gameloop(void)
+static bool gameloop(void)
 {
-	int32_t nexttick = 0;
+	uint32_t gametimer;
 
-	game.switchstage.mapno = -1;
-	
-	while(game.running && game.switchstage.mapno < 0)
+	gametimer = -GAME_WAIT*10;
+
+	if(game.switchstage.mapno < 0)
 	{
-		// get time until next tick
-		int32_t curtime = SDL_GetTicks();
-		int32_t timeRemaining = nexttick - curtime;
-		
-		#ifdef USE_FRAMESKIP
-		if (timeRemaining <= 0 || game.ffwdtime)
-		#else
-		if (timeRemaining <= 0)
-		#endif
-		{
-			run_tick();
-			
-			#ifdef USE_FRAMESKIP
-			// try to "catch up" if something else on the system bogs us down for a moment.
-			// but if we get really far behind, it's ok to start dropping frames
-			if (game.ffwdtime)
-				game.ffwdtime--;
-			#endif
-			
-			nexttick = curtime + GAME_WAIT;
-			
-			// pause game if window minimized
-			if ((SDL_GetAppState() & VISFLAGS) != VISFLAGS)
-			{
-				AppMinimized();
-				nexttick = 0;
-			}
-		}
-		else
-		{
-			// don't needlessly hog CPU, but don't sleep for entire
-			// time left, some CPU's/kernels will fall asleep for
-			// too long and cause us to run slower than we should
-			timeRemaining /= 2;
-			if (timeRemaining)
-				SDL_Delay(timeRemaining);
-		}
+		run_tick();
+		return true;
 	}
+	else
+		return false;
 }
 
-void run_main(void)
+static bool in_gameloop = false;
+
+bool run_main(void)
 {
+	if (in_gameloop)
+		goto loop;
 	// SSS/SPS persists across stage transitions until explicitly
 	// stopped, or you die & reload. It seems a bit risky to me,
 	// but that's the spec.
@@ -206,7 +175,7 @@ void run_main(void)
 			fatal("savefile error");
 			game.running = false;
 			error = 1;
-			return;
+			return false;
 		}
 
 		Replay::OnGameStarting();
@@ -224,7 +193,7 @@ void run_main(void)
 			fatal("error starting playback");
 			game.running = false;
 			error = 1;
-			return;
+			return false;
 		}
 	}
 	else
@@ -232,7 +201,7 @@ void run_main(void)
 		if (game.switchstage.mapno == NEW_GAME || \
 				game.switchstage.mapno == NEW_GAME_FROM_MENU)
 		{
-			bool show_intro = (game.switchstage.mapno == NEW_GAME_FROM_MENU);
+			static bool show_intro = (game.switchstage.mapno == NEW_GAME_FROM_MENU);
 			InitNewGame(show_intro);
 		}
 
@@ -248,7 +217,7 @@ void run_main(void)
 		{
 			game.running = false;
 			error = 1;
-			return;
+			return false;
 		}
 
 		player->x = (game.switchstage.playerx * TILE_W) << CSF;
@@ -260,17 +229,24 @@ void run_main(void)
 	{
 		game.running = false;
 		error = 1;
-		return;
+		return false;
 	}
 
 	if (freshstart)
 		weapon_introslide();
 
-	gameloop();
+	game.switchstage.mapno = -1;
+loop:
+	in_gameloop = true;
+	if (gameloop())
+		return true;	
+	in_gameloop = false;
+
 	game.stageboss.OnMapExit();
 	freshstart = false;
 }
 
+#ifndef __LIBRETRO__
 int main(int argc, char *argv[])
 {
 
@@ -279,18 +255,19 @@ int main(int argc, char *argv[])
 	if(error)
 		goto ingame_error;	
 	
-	while(game.running)
+loop:
+	while (!run_main());
+shutdown: ;
+	if(!game.running)
 	{
-		run_main();
+		post_main();
+		return error;
 	}
-
+check_error: ;
 	if(error)
 		goto ingame_error;
-	
-shutdown: ;
-	post_main();
-	return error;
-	
+	else
+		goto loop;
 ingame_error: ;
 	stat("");
 	stat(" ************************************************");
@@ -299,15 +276,14 @@ ingame_error: ;
 	error = 1;
 	goto shutdown;
 }
+#endif
+
 
 static inline void run_tick()
 {
 static bool can_tick = true;
 static bool last_freezekey = false;
 static bool last_framekey = false;
-#ifdef USE_FRAMESKIP
-static int frameskip = 0;
-#endif
 
 	input_poll();
 	
@@ -352,14 +328,6 @@ static int frameskip = 0;
 		last_framekey = inputs[FRAME_ADVANCE_KEY];
 	}
 	
-	#ifdef USE_FRAMESKIP
-	// fast-forward key (F5)
-	if (inputs[FFWDKEY] && (settings->enable_debug_keys || Replay::IsPlaying()))
-	{
-		game.ffwdtime = 2;
-	}
-	#endif
-	
 	if (can_tick)
 	{
 		game.tick();
@@ -381,24 +349,8 @@ static int frameskip = 0;
 			update_fps();
 		}
 		
-		#ifdef USE_FRAMESKIP
-		if (!flipacceltime)
-		{
-		#endif
-			//platform_sync_to_vblank();
-			screen->Flip();
-		#ifdef USE_FRAMESKIP
-		}
-		else
-		{
-			flipacceltime--;
-			if (--frameskip < 0)
-			{
-				screen->Flip();
-				frameskip = 256;
-			}
-		}
-		#endif
+		//platform_sync_to_vblank();
+		screen->Flip();
 		
 		memcpy(lastinputs, inputs, sizeof(lastinputs));
 	}

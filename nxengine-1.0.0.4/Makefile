@@ -62,7 +62,7 @@ nx:  main.o game.o object.o ObjManager.o \
 	 common/misc.o \
 	 `sdl-config --libs` -lstdc++ -lm
 
-main.o:	main.cpp main.fdh nx.h config.h \
+main.o:	libretro/main.cpp main.fdh nx.h config.h \
 		common/basics.h common/BList.h common/SupportDefs.h \
 		common/StringList.h common/DBuffer.h common/DString.h \
 		common/InitList.h graphics/graphics.h graphics/nxsurface.h \
@@ -79,7 +79,7 @@ main.o:	main.cpp main.fdh nx.h config.h \
 		player.h p_arms.h ai/weapons/whimstar.h \
 		replay.h common/FileBuffer.h platform.h \
 		sound/sound.h graphics/safemode.h
-	g++ -g -O2 -c main.cpp -D DEBUG `sdl-config --cflags` -Wreturn-type -Wformat -Wno-multichar -o main.o
+	g++ -g -O2 -c libretro/main.cpp -D DEBUG `sdl-config --cflags` -Wreturn-type -Wformat -Wno-multichar -o main.o
 
 game.o:	game.cpp game.fdh nx.h config.h \
 		common/basics.h common/BList.h common/SupportDefs.h \
