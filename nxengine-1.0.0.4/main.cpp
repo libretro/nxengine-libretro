@@ -136,8 +136,27 @@ void post_main(void)
 	textbox.Deinit();
 }
 
-void run_main(void)
+static bool gameloop(void)
 {
+	uint32_t gametimer;
+
+	gametimer = -GAME_WAIT*10;
+
+	if(game.switchstage.mapno < 0)
+	{
+		run_tick();
+		return true;
+	}
+	else
+		return false;
+}
+
+static bool in_gameloop = false;
+
+bool run_main(void)
+{
+	if (in_gameloop)
+		goto loop;
 	// SSS/SPS persists across stage transitions until explicitly
 	// stopped, or you die & reload. It seems a bit risky to me,
 	// but that's the spec.
@@ -159,7 +178,7 @@ void run_main(void)
 			fatal("savefile error");
 			game.running = false;
 			error = 1;
-			return;
+			return false;
 		}
 
 		Replay::OnGameStarting();
@@ -177,7 +196,7 @@ void run_main(void)
 			fatal("error starting playback");
 			game.running = false;
 			error = 1;
-			return;
+			return false;
 		}
 	}
 	else
@@ -185,7 +204,7 @@ void run_main(void)
 		if (game.switchstage.mapno == NEW_GAME || \
 				game.switchstage.mapno == NEW_GAME_FROM_MENU)
 		{
-			bool show_intro = (game.switchstage.mapno == NEW_GAME_FROM_MENU);
+			static bool show_intro = (game.switchstage.mapno == NEW_GAME_FROM_MENU);
 			InitNewGame(show_intro);
 		}
 
@@ -201,7 +220,7 @@ void run_main(void)
 		{
 			game.running = false;
 			error = 1;
-			return;
+			return false;
 		}
 
 		player->x = (game.switchstage.playerx * TILE_W) << CSF;
@@ -213,13 +232,19 @@ void run_main(void)
 	{
 		game.running = false;
 		error = 1;
-		return;
+		return false;
 	}
 
 	if (freshstart)
 		weapon_introslide();
 
-	gameloop();
+	game.switchstage.mapno = -1;
+loop:
+	in_gameloop = true;
+	if (gameloop())
+		return true;	
+	in_gameloop = false;
+
 	game.stageboss.OnMapExit();
 	freshstart = false;
 }
@@ -233,18 +258,19 @@ int main(int argc, char *argv[])
 	if(error)
 		goto ingame_error;	
 	
-	while(game.running)
+loop:
+	while (!run_main());
+shutdown: ;
+	if(!game.running)
 	{
-		run_main();
+		post_main();
+		return error;
 	}
-
+check_error: ;
 	if(error)
 		goto ingame_error;
-	
-shutdown: ;
-	post_main();
-	return error;
-	
+	else
+		goto loop;
 ingame_error: ;
 	stat("");
 	stat(" ************************************************");
@@ -255,54 +281,6 @@ ingame_error: ;
 }
 #endif
 
-
-void gameloop(void)
-{
-int32_t nexttick = 0;
-
-	game.switchstage.mapno = -1;
-	
-	while(game.running && game.switchstage.mapno < 0)
-	{
-		// get time until next tick
-		int32_t curtime = SDL_GetTicks();
-		int32_t timeRemaining = nexttick - curtime;
-		
-		#ifdef USE_FRAMESKIP
-		if (timeRemaining <= 0 || game.ffwdtime)
-		#else
-		if (timeRemaining <= 0)
-		#endif
-		{
-			run_tick();
-			
-			#ifdef USE_FRAMESKIP
-			// try to "catch up" if something else on the system bogs us down for a moment.
-			// but if we get really far behind, it's ok to start dropping frames
-			if (game.ffwdtime)
-				game.ffwdtime--;
-			#endif
-			
-			nexttick = curtime + GAME_WAIT;
-			
-			// pause game if window minimized
-			if ((SDL_GetAppState() & VISFLAGS) != VISFLAGS)
-			{
-				AppMinimized();
-				nexttick = 0;
-			}
-		}
-		else
-		{
-			// don't needlessly hog CPU, but don't sleep for entire
-			// time left, some CPU's/kernels will fall asleep for
-			// too long and cause us to run slower than we should
-			timeRemaining /= 2;
-			if (timeRemaining)
-				SDL_Delay(timeRemaining);
-		}
-	}
-}
 
 static inline void run_tick()
 {
