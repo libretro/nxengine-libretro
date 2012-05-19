@@ -21,7 +21,9 @@ int i, j;
 	fp = fileopen(fname, "rb");
 	if (!fp)
 	{
+#ifdef DEBUG
 		stat("niku_load: couldn't open file '%s'", fname);
+#endif
 		if (value_out) *value_out = 0;
 		return 1;
 	}
@@ -44,12 +46,16 @@ int i, j;
 		(result[0] != result[2]) || \
 		(result[0] != result[3]))
 	{
+#ifdef DEBUG
 		stat("niku_load: value mismatch; '%s' corrupt", fname);
+#endif
 		if (value_out) *value_out = 0;
 	}
 	else
 	{
+#ifdef DEBUG
 		stat("niku_load: loaded value 0x%x from %s", *result, fname);
+#endif
 		if (value_out) *value_out = *result;
 	}
 	
@@ -97,7 +103,9 @@ uint32_t *buf_dword = (uint32_t *)buf_byte;
 	fwrite(buf_byte, 20, 1, fp);
 	fclose(fp);
 	
+#ifdef DEBUG
 	stat("niku_save: wrote value 0x%08x", value);
+#endif
 	return 0;
 }
 

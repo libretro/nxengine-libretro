@@ -22,7 +22,9 @@ bool settings_load(Settings *setfile)
 	
 	if (tryload(settings))
 	{
+#ifdef DEBUG
 		stat("No saved settings; using defaults.");
+#endif
 		
 		memset(setfile, 0, sizeof(Settings));
 		setfile->resolution = 2;		// 640x480 Windowed, should be safe value
@@ -62,14 +64,18 @@ void c------------------------------() {}
 
 static bool tryload(Settings *setfile)
 {
-FILE *fp;
+	FILE *fp;
 
+#ifdef DEBUG
 	stat("Loading settings...");
+#endif
 	
 	fp = fileopen(setfilename, "rb");
 	if (!fp)
 	{
+#ifdef DEBUG
 		stat("Couldn't open file %s.", setfilename);
+#endif
 		return 1;
 	}
 	
@@ -77,7 +83,9 @@ FILE *fp;
 	fread(setfile, sizeof(Settings), 1, fp);
 	if (setfile->version != SETTINGS_VERSION)
 	{
+#ifdef DEBUG
 		stat("Wrong settings version %04x.", setfile->version);
+#endif
 		return 1;
 	}
 	
@@ -93,11 +101,15 @@ FILE *fp;
 	if (!setfile)
 		setfile = &normal_settings;
 	
+#ifdef DEBUG
 	stat("Writing settings...");
+#endif
 	fp = fileopen(setfilename, "wb");
 	if (!fp)
 	{
+#ifdef DEBUG
 		stat("Couldn't open file %s.", setfilename);
+#endif
 		return 1;
 	}
 	

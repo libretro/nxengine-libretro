@@ -101,7 +101,9 @@ Object * const &o = this;
 	uint32_t keep = (o->flags & flags_to_keep);
 	o->flags = (objprop[type].defaultflags & ~flags_to_keep) | keep;
 	
-	//stat("new flags: %04x", o->flags);
+#ifdef DEBUG
+	stat("new flags: %04x", o->flags);
+#endif
 	
 	// setup default clipping extents, in case object turns on clip_enable
 	if (!o->clip_enable)
@@ -828,7 +830,9 @@ Object * const &o = this;
 				if (GetCurrentScript() == -1 &&		// no override other scripts
 					game.switchstage.mapno == -1)	// no repeat exec after <TRA
 				{
+#ifdef DEBUG
 					stat("On-touch script %d triggered", o->id2);
+#endif
 					StartScript(o->id2);
 				}
 			}

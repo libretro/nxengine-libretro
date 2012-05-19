@@ -133,13 +133,17 @@ void StringList::SwapItems(int index1, int index2)
 
 void StringList::DumpContents()
 {
-int i, count = CountItems();
+	int i, count = CountItems();
 
+#ifdef DEBUG
 	stat("StringList %08x; %d entries", this, count);
+#endif
 	for(i=0;i<count;i++)
 	{
 		char *str = StringAt(i);
+#ifdef DEBUG
 		stat("(%d) <%08x>: '%s'", i, str, str ? str : "(null)");
+#endif
 	}
 }
 

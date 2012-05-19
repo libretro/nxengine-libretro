@@ -130,12 +130,13 @@ void tsc_close(void)
 // load a tsc file and return the highest script # in the file
 bool tsc_load(const char *fname, int pageno)
 {
-ScriptPage *page = &script_pages[pageno];
-int fsize;
-char *buf;
-bool result;
-
+	ScriptPage *page = &script_pages[pageno];
+	int fsize;
+	char *buf;
+	bool result;
+#ifdef DEBUG
 	stat("tsc_load: loading '%s' to page %d", fname, pageno);
+#endif
 	if (curscript.running && curscript.pageno == pageno)
 		StopScript(&curscript);
 	
@@ -200,12 +201,14 @@ void c------------------------------() {}
 // and place the finished scripts into the given page.
 bool tsc_compile(const char *buf, int bufsize, int pageno)
 {
-ScriptPage *page = &script_pages[pageno];
-const char *buf_end = (buf + (bufsize - 1));
-DBuffer *script = NULL;
-char cmdbuf[4] = { 0 };
+	ScriptPage *page = &script_pages[pageno];
+	const char *buf_end = (buf + (bufsize - 1));
+	DBuffer *script = NULL;
+	char cmdbuf[4] = { 0 };
 
+#ifdef DEBUG
 	//stat("<> tsc_compile bufsize = %d pageno = %d", bufsize, pageno);
+#endif
 	
 	while(buf <= buf_end)
 	{
@@ -233,7 +236,9 @@ char cmdbuf[4] = { 0 };
 				buf++;
 			}
 			
+#ifdef DEBUG
 			//stat("Parsing script #%04d", scriptno);
+#endif
 			if (page->scripts.get(scriptno))
 			{
 				staterr("tsc_compile WARNING: duplicate script #%04d; ignoring", scriptno);
@@ -409,7 +414,9 @@ int found_pageno;
 	// don't start regular map scripts (e.g. hvtrigger) if player is dead
 	if (player->dead && found_pageno != SP_HEAD)
 	{
+#ifdef DEBUG
 		stat("Not starting script %d; player is dead", scriptno);
+#endif
 		return NULL;
 	}
 	
@@ -424,7 +431,9 @@ int found_pageno;
 	curscript.running = true;
 	
 	textbox.ResetState();
+#ifdef DEBUG
 	stat("  - Started script %04d", scriptno);
+#endif
 	
 	RunScripts();
 	return &curscript;
@@ -436,7 +445,9 @@ void StopScript(ScriptInstance *s)
 		return;
 	
 	s->running = false;
+#ifdef DEBUG
 	stat("  - Stopped script %04d", s->scriptno);
+#endif
 	
 	// TRA is really supposed to be a jump, not a script restart--
 	// in that in maintains KEY/PRI across the stage transition.
@@ -460,7 +471,9 @@ ScriptInstance *s = &curscript;
 	if (pageno == -1)
 		pageno = s->pageno;
 	
+#ifdef DEBUG
 	stat("JumpScript: moving to script #%04d page %d", newscriptno, pageno);
+#endif
 	
 	s->program = FindScriptData(newscriptno, pageno, &s->pageno);
 	s->scriptno = newscriptno;
@@ -592,7 +605,9 @@ int cmdip;
 		s->wait_standing = false;
 	}
 	
+#ifdef DEBUG
 	//stat("<> Entering script execution loop at ip = %d", s->ip);
+#endif
 	
 	// main execution loop
 	for(;;)
@@ -623,7 +638,9 @@ int cmdip;
 		if (cmd == OP_TEXT && !textbox.IsVisible() && !strcmp(debugbuffer, "TEXT  '\n'")) { }
 		else
 		{
+#ifdef DEBUG
 			stat("%04d:%d  %s", s->scriptno, cmdip, debugbuffer);
+#endif
 		}
 		#endif
 		
@@ -699,7 +716,9 @@ int cmdip;
 			{
 				bool waslocked = (player->inputs_locked || game.frozen);
 				
+#ifdef DEBUG
 				stat("******* Executing <TRA to stage %d", parm[0]);
+#endif
 				game.switchstage.mapno = parm[0];
 				game.switchstage.eventonentry = parm[1];
 				game.switchstage.playerx = parm[2];
@@ -988,12 +1007,16 @@ int cmdip;
 				// because CR's take no time to display.
 				if (contains_non_cr(str))
 				{
+#ifdef DEBUG
 					//stat("<> Pausing script execution to display message.");
+#endif
 					return;
 				}
 				/*else
 				{
+#ifdef DEBUG
 					stat("<> Message is only CR's, continuing script...");
+#endif
 				}*/
 			}
 			break;
@@ -1255,8 +1278,10 @@ void NPCDo(int id2, int p1, int p2, void (*action_function)(Object *o, int p1, i
 void DoANP(Object *o, int p1, int p2)		// ANIMATE (set) object's state to p1 and set dir to p2
 {
 	#ifdef TRACE_SCRIPT
+#ifdef DEBUG
 		stat("ANP: Obj %08x (%s): setting state: %d and dir: %s", \
 			o, DescribeObjectType(o->type), p1, DescribeCSDir(p2));
+#endif
 	#endif
 	
 	o->state = p1;
@@ -1266,8 +1291,10 @@ void DoANP(Object *o, int p1, int p2)		// ANIMATE (set) object's state to p1 and
 void DoCNP(Object *o, int p1, int p2)		// CHANGE object to p1 and set dir to p2
 {
 	#ifdef TRACE_SCRIPT
+#ifdef DEBUG
 		stat("CNP: Obj %08x changing from %s to %s, new dir = %s",
 			o, DescribeObjectType(o->type), DescribeObjectType(p1), DescribeCSDir(p2));
+#endif
 	#endif
 	
 	// Must set direction BEFORE changing type, so that the Carried Puppy object
@@ -1279,7 +1306,9 @@ void DoCNP(Object *o, int p1, int p2)		// CHANGE object to p1 and set dir to p2
 void DoDNP(Object *o, int p1, int p2)		// DELETE object
 {
 	#ifdef TRACE_SCRIPT
+#ifdef DEBUG
 		stat("DNP: %08x (%s) deleted", o, DescribeObjectType(o->type));
+#endif
 	#endif
 	
 	o->Delete();
