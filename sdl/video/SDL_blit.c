@@ -24,7 +24,6 @@
 #include "SDL_video.h"
 #include "SDL_sysvideo.h"
 #include "SDL_blit.h"
-#include "SDL_RLEaccel_c.h"
 #include "SDL_pixels_c.h"
 
 /* The general purpose software blit routine */
@@ -151,61 +150,11 @@ int SDL_CalculateBlit(SDL_Surface *surface)
 	int blit_index;
 
 	/* Clean everything out to start */
-	if ( (surface->flags & SDL_RLEACCEL) == SDL_RLEACCEL ) {
-		SDL_UnRLESurface(surface, 1);
-	}
 	surface->map->sw_blit = NULL;
 
 	/* Figure out if an accelerated hardware blit is possible */
 	surface->flags &= ~SDL_HWACCEL;
-	if ( surface->map->identity ) {
-		int hw_blit_ok;
-
-		if ( (surface->flags & SDL_HWSURFACE) == SDL_HWSURFACE ) {
-			/* We only support accelerated blitting to hardware */
-			if ( surface->map->dst->flags & SDL_HWSURFACE ) {
-				hw_blit_ok = current_video->info.blit_hw;
-			} else {
-				hw_blit_ok = 0;
-			}
-			if (hw_blit_ok && (surface->flags & SDL_SRCCOLORKEY)) {
-				hw_blit_ok = current_video->info.blit_hw_CC;
-			}
-			if ( hw_blit_ok && (surface->flags & SDL_SRCALPHA) ) {
-				hw_blit_ok = current_video->info.blit_hw_A;
-			}
-		} else {
-			/* We only support accelerated blitting to hardware */
-			if ( surface->map->dst->flags & SDL_HWSURFACE ) {
-				hw_blit_ok = current_video->info.blit_sw;
-			} else {
-				hw_blit_ok = 0;
-			}
-			if (hw_blit_ok && (surface->flags & SDL_SRCCOLORKEY)) {
-				hw_blit_ok = current_video->info.blit_sw_CC;
-			}
-			if ( hw_blit_ok && (surface->flags & SDL_SRCALPHA) ) {
-				hw_blit_ok = current_video->info.blit_sw_A;
-			}
-		}
-		if ( hw_blit_ok ) {
-			SDL_VideoDevice *video = current_video;
-			SDL_VideoDevice *this  = current_video;
-			video->CheckHWBlit(this, surface, surface->map->dst);
-		}
-	}
 	
-	/* if an alpha pixel format is specified, we can accelerate alpha blits */
-	if (((surface->flags & SDL_HWSURFACE) == SDL_HWSURFACE )&&(current_video->displayformatalphapixel)) 
-	{
-		if ( (surface->flags & SDL_SRCALPHA) ) 
-			if ( current_video->info.blit_hw_A ) {
-				SDL_VideoDevice *video = current_video;
-				SDL_VideoDevice *this  = current_video;
-				video->CheckHWBlit(this, surface, surface->map->dst);
-			}
-	}
-
 	/* Get the blit function index, based on surface mode */
 	/* { 0 = nothing, 1 = colorkey, 2 = alpha, 3 = colorkey+alpha } */
 	blit_index = 0;
@@ -254,19 +203,6 @@ int SDL_CalculateBlit(SDL_Surface *surface)
 	}
 
 	/* Choose software blitting function */
-	if(surface->flags & SDL_RLEACCELOK
-	   && (surface->flags & SDL_HWACCEL) != SDL_HWACCEL) {
-
-	        if(surface->map->identity
-		   && (blit_index == 1
-		       || (blit_index == 3 && !surface->format->Amask))) {
-		        if ( SDL_RLESurface(surface) == 0 )
-			        surface->map->sw_blit = SDL_RLEBlit;
-		} else if(blit_index == 2 && surface->format->Amask) {
-		        if ( SDL_RLESurface(surface) == 0 )
-			        surface->map->sw_blit = SDL_RLEAlphaBlit;
-		}
-	}
 	
 	if ( surface->map->sw_blit == NULL ) {
 		surface->map->sw_blit = SDL_SoftBlit;

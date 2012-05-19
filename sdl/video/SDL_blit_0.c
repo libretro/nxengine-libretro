@@ -444,28 +444,6 @@ SDL_loblit SDL_CalculateBlit0(SDL_Surface *surface, int blit_index)
 {
 	int which;
 
-	if ( surface->format->BitsPerPixel != 1 ) {
-		/* We don't support sub 8-bit packed pixel modes */
-		return NULL;
-	}
-	if ( surface->map->dst->format->BitsPerPixel < 8 ) {
-		which = 0;
-	} else {
-		which = surface->map->dst->format->BytesPerPixel;
-	}
-	switch(blit_index) {
-	case 0:			/* copy */
-	    return bitmap_blit[which];
-
-	case 1:			/* colorkey */
-	    return colorkey_blit[which];
-
-	case 2:			/* alpha */
-	    return which >= 2 ? BlitBtoNAlpha : NULL;
-
-	case 4:			/* alpha + colorkey */
-	    return which >= 2 ? BlitBtoNAlphaKey : NULL;
-	}
 	return NULL;
 }
 
