@@ -1,0 +1,75 @@
+0 : VERSION
+8 : RESERVED
+/home/katy/dev/nx/wince.ml
+0 : active
+185 : nlines
+9 : scroll_y
+0 : cursor_x
+31 : cursor_y
+0 : cursor_mode
+0 : selection_present
+-
+/home/katy/dev/nx/main.cpp
+1 : active
+566 : nlines
+37 : scroll_y
+3 : cursor_x
+46 : cursor_y
+0 : cursor_mode
+0 : selection_present
+-
+/home/katy/dev/nx/graphics/font.cpp
+0 : active
+574 : nlines
+390 : scroll_y
+30 : cursor_x
+405 : cursor_y
+0 : cursor_mode
+0 : selection_present
+-
+/home/katy/dev/sdlshim/gapi.cpp
+0 : active
+95 : nlines
+50 : scroll_y
+9 : cursor_x
+58 : cursor_y
+0 : cursor_mode
+0 : selection_present
+-
+/home/katy/dev/sdlshim/SDL/screen.cpp
+0 : active
+437 : nlines
+42 : scroll_y
+3 : cursor_x
+67 : cursor_y
+0 : cursor_mode
+0 : selection_present
+-
+/home/katy/dev/sdlshim/asm.s
+0 : active
+163 : nlines
+62 : scroll_y
+2 : cursor_x
+87 : cursor_y
+0 : cursor_mode
+0 : selection_present
+-
+/home/katy/dev/sdlshim/SDL/screen.h
+0 : active
+67 : nlines
+37 : scroll_y
+7 : cursor_x
+60 : cursor_y
+0 : cursor_mode
+0 : selection_present
+-
+/home/katy/dev/nx/nxce/buildscript
+0 : active
+9 : nlines
+0 : scroll_y
+4 : cursor_x
+7 : cursor_y
+0 : cursor_mode
+0 : selection_present
+-
+*END*

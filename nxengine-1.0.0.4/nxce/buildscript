@@ -1,0 +1,8 @@
+cd ..
+makegen wince.ml +q
+#tools/genobjnametable
+LD_LIBRARY_PATH="/opt/lib32/usr/lib/" make -j4
+
+%cd nxce
+%~/dev/jlime/ceremote/ceremote 192.168.131.201
+hide
