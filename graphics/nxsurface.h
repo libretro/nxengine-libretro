@@ -2,7 +2,7 @@
 #ifndef _NXSURFACE_H
 #define _NXSURFACE_H
 
-#include "SDL.h"
+#include "SDL_video.h"
 #include "../common/basics.h"
 
 #define RED_SHIFT   10

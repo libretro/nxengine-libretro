@@ -1,5 +1,6 @@
 // graphics routines
-#include "SDL.h"
+#include <stdio.h>
+#include "SDL_video.h"
 #include <stdlib.h>
 #include "graphics.h"
 #include "tileset.h"

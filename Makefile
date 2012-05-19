@@ -41,21 +41,11 @@ SRCS_C  := $(shell find . -name '*.c')
 OBJS    := $(patsubst %.cpp,%.o,$(SRCS)) $(patsubst %.c,%.o,$(SRCS_C))
 TARGETS := libretro.so
 
-ifeq ($(platform), win)
-   SDL_CFLAGS := -ISDL
-   SDL_LIBS := -L. -lSDL
-else ifeq ($(platform), xenon)
-   SDL_CFLAGS := -I$(DEVKITXENON)/usr/include -I$(DEVKITXENON)/usr/include/SDL
-   SDL_LIBS := -L. -L$(DEVKITXENON)/usr/lib -lSDL
-else
-   SDL_CFLAGS := $(shell pkg-config sdl --cflags)
-   SDL_LIBS := $(shell pkg-config sdl --libs)
-endif
-
 # Add SDL dependency
 DEFINES += -D__LIBRETRO__
-CXXFLAGS += $(SDL_CFLAGS) $(DEFINES) -O3 -Wreturn-type -Wunused-variable -Wno-multichar -Wl,--no-undefined $(fpic)
-CFLAGS += $(SDL_CFLAGS) $(DEFINES) -O3 -Wreturn-type -Wunused-variable -Wno-multichar -Wl,--no-undefined $(fpic)
+INCDIRS := -Isdl/include
+CXXFLAGS += $(SDL_CFLAGS) $(DEFINES) $(INCDIRS) -O3 -Wreturn-type -Wunused-variable -Wno-multichar -Wl,--no-undefined $(fpic)
+CFLAGS += $(SDL_CFLAGS) $(DEFINES) $(INCDIRS) -O3 -Wreturn-type -Wunused-variable -Wno-multichar -Wl,--no-undefined $(fpic)
 LDFLAGS += -lm $(SDL_LIBS) $(DEFINES) $(SHARED)
 
 all: $(TARGET)

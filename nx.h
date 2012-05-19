@@ -2,7 +2,7 @@
 #ifndef _NX_H
 #define _NX_H
 
-#include "SDL.h"
+#include "SDL_video.h"
 #include <stdio.h>
 #include <ctype.h>
 #include <sys/param.h>
