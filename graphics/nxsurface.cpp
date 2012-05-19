@@ -6,6 +6,8 @@
 
 #define SCREEN_BPP 15
 
+extern char g_dir[1024];
+
 NXSurface::NXSurface()
 {
 	fSurface = NULL;
@@ -59,11 +61,15 @@ bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey)
 	SDL_Surface *image;
 
 	Free();
+	char filename[1024];
 
-	image = SDL_LoadBMP(pbm_name);
+	sprintf(filename, "%s/%s", g_dir, pbm_name);
+	stat("filename: %s\n", filename);
+
+	image = SDL_LoadBMP(filename);
 	if (!image)
 	{
-		staterr("NXSurface::LoadImage: load failed of '%s'!", pbm_name);
+		staterr("NXSurface::LoadImage: load failed of '%s'!", filename);
 		return 1;
 	}
 
