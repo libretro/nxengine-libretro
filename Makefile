@@ -18,6 +18,18 @@ else ifeq ($(platform), osx)
    TARGET := libretro.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
+else ifeq ($(platform), ps3)
+   TARGET := libretro.a
+   CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
+   CXX = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-g++.exe
+   AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe
+   CFLAGS += -D__ppc__
+else ifeq ($(platform), sncps3)
+   TARGET := libretro.a
+   CC = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
+   CXX = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
+   AR = $(CELL_SDK)/host-win32/sn/bin/ps3snarl.exe
+   CFLAGS += -D__ppc__
 else ifeq ($(platform), xenon)
    TARGET := libretro.a
    SHARED := -shared -Wl,--version-script=libretro/link.T -Wl,--no-undefined
@@ -51,7 +63,17 @@ LDFLAGS += -lm $(SDL_LIBS) $(DEFINES) $(SHARED)
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
+ifeq ($(platform), ps3)
+	$(AR) rcs $@ $(OBJS)
+else ifeq ($(platform), sncps3)
+	$(AR) rcs $@ $(OBJS)
+else ifeq ($(platform), xenon)
+	$(AR) rcs $@ $(OBJS)
+else ifeq ($(platform), wii)
+	$(AR) rcs $@ $(OBJS)
+else
 	$(CXX) $(OBJS) $(LDFLAGS) -o $@
+endif
 
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@

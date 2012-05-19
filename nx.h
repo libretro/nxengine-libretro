@@ -5,7 +5,6 @@
 #include "SDL_video.h"
 #include <stdio.h>
 #include <ctype.h>
-#include <sys/param.h>
 
 #include "common/basics.h"
 #include "common/BList.h"

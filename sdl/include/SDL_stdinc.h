@@ -59,9 +59,6 @@
 # endif
 # include <string.h>
 #endif
-#ifdef HAVE_STRINGS_H
-# include <strings.h>
-#endif
 #if defined(HAVE_INTTYPES_H)
 # include <inttypes.h>
 #elif defined(HAVE_STDINT_H)
@@ -69,9 +66,6 @@
 #endif
 #ifdef HAVE_CTYPE_H
 # include <ctype.h>
-#endif
-#if defined(HAVE_ICONV) && defined(HAVE_ICONV_H)
-# include <iconv.h>
 #endif
 
 /** The number of elements in an array */
@@ -450,34 +444,6 @@ extern DECLSPEC int SDLCALL SDL_snprintf(char *text, size_t maxlen, const char *
 #else
 extern DECLSPEC int SDLCALL SDL_vsnprintf(char *text, size_t maxlen, const char *fmt, va_list ap);
 #endif
-
-/** @name SDL_ICONV Error Codes
- *  The SDL implementation of iconv() returns these error codes 
- */
-/*@{*/
-#define SDL_ICONV_ERROR		(size_t)-1
-#define SDL_ICONV_E2BIG		(size_t)-2
-#define SDL_ICONV_EILSEQ	(size_t)-3
-#define SDL_ICONV_EINVAL	(size_t)-4
-/*@}*/
-
-#if defined(HAVE_ICONV) && defined(HAVE_ICONV_H)
-#define SDL_iconv_t     iconv_t
-#define SDL_iconv_open  iconv_open
-#define SDL_iconv_close iconv_close
-#else
-typedef struct _SDL_iconv_t *SDL_iconv_t;
-extern DECLSPEC SDL_iconv_t SDLCALL SDL_iconv_open(const char *tocode, const char *fromcode);
-extern DECLSPEC int SDLCALL SDL_iconv_close(SDL_iconv_t cd);
-#endif
-extern DECLSPEC size_t SDLCALL SDL_iconv(SDL_iconv_t cd, const char **inbuf, size_t *inbytesleft, char **outbuf, size_t *outbytesleft);
-/** This function converts a string between encodings in one pass, returning a
- *  string that must be freed with SDL_free() or NULL on error.
- */
-extern DECLSPEC char * SDLCALL SDL_iconv_string(const char *tocode, const char *fromcode, const char *inbuf, size_t inbytesleft);
-#define SDL_iconv_utf8_locale(S)	SDL_iconv_string("", "UTF-8", S, SDL_strlen(S)+1)
-#define SDL_iconv_utf8_ucs2(S)		(Uint16 *)SDL_iconv_string("UCS-2", "UTF-8", S, SDL_strlen(S)+1)
-#define SDL_iconv_utf8_ucs4(S)		(Uint32 *)SDL_iconv_string("UCS-4", "UTF-8", S, SDL_strlen(S)+1)
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

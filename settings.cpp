@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include <sys/param.h>
 #include "settings.h"
 #include "nx.h"
 #include "replay.h"
