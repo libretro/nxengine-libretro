@@ -512,49 +512,18 @@ int SDL_MapSurface (SDL_Surface *src, SDL_Surface *dst)
 	dstfmt = dst->format;
 
 	switch (srcfmt->BytesPerPixel) {
-	    case 1:
-		switch (dstfmt->BytesPerPixel) {
-		    case 1:
-			/* Palette --> Palette */
-			    map->table = Map1to1(srcfmt->palette,
-					    dstfmt->palette, &map->identity);
-			if ( ! map->identity ) {
-				if ( map->table == NULL ) {
-					return(-1);
-				}
-			}
-			if (srcfmt->BitsPerPixel!=dstfmt->BitsPerPixel)
-				map->identity = 0;
-			break;
-
-		    default:
+		case 1:
 			/* Palette --> BitField */
 			map->table = Map1toN(srcfmt, dstfmt);
 			if ( map->table == NULL ) {
 				return(-1);
 			}
 			break;
-		}
-		break;
-	default:
-		switch (dstfmt->BytesPerPixel) {
-		    case 1:
-			/* BitField --> Palette */
-			map->table = MapNto1(srcfmt, dstfmt, &map->identity);
-			if ( ! map->identity ) {
-				if ( map->table == NULL ) {
-					return(-1);
-				}
-			}
-			map->identity = 0;	/* Don't optimize to copy */
-			break;
-		    default:
+		default:
 			/* BitField --> BitField */
 			if ( FORMAT_EQUAL(srcfmt, dstfmt) )
 				map->identity = 1;
 			break;
-		}
-		break;
 	}
 
 	map->dst = dst;
