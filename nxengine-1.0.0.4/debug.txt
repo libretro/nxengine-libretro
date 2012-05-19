@@ -1,0 +1,88 @@
+Loading settings...
+videoinfo: desktop bpp 32
+Graphics::SetResolution(2)
+Setting scaling 2 and fullscreen=no
+ error << NXSurface::SetScale: CONFIG_MUTABLE_SCALE not set >>
+SDL_SetVideoMode: 320x240 @ 32bpp
+Graphics::FlushAll()
+SIFLoader::LoadHeader: read index of 8 sections
+Loading SIF section 1 from address 004d
+Loading SIF section 2 from address 044c
+SIFSpritesSect: loading 490 sprites
+fonts: using bitmapped from smalfont.bmp
+sslib: initilization was successful.
+Loading Sound FX...
+LoadFXCache: restoring pxts from cache
+Calculating pitch scale...
+-- Drums loaded from cache
+tsc_load: loading 'data/Head.tsc' to page 0
+tsc_load: loading 'data/ArmsItem.tsc' to page 2
+tsc_load: loading 'data/StageSelect.tsc' to page 3
+Reading npc.tbl...
+InitList::CallFunctions(007388e0): executing 61 functions...
+initslopetable: generating slopetables.
+initmapfirsttime: loading tilekey.dat.
+Setting tick function to type 1 param 0
+Setting tick function to type 6 param 0
+Entering main loop...
+ >> Entering stage 72: 'u'.
+load_map: level size 21x16
+load_map: 'data/Stage/Kings.pxm' loaded OK! - 21x16
+load_pxa: reading in data/Stage/White.pxa
+load_entities: reading in data/Stage/Kings.pxe
+tsc_load: loading 'data/Stage/Kings.tsc' to page 1
+StageBossManager::SetType(0)
+-- Starting on-entry script 100
+  - Started script 0100
+0100:0  002c <KEY 
+0100:1  0032 <MNA 
+0100:2   0050
+0100:5   0001
+  - Stopped script 0100
+Setting tick function to type 7 param 0
+niku_load: couldn't open file '290.rec'
+ >> music(24)
+./org/theme.org: Org-02 detected
+ >> Entering stage 0: 'Null'.
+load_map: level size 21x20
+load_map: 'data/Stage/0.pxm' loaded OK! - 21x20
+load_pxa: reading in data/Stage/0.pxa
+load_entities: reading in data/Stage/0.pxe
+tsc_load: loading 'data/Stage/0.tsc' to page 1
+StageBossManager::SetType(0)
+Loading profile from profile.dat...
+Loading profile from profile2.dat...
+ error << profile_load: unable to open 'profile2.dat' >>
+Loading profile from profile3.dat...
+ error << profile_load: unable to open 'profile3.dat' >>
+Loading profile from profile4.dat...
+ error << profile_load: unable to open 'profile4.dat' >>
+Loading profile from profile5.dat...
+ error << profile_load: unable to open 'profile5.dat' >>
+Writing settings...
+ >> music(0)
+Setting tick function to type 1 param 0
+= Loading game =
+game_load: loading savefile 0
+Loading profile from profile.dat...
+ >> Entering stage 11: 'Mimiga Village'.
+load_map: level size 60x60
+load_map: 'data/Stage/Mimi.pxm' loaded OK! - 60x60
+load_pxa: reading in data/Stage/Mimi.pxa
+load_entities: reading in data/Stage/Mimi.pxe
+ -- Disappearing object 200 (OBJ_CHEST_CLOSED(15)) because flag 322 is set
+ -- Appearing object 201 (OBJ_CHEST_OPEN(21)) because flag 322 is set
+ -- Disappearing object 300 (OBJ_TOROKO(60)) because flag 320 is set
+ -- Disappearing object 301 (OBJ_KING(61)) because flag 320 is set
+ -- Appearing object 301 (OBJ_KING(61)) because flag 321 is set
+tsc_load: loading 'data/Stage/Mimi.tsc' to page 1
+ >> music(9)
+./org/town.org: Org-02 detected
+Replay::OnGameStarting()
+ error << LoadHeader: can't open file 'replay/rep7.dat' >>
+begin_record_next: starting record to slot 7
+begin_record('replay/rep7.dat')
+ error << profile_save: unable to open replay/rep7.dat >>
+StageBossManager::SetType(0)
+Setting pause: type 8 param 0
+Graphics::Close()

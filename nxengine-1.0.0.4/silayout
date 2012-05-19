@@ -1,0 +1,88 @@
+0 : VERSION
+9 : RESERVED
+makelist.ml
+0 : active
+166 : nlines
+0 : scroll_y
+49 : cursor_x
+4 : cursor_y
+0 : cursor_mode
+0 : selection_present
+-
+main.cpp
+0 : active
+611 : nlines
+26 : scroll_y
+2 : cursor_x
+51 : cursor_y
+0 : cursor_mode
+0 : selection_present
+-
+config.h
+0 : active
+20 : nlines
+0 : scroll_y
+0 : cursor_x
+13 : cursor_y
+0 : cursor_mode
+0 : selection_present
+-
+settings.h
+0 : active
+41 : nlines
+0 : scroll_y
+0 : cursor_x
+6 : cursor_y
+0 : cursor_mode
+0 : selection_present
+-
+settings.cpp
+0 : active
+122 : nlines
+6 : scroll_y
+34 : cursor_x
+39 : cursor_y
+0 : cursor_mode
+0 : selection_present
+-
+extract/extract.cpp
+1 : active
+293 : nlines
+88 : scroll_y
+48 : cursor_x
+110 : cursor_y
+0 : cursor_mode
+0 : selection_present
+-
+extract/extractstages.cpp
+0 : active
+130 : nlines
+80 : scroll_y
+15 : cursor_x
+100 : cursor_y
+0 : cursor_mode
+1 : selection_present
+2 : selection_x1
+100 : selection_y1
+14 : selection_x2
+100 : selection_y2
+-
+extract/extractfiles.cpp
+0 : active
+249 : nlines
+131 : scroll_y
+31 : cursor_x
+151 : cursor_y
+0 : cursor_mode
+0 : selection_present
+-
+graphics/safemode.cpp
+0 : active
+167 : nlines
+99 : scroll_y
+40 : cursor_x
+126 : cursor_y
+0 : cursor_mode
+0 : selection_present
+-
+*END*
