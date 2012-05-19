@@ -220,14 +220,14 @@ static void Replay::run_playback()
 		return;
 	}
 	
+	#ifdef USE_FRAMESKIP
 	if (play.ffwdto && play.elapsed_frames < play.ffwdto)
 	{
 		game.ffwdtime = 2;
-		#ifdef USE_FRAMESKIP
 		if (play.ffwd_accel)
 			flipacceltime = 2;	// global variable from main; disables screen->Flip()
-		#endif
 	}
+	#endif
 	
 	// RLE decoding
 	if (play.runlength == 0)
@@ -363,7 +363,9 @@ int tapepos;
 	font_draw_shaded(x, y, buf, 0, &greenfont);
 	
 	const char *mode = ((play.elapsed_frames % 40) < 20) ? "PLAY" : "    ";
+	#ifdef USE_FRAMESKIP
 	if (game.ffwdtime) mode = "FFWD";
+	#endif
 	sprintf(buf, "> %s : %05d", mode, play.elapsed_frames);
 	
 	y -= GetFontHeight();
