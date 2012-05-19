@@ -967,9 +967,6 @@ bool org_is_playing(void)
 
 void org_fade(void)
 {
-	#ifdef DEBUG
-	stat("org_fade");
-	#endif
 	song.fading = true;
 	song.last_fade_time = 0;
 }
@@ -983,9 +980,11 @@ void org_set_volume(int newvolume)
 	}
 }
 
+extern unsigned retro_get_tick(void);
+
 static void runfade()
 {
-	uint32_t curtime = SDL_GetTicks();
+	uint32_t curtime = retro_get_tick();
 	if ((curtime - song.last_fade_time) >= 25)
 	{
 		int newvol = (song.volume - 1);

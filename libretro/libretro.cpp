@@ -30,8 +30,15 @@ static retro_audio_sample_t audio_cb;
 static retro_audio_sample_batch_t audio_batch_cb;
 static retro_environment_t environ_cb;
 
+static unsigned g_frame_cnt;
+
 bool retro_60hz = true;
 unsigned pitch;
+
+unsigned retro_get_tick(void)
+{
+	return g_frame_cnt;
+}
 
 void retro_set_environment(retro_environment_t cb)
 {
@@ -137,6 +144,7 @@ EXPORT void retro_run(void)
    int16_t samples[(2 * 22050) / 60 + 1] = {0};
    game_mixaudio(samples, sizeof(samples) / sizeof(int16_t));
    audio_batch_cb(samples, sizeof(samples) >> 2);
+   g_frame_cnt++;
 }
 
 void retro_unload_cartridge(void) {}
