@@ -1,6 +1,7 @@
 
 #include "stdai.h"
 #include "ai.fdh"
+#include "libretro_shared.h"
 
 InitList AIRoutines;
 
@@ -37,11 +38,12 @@ bool load_npc_tbl(void)
 const int smoke_amounts[] = { 0, 3, 7, 12 };
 const int nEntries = 361;
 int i;
+	const char * fname = retro_create_path_string(g_dir, "data/npc.tbl");
 
-	FILE *fp = fileopen("data/npc.tbl", "rb");
-	if (!fp) { staterr("load_npc_tbl: data/npc.tbl is missing"); return 1; }
+	FILE *fp = fileopen(fname, "rb");
+	if (!fp) { staterr("load_npc_tbl: %s is missing", fname); return 1; }
 	
-	stat("Reading npc.tbl...");
+	stat("Reading %s...", fname);
 	
 	for(i=0;i<nEntries;i++) objprop[i].defaultflags = fgeti(fp);
 	for(i=0;i<nEntries;i++) objprop[i].initial_hp = fgeti(fp);

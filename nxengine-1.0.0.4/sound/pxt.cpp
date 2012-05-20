@@ -852,7 +852,7 @@ FILE *fp = NULL;
 	
 	for(slot=1;slot<=top;slot++)
 	{
-		sprintf(fname, "%sfx%02x.pxt", path, slot);
+		sprintf(fname, "%s/fx%02x.pxt", path, slot);
 		
 		if (pxt_load(fname, &snd)) continue;
 		pxt_Render(&snd);
