@@ -2,6 +2,7 @@
 #include "../nx.h"
 #include "CredReader.h"
 #include "CredReader.fdh"
+#include "libretro_shared.h"
 
 /*
 CREDITS FORMAT (credit.tsc)
@@ -130,7 +131,7 @@ bool CredReader::OpenFile(void)
 char fname[MAXPATHLEN];
 
 	if (data) CloseFile();
-	sprintf(fname, "%s/Credit.tsc", data_dir);
+	sprintf(fname, "%s/%s/Credit.tsc", g_dir, data_dir);
 	
 	data = tsc_decrypt(fname, &datalen);
 	if (!data)

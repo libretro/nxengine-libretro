@@ -6,6 +6,7 @@
 #include "message.h"
 using namespace Options;
 #include "options.fdh"
+#include "libretro_shared.h"
 FocusStack optionstack;
 
 #define SLIDE_SPEED				32
@@ -280,12 +281,14 @@ void EnterReplaySubmenu(ODItem *item, int dir)
 
 void _keep_replay(ODItem *item, int dir)
 {
-char fname[MAXPATHLEN];
-ReplayHeader hdr;
+	char fname[MAXPATHLEN];
+	ReplayHeader hdr;
 
 	GetReplayName(opt.selected_replay, fname);
+
+	const char * fname_tmp = retro_create_path_string(g_dir, fname);
 	
-	if (Replay::LoadHeader(fname, &hdr))
+	if (Replay::LoadHeader(fname_tmp, &hdr))
 	{
 		new Message("Failed to load header.");
 		sound(SND_GUN_CLICK);
@@ -295,7 +298,7 @@ ReplayHeader hdr;
 	
 	hdr.locked ^= 1;
 	
-	if (Replay::SaveHeader(fname, &hdr))
+	if (Replay::SaveHeader(fname_tmp, &hdr))
 	{
 		new Message("Failed to write header.");
 		sound(SND_GUN_CLICK);
