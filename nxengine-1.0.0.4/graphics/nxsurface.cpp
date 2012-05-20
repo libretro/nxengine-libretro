@@ -6,6 +6,11 @@
 #include "graphics.h"
 #include "nxsurface.h"
 #include "nxsurface.fdh"
+#include "../port-libretro/libretro.h"
+
+#define SCREEN_BPP 15
+
+extern char g_dir[1024];
 
 NXSurface::NXSurface()
 {
@@ -48,8 +53,8 @@ bool NXSurface::AllocNew(int wd, int ht, NXFormat *format)
 {
 	Free();
 	
-	fSurface = SDL_CreateRGBSurface(SDL_SRCCOLORKEY, wd*SCALE, ht*SCALE, \
-			format->BitsPerPixel, format->Rmask, format->Gmask, format->Bmask, format->Amask);
+	fSurface = SDL_CreateRGBSurface(SDL_SRCCOLORKEY, wd, ht, \
+	SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
 	
 	if (!fSurface)
 	{
@@ -64,19 +69,18 @@ bool NXSurface::AllocNew(int wd, int ht, NXFormat *format)
 // load the surface from a .pbm or bitmap file
 bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey, int use_display_format)
 {
-SDL_Surface *image;
+	SDL_Surface *image;
 
 	Free();
+	char filename[1024];
+
+	sprintf(filename, "%s/%s", g_dir, pbm_name);
+	stat("filename: %s\n", filename);
 	
-	if (use_display_format == -1)
-	{	// use value specified in settings
-		use_display_format = settings->displayformat;
-	}
-	
-	image = SDL_LoadBMP(pbm_name);
+	image = SDL_LoadBMP(filename);
 	if (!image)
 	{
-		staterr("NXSurface::LoadImage: load failed of '%s'!", pbm_name);
+		staterr("NXSurface::LoadImage: load failed of '%s'!", filename);
 		return 1;
 	}
 	
@@ -215,12 +219,12 @@ void c------------------------------() {}
 
 int NXSurface::Width()
 {
-	return fSurface->w / SCALE;
+	return fSurface->w;
 }
 
 int NXSurface::Height()
 {
-	return fSurface->h / SCALE;
+	return fSurface->h;
 }
 
 NXFormat *NXSurface::Format()
@@ -228,9 +232,11 @@ NXFormat *NXSurface::Format()
 	return fSurface->format;
 }
 
+extern retro_video_refresh_t video_cb;
+
 void NXSurface::Flip()
 {
-	SDL_Flip(fSurface);
+	video_cb((const uint16_t*)fSurface->pixels, fSurface->w, fSurface->h, fSurface->pitch);
 }
 
 /*
@@ -261,76 +267,16 @@ void c------------------------------() {}
 SDL_Surface *NXSurface::Scale(SDL_Surface *original, int factor, \
 		bool use_colorkey, bool free_original, bool use_display_format)
 {
-SDL_Surface *scaled;
+	uint8_t color = SDL_MapRGB(original->format, 0, 0, 0);
 
-	if (factor == 1 && free_original)
-	{
-		scaled = original;
-	}
-	else
-	{
-		scaled = SDL_CreateRGBSurface(SDL_SRCCOLORKEY, \
-						original->w * SCALE, \
-						original->h * SCALE, \
-						original->format->BitsPerPixel, \
-						original->format->Rmask, original->format->Gmask,
-						original->format->Bmask, original->format->Amask);
-		
-		if (original->format->BitsPerPixel == 8)
-		{	// copy the palette from the old surface to the new surface
-			SDL_Color palette[256];
-			for(int i=0;i<256;i++)
-			{
-				SDL_GetRGB(i, original->format, &palette[i].r, &palette[i].g, &palette[i].b);
-			}
-			
-			SDL_SetColors(scaled, palette, 0, 256);
-		}
-		
-		// all the .pbm files are 8bpp, so I haven't had a reason
-		// to write any other scalers.
-		switch(original->format->BitsPerPixel)
-		{
-			case 8:
-				Scale8(original, scaled, factor);
-			break;
-			
-			default:
-				staterr("NXSurface::Scale: unsupported bpp %d", original->format->BitsPerPixel);
-				SDL_FreeSurface(scaled);
-			return NULL;
-		}
-		
-		// can get rid of original now if they wanted us to
-		if (free_original)
-			SDL_FreeSurface(original);
-	}
-	
 	// set colorkey to black if requested
 	if (use_colorkey)
 	{	// don't use SDL_RLEACCEL--it seems to actually make things a lot slower,
 		// especially on maps with motion tiles.
-		SDL_SetColorKey(scaled, SDL_SRCCOLORKEY, SDL_MapRGB(scaled->format, 0, 0, 0));
+		SDL_SetColorKey(original, SDL_SRCCOLORKEY, color);
 	}
 	
-	if (use_palette)
-	{
-		scaled = palette_add(scaled);
-		if (!scaled)
-			return NULL;
-	}
-	
-	if (use_display_format)
-	{
-		SDL_Surface *ret_sfc = SDL_DisplayFormat(scaled);
-		SDL_FreeSurface(scaled);
-		
-		return ret_sfc;
-	}
-	else
-	{
-		return scaled;
-	}
+	return original;
 }
 
 void NXSurface::Scale8(SDL_Surface *src, SDL_Surface *dst, int factor)

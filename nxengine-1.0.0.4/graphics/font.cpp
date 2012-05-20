@@ -1,4 +1,3 @@
-
 #include "../config.h"
 #include <SDL/SDL.h>
 
@@ -181,8 +180,7 @@ int x, y, i;
 		// make background transparent and copy into final position
 		SDL_SetColorKey(letter, SDL_SRCCOLORKEY, SDL_MapRGB(format, 0, 0, 0));
 		
-		letters[ch] = SDL_DisplayFormat(letter);
-		SDL_FreeSurface(letter);
+		letters[ch] = letter;
 		
 		// advance to next position on sheet
 		x += BITMAP_SPAC_WIDTH;
@@ -244,26 +242,13 @@ SDL_Rect dstrect;
 // if sfc is a 16bpp surface, replace all instances of color 'oldcolor' with 'newcolor'
 void NXFont::ReplaceColor(SDL_Surface *sfc, uint32_t oldcolor, uint32_t newcolor)
 {
-	if (sfc->format->BitsPerPixel == 8)
+	uint16_t *pixels = (uint16_t *)sfc->pixels;
+	int npixels = (sfc->w * sfc->h);
+
+	for(int i=0;i<npixels;i++)
 	{
-		SDL_Color desired;
-		
-		desired.r = (newcolor >> 16) & 0xff;
-		desired.g = (newcolor >> 8) & 0xff;
-		desired.b = (newcolor & 0xff);
-		
-		SDL_SetColors(sfc, &desired, oldcolor, 1);
-	}
-	else
-	{
-		uint16_t *pixels = (uint16_t *)sfc->pixels;
-		int npixels = (sfc->w * sfc->h);
-		
-		for(int i=0;i<npixels;i++)
-		{
-			if (pixels[i] == oldcolor)
-				pixels[i] = newcolor;
-		}
+		if (pixels[i] == oldcolor)
+			pixels[i] = newcolor;
 	}
 }
 
@@ -420,6 +405,7 @@ int wd;
 	shrink_spaces = true;
 	return (wd / SCALE);
 }
+
 
 
 

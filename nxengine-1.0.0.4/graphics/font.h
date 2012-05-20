@@ -47,4 +47,16 @@ int font_draw_shaded(int x, int y, const char *text, int spacing=0, NXFont *font
 int GetFontWidth(const char *text, int spacing=0, bool is_shaded=false);
 int GetFontHeight();
 
+bool ifont_init_bitmap_chars(SDL_Surface *sheet, uint32_t fgcolor, uint32_t color);
+bool ifont_init(void);
+int ifont_get_height(void);
+int ifont_draw_shaded(int x, int y, const char *text, int spacing, NXFont *font);
+int ifont_text_draw(int x, int y, const char *text, int spacing, NXFont *font);
+void ifont_replace_color(SDL_Surface *sfc, uint32_t oldcolor, uint32_t newcolor);
+bool ifont_create_shade_sfc(void);
+void ifont_free(void);
+int ifont_get_width(const char *text, int spacing, bool is_shaded);
+bool ifont_reload(void);
+bool ifont_bitmap_chars_shadowed(SDL_Surface *sheet, uint32_t fgcolor, uint32_t color, uint32_t shadowcolor);
+
 #endif
