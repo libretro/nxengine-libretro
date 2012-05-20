@@ -258,10 +258,13 @@ unsigned char tc;
 		tileattr[i] = tilekey[tc];
 		//stat("Tile %02x   TC %02x    Attr %08x   tilekey[%02x] = %08x", i, tc, tileattr[i], tc, tilekey[tc]);
 		
+		//FIXME: Destroyable star tiles not showing up right now
+		#if 0
 		if (tc == 0x43)	// destroyable block - have to replace graphics
 		{
 			CopySpriteToTile(SPR_DESTROYABLE, i, 0, 0);
 		}
+		#endif
 		
 		// add water currents to animation list
 		if (tileattr[i] & TA_CURRENT)
