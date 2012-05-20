@@ -2,6 +2,7 @@
 #include "../nx.h"
 #include "credits.h"
 #include "credits.fdh"
+#include "libretro_shared.h"
 
 #define MARGIN			48
 #define SCREEN_Y(Y)		( (Y) - (scroll_y >> CSF) )
@@ -279,7 +280,7 @@ char fname[MAXPATHLEN];
 	// load any images present
 	for(int i=0;i<MAX_BIGIMAGES;i++)
 	{
-		sprintf(fname, "%s/credit%02d.bmp", pic_dir, i);
+		sprintf(fname, "%s/%s/credit%02d.bmp", g_dir, pic_dir, i);
 		if (file_exists(fname))
 		{
 			images[i] = NXSurface::FromFile(fname, false);

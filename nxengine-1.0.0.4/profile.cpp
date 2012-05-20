@@ -2,6 +2,7 @@
 #include "nx.h"
 #include "profile.h"
 #include "profile.fdh"
+#include "libretro_shared.h"
 
 #define PF_WEAPONS_OFFS		0x38
 #define PF_CURWEAPON_OFFS	0x24
@@ -15,22 +16,24 @@
 // load savefile #num into the given Profile structure.
 bool profile_load(const char *pfname, Profile *file)
 {
-int i, curweaponslot;
-FILE *fp;
+	int i, curweaponslot;
+	FILE *fp;
 
 	stat("Loading profile from %s...", pfname);
 	memset(file, 0, sizeof(Profile));
+
+	const char * pfname_tmp = retro_create_path_string(g_dir, pfname);
 	
-	fp = fileopen(pfname, "rb");
+	fp = fileopen(pfname_tmp, "rb");
 	if (!fp)
 	{
-		staterr("profile_load: unable to open '%s'", pfname);
+		staterr("profile_load: unable to open '%s'", pfname_tmp);
 		return 1;
 	}
 	
 	if (!fverifystring(fp, "Do041220"))
 	{
-		staterr("profile_load: invalid savegame format: '%s'", pfname);
+		staterr("profile_load: invalid savegame format: '%s'", pfname_tmp);
 		fclose(fp);
 		return 1;
 	}
@@ -125,11 +128,13 @@ bool profile_save(const char *pfname, Profile *file)
 FILE *fp;
 int i;
 
-	//stat("Writing saved game to %s...", pfname);
-	fp = fileopen(pfname, "wb");
+	const char * pfname_tmp = retro_create_path_string(g_dir, pfname);
+	stat("Writing saved game to %s...", pfname_tmp);
+
+	fp = fileopen(pfname_tmp, "wb");
 	if (!fp)
 	{
-		staterr("profile_save: unable to open %s", pfname);
+		staterr("profile_save: unable to open %s", pfname_tmp);
 		return 1;
 	}
 	
