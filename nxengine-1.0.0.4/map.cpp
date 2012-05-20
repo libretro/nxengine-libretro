@@ -2,6 +2,7 @@
 #include "nx.h"
 #include "map.h"
 #include "map.fdh"
+#include "libretro_shared.h"
 
 stMap map;
 
@@ -63,19 +64,21 @@ void c------------------------------() {}
 // load a PXM map
 bool load_map(const char *fname)
 {
-FILE *fp;
-int x, y;
+	FILE *fp;
+	int x, y;
 
-	fp = fileopen(fname, "rb");
+	const char * fname_tmp = retro_create_path_string(g_dir, fname);
+
+	fp = fileopen(fname_tmp, "rb");
 	if (!fp)
 	{
-		staterr("load_map: no such file: '%s'", fname);
+		staterr("load_map: no such file: '%s'", fname_tmp);
 		return 1;
 	}
 	
 	if (!fverifystring(fp, "PXM"))
 	{
-		staterr("load_map: invalid map format: '%s'", fname);
+		staterr("load_map: invalid map format: '%s'", fname_tmp);
 		return 1;
 	}
 	
@@ -107,7 +110,7 @@ int x, y;
 	map.maxxscroll = (((map.xsize * TILE_W) - SCREEN_WIDTH) - 8) << CSF;
 	map.maxyscroll = (((map.ysize * TILE_H) - SCREEN_HEIGHT) - 8) << CSF;
 	
-	stat("load_map: '%s' loaded OK! - %dx%d", fname, map.xsize, map.ysize);
+	stat("load_map: '%s' loaded OK! - %dx%d", fname_tmp, map.xsize, map.ysize);
 	return 0;
 }
 
@@ -122,19 +125,21 @@ int nEntities;
 	// gotta destroy all objects before creating new ones
 	Objects::DestroyAll(false);
 	FloatText::ResetAll();
+
+	const char * fname_tmp = retro_create_path_string(g_dir, fname);
 	
-	stat("load_entities: reading in %s", fname);
+	stat("load_entities: reading in %s", fname_tmp);
 	// now we can load in the new objects
-	fp = fileopen(fname, "rb");
+	fp = fileopen(fname_tmp, "rb");
 	if (!fp)
 	{
-		staterr("load_entities: no such file: '%s'", fname);
+		staterr("load_entities: no such file: '%s'", fname_tmp);
 		return 1;
 	}
 	
 	if (!fverifystring(fp, "PXE"))
 	{
-		staterr("load_entities: not a PXE: '%s'", fname);
+		staterr("load_entities: not a PXE: '%s'", fname_tmp);
 		return 1;
 	}
 	
@@ -235,12 +240,14 @@ int i;
 unsigned char tc;
 
 	map.nmotiontiles = 0;
+
+	const char * fname_tmp = retro_create_path_string(g_dir, fname);
 	
-	stat("load_pxa: reading in %s", fname);
-	fp = fileopen(fname, "rb");
+	stat("load_pxa: reading in %s", fname_tmp);
+	fp = fileopen(fname_tmp, "rb");
 	if (!fp)
 	{
-		staterr("load_pxa: no such file: '%s'", fname);
+		staterr("load_pxa: no such file: '%s'", fname_tmp);
 		return 1;
 	}
 	
@@ -274,12 +281,14 @@ unsigned char tc;
 
 bool load_stages(void)
 {
-FILE *fp;
+	FILE *fp;
 
-	fp = fileopen("stage.dat", "rb");
+	const char * fname = retro_create_path_string(g_dir, "stage.dat");
+
+	fp = fileopen(fname, "rb");
 	if (!fp)
 	{
-		staterr("%s(%d): failed to open stage.dat", __FILE__, __LINE__);
+		staterr("%s(%d): failed to open %s", __FILE__, __LINE__, fname);
 		num_stages = 0;
 		return 1;
 	}
@@ -294,13 +303,15 @@ FILE *fp;
 
 bool initmapfirsttime(void)
 {
-FILE *fp;
-int i;
+	FILE *fp;
+	int i;
 
-	stat("initmapfirsttime: loading tilekey.dat.");
-	if (!(fp = fileopen("tilekey.dat", "rb")))
+	const char * fname = retro_create_path_string(g_dir, "tilekey.dat");
+
+	stat("initmapfirsttime: loading %s.", fname);
+	if (!(fp = fileopen(fname, "rb")))
 	{
-		staterr("tilekey.dat is missing!");
+		staterr("%s is missing!", fname);
 		return 1;
 	}
 	
@@ -441,7 +452,7 @@ char fname[MAXPATHLEN];
 		// use chromakey (transparency) on bkwater, all others don't
 		bool use_chromakey = (backdrop_no == 8);
 		
-		sprintf(fname, "%s/%s.pbm", data_dir, backdrop_names[backdrop_no]);
+		sprintf(fname, "%s/%s/%s.pbm", g_dir, data_dir, backdrop_names[backdrop_no]);
 		
 		backdrop[backdrop_no] = NXSurface::FromFile(fname, use_chromakey);
 		if (!backdrop[backdrop_no])

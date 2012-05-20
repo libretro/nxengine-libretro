@@ -74,10 +74,9 @@ bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey, int use_displ
 	Free();
 	char filename[1024];
 
-	sprintf(filename, "%s/%s", g_dir, pbm_name);
-	stat("filename: %s\n", filename);
+	stat("filename: %s\n", pbm_name);
 	
-	image = SDL_LoadBMP(filename);
+	image = SDL_LoadBMP(pbm_name);
 	if (!image)
 	{
 		staterr("NXSurface::LoadImage: load failed of '%s'!", filename);
