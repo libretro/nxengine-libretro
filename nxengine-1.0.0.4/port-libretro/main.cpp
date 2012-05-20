@@ -4,6 +4,7 @@
 #include "../graphics/safemode.h"
 #endif
 #include "../main.fdh"
+#include "libretro_shared.h";
 
 const char *data_dir = "data";
 const char *stage_dir = "data/Stage";
@@ -363,9 +364,9 @@ static void fatal(const char *str)
 
 static bool check_data_exists()
 {
-char fname[MAXPATHLEN];
+	const char *fname = retro_create_subpath_string(g_dir, data_dir, "npc.tbl");
+	stat("check_data_exists: %s", fname);
 
-	sprintf(fname, "%s/npc.tbl", data_dir);
 	if (file_exists(fname)) return 0;
 	
 #ifdef USE_SAFEMODE
