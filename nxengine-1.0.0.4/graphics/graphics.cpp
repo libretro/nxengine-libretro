@@ -1,7 +1,7 @@
 
 // graphics routines
-#include <SDL/SDL.h>
-#include <SDL/SDL_getenv.h>
+#include <SDL.h>
+#include <SDL_getenv.h>
 
 #include <stdlib.h>
 #include "../config.h"

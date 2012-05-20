@@ -1,5 +1,5 @@
 #include "../config.h"
-#include <SDL/SDL.h>
+#include <SDL.h>
 
 #include "../nx.h"
 #include "font.h"

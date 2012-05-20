@@ -6,7 +6,6 @@
 #include <math.h>			// for sin()
 #include <stdlib.h>
 #include <string.h>
-#include <endian.h>
 
 #include "../config.h"
 #include "pxt.h"
@@ -697,7 +696,7 @@ int malc_size;
 	{
 		value = buffer[i];
 		value *= 200;
-		value = htole16(value);
+		//value = htole16(value);
 		
 		outbuffer[ap++] = value;		// left ch
 		outbuffer[ap++] = value;		// right ch

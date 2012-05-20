@@ -1,8 +1,8 @@
 
 #include "../nx.h"
-#include <stdarg.h>
-#include <unistd.h>
+#ifdef USE_SAFEMODE
 #include "../graphics/safemode.h"
+#endif
 #include "../main.fdh"
 
 const char *data_dir = "data";
@@ -343,6 +343,7 @@ static void fatal(const char *str)
 {
 	staterr("fatal: '%s'", str);
 	
+#ifdef USE_SAFEMODE
 	if (!safemode::init())
 	{
 		safemode::moveto(SM_UPPER_THIRD);
@@ -354,6 +355,10 @@ static void fatal(const char *str)
 		safemode::run_until_key();
 		safemode::close();
 	}
+#else
+		stat("Fatal Error");
+		stat("%s", str);
+#endif
 }
 
 static bool check_data_exists()
@@ -363,6 +368,7 @@ char fname[MAXPATHLEN];
 	sprintf(fname, "%s/npc.tbl", data_dir);
 	if (file_exists(fname)) return 0;
 	
+#ifdef USE_SAFEMODE
 	if (!safemode::init())
 	{
 		safemode::moveto(SM_UPPER_THIRD);
@@ -375,6 +381,12 @@ char fname[MAXPATHLEN];
 		safemode::run_until_key();
 		safemode::close();
 	}
+#else
+		stat("Fatal Error");
+		
+		stat("Missing \"%s\" directory.", data_dir);
+		stat("Please copy it over from a Doukutsu installation.");
+#endif
 	
 	return 1;
 }
@@ -391,7 +403,9 @@ char buffer[80];
 	console.Print(buffer);
 }
 
+#if 0
 void SDL_Delay(int ms)
 {
 	usleep(ms * 1000);
 }
+#endif
