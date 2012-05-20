@@ -15,6 +15,8 @@ using namespace Graphics;
 #include "sprites.h"
 #include "sprites.fdh"
 
+#include "libretro_shared.h"
+
 static NXSurface *spritesheet[MAX_SPRITESHEETS];
 static int num_spritesheets;
 static StringList sheetfiles;
@@ -26,9 +28,11 @@ int num_sprites;
 bool Sprites::Init()
 {
 	memset(spritesheet, 0, sizeof(spritesheet));
+
+	const char * f_sprites_sif = retro_create_subpath_string(g_dir, "data", "sprites.sif");
 	
 	// load sprites info--sheet positions, bounding boxes etc
-	if (load_sif("sprites.sif"))
+	if (load_sif(f_sprites_sif))
 		return 1;
 	
 	num_spritesheets = sheetfiles.CountItems();
