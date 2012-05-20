@@ -10,6 +10,10 @@
 
 #define SCREEN_BPP 15
 
+#define RED_SHIFT 10
+#define GREEN_SHIFT 5
+#define BLUE_SHIFT 0
+
 extern char g_dir[1024];
 
 NXSurface::NXSurface()
@@ -53,8 +57,7 @@ bool NXSurface::AllocNew(int wd, int ht, NXFormat *format)
 {
 	Free();
 	
-	fSurface = SDL_CreateRGBSurface(SDL_SRCCOLORKEY, wd, ht, \
-	SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
+	fSurface = SDL_CreateRGBSurface(SDL_SRCCOLORKEY, wd, ht, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
 	
 	if (!fSurface)
 	{
@@ -166,7 +169,7 @@ void c------------------------------() {}
 void NXSurface::DrawRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 {
 SDL_Rect rect;
-uint32_t color = MapColor(r, g, b);
+	uint32_t color = r << RED_SHIFT | g << GREEN_SHIFT | b << BLUE_SHIFT;
 
 	// top and bottom
 	rect.x = x1 * SCALE;
@@ -192,13 +195,14 @@ uint32_t color = MapColor(r, g, b);
 void NXSurface::FillRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 {
 SDL_Rect rect;
+	uint32_t color = r << RED_SHIFT | g << GREEN_SHIFT | b << BLUE_SHIFT;
 
 	rect.x = x1 * SCALE;
 	rect.y = y1 * SCALE;
 	rect.w = ((x2 - x1) + 1) * SCALE;
 	rect.h = ((y2 - y1) + 1) * SCALE;
 	
-	SDL_FillRect(fSurface, &rect, MapColor(r, g, b));
+	SDL_FillRect(fSurface, &rect, color);
 }
 
 void NXSurface::Clear(uint8_t r, uint8_t g, uint8_t b)

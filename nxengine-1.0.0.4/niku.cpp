@@ -22,7 +22,7 @@ int i, j;
 
 	const char *fname_tmp = retro_create_path_string(g_dir, fname);
 
-	fp = fileopen(fname_tmp, "rb");
+	fp = fopen(fname_tmp, "rb");
 	if (!fp)
 	{
 #ifdef DEBUG
@@ -100,7 +100,7 @@ uint32_t *buf_dword = (uint32_t *)buf_byte;
 
 	const char * fname_tmp = retro_create_path_string(g_dir, fname);
 
-	FILE *fp = fileopen(fname_tmp, "wb");
+	FILE *fp = fopen(fname_tmp, "wb");
 	if (!fp)
 	{
 		staterr("niku_save: failed to open '%s'", fname_tmp);

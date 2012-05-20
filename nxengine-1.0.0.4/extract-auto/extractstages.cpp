@@ -87,7 +87,7 @@ int i;
 	}
 	
 	// write out
-	FILE *fpo = fileopen("stage.dat", "wb");
+	FILE *fpo = fopen("stage.dat", "wb");
 	if (!fpo)
 	{
 		stat("failed to open stage.dat for writing");

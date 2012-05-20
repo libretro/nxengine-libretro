@@ -6,13 +6,6 @@
 //---------------------[referenced from ai/ai.cpp]-------------------//
 Object *CreateObject(int x, int y, int type);
 
-
-/* located in platform.cpp */
-
-//---------------------[referenced from ai/ai.cpp]-------------------//
-FILE *fileopen(const char *fname, const char *mode);
-
-
 /* located in caret.cpp */
 
 //---------------------[referenced from ai/ai.cpp]-------------------//

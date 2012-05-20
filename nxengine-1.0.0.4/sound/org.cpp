@@ -126,7 +126,7 @@ uint16_t version;
 		const char * drum_cache_fname = retro_create_path_string(g_dir, drum_cache);
 		
 		// try and load the drums from cache instead of synthing them
-		fp = fileopen(drum_cache_fname, "rb");
+		fp = fopen(drum_cache_fname, "rb");
 		if (fp)
 		{
 			// this also checks for correct endianness
@@ -163,7 +163,7 @@ uint16_t version;
 		}
 		
 		// cache the drums for next time
-		fp = fileopen(drum_cache_fname, "wb");
+		fp = fopen(drum_cache_fname, "wb");
 		if (fp)
 		{
 			version = DRUM_VERSION;
@@ -271,7 +271,7 @@ FILE *fp;
 signed char buffer[BUF_SIZE + 1];
 signed char *ptr;
 
-	fp = fileopen(fname, "rb");
+	fp = fopen(fname, "rb");
 	if (!fp)
 	{
 		stat("Unable to open wavetable.dat!!");
@@ -341,7 +341,7 @@ char buf[8];
 FILE *fp;
 int i, j;
 
-	fp = fileopen(fname, "rb");
+	fp = fopen(fname, "rb");
 	if (!fp) { visible_warning("org_load: no such file: '%s'", fname); return 1; }
 	
 	for(i=0;i<6;i++) { buf[i] = fgetc(fp); } buf[i] = 0;

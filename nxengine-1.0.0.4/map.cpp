@@ -69,7 +69,7 @@ bool load_map(const char *fname)
 
 	const char * fname_tmp = retro_create_path_string(g_dir, fname);
 
-	fp = fileopen(fname_tmp, "rb");
+	fp = fopen(fname_tmp, "rb");
 	if (!fp)
 	{
 		staterr("load_map: no such file: '%s'", fname_tmp);
@@ -130,7 +130,7 @@ int nEntities;
 	
 	stat("load_entities: reading in %s", fname_tmp);
 	// now we can load in the new objects
-	fp = fileopen(fname_tmp, "rb");
+	fp = fopen(fname_tmp, "rb");
 	if (!fp)
 	{
 		staterr("load_entities: no such file: '%s'", fname_tmp);
@@ -244,7 +244,7 @@ unsigned char tc;
 	const char * fname_tmp = retro_create_path_string(g_dir, fname);
 	
 	stat("load_pxa: reading in %s", fname_tmp);
-	fp = fileopen(fname_tmp, "rb");
+	fp = fopen(fname_tmp, "rb");
 	if (!fp)
 	{
 		staterr("load_pxa: no such file: '%s'", fname_tmp);
@@ -285,7 +285,7 @@ bool load_stages(void)
 
 	const char * fname = retro_create_path_string(g_dir, "stage.dat");
 
-	fp = fileopen(fname, "rb");
+	fp = fopen(fname, "rb");
 	if (!fp)
 	{
 		staterr("%s(%d): failed to open %s", __FILE__, __LINE__, fname);
@@ -309,7 +309,7 @@ bool initmapfirsttime(void)
 	const char * fname = retro_create_path_string(g_dir, "tilekey.dat");
 
 	stat("initmapfirsttime: loading %s.", fname);
-	if (!(fp = fileopen(fname, "rb")))
+	if (!(fp = fopen(fname, "rb")))
 	{
 		staterr("%s is missing!", fname);
 		return 1;

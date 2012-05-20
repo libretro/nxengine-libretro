@@ -219,7 +219,7 @@ bool file_exists(const char *fname)
 {
 FILE *fp;
 
-	fp = fileopen(fname, "rb");
+	fp = fopen(fname, "rb");
 	if (!fp) return 0;
 	fclose(fp);
 	return 1;

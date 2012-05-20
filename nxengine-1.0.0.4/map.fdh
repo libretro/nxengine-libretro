@@ -40,12 +40,6 @@ void AnimateMotionTiles(void);
 Object *FindObjectByID2(int id2);
 
 
-/* located in platform.cpp */
-
-//----------------------[referenced from map.cpp]--------------------//
-FILE *fileopen(const char *fname, const char *mode);
-
-
 /* located in caret.cpp */
 
 //----------------------[referenced from map.cpp]--------------------//

@@ -10,13 +10,6 @@ const char *GetProfileName(int num);
 bool ProfileExists(int num);
 bool AnyProfileExists();
 
-
-/* located in platform.cpp */
-
-//--------------------[referenced from profile.cpp]------------------//
-FILE *fileopen(const char *fname, const char *mode);
-
-
 /* located in tsc.cpp */
 
 //--------------------[referenced from profile.cpp]------------------//

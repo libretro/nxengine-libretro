@@ -158,7 +158,7 @@ int s, c, i;
 		stat("[ %s ]", outfilename);
 		
 		mkdir("pxt", 0755);
-		FILE *fpo = fileopen(outfilename, "wb");
+		FILE *fpo = fopen(outfilename, "wb");
 		if (!fpo)
 		{
 			stat("failed to open %s", outfilename);

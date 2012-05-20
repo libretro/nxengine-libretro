@@ -15,7 +15,7 @@ static int extract_do(void)
 
 	const char *filename = retro_create_path_string(g_dir, "Doukutsu.exe");
 	
-	fp = fileopen(filename, "rb");
+	fp = fopen(filename, "rb");
 	if (!fp)
 	{
 		stat("cannot find executable %s", filename);
@@ -160,7 +160,7 @@ FILE *fpo;
 int len;
 uint32_t crc;
 
-	fpo = fileopen("/tmp/files.dat", "wb");
+	fpo = fopen("/tmp/files.dat", "wb");
 	crc_init();
 	
 	for(i=0;fileinfo[i].filename;i++)
@@ -199,7 +199,7 @@ uint8_t *buffer;
 uint32_t hit = 0;
 int len;
 
-	fp = fileopen(fname, "rb");
+	fp = fopen(fname, "rb");
 	if (!fp)
 	{
 		staterr("can't open %s", fname);

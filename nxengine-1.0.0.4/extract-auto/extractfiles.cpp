@@ -161,7 +161,7 @@ bool first_crc_failure = true;
 		// write out the file
 		createdir(outfilename);
 		
-		FILE *fp = fileopen(outfilename, "wb");
+		FILE *fp = fopen(outfilename, "wb");
 		if (!fp)
 		{
 			stat("Failed to open '%s' for writing.", outfilename);

@@ -56,7 +56,7 @@ SDL_Surface *sdl_screen;
 	if (drawtarget == screen) drawtarget = NULL;
 	if (screen) delete screen;
 	
-	sdl_screen = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, screen_bpp, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
+	sdl_screen = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
 	pitch = 320 << 1;
 
 	if (!sdl_screen)
