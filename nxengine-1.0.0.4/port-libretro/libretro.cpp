@@ -187,3 +187,16 @@ unsigned retro_get_region(void)
 void * retro_get_memory_data(unsigned id) { return 0; }
 size_t retro_get_memory_size(unsigned id) { return 0; }
 
+const char * retro_create_subpath_string(const char * dir, const char * subdir, const char * filename)
+{
+	char fname[1024];
+	snprintf(fname, sizeof(fname), "%s/%s/%s", dir, subdir, filename);
+	return fname;
+}
+
+const char * retro_create_path_string(const char * dir, const char * filename)
+{
+	char fname[1024];
+	snprintf(fname, sizeof(fname), "%s/%s", dir, filename);
+	return fname;
+}
