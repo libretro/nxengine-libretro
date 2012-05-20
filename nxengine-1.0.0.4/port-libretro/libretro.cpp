@@ -10,6 +10,7 @@ typedef unsigned char bool;
 
 #include "libretro.h"
 #include "../graphics/graphics.h"
+#include "../nx.h"
 
 bool pre_main();
 void post_main();
@@ -125,7 +126,11 @@ void retro_deinit(void)
    post_main();
 }
 
-void retro_reset(void) {}
+void retro_reset(void)
+{
+	lastinputs[F2KEY] = true;
+	game.reset();
+}
 
 void mixaudio(int16_t *stream, size_t len_samples);
 
