@@ -74,7 +74,7 @@ static bool tryload(Settings *setfile)
 
 	const char * setfilename_tmp = retro_create_path_string(g_dir, setfilename);
 	
-	fp = fileopen(setfilename_tmp, "rb");
+	fp = fopen(setfilename_tmp, "rb");
 	if (!fp)
 	{
 #ifdef DEBUG
@@ -110,7 +110,7 @@ FILE *fp;
 #ifdef DEBUG
 	stat("Writing settings...");
 #endif
-	fp = fileopen(setfilename_tmp, "wb");
+	fp = fopen(setfilename_tmp, "wb");
 	if (!fp)
 	{
 #ifdef DEBUG

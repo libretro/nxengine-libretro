@@ -24,7 +24,7 @@ bool profile_load(const char *pfname, Profile *file)
 
 	const char * pfname_tmp = retro_create_path_string(g_dir, pfname);
 	
-	fp = fileopen(pfname_tmp, "rb");
+	fp = fopen(pfname_tmp, "rb");
 	if (!fp)
 	{
 		staterr("profile_load: unable to open '%s'", pfname_tmp);
@@ -131,7 +131,7 @@ int i;
 	const char * pfname_tmp = retro_create_path_string(g_dir, pfname);
 	stat("Writing saved game to %s...", pfname_tmp);
 
-	fp = fileopen(pfname_tmp, "wb");
+	fp = fopen(pfname_tmp, "wb");
 	if (!fp)
 	{
 		staterr("profile_save: unable to open %s", pfname_tmp);

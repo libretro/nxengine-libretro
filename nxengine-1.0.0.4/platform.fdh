@@ -4,6 +4,4 @@
 /* located in platform.cpp */
 
 //-------------------[referenced from platform.cpp]------------------//
-FILE *fileopen(const char *fname, const char *mode);
-FILE *fileopen(const char *fname, const char *mode);
 

@@ -3,10 +3,6 @@
 
 /* located in platform.cpp */
 
-//------------------[referenced from common/misc.cpp]----------------//
-FILE *fileopen(const char *fname, const char *mode);
-
-
 /* located in common/stat.cpp */
 
 //------------------[referenced from common/misc.cpp]----------------//

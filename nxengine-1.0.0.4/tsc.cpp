@@ -165,7 +165,7 @@ char *tsc_decrypt(const char *fname, int *fsize_out)
 FILE *fp;
 int fsize, i;
 
-	fp = fileopen(fname, "rb");
+	fp = fopen(fname, "rb");
 	if (!fp)
 	{
 		staterr("tsc_decrypt: no such file: '%s'!", fname);

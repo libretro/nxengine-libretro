@@ -21,12 +21,6 @@ bool profile_save(const char *pfname, Profile *file);
 bool profile_load(const char *pfname, Profile *file);
 
 
-/* located in platform.cpp */
-
-//--------------------[referenced from replay.cpp]-------------------//
-FILE *fileopen(const char *fname, const char *mode);
-
-
 /* located in replay.cpp */
 
 //--------------------[referenced from replay.cpp]-------------------//

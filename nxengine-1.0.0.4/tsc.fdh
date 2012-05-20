@@ -21,13 +21,6 @@ void map_show_map_name();
 Object *FindObjectByID2(int id2);
 void map_focus(Object *o, int spd);
 
-
-/* located in platform.cpp */
-
-//----------------------[referenced from tsc.cpp]--------------------//
-FILE *fileopen(const char *fname, const char *mode);
-
-
 /* located in player.cpp */
 
 //----------------------[referenced from tsc.cpp]--------------------//

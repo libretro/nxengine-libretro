@@ -71,7 +71,7 @@ FILE *fpo;
 }
 
 	// pull sound offsets out of exe
-	fp = fileopen(fname, "rb");
+	fp = fopen(fname, "rb");
 	
 	fseek(fp, offset_start, SEEK_SET);
 	
@@ -110,7 +110,7 @@ FILE *fpo;
 		//lprintf("id %02x chanl %d offs %08x\n", snd[s].id, snd[s].chan, snd[s].offs);
 		
 		sprintf(outfname, "pxt/fx%02x.pxt", snd[s].id);
-		fpo = fileopen(outfname, "wb");
+		fpo = fopen(outfname, "wb");
 		if (!fpo) { lprintf("extract_pxt: failed to open %s\n", fname); goto fail; }
 		
 		memset(chan, 0, sizeof(chan));

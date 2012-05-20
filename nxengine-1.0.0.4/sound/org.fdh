@@ -7,12 +7,6 @@
 void visible_warning(const char *fmt, ...);
 
 
-/* located in platform.cpp */
-
-//-------------------[referenced from sound/org.cpp]-----------------//
-FILE *fileopen(const char *fname, const char *mode);
-
-
 /* located in sound/sslib.cpp */
 
 //-------------------[referenced from sound/org.cpp]-----------------//

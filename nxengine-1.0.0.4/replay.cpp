@@ -34,7 +34,7 @@ Profile profile;
 	if (game_save(&profile)) return 1;
 	if (profile_save(fname, &profile)) return 1;
 	
-	fp = fileopen(fname, "r+");
+	fp = fopen(fname, "r+");
 	if (!fp)
 	{
 		staterr("begin_record: failed to open file %s", fname);
@@ -105,7 +105,7 @@ Profile profile;
 	if (profile_load(fname, &profile))
 		return 1;
 	
-	fp = fileopen(fname, "rb");
+	fp = fopen(fname, "rb");
 	if (!fp)
 	{
 		staterr("begin_playback: failed to open file %s", fname);
@@ -497,7 +497,7 @@ bool Replay::LoadHeader(const char *fname, ReplayHeader *hdr)
 {
 FILE *fp;
 
-	fp = fileopen(fname, "rb");
+	fp = fopen(fname, "rb");
 	if (!fp)
 	{
 		staterr("LoadHeader: can't open file '%s'", fname);
@@ -515,7 +515,7 @@ bool Replay::SaveHeader(const char *fname, ReplayHeader *hdr)
 {
 FILE *fp;
 
-	fp = fileopen(fname, "r+");
+	fp = fopen(fname, "r+");
 	if (!fp)
 	{
 		staterr("SaveHeader: can't open file '%s'", fname);

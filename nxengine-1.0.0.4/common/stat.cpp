@@ -20,9 +20,9 @@ void SetLogFilename(const char *fname)
 
 void writelog(const char *buf, bool append_cr)
 {
-FILE *fp;
+	FILE *fp;
 
-	fp = fileopen(logfilename, "a+");
+	fp = fopen(logfilename, "a+");
 	if (fp)
 	{
 		fputs(buf, fp);

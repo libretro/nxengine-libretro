@@ -53,7 +53,7 @@ int count = 0;
 		return 1;
 	}
 	
-	fpo = fileopen(outfile, "wb");
+	fpo = fopen(outfile, "wb");
 	if (!fpo)
 	{
 		fprintf(stderr, "<Cannot open objnames.cpp>\n");

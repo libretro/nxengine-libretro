@@ -40,7 +40,7 @@ const int nEntries = 361;
 int i;
 	const char * fname = retro_create_path_string(g_dir, "data/npc.tbl");
 
-	FILE *fp = fileopen(fname, "rb");
+	FILE *fp = fopen(fname, "rb");
 	if (!fp) { staterr("load_npc_tbl: %s is missing", fname); return 1; }
 	
 	stat("Reading %s...", fname);
