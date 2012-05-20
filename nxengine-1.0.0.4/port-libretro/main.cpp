@@ -27,7 +27,8 @@ static bool freshstart;
 void pre_main(void)
 {
 #ifdef DEBUG_LOG
-SetLogFilename("debug.txt");
+const char * debug_fname = retro_create_path_string(g_dir, "debug.txt");
+SetLogFilename(debug_fname);
 #endif
 	// start up inputs first thing because settings_load may remap them
 	input_init();
