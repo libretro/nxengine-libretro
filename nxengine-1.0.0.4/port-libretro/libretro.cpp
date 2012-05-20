@@ -69,8 +69,8 @@ void retro_get_system_info(struct retro_system_info *info)
 {
    info->need_fullpath = false;
    info->valid_extensions = "bin|BIN|zip|ZIP";
-   info->library_version = "10.0.4";
-   info->library_name = "NXEngine (Cave Story)";
+   info->library_version = "1.0.0.4";
+   info->library_name = "NXEngine";
    info->block_extract = false;
 }
 
