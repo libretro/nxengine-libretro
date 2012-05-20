@@ -1,7 +1,5 @@
 #include "nx.h"
-#ifdef __LIBRETRO__
 #include "libretro/libretro.h"
-#endif
 
 #define SDLK_LAST 12
 
@@ -76,9 +74,7 @@ void c------------------------------() {}
 
 void input_poll(void)
 {
-#ifdef __LIBRETRO__
    extern retro_input_state_t input_cb;
-#endif
 
    for (unsigned i = 0; i < 12; i++)
    {
@@ -87,9 +83,7 @@ void input_poll(void)
       if (ino != F3KEY)
       {
          if (ino != 0xff)
-#ifdef __LIBRETRO__
             inputs[ino] = input_cb(0, RETRO_DEVICE_JOYPAD, 0, i);
-#endif
       }
       else
       {

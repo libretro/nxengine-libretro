@@ -107,11 +107,12 @@ void safemode::clear()
 	moveto(SM_UPPER_THIRD);
 }
 
+extern unsigned retro_get_tick(void);
 
 int safemode::run_until_key(bool delay)
 {
 	stat("run_until_key()");
-	uint32_t start = SDL_GetTicks();
+	uint32_t start = retro_get_tick();
 	
 	last_sdl_key = -1;
 	do
@@ -119,7 +120,7 @@ int safemode::run_until_key(bool delay)
 		input_poll();
 		SDL_Delay(50);
 		
-		if (delay && (SDL_GetTicks() - start) < 500)
+		if (delay && (retro_get_tick() - start) < 500)
 			last_sdl_key = -1;
 	}
 	while(last_sdl_key == -1);

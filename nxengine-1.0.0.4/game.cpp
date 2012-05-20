@@ -196,7 +196,9 @@ bool Game::pause(int pausemode, int param)
 
 void Game::tick(void)
 {
+#ifdef DEBUG
 	debug_clear();
+#endif
 	
 	if (game.paused)
 	{
@@ -214,7 +216,9 @@ void Game::tick(void)
 		tickfunctions[game.mode].OnTick();
 	}
 	
+#ifdef DEBUG
 	DrawDebug();
+#endif
 	console.Draw();
 }
 

@@ -4,35 +4,24 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../graphics/safemode.h"
 #include "extract.fdh"
 
-using safemode::print;
-using safemode::status;
-using safemode::clearstatus;
-using safemode::clear;
-using safemode::moveto;
-using safemode::run_until_key;
 static const char *filename = "Doukutsu.exe";
 
 static int extract_do(void)
 {
 	FILE *fp;
 
-	clear();
-	moveto(SM_UPPER_THIRD);
-	print("= Extracting Files =");
+	stat("= Extracting Files =");
 	
 	fp = fileopen(filename, "rb");
 	if (!fp)
 	{
-		moveto(SM_CENTER);
-		print("cannot find executable %s", filename);
-		print("");
-		print("");
-		print("Please put it and it's \"data\" directory");
-		print("into the same folder as this program.");
-		run_until_key();
+		stat("cannot find executable %s", filename);
+		stat("");
+		stat("");
+		stat("Please put it and it's \"data\" directory");
+		stat("into the same folder as this program.");
 		return 1;
 	}
 	
@@ -42,7 +31,6 @@ static int extract_do(void)
 	//findfiles(fp);
 	//exit(1);
 	
-	clearstatus();
 	fclose(fp);
 	return 0;
 }
@@ -50,63 +38,42 @@ static int extract_do(void)
 
 int extract_main()
 {
-int result;
+	int result;
 
-	if (safemode::init())
-	{
-		staterr("failed to initialize safemode graphics");
-		return 1;
-	}
-	
-	result = introduction();
-	if (result == SDLK_ESCAPE)
-	{
-		stat("Breaking out");
-		return 1;
-	}
+	introduction();
 	
 	result = extract_do();
 	if (!result)
 		conclusion();
 	
-	safemode::close();
 	return result;
 }
 
 
-int introduction()
+void introduction()
 {
-	clear();
-	moveto(SM_UPPER_THIRD);
-	
-	print("I need to extract some game data");
-	print("before I can start up for the first time.");
-	print("");
-	print("Before beginning, you should have the Aeon Genesis");
-	print("English translation of version 1.0.0.6, and drop");
-	print("Doukutsu.exe and it's \"data\" directory into the same");
-	print("folder as the \"nx.bin\" file you just ran.");
-	print("");
-	print("If you haven't done that yet, please press ESCAPE now");
-	print("and come back in a moment. Otherwise, you can");
-	print("press any other button to start the extraction.");
-	
-	return run_until_key();
+	stat("I need to extract some game data");
+	stat("before I can start up for the first time.");
+	stat("");
+	stat("Before beginning, you should have the Aeon Genesis");
+	stat("English translation of version 1.0.0.6, and drop");
+	stat("Doukutsu.exe and it's \"data\" directory into the same");
+	stat("folder as the \"nx.bin\" file you just ran.");
+	stat("");
+	stat("If you haven't done that yet, please press ESCAPE now");
+	stat("and come back in a moment. Otherwise, you can");
+	stat("press any other button to start the extraction.");
 }
 
-int conclusion()
+void conclusion()
 {
-	moveto(SM_MIDUPPER_Y);
-
-	print("Success!");
-	print("");
-	print("You can now remove the Doukutsu.exe file");
-	print("if you like, as it isn't needed anymore.");
-	print("Please leave the \"data\" directory though.");
-	print("");
-	print("Press any button to begin");
-	
-	return run_until_key();
+	stat("Success!");
+	stat("");
+	stat("You can now remove the Doukutsu.exe file");
+	stat("if you like, as it isn't needed anymore.");
+	stat("Please leave the \"data\" directory though.");
+	stat("");
+	stat("Press any button to begin");
 }
 
 /*

@@ -22,31 +22,7 @@ int lockcount = 0;
 
 char SSInit(void)
 {
-SDL_AudioSpec fmt, obtained;
-
-	// Set 16-bit stereo audio at 22Khz
-	fmt.freq = SAMPLE_RATE;
-	fmt.format = AUDIO_S16;
-	fmt.channels = 2;
-	fmt.samples = 512;
-	fmt.callback = mixaudio;
-	fmt.userdata = NULL;
-	
-	// Open the audio device and start playing sound!
-	if (SDL_OpenAudio(&fmt, &obtained) < 0)
-	{
-		staterr("SS: Unable to open audio: %s", SDL_GetError());
-		return 1;
-	}
-	
-	if (obtained.format != fmt.format || \
-		obtained.channels != fmt.channels)
-	{
-		staterr("SS: Failed to obtain the audio format I wanted");
-		return 1;
-	}
-	
-	mixbuffer = (uint8_t *)malloc(obtained.samples * obtained.channels * 2);
+	mixbuffer = (uint8_t *)malloc(4096 * 2);
 	
 	// zero everything in all channels
 	memset(channel, 0, sizeof(channel));
@@ -56,13 +32,11 @@ SDL_AudioSpec fmt, obtained;
 	stat("sslib: initilization was successful.");
 	
 	lockcount = 0;
-	SDL_PauseAudio(0);
 	return 0;
 }
 
 void SSClose(void)
 {
-	SDL_CloseAudio();
 	if (mixbuffer) free(mixbuffer);
 }
 
@@ -226,17 +200,6 @@ void SSAbortChannel(int c)
 {
 	SSLockAudio();
 	
-	/*if (c >= 0 && c < SS_NUM_CHANNELS)
-	{
-		while(channel[c].head != channel[c].tail)
-		{
-			if (channel[c].FinishedCB)
-				(*channel[c].FinishedCB)(c, channel[c].chunks[channel[c].head].userdata);
-			
-			if (++channel[c].head >= MAX_QUEUED_CHUNKS)
-				channel[c].head = 0;
-		}
-	}*/
 	channel[c].head = channel[c].tail;
 	
 	SSUnlockAudio();
@@ -274,14 +237,10 @@ void c------------------------------() {}
 // the audio "more", and you have to call it the same numbers of times before it will unlock.
 void SSLockAudio(void)
 {
-	if (lockcount==0) SDL_LockAudio();
-	lockcount++;
 }
 
 void SSUnlockAudio(void)
 {
-	lockcount--;
-	if (!lockcount) SDL_UnlockAudio();
 }
 
 /*
@@ -322,12 +281,14 @@ static int AddBuffer(SSChannel *chan, int bytes)
 }
 
 
-static void mixaudio(void *unused, uint8_t *stream, int len)
+void mixaudio(int16_t *stream, size_t len_samples)
 {
-int bytes_copied;
-int bytestogo;
-int c;
-int i;
+	int bytes_copied;
+	int bytestogo;
+	int c;
+	int i;
+
+	size_t len = len_samples * sizeof(int16_t);
 
 	// get data for all channels and add it to the mix
 	for(c=0;c<SS_NUM_CHANNELS;c++)
@@ -352,11 +313,23 @@ int i;
 				break;
 			}
 		}
-		
-		SDL_MixAudio(stream, mixbuffer, len, channel[c].volume);
 	}
 	
 	// tell any callbacks that had a chunk finish, that their chunk finished
+	const int16_t *mixbuf = (const int16_t*)mixbuffer;
+
+	for(unsigned i = 0; i < len_samples; i++)
+	{
+		int32_t current = stream[i];
+		current += (int32_t)mixbuf[i] * channel[c].volume / SDL_MIX_MAXVOLUME;
+		if (current > 0x7fff)
+			stream[i] = 0x7fff;
+		else if (current < -0x8000)
+			stream[i] = -0x8000;
+		else
+			stream[i] = current;
+	}
+
 	for(c=0;c<SS_NUM_CHANNELS;c++)
 	{
 		if (channel[c].FinishedCB)

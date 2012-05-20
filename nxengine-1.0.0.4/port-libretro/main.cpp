@@ -28,14 +28,6 @@ void pre_main(void)
 #ifdef DEBUG_LOG
 SetLogFilename("debug.txt");
 #endif
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
-	{
-		staterr("ack, sdl_init failed: %s.", SDL_GetError());
-		error = 1;
-		return;
-	}
-	atexit(SDL_Quit);
-	
 	// start up inputs first thing because settings_load may remap them
 	input_init();
 	
@@ -46,7 +38,6 @@ SetLogFilename("debug.txt");
 	if (Graphics::init(settings->resolution)) { staterr("Failed to initialize graphics."); error = 1; return; }
 	if (font_init()) { staterr("Failed to load font."); error = 1; return; }
 	
-	//speed_test();
 	//return;
 	
 	#ifdef CONFIG_DATA_EXTRACTOR
@@ -115,7 +106,6 @@ SetLogFilename("debug.txt");
 	
 	stat("Entering main loop...");
 	
-	//speed_test();
 	//return;
 }
 
@@ -281,10 +271,6 @@ ingame_error: ;
 
 static inline void run_tick()
 {
-static bool can_tick = true;
-static bool last_freezekey = false;
-static bool last_framekey = false;
-
 	input_poll();
 	
 	// input handling for a few global things
@@ -305,84 +291,20 @@ static bool last_framekey = false;
 	}
 	
 	// freeze frame
-	if (settings->enable_debug_keys)
-	{
-		if (inputs[FREEZE_FRAME_KEY] && !last_freezekey)
-		{
-			can_tick = true;
-			freezeframe ^= 1;
-			framecount = 0;
-		}
-		
-		if (inputs[FRAME_ADVANCE_KEY] && !last_framekey)
-		{
-			can_tick = true;
-			if (!freezeframe)
-			{
-				freezeframe = 1;
-				framecount = 0;
-			}
-		}
-		
-		last_freezekey = inputs[FREEZE_FRAME_KEY];
-		last_framekey = inputs[FRAME_ADVANCE_KEY];
-	}
-	
-	if (can_tick)
-	{
-		game.tick();
-		
-		if (freezeframe)
-		{
-			char buf[1024];
-			sprintf(buf, "[] Tick %d", framecount++);
-			font_draw_shaded(4, (SCREEN_HEIGHT-GetFontHeight()-4), buf, 0, &greenfont);
-			can_tick = false;
-		}
-		else
-		{
-			Replay::DrawStatus();
-		}
-		
-		if (settings->show_fps)
-		{
-			update_fps();
-		}
-		
-		//platform_sync_to_vblank();
-		screen->Flip();
-		
-		memcpy(lastinputs, inputs, sizeof(lastinputs));
-	}
-	else
-	{	// frame is frozen; don't hog CPU
-		SDL_Delay(20);
-	}
+	game.tick();
+
+	Replay::DrawStatus();
+
+	//platform_sync_to_vblank();
+	screen->Flip();
+
+	memcpy(lastinputs, inputs, sizeof(lastinputs));
 	
 	// immediately after a game tick is when we have the most amount of time before
 	// the game needs to run again. so now's as good a time as any for some
 	// BGM audio processing, wouldn't you say?
 	org_run();
 }
-
-void update_fps()
-{
-	fps_so_far++;
-	
-	if ((SDL_GetTicks() - fpstimer) >= 500)
-	{
-		fpstimer = SDL_GetTicks();
-		fps = (fps_so_far << 1);
-		fps_so_far = 0;
-	}
-	
-	char fpstext[64];
-	sprintf(fpstext, "%d fps", fps);
-	
-	int x = (SCREEN_WIDTH - 4) - GetFontWidth(fpstext, 0, true);
-	font_draw_shaded(x, 4, fpstext, 0, &greenfont);
-}
-
 
 void InitNewGame(bool with_intro)
 {
@@ -412,28 +334,6 @@ void InitNewGame(bool with_intro)
 	
 	fade.set_full(FADE_OUT);
 }
-
-
-void AppMinimized(void)
-{
-	stat("Game minimized or lost focus--pausing...");
-	SDL_PauseAudio(1);
-	
-	for(;;)
-	{
-		if ((SDL_GetAppState() & VISFLAGS) == VISFLAGS)
-		{
-			break;
-		}
-		
-		input_poll();
-		SDL_Delay(20);
-	}
-	
-	SDL_PauseAudio(0);
-	stat("Focus regained, resuming play...");
-}
-
 
 /*
 void c------------------------------() {}
@@ -489,80 +389,6 @@ char buffer[80];
 	va_end(ar);
 	
 	console.Print(buffer);
-}
-
-/*
-void c------------------------------() {}
-*/
-
-void speed_test(void)
-{
-	SDL_Rect textrect;
-	SDL_Surface *vram = screen->GetSDLSurface();
-	int click = 0;
-	
-	uint32_t end = 0;
-	fps = 0;
-	
-	SDL_FillRect(vram, NULL, SDL_MapRGB(vram->format, 255, 0, 0));
-	int c = 0;
-	
-	game.running = true;
-	while(game.running)
-	{
-		//SDL_FillRect(vram, NULL, c ^= 255);
-		
-		if (SDL_GetTicks() >= end)
-		{
-			stat("%d fps", fps);
-			fps = 0;
-			end = SDL_GetTicks() + 1000;
-			
-			if (++click > 3)
-				break;
-		}
-		
-		screen->Flip();
-		fps++;
-	}
-}
-
-void org_test_miniloop(void)
-{
-uint32_t start = 0, curtime;
-uint32_t counter;
-
-	stat("Starting org test");
-	
-	font_draw(5, 5, "ORG test in progress...", 0, &greenfont);
-	font_draw(5, 15, "Logging statistics to nx.log", 0, &greenfont);
-	font_draw(5, 25, "Press any button to quit", 0, &greenfont);
-	screen->Flip();
-	
-	music_set_enabled(1);
-	music(32);
-	
-	last_sdl_key = -1;
-	
-	for(;;)
-	{
-		org_run();
-		
-		if (++counter > 1024)
-		{
-			counter = 0;
-			
-			curtime = SDL_GetTicks();
-			if ((curtime - start) >= 100)
-			{
-				start = curtime;
-				input_poll();
-				
-				if (last_sdl_key != -1)
-					return;
-			}
-		}
-	}
 }
 
 void SDL_Delay(int ms)

@@ -13,40 +13,20 @@
 
 NXSurface *screen = NULL;				// created from SDL's screen
 static NXSurface *drawtarget = NULL;	// target of DrawRect etc; almost always screen
-bool use_palette = false;				// true if we are in an indexed-color video mode
 int screen_bpp;
 
 const NXColor DK_BLUE(0, 0, 0x21);		// the popular dk blue backdrop color
 const NXColor BLACK(0, 0, 0);			// pure black, only works if no colorkey
 const NXColor CLEAR(0, 0, 0);			// the transparent/colorkey color
 
-static bool is_fullscreen = false;
 static int current_res = -1;
 
 bool Graphics::init(int resolution)
 {
-	if (use_palette)
-	{
-		screen_bpp = 8;
-	}
-	else
-	{
-		screen_bpp = 16;	// the default
-		
-		const SDL_VideoInfo *info;
-		
-		// it's faster if we create the SDL screen at the bpp of the real screen.
-		// max fps went from 120 to 160 on my X11 system this way.
-		if ((info = SDL_GetVideoInfo()))
-		{
-			stat("videoinfo: desktop bpp %d", info->vfmt->BitsPerPixel);
-			if (info->vfmt->BitsPerPixel > 8)
-				screen_bpp = info->vfmt->BitsPerPixel;
-		}
-	}
-	
-	palette_reset();
-	
+	screen_bpp = 16;	// the default
+
+	const SDL_VideoInfo *info;
+
 	if (SetResolution(resolution, false))
 		return 1;
 	
@@ -62,12 +42,12 @@ bool Graphics::init(int resolution)
 void Graphics::close()
 {
 	stat("Graphics::Close()");
-	SDL_ShowCursor(true);
 }
 
 /*
 void c------------------------------() {}
 */
+extern unsigned pitch;
 
 bool Graphics::InitVideo()
 {
@@ -76,27 +56,14 @@ SDL_Surface *sdl_screen;
 	if (drawtarget == screen) drawtarget = NULL;
 	if (screen) delete screen;
 	
-	uint32_t flags = SDL_SWSURFACE | SDL_HWPALETTE;
-	if (is_fullscreen) flags |= SDL_FULLSCREEN;
-	
-	putenv((char *)"SDL_VIDEO_CENTERED=1");
-	
-	stat("SDL_SetVideoMode: %dx%d @ %dbpp", SCREEN_WIDTH*SCALE, SCREEN_HEIGHT*SCALE, screen_bpp);
-	sdl_screen = SDL_SetVideoMode(SCREEN_WIDTH*SCALE, SCREEN_HEIGHT*SCALE, screen_bpp, flags);
+	sdl_screen = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, screen_bpp, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
+	pitch = 320 << 1;
+
 	if (!sdl_screen)
 	{
 		staterr("Graphics::InitVideo: error setting video mode");
 		return 1;
 	}
-	
-	if (use_palette && !(sdl_screen->flags & SDL_HWPALETTE))
-	{
-		staterr("Graphics::InitVideo: failed to obtain exclusive access to hardware palette");
-		exit(1);
-	}
-	
-	SDL_WM_SetCaption("NXEngine", NULL);
-	SDL_ShowCursor(is_fullscreen == false);
 	
 	screen = new NXSurface(sdl_screen, false);
 	if (!drawtarget) drawtarget = screen;
@@ -106,7 +73,6 @@ SDL_Surface *sdl_screen;
 bool Graphics::FlushAll()
 {
 	stat("Graphics::FlushAll()");
-	palette_reset();
 	Sprites::FlushSheets();
 	Tileset::Reload();
 	map_flush_graphics();
@@ -115,12 +81,6 @@ bool Graphics::FlushAll()
 
 void Graphics::SetFullscreen(bool enable)
 {
-	if (is_fullscreen != enable)
-	{
-		is_fullscreen = enable;
-		InitVideo();
-		Graphics::FlushAll();
-	}
 }
 
 // change the video mode to one of the available resolution codes, currently:
@@ -137,37 +97,12 @@ bool Graphics::SetResolution(int r, bool restoreOnFailure)
 	int old_res = current_res;
 	int factor;
 	
-	if (r == 0)
-	{
-		is_fullscreen = true;
-		factor = 2;
-	}
-	else
-	{
-		is_fullscreen = false;
-		factor = r;
-	}
-	
-	stat("Setting scaling %d and fullscreen=%s", factor, is_fullscreen ? "yes":"no");
-	NXSurface::SetScale(factor);
-	
 	if (Graphics::InitVideo())
-	{
-		staterr("Switch to resolution %d failed!", r);
-		
-		if (restoreOnFailure)
-		{
-			staterr("Trying to recover old mode %d.", r, old_res);
-			if (Graphics::SetResolution(old_res, false))
-			{
-				staterr("Fatal error: vidmode recovery failed!!!");
-			}
-		}
-		
 		return 1;
-	}
 	
-	if (Graphics::FlushAll()) return 1;
+	if (Graphics::FlushAll())
+		return 1;
+
 	return 0;
 }
 

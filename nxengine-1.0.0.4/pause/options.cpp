@@ -128,7 +128,6 @@ Dialog *dlg = opt.dlg;
 	dlg->Clear();
 	
 	dlg->AddItem("Resolution: ", _res_change, _res_get);
-	dlg->AddItem("Controls", EnterControlsMenu);
 	dlg->AddItem("Replay", EnterReplayMenu);
 	
 	dlg->AddSeparator();
@@ -360,39 +359,6 @@ void _play_replay(ODItem *item, int dir)
 /*
 void c------------------------------() {}
 */
-
-static void EnterControlsMenu(ODItem *item, int dir)
-{
-Dialog *dlg = opt.dlg;
-
-	dlg->Clear();
-	sound(SND_MENU_MOVE);
-	
-	dlg->AddItem("Left", _edit_control, _upd_control, LEFTKEY);
-	dlg->AddItem("Right", _edit_control, _upd_control, RIGHTKEY);
-	dlg->AddItem("Up", _edit_control, _upd_control, UPKEY);
-	dlg->AddItem("Down", _edit_control, _upd_control, DOWNKEY);
-	
-	dlg->AddSeparator();
-	
-	dlg->AddItem("Jump", _edit_control, _upd_control, JUMPKEY);
-	dlg->AddItem("Fire", _edit_control, _upd_control,  FIREKEY);
-	dlg->AddItem("Wpn Prev", _edit_control, _upd_control, PREVWPNKEY);
-	dlg->AddItem("Wpn Next", _edit_control, _upd_control, NEXTWPNKEY);
-	dlg->AddItem("Inventory", _edit_control, _upd_control, INVENTORYKEY);
-	dlg->AddItem("Map", _edit_control, _upd_control, MAPSYSTEMKEY);
-	
-	dlg->AddSeparator();
-	dlg->AddDismissalItem();
-}
-
-static void _upd_control(ODItem *item)
-{
-	int keysym = input_get_mapping(item->id);
-	const char *keyname = SDL_GetKeyName((SDLKey)keysym);
-	
-	maxcpy(item->righttext, keyname, sizeof(item->righttext) - 1);
-}
 
 static void _edit_control(ODItem *item, int dir)
 {

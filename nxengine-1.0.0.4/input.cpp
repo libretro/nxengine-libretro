@@ -1,6 +1,10 @@
 
 #include "nx.h"
 #include "input.fdh"
+#include "libretro.h"
+
+#undef SDLK_LAST
+#define SDLK_LAST 12
 
 uint8_t mappings[SDLK_LAST];
 
@@ -13,39 +17,20 @@ bool input_init(void)
 	memset(inputs, 0, sizeof(inputs));
 	memset(lastinputs, 0, sizeof(lastinputs));
 	memset(mappings, 0xff, sizeof(mappings));
-	
-	// default mappings
-	{
-		mappings[SDLK_LEFT] = LEFTKEY;
-		mappings[SDLK_RIGHT] = RIGHTKEY;
-		mappings[SDLK_UP] = UPKEY;
-		mappings[SDLK_DOWN] = DOWNKEY;
-		mappings[SDLK_z] = JUMPKEY;
-		mappings[SDLK_x] = FIREKEY;
-		mappings[SDLK_a] = PREVWPNKEY;
-		mappings[SDLK_s] = NEXTWPNKEY;
-		mappings[SDLK_q] = INVENTORYKEY;
-		mappings[SDLK_w] = MAPSYSTEMKEY;
-		
-		mappings[SDLK_ESCAPE] = ESCKEY;
-		
-		mappings[SDLK_F1] = F1KEY;
-		mappings[SDLK_F2] = F2KEY;
-		mappings[SDLK_F3] = F3KEY;
-		mappings[SDLK_F4] = F4KEY;
-		mappings[SDLK_F5] = F5KEY;
-		mappings[SDLK_F6] = F6KEY;
-		mappings[SDLK_F7] = F7KEY;
-		mappings[SDLK_F8] = F8KEY;
-		mappings[SDLK_F9] = F9KEY;
-		mappings[SDLK_F10] = F10KEY;
-		mappings[SDLK_F11] = F11KEY;
-		mappings[SDLK_F12] = F12KEY;
-		
-		mappings[SDLK_SPACE] = FREEZE_FRAME_KEY;
-		mappings[SDLK_c] = FRAME_ADVANCE_KEY;
-		mappings[SDLK_v] = DEBUG_FLY_KEY;
-	}
+
+	mappings[RETRO_DEVICE_ID_JOYPAD_LEFT]   = LEFTKEY;  
+	mappings[RETRO_DEVICE_ID_JOYPAD_RIGHT]  = RIGHTKEY;  
+	mappings[RETRO_DEVICE_ID_JOYPAD_UP]     = UPKEY;  
+	mappings[RETRO_DEVICE_ID_JOYPAD_DOWN]   = DOWNKEY;  
+
+	mappings[RETRO_DEVICE_ID_JOYPAD_B] = JUMPKEY;
+	mappings[RETRO_DEVICE_ID_JOYPAD_Y] = FIREKEY;
+	mappings[RETRO_DEVICE_ID_JOYPAD_L] = PREVWPNKEY;
+	mappings[RETRO_DEVICE_ID_JOYPAD_R] = NEXTWPNKEY;
+	mappings[RETRO_DEVICE_ID_JOYPAD_X] = MAPSYSTEMKEY;
+
+	mappings[RETRO_DEVICE_ID_JOYPAD_SELECT] = F3KEY;
+	mappings[RETRO_DEVICE_ID_JOYPAD_START] = INVENTORYKEY;
 	
 	return 0;
 }
@@ -54,12 +39,6 @@ bool input_init(void)
 // set the SDL key that triggers an input
 void input_remap(int keyindex, int sdl_key)
 {
-	stat("input_remap(%d => %d)", keyindex, sdl_key);
-	int old_mapping = input_get_mapping(keyindex);
-	if (old_mapping != -1)
-		mappings[old_mapping] = 0xff;
-	
-	mappings[sdl_key] = keyindex;
 }
 
 // get which SDL key triggers a given input
@@ -96,9 +75,6 @@ static const char *input_names[] =
 
 void input_set_mappings(int *array)
 {
-	memset(mappings, 0xff, sizeof(mappings));
-	for(int i=0;i<INPUT_COUNT;i++)
-		mappings[array[i]] = i;
 }
 
 /*
@@ -107,96 +83,25 @@ void c------------------------------() {}
 
 void input_poll(void)
 {
-SDL_Event evt;
-int ino, key;
-	
-	while(SDL_PollEvent(&evt))
-	{
-		switch(evt.type)
-		{
-			case SDL_KEYDOWN:
-			case SDL_KEYUP:
-			{
-				key = evt.key.keysym.sym;
-				
-				static uint8_t shiftstates = 0;
-				extern bool freezeframe;
-				
-				if (console.IsVisible() && !IsNonConsoleKey(key))
-				{
-					if (key == SDLK_LSHIFT)
-					{
-						if (evt.type == SDL_KEYDOWN)
-							shiftstates |= LEFTMASK;
-						else
-							shiftstates &= ~LEFTMASK;
-					}
-					else if (key == SDLK_RSHIFT)
-					{
-						if (evt.type == SDL_KEYDOWN)
-							shiftstates |= RIGHTMASK;
-						else
-							shiftstates &= ~RIGHTMASK;
-					}
-					else
-					{
-						int ch = key;
-						if (shiftstates != 0)
-						{
-							ch = toupper(ch);
-							if (ch == '.') ch = '>';
-							if (ch == '-') ch = '_';
-							if (ch == '/') ch = '?';
-							if (ch == '1') ch = '!';
-						}
-						
-						if (evt.type == SDL_KEYDOWN)
-							console.HandleKey(ch);
-						else
-							console.HandleKeyRelease(ch);
-					}
-				}
-				else
-				{
-					ino = mappings[key];
-					if (ino != 0xff)
-						inputs[ino] = (evt.type == SDL_KEYDOWN);
-					
-					if (evt.type == SDL_KEYDOWN)
-					{
-						if (Replay::IsPlaying() && ino <= LASTCONTROLKEY)
-						{
-							stat("user interrupt - stopping playback of replay");
-							Replay::end_playback();
-							memset(inputs, 0, sizeof(inputs));
-							inputs[ino] = true;
-						}
-						
-						if (key == '`')		// bring up console
-						{
-							if (!freezeframe)
-							{
-								sound(SND_SWITCH_WEAPON);
-								console.SetVisible(true);
-							}
-						}
-						else
-						{
-							last_sdl_key = key;
-						}
-					}
-				}
-			}
-			break;
-			
-			case SDL_QUIT:
-			{
-				inputs[ESCKEY] = true;
-				game.running = false;
-			}
-			break;
-		}
-	}
+   extern retro_input_state_t input_cb;
+
+   for (unsigned i = 0; i < 12; i++)
+   {
+      int ino = mappings[i];
+
+      if (ino != F3KEY)
+      {
+         if (ino != 0xff)
+            inputs[ino] = input_cb(0, RETRO_DEVICE_JOYPAD, 0, i);
+      }
+      else
+      {
+         static bool old;
+         bool input = input_cb(0, RETRO_DEVICE_JOYPAD, 0, i);
+         inputs[ino] = input && !old;
+         old = input;
+      }
+   }
 }
 
 // keys that we don't want to send to the console
