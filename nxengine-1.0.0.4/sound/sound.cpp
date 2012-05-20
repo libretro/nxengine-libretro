@@ -11,6 +11,8 @@
 #include "sound.h"
 #include "sound.fdh"
 
+#include "libretro_shared.h"
+
 #define MUSIC_OFF		0
 #define MUSIC_ON		1
 #define MUSIC_BOSS_ONLY	2
@@ -34,7 +36,7 @@ const char *org_names[] =
 
 static const char bossmusic[] = { 4, 7, 10, 11, 15, 16, 17, 18, 21, 22, 31, 33, 35, 0 };
 
-static const char *pxt_dir = "./pxt/";
+static const char *pxt_dir = "pxt";
 static const char *org_dir = "./org/";
 static const char *sndcache = "sndcache.pcm";
 static const char *org_wavetable = "wavetable.dat";
@@ -43,7 +45,11 @@ bool sound_init(void)
 {
 	if (SSInit()) return 1;
 	if (pxt_init()) return 1;
-	if (pxt_LoadSoundFX(pxt_dir, sndcache, NUM_SOUNDS)) return 1;
+
+	const char * pxt_dirname = retro_create_path_string(g_dir, pxt_dir);
+	const char * sndcache_tmp = retro_create_path_string(g_dir, sndcache);
+
+	if (pxt_LoadSoundFX(pxt_dirname, sndcache_tmp, NUM_SOUNDS)) return 1;
 	
 	if (org_init(org_wavetable, pxt_dir, ORG_VOLUME))
 	{

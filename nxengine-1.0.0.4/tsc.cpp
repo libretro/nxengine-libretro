@@ -6,6 +6,7 @@
 #include "vararray.h"
 #include "tsc.h"
 #include "tsc.fdh"
+#include "libretro_shared.h"
 
 #define TRACE_SCRIPT
 
@@ -106,15 +107,15 @@ char fname[MAXPATHLEN];
 	for(int i=0;i<NUM_SCRIPT_PAGES;i++)
 	
 	// load the "common" TSC scripts available to all maps
-	sprintf(fname, "%s/Head.tsc", data_dir);
+	sprintf(fname, "%s/%s/Head.tsc", g_dir, data_dir);
 	if (tsc_load(fname, SP_HEAD)) return 1;
 	
 	// load the inventory screen scripts
-	sprintf(fname, "%s/ArmsItem.tsc", data_dir);
+	sprintf(fname, "%s/%s/ArmsItem.tsc", g_dir, data_dir);
 	if (tsc_load(fname, SP_ARMSITEM)) return 1;
 	
 	// load stage select/teleporter scripts
-	sprintf(fname, "%s/StageSelect.tsc", data_dir);
+	sprintf(fname, "%s/%s/StageSelect.tsc", g_dir, data_dir);
 	if (tsc_load(fname, SP_STAGESELECT)) return 1;
 	
 	return 0;

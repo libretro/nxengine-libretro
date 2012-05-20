@@ -11,6 +11,8 @@
 #include "sslib.h"			// SAMPLE_RATE
 #include "org.fdh"
 
+#include "libretro_shared.h"
+
 //#define QUIET
 #define DRUM_PXT
 
@@ -120,16 +122,18 @@ uint16_t version;
 			if (load_drum(fname, d)) return 1;
 		}
 	#else
+
+		const char * drum_cache_fname = retro_create_path_string(g_dir, drum_cache);
 		
 		// try and load the drums from cache instead of synthing them
-		fp = fileopen(drum_cache, "rb");
+		fp = fileopen(drum_cache_fname, "rb");
 		if (fp)
 		{
 			// this also checks for correct endianness
 			fread(&version, sizeof(version), 1, fp);
 			if (version != DRUM_VERSION)
 			{
-				printf("%s: version incorrect\n", drum_cache);
+				printf("%s: version incorrect\n", drum_cache_fname);
 			}
 			else
 			{
@@ -159,7 +163,7 @@ uint16_t version;
 		}
 		
 		// cache the drums for next time
-		fp = fileopen(drum_cache, "wb");
+		fp = fileopen(drum_cache_fname, "wb");
 		if (fp)
 		{
 			version = DRUM_VERSION;
