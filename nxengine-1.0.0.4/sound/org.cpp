@@ -1,10 +1,9 @@
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <endian.h>
 
 #include "../common/basics.h"
 #include "org.h"
@@ -537,16 +536,18 @@ bool org_is_playing(void)
 }
 
 // resume a song paused with org_stop
-/*void org_resume(void)
+#if 0
+void org_resume(void)
 {
 	if (!song.playing)
 	{
-/*		lprintf("restarting buffer %d\n", last_played_buffer);
+		lprintf("restarting buffer %d\n", last_played_buffer);
 		//StartOrgBuffer(last_played_buffer, &final_buffer[last_played_buffer].chunk);
 		song.playing = 1;
-		song.volume = ORG_VOLUME;*/
-/*	}
-}*/
+		song.volume = ORG_VOLUME;
+	}
+}
+#endif
 
 
 void org_fade(void)
@@ -594,9 +595,9 @@ void c------------------------------() {}
 // combines all of the individual channel output buffers into a single, final, buffer.
 static void mix_buffers(void)
 {
-int i, cursample, len;
-int mixed_sample;
-signed short *final;
+	int i, cursample, len;
+	int mixed_sample;
+	signed short *final;
 
 //	lprintf("mix_buffers: mixing channels into final_buffer[%d]\n", current_buffer);
 	
@@ -614,7 +615,7 @@ signed short *final;
 		if (mixed_sample > 32767) mixed_sample = 32767;
 		else if (mixed_sample < -32768) mixed_sample = -32768;
 		
-		final[cursample] = htole16(mixed_sample);
+		final[cursample] = mixed_sample;
 	}
 }
 
@@ -640,11 +641,11 @@ void c------------------------------() {}
 */
 
 
-// given a volume and a panning value, it returns three values
-// between 0 and 1.00 which are how much to scale:
-//	the whole sound (volume_ratio)
-//  just the left channel (volume_left_ratio)
-//  just the right channel (volume_right_ratio)
+/* given a volume and a panning value, it returns three values
+ between 0 and 1.00 which are how much to scale:
+the whole sound (volume_ratio)
+just the left channel (volume_left_ratio)
+just the right channel (volume_right_ratio) */
 static void ComputeVolumeRatios(int volume, int panning, double *volume_ratio, \
 								double *volume_left_ratio, double *volume_right_ratio)
 {

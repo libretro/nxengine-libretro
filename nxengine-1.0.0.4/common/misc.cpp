@@ -12,7 +12,7 @@
 
 void stat(const char *fmt, ...);
 
-#if __BYTE_ORDER == __LITTLE_ENDIAN
+#ifndef MSB_FIRST
 uint16_t fgeti(FILE *fp)
 {
 uint16_t value;

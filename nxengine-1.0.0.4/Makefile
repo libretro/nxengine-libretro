@@ -31,25 +31,25 @@ else ifeq ($(platform), ps3)
    CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
    CXX = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-g++.exe
    AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe
-   CFLAGS += 
+   CFLAGS += -DMSB_FIRST=1
 else ifeq ($(platform), sncps3)
    TARGET := libretro.a
    CC = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    CXX = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    AR = $(CELL_SDK)/host-win32/sn/bin/ps3snarl.exe
-   CFLAGS += 
+   CFLAGS +=  -DMSB_FIRST=1
 else ifeq ($(platform), xenon)
    TARGET := libretro.a
    CC = xenon-gcc
    CXX = xenon-g++
    AR = xenon-ar
-   CFLAGS += -D__LIBXENON__ -D__ppc_
+   CFLAGS += -D__LIBXENON__ -D__ppc_ -DMSB_FIRST=1
 else ifeq ($(platform), wii)
    TARGET := libretro.a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar
-   CFLAGS += -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float
+   CFLAGS += -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float -DMSB_FIRST=1
 else
    TARGET := retro.dll
    CC = gcc
@@ -71,10 +71,11 @@ ENDGAME_OBJS := endgame/credits.o endgame/CredReader.o endgame/island.o endgame/
 
 EXTRACT_OBJS := $(EXTRACTDIR)/crc.o $(EXTRACTDIR)/extract.o $(EXTRACTDIR)/extractfiles.o $(EXTRACTDIR)/extractpxt.o $(EXTRACTDIR)/extractstages.o
 
-GRAPHICS_OBJS := graphics/graphics.o graphics/nxsurface.o graphics/font.o graphics/safemode.o graphics/sprites.o graphics/tileset.o
+GRAPHICS_OBJS := graphics/graphics.o graphics/nxsurface.o graphics/font.o graphics/sprites.o graphics/tileset.o
 
 ifeq ($(SAFEMODE), 1)
 SAFEMODE_OBJS := graphics/safemode.o
+CFLAGS += -DUSE_SAFEMODE=1
 else
 SAFEMODE_OBJS :=
 endif
@@ -132,7 +133,7 @@ else ifeq ($(platform), xenon)
 else ifeq ($(platform), wii)
 	$(AR) rcs $@ $(OBJECTS)
 else
-	$(CXX) $(fpic) $(SHARED) $(INCLUDES) -o $@ $(OBJECTS) -lm
+	$(CXX) $(fpic) $(SHARED) $(INCLUDES) $(CFLAGS) -o $@ $(OBJECTS) -lm
 endif
 
 %.o: %.c
