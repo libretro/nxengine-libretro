@@ -8,6 +8,8 @@
 #include "replay.h"
 #include "settings.fdh"
 
+#include "libretro_shared.h"
+
 const char *setfilename = "settings.dat";
 const uint16_t SETTINGS_VERSION = 0x1602;		// serves as both a version and magic
 
@@ -69,12 +71,14 @@ static bool tryload(Settings *setfile)
 #ifdef DEBUG
 	stat("Loading settings...");
 #endif
+
+	const char * setfilename_tmp = retro_create_path_string(g_dir, setfilename);
 	
-	fp = fileopen(setfilename, "rb");
+	fp = fileopen(setfilename_tmp, "rb");
 	if (!fp)
 	{
 #ifdef DEBUG
-		stat("Couldn't open file %s.", setfilename);
+		stat("Couldn't open file %s.", setfilename_tmp);
 #endif
 		return 1;
 	}
@@ -100,15 +104,17 @@ FILE *fp;
 
 	if (!setfile)
 		setfile = &normal_settings;
+
+	const char * setfilename_tmp = retro_create_path_string(g_dir, setfilename);
 	
 #ifdef DEBUG
 	stat("Writing settings...");
 #endif
-	fp = fileopen(setfilename, "wb");
+	fp = fileopen(setfilename_tmp, "wb");
 	if (!fp)
 	{
 #ifdef DEBUG
-		stat("Couldn't open file %s.", setfilename);
+		stat("Couldn't open file %s.", setfilename_tmp);
 #endif
 		return 1;
 	}
