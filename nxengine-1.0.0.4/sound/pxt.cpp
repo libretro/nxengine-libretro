@@ -976,33 +976,6 @@ void pxt_FreeSound(int slot)
 	}
 }
 
-/*
-char pxt_init(void)
-{
-int start;
-
-	//lprintf("Loading sound FX...\n");
-	start = SDL_GetTicks();
-	if (LoadSoundFX("pxt/", "fx.pcm", 0xa0)) return 1;
-	lprintf("time = %d\n", SDL_GetTicks() - start);
-	
-	pxt_Play(0x1e);
-	
-	snd = pxt_load("pxt/fx11.pxt");
-	if (snd)
-	{
-		render_pxt(snd);
-		
-		pxt_PrepareToPlay(snd, 4);
-		pxt_Play(4);
-		
-		debugshowsound(snd);
-	}
-	
-	return 0;
-}*/
-
-
 // free all the internal buffers of a PXSound
 void FreePXTBuf(stPXSound *snd)
 {

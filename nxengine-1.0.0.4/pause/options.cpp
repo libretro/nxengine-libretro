@@ -116,6 +116,18 @@ void DialogDismissed()
 	}
 }
 
+void _60hz_change(ODItem *item, int dir)
+{
+   extern bool retro_60hz;
+   retro_60hz ^= 1;
+}
+
+void _60hz_get(ODItem *item)
+{
+   extern bool retro_60hz;
+   static const char *strs[] = { "50fps", "60fps" };
+   strcpy(item->suffix, strs[retro_60hz]);
+}
 
 /*
 void c------------------------------() {}
@@ -127,7 +139,7 @@ Dialog *dlg = opt.dlg;
 
 	dlg->Clear();
 	
-	dlg->AddItem("Resolution: ", _res_change, _res_get);
+	dlg->AddItem("Framerate: ", _60hz_change, _60hz_get);
 	dlg->AddItem("Replay", EnterReplayMenu);
 	
 	dlg->AddSeparator();
@@ -154,56 +166,6 @@ void LeavingMainMenu()
 	opt.dlg->onclear = NULL;
 	opt.InMainMenu = false;
 }
-
-void _res_get(ODItem *item)
-{
-	const char **reslist = Graphics::GetResolutions();
-	
-	if (settings->resolution < 0 || \
-		settings->resolution >= count_string_list(reslist))
-	{
-		item->suffix[0] = 0;
-	}
-	else
-	{
-		strcpy(item->suffix, reslist[settings->resolution]);
-	}
-}
-
-
-void _res_change(ODItem *item, int dir)
-{
-const char **reslist = Graphics::GetResolutions();
-int numres = count_string_list(reslist);
-int newres;
-
-	sound(SND_DOOR);
-	
-	newres = (settings->resolution + dir);
-	if (newres >= numres) newres = 0;
-	if (newres < 0) newres = (numres - 1);
-	
-	// because on my computer, a SDL bug causes switching to fullscreen to
-	// not restore the resolution properly on exit, and it keeps messing up all
-	// the windows when I press it accidently.
-	if (newres == 0 && settings->inhibit_fullscreen)
-	{
-		new Message("Fullscreen disabled via", "inhibit-fullscreen console setting");
-		sound(SND_GUN_CLICK);
-		return;
-	}
-	
-	if (!Graphics::SetResolution(newres, true))
-	{
-		settings->resolution = newres;
-	}
-	else
-	{
-		new Message("Resolution change failed");
-		sound(SND_GUN_CLICK);
-	}
-}
-
 
 void _debug_change(ODItem *item, int dir)
 {
