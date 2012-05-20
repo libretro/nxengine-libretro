@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include "../graphics/safemode.h"
 #include "extract.fdh"
+#include "libretro_shared.h"
 
 using safemode::print;
 using safemode::status;
@@ -13,7 +14,6 @@ using safemode::clearstatus;
 using safemode::clear;
 using safemode::moveto;
 using safemode::run_until_key;
-static const char *filename = "Doukutsu.exe";
 
 static int extract_do(void)
 {
@@ -22,6 +22,8 @@ static int extract_do(void)
 	clear();
 	moveto(SM_UPPER_THIRD);
 	print("= Extracting Files =");
+
+	const char *filename = retro_create_path_string(g_dir, "Doukutsu.exe");
 	
 	fp = fileopen(filename, "rb");
 	if (!fp)

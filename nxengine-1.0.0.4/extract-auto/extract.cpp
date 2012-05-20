@@ -5,14 +5,15 @@
 #include <string.h>
 #include <stdlib.h>
 #include "extract.fdh"
-
-static const char *filename = "Doukutsu.exe";
+#include "libretro_shared.h"
 
 static int extract_do(void)
 {
 	FILE *fp;
 
 	stat("= Extracting Files =");
+
+	const char *filename = retro_create_path_string(g_dir, "Doukutsu.exe");
 	
 	fp = fileopen(filename, "rb");
 	if (!fp)
