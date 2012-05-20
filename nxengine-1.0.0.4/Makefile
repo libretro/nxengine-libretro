@@ -1,5 +1,6 @@
 DEBUG=0
 SAFEMODE=0
+DEBUGLOG=0
 
 ifeq ($(platform),)
 platform = unix
@@ -78,6 +79,10 @@ SAFEMODE_OBJS := graphics/safemode.o
 CFLAGS += -DUSE_SAFEMODE=1
 else
 SAFEMODE_OBJS :=
+endif
+
+ifeq ($(DEBUGLOG), 1)
+CFLAGS += -DDEBUG_LOG=1
 endif
 
 INTRO_OBJS := intro/intro.o intro/title.o
