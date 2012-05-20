@@ -66,9 +66,10 @@ static void Sprites::LoadSheetIfNeeded(int sheetno)
 {
 	if (!spritesheet[sheetno])
 	{
-		char pbm_name[MAXPATHLEN];
+		const char * pbm_name = retro_create_subpath_string(g_dir, data_dir, sheetfiles.StringAt(sheetno));
 		
-		sprintf(pbm_name, "%s/%s", data_dir, sheetfiles.StringAt(sheetno));
+		stat("LoadSheetIfNeeded: %s", pbm_name);
+
 		spritesheet[sheetno] = new NXSurface;
 		spritesheet[sheetno]->LoadImage(pbm_name, true);
 		
