@@ -3,6 +3,8 @@
 #include "graphics.h"
 #include "tileset.h"
 #include "tileset.fdh"
+#include "libretro_shared.h"
+
 using namespace Graphics;
 
 extern const char *tileset_names[];		// from stagedata.cpp
@@ -41,10 +43,14 @@ char fname[MAXPATHLEN];
 		}
 		
 		sprintf(fname, "%s/Prt%s.pbm", stage_dir, tileset_names[new_tileset]);
+
+		const char * fname_tmp = retro_create_path_string(g_dir, fname);
+
+		stat("Tileset::Load: %s", fname_tmp);
 		
 		// always use SDL_DisplayFormat on tilesets; they need to come out of 8-bit
 		// so that we can replace the destroyable star tiles without them palletizing.
-		tileset = NXSurface::FromFile(fname, true, true);
+		tileset = NXSurface::FromFile(fname_tmp, true, true);
 		if (!tileset)
 		{
 			return 1;
