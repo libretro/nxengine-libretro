@@ -3,6 +3,8 @@
 #include "font.h"
 #include "font.fdh"
 
+#include "libretro_shared.h"
+
 static int text_draw(int x, int y, const char *text, int spacing=0, NXFont *font=&whitefont);
 
 #define SCREEN_BPP 15
@@ -10,8 +12,6 @@ static int text_draw(int x, int y, const char *text, int spacing=0, NXFont *font
 #define GREEN_SHIFT 5
 #define BLUE_SHIFT 0
 
-const char *fontdir = "data";
-const char *fontfile = "font.bmp";
 static SDL_Surface *sdl_screen = NULL;
 static SDL_Surface *shadesfc = NULL;
 
@@ -25,20 +25,17 @@ NXFont greenfont;
 NXFont bluefont;		// used for "F3:Options" text on pause screen
 NXFont shadowfont;		// white letters w/ drop shadow
 
-extern char g_dir[1024];
-
 bool font_init(void)
 {
 	bool error = false;
-	char fontfile_new[512];
 
-	snprintf(fontfile_new, sizeof(fontfile_new), "%s/%s/%s", g_dir, fontdir, fontfile); 
+	const char * fontfile_name = retro_create_subpath_string(g_dir, "data", "font.bmp");
 
 	// we'll be bypassing the NXSurface automatic scaling features
 	// and drawing at the real resolution so we can get better-looking fonts.
 	sdl_screen = screen->GetSDLSurface();
 
-	SDL_Surface *font = SDL_LoadBMP(fontfile_new);
+	SDL_Surface *font = SDL_LoadBMP(fontfile_name);
 	SDL_SetColorKey(font, SDL_SRCCOLORKEY, 0);
 
 	error |= whitefont.InitChars(font, 0xffffff);
