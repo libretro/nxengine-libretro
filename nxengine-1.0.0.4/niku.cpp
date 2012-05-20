@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "niku.fdh"
+#include "libretro_shared.h"
 
 /*
 	290.rec contains the tick value 4 times, followed by the 4 byte key
@@ -18,11 +19,14 @@ uint32_t *result = (uint32_t *)buffer;
 int i, j;
 
 	const char *fname = getfname();
-	fp = fileopen(fname, "rb");
+
+	const char *fname_tmp = retro_create_path_string(g_dir, fname);
+
+	fp = fileopen(fname_tmp, "rb");
 	if (!fp)
 	{
 #ifdef DEBUG
-		stat("niku_load: couldn't open file '%s'", fname);
+		stat("niku_load: couldn't open file '%s'", fname_tmp);
 #endif
 		if (value_out) *value_out = 0;
 		return 1;
@@ -47,14 +51,14 @@ int i, j;
 		(result[0] != result[3]))
 	{
 #ifdef DEBUG
-		stat("niku_load: value mismatch; '%s' corrupt", fname);
+		stat("niku_load: value mismatch; '%s' corrupt", fname_tmp);
 #endif
 		if (value_out) *value_out = 0;
 	}
 	else
 	{
 #ifdef DEBUG
-		stat("niku_load: loaded value 0x%x from %s", *result, fname);
+		stat("niku_load: loaded value 0x%x from %s", *result, fname_tmp);
 #endif
 		if (value_out) *value_out = *result;
 	}
@@ -93,10 +97,13 @@ uint32_t *buf_dword = (uint32_t *)buf_byte;
 	}
 	
 	const char *fname = getfname();
-	FILE *fp = fileopen(fname, "wb");
+
+	const char * fname_tmp = retro_create_path_string(g_dir, fname);
+
+	FILE *fp = fileopen(fname_tmp, "wb");
 	if (!fp)
 	{
-		staterr("niku_save: failed to open '%s'", fname);
+		staterr("niku_save: failed to open '%s'", fname_tmp);
 		return 1;
 	}
 	
