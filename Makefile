@@ -19,19 +19,19 @@ else ifeq ($(platform), osx)
    fpic := -fPIC
    SHARED := -dynamiclib
 else ifeq ($(platform), ps3)
-   TARGET := libretro.a
+   TARGET := libretro_ps3.a
    CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
    CXX = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-g++.exe
    AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe
    CFLAGS += -D__ppc__
 else ifeq ($(platform), sncps3)
-   TARGET := libretro.a
+   TARGET := libretro_ps3.a
    CC = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    CXX = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    AR = $(CELL_SDK)/host-win32/sn/bin/ps3snarl.exe
    CFLAGS += -D__ppc__
 else ifeq ($(platform), xenon)
-   TARGET := libretro.a
+   TARGET := libretro_xenon360.a
    SHARED := -shared -Wl,--version-script=libretro/link.T -Wl,--no-undefined
    CC = xenon-gcc
    CXX = xenon-g++
