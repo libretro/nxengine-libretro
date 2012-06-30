@@ -28,25 +28,25 @@ else ifeq ($(platform), osx)
    fpic := -fPIC
    SHARED := -dynamiclib
 else ifeq ($(platform), ps3)
-   TARGET := libretro.a
+   TARGET := libretro_ps3.a
    CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
    CXX = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-g++.exe
    AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe
    CFLAGS += -DMSB_FIRST=1
 else ifeq ($(platform), sncps3)
-   TARGET := libretro.a
+   TARGET := libretro_ps3.a
    CC = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    CXX = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    AR = $(CELL_SDK)/host-win32/sn/bin/ps3snarl.exe
    CFLAGS +=  -DMSB_FIRST=1
 else ifeq ($(platform), xenon)
-   TARGET := libretro.a
+   TARGET := libretro_xenon360.a
    CC = xenon-gcc
    CXX = xenon-g++
    AR = xenon-ar
    CFLAGS += -D__LIBXENON__ -D__ppc_ -DMSB_FIRST=1
 else ifeq ($(platform), wii)
-   TARGET := libretro.a
+   TARGET := libretro_wii.a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar
