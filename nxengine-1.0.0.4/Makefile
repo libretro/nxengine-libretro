@@ -39,6 +39,12 @@ else ifeq ($(platform), sncps3)
    CXX = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    AR = $(CELL_SDK)/host-win32/sn/bin/ps3snarl.exe
    CFLAGS +=  -DMSB_FIRST=1
+else ifeq ($(platform), psl1ght)
+   TARGET := libretro_psl1ght.a
+   CC = $(PS3DEV)/ppu/bin/ppu-gcc
+   CC = $(PS3DEV)/ppu/bin/ppu-g++
+   AR = $(PS3DEV)/ppu/bin/ppu-ar
+   CFLAGS += -DMSB_FIRST=1
 else ifeq ($(platform), xenon)
    TARGET := libretro_xenon360.a
    CC = xenon-gcc
@@ -132,6 +138,8 @@ $(TARGET): $(OBJECTS)
 ifeq ($(platform), ps3)
 	$(AR) rcs $@ $(OBJECTS)
 else ifeq ($(platform), sncps3)
+	$(AR) rcs $@ $(OBJECTS)
+ifeq ($(platform), psl1ght)
 	$(AR) rcs $@ $(OBJECTS)
 else ifeq ($(platform), xenon)
 	$(AR) rcs $@ $(OBJECTS)
