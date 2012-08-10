@@ -173,6 +173,7 @@ struct SDL_VideoDevice {
 	/* Swap the current buffers in double buffer mode. */
 	void (*GL_SwapBuffers)(_THIS);
 
+  	/* OpenGL functions for SDL_OPENGLBLIT */
 	int is_32bit;
  
 	/* * * */

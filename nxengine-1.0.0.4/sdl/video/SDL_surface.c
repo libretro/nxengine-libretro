@@ -24,6 +24,7 @@
 #include "SDL_video.h"
 #include "SDL_sysvideo.h"
 #include "SDL_blit.h"
+#include "SDL_RLEaccel_c.h"
 #include "SDL_pixels_c.h"
 #include "SDL_leaks.h"
 
@@ -73,7 +74,7 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 	}
 
 	/* Allocate the surface */
-	surface = (SDL_Surface *)malloc(sizeof(*surface));
+	surface = (SDL_Surface *)SDL_malloc(sizeof(*surface));
 	if ( surface == NULL ) {
 		SDL_OutOfMemory();
 		return(NULL);
@@ -99,7 +100,7 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 	}
 	surface->format = SDL_AllocFormat(depth, Rmask, Gmask, Bmask, Amask);
 	if ( surface->format == NULL ) {
-		free(surface);
+		SDL_free(surface);
 		return(NULL);
 	}
 	if ( Amask ) {
@@ -121,14 +122,14 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 	if ( ((flags&SDL_HWSURFACE) == SDL_SWSURFACE) || 
 				(video->AllocHWSurface(this, surface) < 0) ) {
 		if ( surface->w && surface->h ) {
-			surface->pixels = malloc(surface->h*surface->pitch);
+			surface->pixels = SDL_malloc(surface->h*surface->pitch);
 			if ( surface->pixels == NULL ) {
 				SDL_FreeSurface(surface);
 				SDL_OutOfMemory();
 				return(NULL);
 			}
 			/* This is important for bitmaps */
-			memset(surface->pixels, 0, surface->h*surface->pitch);
+			SDL_memset(surface->pixels, 0, surface->h*surface->pitch);
 		}
 	}
 
@@ -171,9 +172,24 @@ int SDL_SetColorKey (SDL_Surface *surface, Uint32 flag, Uint32 key)
 {
 	/* Sanity check the flag as it gets passed in */
 	if ( flag & SDL_SRCCOLORKEY ) {
-		flag = SDL_SRCCOLORKEY;
+		if ( flag & (SDL_RLEACCEL|SDL_RLEACCELOK) ) {
+			flag = (SDL_SRCCOLORKEY | SDL_RLEACCELOK);
+		} else {
+			flag = SDL_SRCCOLORKEY;
+		}
 	} else {
 		flag = 0;
+	}
+
+	/* Optimize away operations that don't change anything */
+	if ( (flag == (surface->flags & (SDL_SRCCOLORKEY|SDL_RLEACCELOK))) &&
+	     (key == surface->format->colorkey) ) {
+		return(0);
+	}
+
+	/* UnRLE surfaces before we change the colorkey */
+	if ( surface->flags & SDL_RLEACCEL ) {
+	        SDL_UnRLESurface(surface, 1);
 	}
 
 	if ( flag ) {
@@ -189,7 +205,11 @@ int SDL_SetColorKey (SDL_Surface *surface, Uint32 flag, Uint32 key)
 				surface->flags &= ~SDL_HWACCEL;
 			}
 		}
-		surface->flags &= ~SDL_RLEACCELOK;
+		if ( flag & SDL_RLEACCELOK ) {
+			surface->flags |= SDL_RLEACCELOK;
+		} else {
+			surface->flags &= ~SDL_RLEACCELOK;
+		}
 	} else {
 		surface->flags &= ~(SDL_SRCCOLORKEY|SDL_RLEACCELOK);
 		surface->format->colorkey = 0;
@@ -205,10 +225,23 @@ int SDL_SetAlpha (SDL_Surface *surface, Uint32 flag, Uint8 value)
 
 	/* Sanity check the flag as it gets passed in */
 	if ( flag & SDL_SRCALPHA ) {
+		if ( flag & (SDL_RLEACCEL|SDL_RLEACCELOK) ) {
+			flag = (SDL_SRCALPHA | SDL_RLEACCELOK);
+		} else {
 			flag = SDL_SRCALPHA;
+		}
 	} else {
 		flag = 0;
 	}
+
+	/* Optimize away operations that don't change anything */
+	if ( (flag == (surface->flags & (SDL_SRCALPHA|SDL_RLEACCELOK))) &&
+	     (!flag || value == oldalpha) ) {
+		return(0);
+	}
+
+	if(!(flag & SDL_RLEACCELOK) && (surface->flags & SDL_RLEACCEL))
+		SDL_UnRLESurface(surface, 1);
 
 	if ( flag ) {
 		SDL_VideoDevice *video = current_video;
@@ -222,7 +255,11 @@ int SDL_SetAlpha (SDL_Surface *surface, Uint32 flag, Uint8 value)
 				surface->flags &= ~SDL_HWACCEL;
 			}
 		}
-		surface->flags &= ~SDL_RLEACCELOK;
+		if ( flag & SDL_RLEACCELOK ) {
+		        surface->flags |= SDL_RLEACCELOK;
+		} else {
+		        surface->flags &= ~SDL_RLEACCELOK;
+		}
 	} else {
 		surface->flags &= ~SDL_SRCALPHA;
 		surface->format->alpha = SDL_ALPHA_OPAQUE;
@@ -572,7 +609,7 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 		} else {
 			{
 				for(y = dstrect->h; y; y--) {
-					memset(row, color, x);
+					SDL_memset(row, color, x);
 					row += dst->pitch;
 				}
 			}
@@ -604,7 +641,7 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 			for ( y=dstrect->h; y; --y ) {
 				Uint8 *pixels = row;
 				for ( x=dstrect->w; x; --x ) {
-					memcpy(pixels, &color, 3);
+					SDL_memcpy(pixels, &color, 3);
 					pixels += 3;
 				}
 				row += dst->pitch;
@@ -639,6 +676,10 @@ int SDL_LockSurface (SDL_Surface *surface)
 				return(-1);
 			}
 		}
+		if ( surface->flags & SDL_RLEACCEL ) {
+			SDL_UnRLESurface(surface, 1);
+			surface->flags |= SDL_RLEACCEL;	/* save accel'd state */
+		}
 		/* This needs to be done here in case pixels changes value */
 		surface->pixels = (Uint8 *)surface->pixels + surface->offset;
 	}
@@ -661,6 +702,19 @@ void SDL_UnlockSurface (SDL_Surface *surface)
 
 	/* Perform the unlock */
 	surface->pixels = (Uint8 *)surface->pixels - surface->offset;
+
+	/* Unlock hardware or accelerated surfaces */
+	if ( surface->flags & (SDL_HWSURFACE|SDL_ASYNCBLIT) ) {
+		SDL_VideoDevice *video = current_video;
+		SDL_VideoDevice *this  = current_video;
+		video->UnlockHWSurface(this, surface);
+	} else {
+		/* Update RLE encoded surface with new data */
+		if ( (surface->flags & SDL_RLEACCEL) == SDL_RLEACCEL ) {
+		        surface->flags &= ~SDL_RLEACCEL; /* stop lying */
+			SDL_RLESurface(surface);
+		}
+	}
 }
 
 /* 
@@ -708,7 +762,7 @@ SDL_Surface * SDL_ConvertSurface (SDL_Surface *surface,
 
 	/* Copy the palette if any */
 	if ( format->palette && convert->format->palette ) {
-		memcpy(convert->format->palette->colors,
+		SDL_memcpy(convert->format->palette->colors,
 				format->palette->colors,
 				format->palette->ncolors*sizeof(SDL_Color));
 		convert->format->palette->ncolors = format->palette->ncolors;
@@ -792,6 +846,9 @@ void SDL_FreeSurface (SDL_Surface *surface)
 	while ( surface->locked > 0 ) {
 		SDL_UnlockSurface(surface);
 	}
+	if ( (surface->flags & SDL_RLEACCEL) == SDL_RLEACCEL ) {
+	        SDL_UnRLESurface(surface, 0);
+	}
 	if ( surface->format ) {
 		SDL_FreeFormat(surface->format);
 		surface->format = NULL;
@@ -807,7 +864,7 @@ void SDL_FreeSurface (SDL_Surface *surface)
 	}
 	if ( surface->pixels &&
 	     ((surface->flags & SDL_PREALLOC) != SDL_PREALLOC) ) {
-		free(surface->pixels);
+		SDL_free(surface->pixels);
 	}
-	free(surface);
+	SDL_free(surface);
 }
