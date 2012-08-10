@@ -156,8 +156,12 @@ int s, c, i;
 		char outfilename[MAXPATHLEN];
 		sprintf(outfilename, "pxt/fx%02x.pxt", snd[s].id);
 		stat("[ %s ]", outfilename);
-		
+
+#ifdef _WIN32
+		mkdir("pxt");
+#else
 		mkdir("pxt", 0755);
+#endif
 		FILE *fpo = fopen(outfilename, "wb");
 		if (!fpo)
 		{
