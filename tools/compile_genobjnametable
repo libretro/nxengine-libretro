@@ -1,5 +1,0 @@
-#!/bin/bash
-echo compiling..
-gcc genobjnametable.cpp -o genobjnametable -lstdc++
-rm ../autogen/objnames.cpp
-cd ..; tools/genobjnametable; cd tools
