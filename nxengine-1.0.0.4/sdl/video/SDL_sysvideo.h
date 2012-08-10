@@ -24,11 +24,6 @@
 #ifndef _SDL_sysvideo_h
 #define _SDL_sysvideo_h
 
-#include "SDL_mouse.h"
-#define SDL_PROTOTYPES_ONLY
-#include "SDL_syswm.h"
-#undef SDL_PROTOTYPES_ONLY
-
 /* This file prototypes the video driver implementation.
    This is designed to be easily converted to C++ in the future.
  */
@@ -197,41 +192,6 @@ struct SDL_VideoDevice {
 
 	/* Grab or ungrab keyboard and mouse input */
 	SDL_GrabMode (*GrabInput)(_THIS, SDL_GrabMode mode);
-
-	/* Get some platform dependent window information */
-	int (*GetWMInfo)(_THIS, SDL_SysWMinfo *info);
-
-	/* * * */
-	/* Cursor manager functions */
-
-	/* Free a window manager cursor
-	   This function can be NULL if CreateWMCursor is also NULL.
-	 */
-	void (*FreeWMCursor)(_THIS, WMcursor *cursor);
-
-	/* If not NULL, create a black/white window manager cursor */
-	WMcursor *(*CreateWMCursor)(_THIS,
-		Uint8 *data, Uint8 *mask, int w, int h, int hot_x, int hot_y);
-
-	/* Show the specified cursor, or hide if cursor is NULL */
-	int (*ShowWMCursor)(_THIS, WMcursor *cursor);
-
-	/* Warp the window manager cursor to (x,y)
-	   If NULL, a mouse motion event is posted internally.
-	 */
-	void (*WarpWMCursor)(_THIS, Uint16 x, Uint16 y);
-
-	/* If not NULL, this is called when a mouse motion event occurs */
-	void (*MoveWMCursor)(_THIS, int x, int y);
-
-	/* Determine whether the mouse should be in relative mode or not.
-	   This function is called when the input grab state or cursor
-	   visibility state changes.
-	   If the cursor is not visible, and the input is grabbed, the
-	   driver can place the mouse in relative mode, which may result
-	   in higher accuracy sampling of the pointer motion.
-	*/
-	void (*CheckMouseMode)(_THIS);
 
 	/* * * */
 	/* Event manager functions */
