@@ -158,7 +158,7 @@ uint16_t version;
 		{
 			if (drum_pxt[d])
 			{
-				sprintf(fname, "%sfx%02x.pxt", pxt_path, drum_pxt[d]);
+				sprintf(fname, "%s/fx%02x.pxt", pxt_path, drum_pxt[d]);
 				if (load_drum_pxt(fname, d)) return 1;
 			}
 		}
