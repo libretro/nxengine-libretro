@@ -156,27 +156,6 @@ struct SDL_VideoDevice {
 	int (*GetGammaRamp)(_THIS, Uint16 *ramp);
 
 	/* * * */
-	/* OpenGL support */
-
-	/* Sets the dll to use for OpenGL and loads it */
-	int (*GL_LoadLibrary)(_THIS, const char *path);
-
-	/* Retrieves the address of a function in the gl library */
-	void* (*GL_GetProcAddress)(_THIS, const char *proc);
-
-	/* Get attribute information from the windowing system. */
-	int (*GL_GetAttribute)(_THIS, SDL_GLattr attrib, int* value);
-
-	/* Make the context associated with this driver current */
-	int (*GL_MakeCurrent)(_THIS);
-
-	/* Swap the current buffers in double buffer mode. */
-	void (*GL_SwapBuffers)(_THIS);
-
-  	/* OpenGL functions for SDL_OPENGLBLIT */
-	int is_32bit;
- 
-	/* * * */
 	/* Window manager functions */
 
 	/* Set the title and icon text */

@@ -33,7 +33,6 @@ SDL_VideoDevice *current_video = NULL;
 /* Various local functions */
 int SDL_VideoInit(const char *driver_name, Uint32 flags);
 void SDL_VideoQuit(void);
-void SDL_GL_UpdateRectsLock(SDL_VideoDevice* this, int numrects, SDL_Rect* rects);
 
 /*
  * Get the current display surface
@@ -438,10 +437,6 @@ void SDL_UpdateRects (SDL_Surface *screen, int numrects, SDL_Rect *rects)
 	SDL_VideoDevice *video = current_video;
 	SDL_VideoDevice *this = current_video;
 
-	if ( (screen->flags & (SDL_OPENGL | SDL_OPENGLBLIT)) == SDL_OPENGL ) {
-		SDL_SetError("OpenGL active, use SDL_GL_SwapBuffers()");
-		return;
-	}
 	if ( screen == SDL_ShadowSurface ) {
 		/* Blit the shadow surface using saved mapping */
 		SDL_Palette *pal = screen->format->palette;
@@ -531,122 +526,6 @@ int SDL_Flip(SDL_Surface *screen)
 		SDL_UpdateRect(screen, 0, 0, 0, 0);
 	}
 	return(0);
-}
-
-void *SDL_GL_GetProcAddress(const char* proc)
-{
-	SDL_VideoDevice *video = current_video;
-	SDL_VideoDevice *this = current_video;
-	void *func;
-
-	func = NULL;
-	if ( video->GL_GetProcAddress ) {
-		if ( video->gl_config.driver_loaded ) {
-			func = video->GL_GetProcAddress(this, proc);
-		} else {
-			SDL_SetError("No GL driver has been loaded");
-		}
-	} else {
-		SDL_SetError("No dynamic GL support in video driver");
-	}
-	return func;
-}
-
-/* Set the specified GL attribute for setting up a GL video mode */
-int SDL_GL_SetAttribute( SDL_GLattr attr, int value )
-{
-	int retval;
-	SDL_VideoDevice *video = current_video;
-
-	retval = 0;
-	switch (attr) {
-		case SDL_GL_RED_SIZE:
-			video->gl_config.red_size = value;
-			break;
-		case SDL_GL_GREEN_SIZE:
-			video->gl_config.green_size = value;
-			break;
-		case SDL_GL_BLUE_SIZE:
-			video->gl_config.blue_size = value;
-			break;
-		case SDL_GL_ALPHA_SIZE:
-			video->gl_config.alpha_size = value;
-			break;
-		case SDL_GL_DOUBLEBUFFER:
-			video->gl_config.double_buffer = value;
-			break;
-		case SDL_GL_BUFFER_SIZE:
-			video->gl_config.buffer_size = value;
-			break;
-		case SDL_GL_DEPTH_SIZE:
-			video->gl_config.depth_size = value;
-			break;
-		case SDL_GL_STENCIL_SIZE:
-			video->gl_config.stencil_size = value;
-			break;
-		case SDL_GL_ACCUM_RED_SIZE:
-			video->gl_config.accum_red_size = value;
-			break;
-		case SDL_GL_ACCUM_GREEN_SIZE:
-			video->gl_config.accum_green_size = value;
-			break;
-		case SDL_GL_ACCUM_BLUE_SIZE:
-			video->gl_config.accum_blue_size = value;
-			break;
-		case SDL_GL_ACCUM_ALPHA_SIZE:
-			video->gl_config.accum_alpha_size = value;
-			break;
-		case SDL_GL_STEREO:
-			video->gl_config.stereo = value;
-			break;
-		case SDL_GL_MULTISAMPLEBUFFERS:
-			video->gl_config.multisamplebuffers = value;
-			break;
-		case SDL_GL_MULTISAMPLESAMPLES:
-			video->gl_config.multisamplesamples = value;
-			break;
-		case SDL_GL_ACCELERATED_VISUAL:
-			video->gl_config.accelerated = value;
-			break;
-		case SDL_GL_SWAP_CONTROL:
-			video->gl_config.swap_control = value;
-			break;
-		default:
-			SDL_SetError("Unknown OpenGL attribute");
-			retval = -1;
-			break;
-	}
-	return(retval);
-}
-
-/* Retrieve an attribute value from the windowing system. */
-int SDL_GL_GetAttribute(SDL_GLattr attr, int* value)
-{
-	int retval = -1;
-	SDL_VideoDevice* video = current_video;
-	SDL_VideoDevice* this = current_video;
-
-	if ( video->GL_GetAttribute ) {
-		retval = this->GL_GetAttribute(this, attr, value);
-	} else {
-		*value = 0;
-		SDL_SetError("GL_GetAttribute not supported");
-	}
-	return retval;
-}
-
-void SDL_WM_GetCaption (char **title, char **icon)
-{
-	SDL_VideoDevice *video = current_video;
-
-	if ( video ) {
-		if ( title ) {
-			*title = video->wm_title;
-		}
-		if ( icon ) {
-			*icon = video->wm_icon;
-		}
-	}
 }
 
 /* Utility function used by SDL_WM_SetIcon();

@@ -226,27 +226,6 @@ typedef struct SDL_Overlay {
 } SDL_Overlay;
 
 
-/** Public enumeration for setting the OpenGL window attributes. */
-typedef enum {
-    SDL_GL_RED_SIZE,
-    SDL_GL_GREEN_SIZE,
-    SDL_GL_BLUE_SIZE,
-    SDL_GL_ALPHA_SIZE,
-    SDL_GL_BUFFER_SIZE,
-    SDL_GL_DOUBLEBUFFER,
-    SDL_GL_DEPTH_SIZE,
-    SDL_GL_STENCIL_SIZE,
-    SDL_GL_ACCUM_RED_SIZE,
-    SDL_GL_ACCUM_GREEN_SIZE,
-    SDL_GL_ACCUM_BLUE_SIZE,
-    SDL_GL_ACCUM_ALPHA_SIZE,
-    SDL_GL_STEREO,
-    SDL_GL_MULTISAMPLEBUFFERS,
-    SDL_GL_MULTISAMPLESAMPLES,
-    SDL_GL_ACCELERATED_VISUAL,
-    SDL_GL_SWAP_CONTROL
-} SDL_GLattr;
-
 /** @name flags for SDL_SetPalette() */
 /*@{*/
 #define SDL_LOGPAL 0x01
@@ -793,86 +772,6 @@ extern DECLSPEC SDL_Surface * SDLCALL SDL_DisplayFormat(SDL_Surface *surface);
  * If the conversion fails or runs out of memory, it returns NULL
  */
 extern DECLSPEC SDL_Surface * SDLCALL SDL_DisplayFormatAlpha(SDL_Surface *surface);
-
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/** @name YUV video surface overlay functions                                */ /*@{*/
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-/** This function creates a video output overlay
- *  Calling the returned surface an overlay is something of a misnomer because
- *  the contents of the display surface underneath the area where the overlay
- *  is shown is undefined - it may be overwritten with the converted YUV data.
- */
-extern DECLSPEC SDL_Overlay * SDLCALL SDL_CreateYUVOverlay(int width, int height,
-				Uint32 format, SDL_Surface *display);
-
-/** Lock an overlay for direct access, and unlock it when you are done */
-extern DECLSPEC int SDLCALL SDL_LockYUVOverlay(SDL_Overlay *overlay);
-extern DECLSPEC void SDLCALL SDL_UnlockYUVOverlay(SDL_Overlay *overlay);
-
-/** Blit a video overlay to the display surface.
- *  The contents of the video surface underneath the blit destination are
- *  not defined.  
- *  The width and height of the destination rectangle may be different from
- *  that of the overlay, but currently only 2x scaling is supported.
- */
-extern DECLSPEC int SDLCALL SDL_DisplayYUVOverlay(SDL_Overlay *overlay, SDL_Rect *dstrect);
-
-/** Free a video overlay */
-extern DECLSPEC void SDLCALL SDL_FreeYUVOverlay(SDL_Overlay *overlay);
-
-/*@}*/
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-/** @name OpenGL support functions.                                          */ /*@{*/
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-/**
- * Dynamically load an OpenGL library, or the default one if path is NULL
- *
- * If you do this, you need to retrieve all of the GL functions used in
- * your program from the dynamic library using SDL_GL_GetProcAddress().
- */
-extern DECLSPEC int SDLCALL SDL_GL_LoadLibrary(const char *path);
-
-/**
- * Get the address of a GL function
- */
-extern DECLSPEC void * SDLCALL SDL_GL_GetProcAddress(const char* proc);
-
-/**
- * Set an attribute of the OpenGL subsystem before intialization.
- */
-extern DECLSPEC int SDLCALL SDL_GL_SetAttribute(SDL_GLattr attr, int value);
-
-/**
- * Get an attribute of the OpenGL subsystem from the windowing
- * interface, such as glX. This is of course different from getting
- * the values from SDL's internal OpenGL subsystem, which only
- * stores the values you request before initialization.
- *
- * Developers should track the values they pass into SDL_GL_SetAttribute
- * themselves if they want to retrieve these values.
- */
-extern DECLSPEC int SDLCALL SDL_GL_GetAttribute(SDL_GLattr attr, int* value);
-
-/**
- * Swap the OpenGL buffers, if double-buffering is supported.
- */
-extern DECLSPEC void SDLCALL SDL_GL_SwapBuffers(void);
-
-/** @name OpenGL Internal Functions
- * Internal functions that should not be called unless you have read
- * and understood the source code for these functions.
- */
-/*@{*/
-extern DECLSPEC void SDLCALL SDL_GL_UpdateRects(int numrects, SDL_Rect* rects);
-extern DECLSPEC void SDLCALL SDL_GL_Lock(void);
-extern DECLSPEC void SDLCALL SDL_GL_Unlock(void);
-/*@}*/
-
-/*@}*/
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /** @name Window Manager Functions                                           */
