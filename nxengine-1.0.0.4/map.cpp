@@ -38,16 +38,16 @@ char fname[MAXPATHLEN];
 	if (!strcmp(mapname, "lounge")) mapname = "Lounge";
 	sprintf(stage, "%s/%s", stage_dir, mapname);
 	
-	sprintf(fname, "%s.pxm", stage);
+	sprintf(fname, "%s/%s.pxm", g_dir, stage);
 	if (load_map(fname)) return 1;
 	
-	sprintf(fname, "%s/%s.pxa", stage_dir, tileset_names[stages[stage_no].tileset]);
+	sprintf(fname, "%s/%s/%s.pxa", g_dir, stage_dir, tileset_names[stages[stage_no].tileset]);
 	if (load_tileattr(fname)) return 1;
 	
-	sprintf(fname, "%s.pxe", stage);
+	sprintf(fname, "%s/%s.pxe", g_dir, stage);
 	if (load_entities(fname)) return 1;
 	
-	sprintf(fname, "%s.tsc", stage);
+	sprintf(fname, "%s/%s.tsc", g_dir, stage);
 	if (tsc_load(fname, SP_MAP) == -1) return 1;
 	
 	map_set_backdrop(stages[stage_no].bg_no);
@@ -64,22 +64,21 @@ void c------------------------------() {}
 // load a PXM map
 bool load_map(const char *fname)
 {
-        char fname_tmp[1024];
 	FILE *fp;
 	int x, y;
 
-	retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
+        stat("load_map: %s\n", fname);
 
-	fp = fopen(fname_tmp, "rb");
+	fp = fopen(fname, "rb");
 	if (!fp)
 	{
-		staterr("load_map: no such file: '%s'", fname_tmp);
+		staterr("load_map: no such file: '%s'", fname);
 		return 1;
 	}
 	
 	if (!fverifystring(fp, "PXM"))
 	{
-		staterr("load_map: invalid map format: '%s'", fname_tmp);
+		staterr("load_map: invalid map format: '%s'", fname);
 		return 1;
 	}
 	
@@ -111,7 +110,7 @@ bool load_map(const char *fname)
 	map.maxxscroll = (((map.xsize * TILE_W) - SCREEN_WIDTH) - 8) << CSF;
 	map.maxyscroll = (((map.ysize * TILE_H) - SCREEN_HEIGHT) - 8) << CSF;
 	
-	stat("load_map: '%s' loaded OK! - %dx%d", fname_tmp, map.xsize, map.ysize);
+	stat("load_map: '%s' loaded OK! - %dx%d", fname, map.xsize, map.ysize);
 	return 0;
 }
 
@@ -119,7 +118,6 @@ bool load_map(const char *fname)
 // load a PXE (entity list for a map)
 bool load_entities(const char *fname)
 {
-char fname_tmp[1024];
 FILE *fp;
 int i;
 int nEntities;
@@ -128,20 +126,18 @@ int nEntities;
 	Objects::DestroyAll(false);
 	FloatText::ResetAll();
 
-	retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
-	
-	stat("load_entities: reading in %s", fname_tmp);
+	stat("load_entities: reading in %s", fname);
 	// now we can load in the new objects
-	fp = fopen(fname_tmp, "rb");
+	fp = fopen(fname, "rb");
 	if (!fp)
 	{
-		staterr("load_entities: no such file: '%s'", fname_tmp);
+		staterr("load_entities: no such file: '%s'", fname);
 		return 1;
 	}
 	
 	if (!fverifystring(fp, "PXE"))
 	{
-		staterr("load_entities: not a PXE: '%s'", fname_tmp);
+		staterr("load_entities: not a PXE: '%s'", fname);
 		return 1;
 	}
 	
@@ -237,20 +233,17 @@ int nEntities;
 // loads a pxa (tileattr) file
 bool load_tileattr(const char *fname)
 {
-char fname_tmp[1024];
 FILE *fp;
 int i;
 unsigned char tc;
 
 	map.nmotiontiles = 0;
 
-	retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
-	
-	stat("load_pxa: reading in %s", fname_tmp);
-	fp = fopen(fname_tmp, "rb");
+	stat("load_pxa: reading in %s", fname);
+	fp = fopen(fname, "rb");
 	if (!fp)
 	{
-		staterr("load_pxa: no such file: '%s'", fname_tmp);
+		staterr("load_pxa: no such file: '%s'", fname);
 		return 1;
 	}
 	
