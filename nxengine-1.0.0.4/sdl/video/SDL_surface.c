@@ -24,7 +24,6 @@
 #include "SDL_video.h"
 #include "SDL_sysvideo.h"
 #include "SDL_blit.h"
-#include "SDL_RLEaccel_c.h"
 #include "SDL_pixels_c.h"
 #include "SDL_leaks.h"
 
@@ -187,11 +186,6 @@ int SDL_SetColorKey (SDL_Surface *surface, Uint32 flag, Uint32 key)
 		return(0);
 	}
 
-	/* UnRLE surfaces before we change the colorkey */
-	if ( surface->flags & SDL_RLEACCEL ) {
-	        SDL_UnRLESurface(surface, 1);
-	}
-
 	if ( flag ) {
 		SDL_VideoDevice *video = current_video;
 		SDL_VideoDevice *this  = current_video;
@@ -239,9 +233,6 @@ int SDL_SetAlpha (SDL_Surface *surface, Uint32 flag, Uint8 value)
 	     (!flag || value == oldalpha) ) {
 		return(0);
 	}
-
-	if(!(flag & SDL_RLEACCELOK) && (surface->flags & SDL_RLEACCEL))
-		SDL_UnRLESurface(surface, 1);
 
 	if ( flag ) {
 		SDL_VideoDevice *video = current_video;
@@ -676,10 +667,6 @@ int SDL_LockSurface (SDL_Surface *surface)
 				return(-1);
 			}
 		}
-		if ( surface->flags & SDL_RLEACCEL ) {
-			SDL_UnRLESurface(surface, 1);
-			surface->flags |= SDL_RLEACCEL;	/* save accel'd state */
-		}
 		/* This needs to be done here in case pixels changes value */
 		surface->pixels = (Uint8 *)surface->pixels + surface->offset;
 	}
@@ -708,12 +695,6 @@ void SDL_UnlockSurface (SDL_Surface *surface)
 		SDL_VideoDevice *video = current_video;
 		SDL_VideoDevice *this  = current_video;
 		video->UnlockHWSurface(this, surface);
-	} else {
-		/* Update RLE encoded surface with new data */
-		if ( (surface->flags & SDL_RLEACCEL) == SDL_RLEACCEL ) {
-		        surface->flags &= ~SDL_RLEACCEL; /* stop lying */
-			SDL_RLESurface(surface);
-		}
 	}
 }
 
@@ -845,9 +826,6 @@ void SDL_FreeSurface (SDL_Surface *surface)
 	}
 	while ( surface->locked > 0 ) {
 		SDL_UnlockSurface(surface);
-	}
-	if ( (surface->flags & SDL_RLEACCEL) == SDL_RLEACCEL ) {
-	        SDL_UnRLESurface(surface, 0);
 	}
 	if ( surface->format ) {
 		SDL_FreeFormat(surface->format);

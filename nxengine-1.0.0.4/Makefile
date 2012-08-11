@@ -107,7 +107,7 @@ SOUND_OBJS := sound/org.o sound/pxt.o sound/sound.o sound/sslib.o
 
 TEXTBOX_OBJS := TextBox/ItemImage.o TextBox/SaveSelect.o TextBox/StageSelect.o TextBox/TextBox.o TextBox/YesNoPrompt.o
 
-SDL_OBJS := sdl/SDL_error.o sdl/file/SDL_rwops.o sdl/stdlib/SDL_string.o sdl/video/SDL_blit.o sdl/video/SDL_blit_0.o sdl/video/SDL_blit_1.o sdl/video/SDL_blit_A.o sdl/video/SDL_blit_N.o sdl/video/SDL_bmp.o sdl/video/SDL_pixels.o sdl/video/SDL_surface.o sdl/video/SDL_video.o sdl/video/SDL_RLEaccel.o sdl/cpuinfo/SDL_cpuinfo.o
+SDL_OBJS := sdl/SDL_error.o sdl/file/SDL_rwops.o sdl/stdlib/SDL_string.o sdl/video/SDL_blit.o sdl/video/SDL_blit_0.o sdl/video/SDL_blit_1.o sdl/video/SDL_blit_A.o sdl/video/SDL_blit_N.o sdl/video/SDL_bmp.o sdl/video/SDL_pixels.o sdl/video/SDL_surface.o sdl/video/SDL_video.o sdl/cpuinfo/SDL_cpuinfo.o
 
 AUTOGEN_OBJS := autogen/AssignSprites.o autogen/objnames.o
 
