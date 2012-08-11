@@ -32,31 +32,31 @@ else ifeq ($(platform), ps3)
    CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
    CXX = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-g++.exe
    AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe
-   CFLAGS += -DMSB_FIRST=1
+   CFLAGS += -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
 else ifeq ($(platform), sncps3)
    TARGET := libretro_ps3.a
    CC = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    CXX = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    AR = $(CELL_SDK)/host-win32/sn/bin/ps3snarl.exe
-   CFLAGS +=  -DMSB_FIRST=1
+   CFLAGS +=  -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
 else ifeq ($(platform), psl1ght)
    TARGET := libretro_psl1ght.a
    CC = $(PS3DEV)/ppu/bin/ppu-gcc
    CC = $(PS3DEV)/ppu/bin/ppu-g++
    AR = $(PS3DEV)/ppu/bin/ppu-ar
-   CFLAGS += -DMSB_FIRST=1
+   CFLAGS += -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
 else ifeq ($(platform), xenon)
    TARGET := libretro_xenon360.a
    CC = xenon-gcc
    CXX = xenon-g++
    AR = xenon-ar
-   CFLAGS += -D__LIBXENON__ -D__ppc_ -DMSB_FIRST=1
+   CFLAGS += -D__LIBXENON__ -D__ppc_ -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
 else ifeq ($(platform), wii)
    TARGET := libretro_wii.a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar
-   CFLAGS += -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float -DMSB_FIRST=1
+   CFLAGS += -DGEKKO -mrvl -mcpu=750 -meabi -mhard-float -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
 else
    TARGET := retro.dll
    CC = gcc
