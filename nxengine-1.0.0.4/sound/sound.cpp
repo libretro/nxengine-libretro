@@ -37,7 +37,7 @@ const char *org_names[] =
 static const char bossmusic[] = { 4, 7, 10, 11, 15, 16, 17, 18, 21, 22, 31, 33, 35, 0 };
 
 static const char *pxt_dir = "pxt";
-static const char *org_dir = "./org/";
+static const char *org_dir = "org";
 static const char *sndcache = "sndcache.pcm";
 static const char *org_wavetable = "wavetable.dat";
 
@@ -190,7 +190,8 @@ void music_set_enabled(int newstate)
 
 static void start_track(int songno)
 {
-char fname[MAXPATHLEN];
+	char fname_dir[MAXPATHLEN];
+        char fname[MAXPATHLEN];
 
 	if (songno == 0)
 	{
@@ -198,9 +199,9 @@ char fname[MAXPATHLEN];
 		return;
 	}
 	
-	strcpy(fname, org_dir);
-	strcat(fname, org_names[songno]);
-	strcat(fname, ".org");
+	retro_create_path_string(fname_dir, sizeof(fname_dir), g_dir, org_dir);
+        snprintf(fname, sizeof(fname), "%s/%s.org", fname_dir, org_names[songno]);
+        stat("start_track: %s\n", fname);
 	
 	if (!org_load(fname))
 	{
