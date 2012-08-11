@@ -27,42 +27,6 @@
 #ifndef _SDL_platform_h
 #define _SDL_platform_h
 
-#if defined(_AIX)
-#undef __AIX__
-#define __AIX__		1
-#endif
-#if defined(__BEOS__)
-#undef __BEOS__
-#define __BEOS__	1
-#endif
-#if defined(__HAIKU__)
-#undef __HAIKU__
-#define __HAIKU__ 1
-#endif
-#if defined(bsdi) || defined(__bsdi) || defined(__bsdi__)
-#undef __BSDI__
-#define __BSDI__	1
-#endif
-#if defined(_arch_dreamcast)
-#undef __DREAMCAST__
-#define __DREAMCAST__	1
-#endif
-#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__DragonFly__)
-#undef __FREEBSD__
-#define __FREEBSD__	1
-#endif
-#if defined(__HAIKU__)
-#undef __HAIKU__
-#define __HAIKU__	1
-#endif
-#if defined(hpux) || defined(__hpux) || defined(__hpux__)
-#undef __HPUX__
-#define __HPUX__	1
-#endif
-#if defined(sgi) || defined(__sgi) || defined(__sgi__) || defined(_SGI_SOURCE)
-#undef __IRIX__
-#define __IRIX__	1
-#endif
 #if defined(linux) || defined(__linux) || defined(__linux__)
 #undef __LINUX__
 #define __LINUX__	1
@@ -93,10 +57,6 @@
 #if defined(__QNXNTO__)
 #undef __QNXNTO__
 #define __QNXNTO__	1
-#endif
-#if defined(riscos) || defined(__riscos) || defined(__riscos__)
-#undef __RISCOS__
-#define __RISCOS__	1
 #endif
 #if defined(__SVR4)
 #undef __SOLARIS__
