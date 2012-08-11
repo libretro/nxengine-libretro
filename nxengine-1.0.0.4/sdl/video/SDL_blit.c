@@ -24,7 +24,6 @@
 #include "SDL_video.h"
 #include "SDL_sysvideo.h"
 #include "SDL_blit.h"
-#include "SDL_RLEaccel_c.h"
 #include "SDL_pixels_c.h"
 
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__)) && SDL_ASSEMBLY_ROUTINES
@@ -235,9 +234,6 @@ int SDL_CalculateBlit(SDL_Surface *surface)
 	int blit_index;
 
 	/* Clean everything out to start */
-	if ( (surface->flags & SDL_RLEACCEL) == SDL_RLEACCEL ) {
-		SDL_UnRLESurface(surface, 1);
-	}
 	surface->map->sw_blit = NULL;
 
 	/* Figure out if an accelerated hardware blit is possible */
@@ -338,20 +334,6 @@ int SDL_CalculateBlit(SDL_Surface *surface)
 	}
 
 	/* Choose software blitting function */
-	if(surface->flags & SDL_RLEACCELOK
-	   && (surface->flags & SDL_HWACCEL) != SDL_HWACCEL) {
-
-	        if(surface->map->identity
-		   && (blit_index == 1
-		       || (blit_index == 3 && !surface->format->Amask))) {
-		        if ( SDL_RLESurface(surface) == 0 )
-			        surface->map->sw_blit = SDL_RLEBlit;
-		} else if(blit_index == 2 && surface->format->Amask) {
-		        if ( SDL_RLESurface(surface) == 0 )
-			        surface->map->sw_blit = SDL_RLEAlphaBlit;
-		}
-	}
-	
 	if ( surface->map->sw_blit == NULL ) {
 		surface->map->sw_blit = SDL_SoftBlit;
 	}

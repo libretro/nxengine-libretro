@@ -28,7 +28,6 @@
 #include "SDL_sysvideo.h"
 #include "SDL_blit.h"
 #include "SDL_pixels_c.h"
-#include "SDL_RLEaccel_c.h"
 
 /* Helper functions */
 /*
@@ -529,9 +528,6 @@ int SDL_MapSurface (SDL_Surface *src, SDL_Surface *dst)
 
 	/* Clear out any previous mapping */
 	map = src->map;
-	if ( (src->flags & SDL_RLEACCEL) == SDL_RLEACCEL ) {
-		SDL_UnRLESurface(src, 1);
-	}
 	SDL_InvalidateMap(map);
 
 	/* Figure out what kind of mapping we're doing */
