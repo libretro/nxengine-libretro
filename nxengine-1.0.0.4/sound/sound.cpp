@@ -45,6 +45,7 @@ bool sound_init(void)
 {
         char pxt_dirname[1024];
         char sndcache_tmp[1024];
+        char org_wavetable_fname[1024];
 	if (SSInit()) return 1;
 	if (pxt_init()) return 1;
 
@@ -52,8 +53,10 @@ bool sound_init(void)
 	retro_create_path_string(sndcache_tmp, sizeof(sndcache_tmp), g_dir, sndcache);
 
 	if (pxt_LoadSoundFX(pxt_dirname, sndcache_tmp, NUM_SOUNDS)) return 1;
+
+        snprintf(org_wavetable_fname, sizeof(org_wavetable_fname), "%s/%s", g_dir, org_wavetable);
 	
-	if (org_init(org_wavetable, pxt_dir, ORG_VOLUME))
+	if (org_init(org_wavetable_fname, pxt_dir, ORG_VOLUME))
 	{
 		staterr("Music failed to initialize");
 		return 1;

@@ -272,6 +272,7 @@ FILE *fp;
 signed char buffer[BUF_SIZE + 1];
 signed char *ptr;
 
+        stat("load_wavetable: %s\n", fname);
 	fp = fopen(fname, "rb");
 	if (!fp)
 	{
