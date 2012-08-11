@@ -38,6 +38,20 @@ SetLogFilename(debug_fname);
 	// so we know the initial screen resolution.
 	settings_load();
 	
+	if (!settings->files_extracted)
+	{
+		if (extract_main())
+		{
+			error = 1;
+			return;
+		}
+		else
+		{
+			settings->files_extracted = true;
+			settings_save();
+		}
+	}
+	
 	if (Graphics::init(settings->resolution)) { staterr("Failed to initialize graphics."); error = 1; return; }
 	if (font_init()) { staterr("Failed to load font."); error = 1; return; }
 	

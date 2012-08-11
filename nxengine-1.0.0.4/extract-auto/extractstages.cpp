@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include "../common/StringList.h"
 #include "../common/basics.h"
+#include "../port-libretro/libretro_shared.h"
 #include "../stagedata.h"
 #include "../maprecord.h"
 #include "extractstages.fdh"
@@ -47,7 +48,9 @@ bool extract_stages(FILE *exefp)
 {
 int i;
 
-	stat("[ stage.dat ]");
+	char stage_dat[1024];
+	retro_create_path_string(stage_dat, sizeof(stage_dat), g_dir, "stage.dat");
+	stat("[ %s ]", stage_dat);
 	
 	// load raw data into struct
 	fseek(exefp, DATA_OFFSET, SEEK_SET);
@@ -87,7 +90,7 @@ int i;
 	}
 	
 	// write out
-	FILE *fpo = fopen("stage.dat", "wb");
+	FILE *fpo = fopen(stage_dat, "wb");
 	if (!fpo)
 	{
 		stat("failed to open stage.dat for writing");

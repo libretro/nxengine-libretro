@@ -56,7 +56,7 @@ bool sound_init(void)
 
         snprintf(org_wavetable_fname, sizeof(org_wavetable_fname), "%s/%s", g_dir, org_wavetable);
 	
-	if (org_init(org_wavetable_fname, pxt_dir, ORG_VOLUME))
+	if (org_init(org_wavetable_fname, pxt_dirname, ORG_VOLUME))
 	{
 		staterr("Music failed to initialize");
 		return 1;
