@@ -64,10 +64,11 @@ void c------------------------------() {}
 // load a PXM map
 bool load_map(const char *fname)
 {
+        char fname_tmp[1024];
 	FILE *fp;
 	int x, y;
 
-	const char * fname_tmp = retro_create_path_string(g_dir, fname);
+	retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
 
 	fp = fopen(fname_tmp, "rb");
 	if (!fp)
@@ -118,6 +119,7 @@ bool load_map(const char *fname)
 // load a PXE (entity list for a map)
 bool load_entities(const char *fname)
 {
+char fname_tmp[1024];
 FILE *fp;
 int i;
 int nEntities;
@@ -126,7 +128,7 @@ int nEntities;
 	Objects::DestroyAll(false);
 	FloatText::ResetAll();
 
-	const char * fname_tmp = retro_create_path_string(g_dir, fname);
+	retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
 	
 	stat("load_entities: reading in %s", fname_tmp);
 	// now we can load in the new objects
@@ -235,13 +237,14 @@ int nEntities;
 // loads a pxa (tileattr) file
 bool load_tileattr(const char *fname)
 {
+char fname_tmp[1024];
 FILE *fp;
 int i;
 unsigned char tc;
 
 	map.nmotiontiles = 0;
 
-	const char * fname_tmp = retro_create_path_string(g_dir, fname);
+	retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
 	
 	stat("load_pxa: reading in %s", fname_tmp);
 	fp = fopen(fname_tmp, "rb");
@@ -282,9 +285,10 @@ unsigned char tc;
 
 bool load_stages(void)
 {
+        char fname[1024];
 	FILE *fp;
 
-	const char * fname = retro_create_path_string(g_dir, "stage.dat");
+	retro_create_path_string(fname, sizeof(fname), g_dir, "stage.dat");
 
 	fp = fopen(fname, "rb");
 	if (!fp)
@@ -304,10 +308,11 @@ bool load_stages(void)
 
 bool initmapfirsttime(void)
 {
+        char fname[1024];
 	FILE *fp;
 	int i;
 
-	const char * fname = retro_create_path_string(g_dir, "tilekey.dat");
+	retro_create_path_string(fname, sizeof(fname), g_dir, "tilekey.dat");
 
 	stat("initmapfirsttime: loading %s.", fname);
 	if (!(fp = fopen(fname, "rb")))

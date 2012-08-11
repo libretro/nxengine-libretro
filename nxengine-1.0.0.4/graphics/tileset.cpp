@@ -36,6 +36,7 @@ char fname[MAXPATHLEN];
 
 	if (new_tileset != current_tileset)
 	{
+                char fname_tmp[1024];
 		if (tileset)
 		{
 			delete tileset;
@@ -44,7 +45,7 @@ char fname[MAXPATHLEN];
 		
 		sprintf(fname, "%s/Prt%s.pbm", stage_dir, tileset_names[new_tileset]);
 
-		const char * fname_tmp = retro_create_path_string(g_dir, fname);
+		retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
 
 		stat("Tileset::Load: %s", fname_tmp);
 		

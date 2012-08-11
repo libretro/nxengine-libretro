@@ -9,11 +9,12 @@
 
 static int extract_do(void)
 {
+        char filename[1024];
 	FILE *fp;
 
 	stat("= Extracting Files =");
 
-	const char *filename = retro_create_path_string(g_dir, "Doukutsu.exe");
+	retro_create_path_string(filename, sizeof(filename), g_dir, "Doukutsu.exe");
 	
 	fp = fopen(filename, "rb");
 	if (!fp)

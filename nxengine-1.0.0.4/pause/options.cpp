@@ -281,12 +281,13 @@ void EnterReplaySubmenu(ODItem *item, int dir)
 
 void _keep_replay(ODItem *item, int dir)
 {
+        char fname_tmp[1024];
 	char fname[MAXPATHLEN];
 	ReplayHeader hdr;
 
 	GetReplayName(opt.selected_replay, fname);
 
-	const char * fname_tmp = retro_create_path_string(g_dir, fname);
+	retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
 	
 	if (Replay::LoadHeader(fname_tmp, &hdr))
 	{

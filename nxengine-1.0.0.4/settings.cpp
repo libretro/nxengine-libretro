@@ -66,13 +66,14 @@ void c------------------------------() {}
 
 static bool tryload(Settings *setfile)
 {
+        char setfilename_tmp[1024];
 	FILE *fp;
 
 #ifdef DEBUG
 	stat("Loading settings...");
 #endif
 
-	const char * setfilename_tmp = retro_create_path_string(g_dir, setfilename);
+	retro_create_path_string(setfilename_tmp, sizeof(setfilename_tmp), g_dir, setfilename);
 	
 	fp = fopen(setfilename_tmp, "rb");
 	if (!fp)
@@ -100,12 +101,13 @@ static bool tryload(Settings *setfile)
 
 bool settings_save(Settings *setfile)
 {
+char setfilename_tmp[1024];
 FILE *fp;
 
 	if (!setfile)
 		setfile = &normal_settings;
 
-	const char * setfilename_tmp = retro_create_path_string(g_dir, setfilename);
+	retro_create_path_string(setfilename_tmp, sizeof(setfilename_tmp), g_dir, setfilename);
 	
 #ifdef DEBUG
 	stat("Writing settings...");

@@ -16,13 +16,14 @@
 // load savefile #num into the given Profile structure.
 bool profile_load(const char *pfname, Profile *file)
 {
+        char pfname_tmp[1024];
 	int i, curweaponslot;
 	FILE *fp;
 
 	stat("Loading profile from %s...", pfname);
 	memset(file, 0, sizeof(Profile));
 
-	const char * pfname_tmp = retro_create_path_string(g_dir, pfname);
+	retro_create_path_string(pfname_tmp, sizeof(pfname_tmp), g_dir, pfname);
 	
 	fp = fopen(pfname_tmp, "rb");
 	if (!fp)
@@ -125,10 +126,11 @@ bool profile_load(const char *pfname, Profile *file)
 
 bool profile_save(const char *pfname, Profile *file)
 {
+char pfname_tmp[1024];
 FILE *fp;
 int i;
 
-	const char * pfname_tmp = retro_create_path_string(g_dir, pfname);
+	retro_create_path_string(pfname_tmp, sizeof(pfname_tmp), g_dir, pfname);
 	stat("Writing saved game to %s...", pfname_tmp);
 
 	fp = fopen(pfname_tmp, "wb");

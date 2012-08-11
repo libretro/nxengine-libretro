@@ -27,9 +27,10 @@ int num_sprites;
 
 bool Sprites::Init()
 {
+        char f_sprites_sif[1024];
 	memset(spritesheet, 0, sizeof(spritesheet));
 
-	const char * f_sprites_sif = retro_create_subpath_string(g_dir, "data", "sprites.sif");
+	retro_create_subpath_string(f_sprites_sif, sizeof(f_sprites_sif), g_dir, "data", "sprites.sif");
 	
 	// load sprites info--sheet positions, bounding boxes etc
 	if (load_sif(f_sprites_sif))
@@ -66,8 +67,8 @@ static void Sprites::LoadSheetIfNeeded(int sheetno)
 {
 	if (!spritesheet[sheetno])
 	{
-		const char * pbm_name = retro_create_subpath_string(g_dir, data_dir, sheetfiles.StringAt(sheetno));
-		
+                char pbm_name[1024];
+		retro_create_subpath_string(pbm_name, sizeof(pbm_name), g_dir, data_dir, sheetfiles.StringAt(sheetno));
 		stat("LoadSheetIfNeeded: %s", pbm_name);
 
 		spritesheet[sheetno] = new NXSurface;

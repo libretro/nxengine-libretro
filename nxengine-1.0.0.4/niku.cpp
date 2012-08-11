@@ -13,6 +13,7 @@
 // If there is no such file or an error occurs, writes 0 to value_out.
 bool niku_load(uint32_t *value_out)
 {
+char fname_tmp[1024];
 FILE *fp;
 uint8_t buffer[20];
 uint32_t *result = (uint32_t *)buffer;
@@ -20,7 +21,7 @@ int i, j;
 
 	const char *fname = getfname();
 
-	const char *fname_tmp = retro_create_path_string(g_dir, fname);
+	retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
 
 	fp = fopen(fname_tmp, "rb");
 	if (!fp)
@@ -69,6 +70,7 @@ int i, j;
 // save the timestamp in value to 290.rec.
 bool niku_save(uint32_t value)
 {
+char fname_tmp[1024];
 uint8_t buf_byte[20];
 uint32_t *buf_dword = (uint32_t *)buf_byte;
 
@@ -98,7 +100,7 @@ uint32_t *buf_dword = (uint32_t *)buf_byte;
 	
 	const char *fname = getfname();
 
-	const char * fname_tmp = retro_create_path_string(g_dir, fname);
+	retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
 
 	FILE *fp = fopen(fname_tmp, "wb");
 	if (!fp)

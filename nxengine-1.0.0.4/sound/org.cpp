@@ -109,6 +109,7 @@ static int SamplesToMS(int samples)
 static bool load_drumtable(const char *pxt_path)		// pxt_path = the path where drum pxt files can be found
 {
 char fname[80];
+char drum_cache_fname[1024];
 int d;
 FILE *fp;
 static const char *drum_cache = "drum.pcm";
@@ -123,7 +124,7 @@ uint16_t version;
 		}
 	#else
 
-		const char * drum_cache_fname = retro_create_path_string(g_dir, drum_cache);
+		retro_create_path_string(drum_cache_fname, sizeof(drum_cache_fname), g_dir, drum_cache);
 		
 		// try and load the drums from cache instead of synthing them
 		fp = fopen(drum_cache_fname, "rb");
