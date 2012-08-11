@@ -43,11 +43,13 @@ static const char *org_wavetable = "wavetable.dat";
 
 bool sound_init(void)
 {
+        char pxt_dirname[1024];
+        char sndcache_tmp[1024];
 	if (SSInit()) return 1;
 	if (pxt_init()) return 1;
 
-	const char * pxt_dirname = retro_create_path_string(g_dir, pxt_dir);
-	const char * sndcache_tmp = retro_create_path_string(g_dir, sndcache);
+	retro_create_path_string(pxt_dirname, sizeof(pxt_dirname), g_dir, pxt_dir);
+	retro_create_path_string(sndcache_tmp, sizeof(sndcache_tmp), g_dir, sndcache);
 
 	if (pxt_LoadSoundFX(pxt_dirname, sndcache_tmp, NUM_SOUNDS)) return 1;
 	

@@ -27,7 +27,8 @@ static bool freshstart;
 void pre_main(void)
 {
 #ifdef DEBUG_LOG
-const char * debug_fname = retro_create_path_string(g_dir, "debug.txt");
+char debug_fname[1024];
+retro_create_path_string(debug_fname, sizeof(debug_fname), g_dir, "debug.txt");
 SetLogFilename(debug_fname);
 #endif
 	// start up inputs first thing because settings_load may remap them
@@ -365,7 +366,8 @@ static void fatal(const char *str)
 
 static bool check_data_exists()
 {
-	const char *fname = retro_create_subpath_string(g_dir, data_dir, "npc.tbl");
+        char fname[1024];
+	retro_create_subpath_string(fname, sizeof(fname), g_dir, data_dir, "npc.tbl");
 	stat("check_data_exists: %s", fname);
 
 	if (file_exists(fname)) return 0;

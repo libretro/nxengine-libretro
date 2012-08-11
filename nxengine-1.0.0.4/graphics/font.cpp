@@ -27,9 +27,10 @@ NXFont shadowfont;		// white letters w/ drop shadow
 
 bool font_init(void)
 {
+        char fontfile_name[1024];
 	bool error = false;
 
-	const char * fontfile_name = retro_create_subpath_string(g_dir, "data", "font.bmp");
+	retro_create_subpath_string(fontfile_name, sizeof(fontfile_name), g_dir, "data", "font.bmp");
 
 	// we'll be bypassing the NXSurface automatic scaling features
 	// and drawing at the real resolution so we can get better-looking fonts.

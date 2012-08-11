@@ -35,10 +35,11 @@ bool ai_init(void)
 
 bool load_npc_tbl(void)
 {
+char fname[1024];
 const int smoke_amounts[] = { 0, 3, 7, 12 };
 const int nEntries = 361;
 int i;
-	const char * fname = retro_create_path_string(g_dir, "data/npc.tbl");
+	retro_create_path_string(fname, sizeof(fname), g_dir, "data/npc.tbl");
 
 	FILE *fp = fopen(fname, "rb");
 	if (!fp) { staterr("load_npc_tbl: %s is missing", fname); return 1; }
