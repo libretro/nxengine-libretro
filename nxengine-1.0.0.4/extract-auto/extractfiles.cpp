@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include "../common/basics.h"
 #include "../graphics/safemode.h"
+#include "../port-libretro/libretro_shared.h"
 #include "extractfiles.fdh"
 
 #ifdef __MINGW32__
@@ -119,8 +120,9 @@ bool first_crc_failure = true;
 	
 	for(int i=0;;i++)
 	{
-		const char *outfilename = files[i].filename;
-		if (!outfilename) break;
+		if (!files[i].filename) break;
+		char outfilename[1024];
+		retro_create_path_string(outfilename, sizeof(outfilename), g_dir, files[i].filename);
 		
 		stat("[ %s ]", outfilename);
 		
@@ -181,7 +183,7 @@ bool first_crc_failure = true;
 static void createdir(const char *fname)
 {
 	char *dir = strdup(fname);
-	char *ptr = strchr(dir, '/');
+	char *ptr = strrchr(dir, '/');
 	if (ptr)
 	{
 		*ptr = 0;

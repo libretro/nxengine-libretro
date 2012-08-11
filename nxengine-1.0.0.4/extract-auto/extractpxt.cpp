@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 #include "../graphics/safemode.h"
 #include "../common/basics.h"
+#include "../port-libretro/libretro_shared.h"
 #include "extractpxt.fdh"
 
 static struct
@@ -154,13 +155,15 @@ int s, c, i;
 		if (!snd[s].id) break;
 		
 		char outfilename[MAXPATHLEN];
-		sprintf(outfilename, "pxt/fx%02x.pxt", snd[s].id);
+      char outpath[MAXPATHLEN];
+		snprintf(outfilename, sizeof(outfilename), "%s/pxt/fx%02x.pxt", g_dir, snd[s].id);
+		snprintf(outpath, sizeof(outpath), "%s/pxt", g_dir);
 		stat("[ %s ]", outfilename);
 
 #ifdef _WIN32
-		mkdir("pxt");
+		mkdir(outpath);
 #else
-		mkdir("pxt", 0755);
+		mkdir(outpath, 0755);
 #endif
 		FILE *fpo = fopen(outfilename, "wb");
 		if (!fpo)
