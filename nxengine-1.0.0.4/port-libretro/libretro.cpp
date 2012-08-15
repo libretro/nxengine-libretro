@@ -72,7 +72,6 @@ void retro_get_system_info(struct retro_system_info *info)
    info->valid_extensions = "bin|BIN|zip|ZIP";
    info->library_version = "1.0.0.4";
    info->library_name = "NXEngine";
-   info->nonblock_state = false;
    info->block_extract = false;
 }
 
