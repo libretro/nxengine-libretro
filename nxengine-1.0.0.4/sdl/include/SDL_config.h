@@ -30,7 +30,7 @@
 #include "SDL_platform.h"
 
 /* Make sure that this isn't included by Visual C++ */
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && !defined(_XBOX)
 #error You should copy include/SDL_config.h.default to include/SDL_config.h
 #endif
 
@@ -60,7 +60,6 @@
 #if HAVE_LIBC
 
 /* Useful headers */
-#define HAVE_ALLOCA_H 1
 #define HAVE_SYS_TYPES_H 1
 #define HAVE_STDIO_H 1
 #define STDC_HEADERS 1
@@ -70,7 +69,12 @@
 #define HAVE_MEMORY_H 1
 #define HAVE_STRING_H 1
 #define HAVE_STRINGS_H 1
+
+#ifndef _XBOX1
+#define HAVE_ALLOCA_H 1
 #define HAVE_INTTYPES_H 1
+#endif
+
 #define HAVE_STDINT_H 1
 #define HAVE_CTYPE_H 1
 #define HAVE_MATH_H 1

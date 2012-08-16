@@ -7,6 +7,10 @@
 #include "basics.h"
 #include "misc.fdh"
 
+#ifdef _WIN32
+#include "msvc_compat.h"
+#endif
+
 #define MAXBUFSIZE		1024
 char logfilename[64] = { 0 };
 void writelog(const char *buf, bool append_cr);
@@ -38,6 +42,7 @@ void c------------------------------() {}
 
 void stat(const char *fmt, ...)
 {
+#ifndef _XBOX1
 	va_list ar;
 	char buffer[MAXBUFSIZE];
 
@@ -50,10 +55,12 @@ void stat(const char *fmt, ...)
 	
 	if (logfilename[0])
 		writelog(buffer, true);
+#endif
 }
 
 void staterr(const char *fmt, ...)
 {
+#ifndef _XBOX1
 va_list ar;
 char buffer[MAXBUFSIZE];
 
@@ -70,6 +77,7 @@ char buffer[MAXBUFSIZE];
 		writelog(buffer, false);
 		writelog(" >>\n", false);
 	}
+#endif
 }
 
 

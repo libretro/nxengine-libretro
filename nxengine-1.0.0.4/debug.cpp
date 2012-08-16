@@ -163,6 +163,7 @@ void c------------------------------() {}
 // debug text display debug() useful for reporting game vars etc
 void debug(const char *fmt, ...)
 {
+#ifndef _XBOX1
 char buffer[128];
 va_list ar;
 
@@ -171,6 +172,7 @@ va_list ar;
 	va_end(ar);
 	
 	DebugList.AddString(buffer);
+#endif
 }
 
 void debug_draw(void)
@@ -195,7 +197,7 @@ void debug_clear()
 void c------------------------------() {}
 */
 
-extern char *object_names[];	// from autogen'd objnames.cpp
+extern const char *object_names[];	// from autogen'd objnames.cpp
 
 // given an object type returns the name of the object e.g. "OBJ_TOROKO"
 const char *DescribeObjectType(int type)

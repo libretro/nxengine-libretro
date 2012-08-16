@@ -19,6 +19,8 @@
     Sam Lantinga
     slouken@libsdl.org
 */
+#include <stdio.h>
+
 #include "SDL_config.h"
 
 /* Simple error handling in SDL */
