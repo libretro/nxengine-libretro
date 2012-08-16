@@ -6,6 +6,10 @@
 #include "../main.fdh"
 #include "libretro_shared.h";
 
+#ifdef _WIN32
+#include "msvc_compat.h"
+#endif
+
 const char *data_dir = "data";
 const char *stage_dir = "data/Stage";
 const char *pic_dir = "endpic";
@@ -411,6 +415,7 @@ static bool check_data_exists()
 
 void visible_warning(const char *fmt, ...)
 {
+#ifndef _XBOX1
 va_list ar;
 char buffer[80];
 
@@ -419,6 +424,7 @@ char buffer[80];
 	va_end(ar);
 	
 	console.Print(buffer);
+#endif
 }
 
 #if 0

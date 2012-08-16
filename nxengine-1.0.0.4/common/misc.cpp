@@ -10,6 +10,10 @@
 #include "basics.h"
 #include "misc.fdh"
 
+#ifdef _WIN32
+#include "msvc_compat.h"
+#endif
+
 void stat(const char *fmt, ...);
 
 #ifndef MSB_FIRST
@@ -227,6 +231,9 @@ FILE *fp;
 
 char *stprintf(const char *fmt, ...)
 {
+#ifdef _XBOX1
+   return "";
+#else
 va_list ar;
 char *str = GetStaticStr();
 
@@ -235,6 +242,7 @@ char *str = GetStaticStr();
 	va_end(ar);
 	
 	return str;
+#endif
 }
 
 /*

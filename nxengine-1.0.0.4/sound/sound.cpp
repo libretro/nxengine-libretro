@@ -13,6 +13,10 @@
 
 #include "libretro_shared.h"
 
+#ifdef _WIN32
+#include "msvc_compat.h"
+#endif
+
 #define MUSIC_OFF		0
 #define MUSIC_ON		1
 #define MUSIC_BOSS_ONLY	2

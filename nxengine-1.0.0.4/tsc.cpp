@@ -8,6 +8,10 @@
 #include "tsc.fdh"
 #include "libretro_shared.h"
 
+#ifdef _WIN32
+#include "msvc_compat.h"
+#endif
+
 #define TRACE_SCRIPT
 
 // which textbox options are enabled by the "<TUR" script command.

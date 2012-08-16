@@ -33,7 +33,8 @@ Dialog::Dialog()
 
 Dialog::~Dialog()
 {
-	for(int i=0;ODItem *item = ItemAt(i);i++)
+   ODItem *item;
+	for(int i=0; item = ItemAt(i);i++)
 		delete item;
 	
 	optionstack.RemoveItem(this);
@@ -244,7 +245,8 @@ void Dialog::Dismiss()
 
 void Dialog::Refresh()
 {
-	for(int i=0;ODItem *item = ItemAt(i);i++)
+   ODItem *item;
+	for(int i=0; item = ItemAt(i);i++)
 	{
 		if (item->update)
 			(*item->update)(item);
@@ -256,7 +258,8 @@ void Dialog::Clear()
 	if (onclear)
 		(*onclear)();
 	
-	for(int i=0;ODItem *item = ItemAt(i);i++)
+   ODItem *item;
+	for(int i=0; item = ItemAt(i);i++)
 		delete item;
 	
 	fItems.MakeEmpty();

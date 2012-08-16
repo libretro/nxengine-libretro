@@ -3,6 +3,10 @@
 #include <stdarg.h>
 #include "console.fdh"
 
+#ifdef _WIN32
+#include "msvc_compat.h"
+#endif
+
 static CommandEntry commands[] =
 {
 	"god", __god, 0, 1,
@@ -239,7 +243,8 @@ void c------------------------------() {}
 
 void DebugConsole::Print(const char *fmt, ...)
 {
-va_list ar;
+#ifndef _XBOX1
+   va_list ar;
 
 	va_start(ar, fmt);
 	vsnprintf(fResponse, sizeof(fResponse), fmt, ar);
@@ -247,6 +252,7 @@ va_list ar;
 	
 	stat("%s", fResponse);
 	fResponseTimer = 60;
+#endif
 }
 
 /*

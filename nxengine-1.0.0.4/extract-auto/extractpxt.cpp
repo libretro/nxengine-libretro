@@ -9,6 +9,14 @@
 #include "../port-libretro/libretro_shared.h"
 #include "extractpxt.fdh"
 
+#ifdef _WIN32
+#include "msvc_compat.h"
+#endif
+
+#ifdef _XBOX
+#include <xtl.h>
+#endif
+
 static struct
 {
 	const char *name;
@@ -160,8 +168,10 @@ int s, c, i;
 		snprintf(outpath, sizeof(outpath), "%s/pxt", g_dir);
 		stat("[ %s ]", outfilename);
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_XBOX)
 		mkdir(outpath);
+#elif defined(_XBOX)
+      CreateDirectory(outpath, NULL);
 #else
 		mkdir(outpath, 0755);
 #endif

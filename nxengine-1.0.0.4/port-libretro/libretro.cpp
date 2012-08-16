@@ -1,18 +1,14 @@
-#ifndef _MSC_VER
-#include <stdbool.h>
+#ifdef _WIN32
+#include "msvc_compat.h"
 #else
-#define TRUE 1
-#define FALSE 0
-typedef unsigned char bool;
-#endif
 #include <unistd.h>
+#endif
 #include <string>
 
 #include "libretro.h"
 #include "../graphics/graphics.h"
 #include "../nx.h"
 
-bool pre_main();
 void post_main();
 bool run_main();
 
@@ -27,6 +23,8 @@ static unsigned g_frame_cnt;
 
 bool retro_60hz = true;
 unsigned pitch;
+
+extern void pre_main(void);
 
 unsigned retro_get_tick(void)
 {
