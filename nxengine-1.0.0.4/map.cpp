@@ -27,6 +27,13 @@ bool load_stage(int stage_no)
 char stage[MAXPATHLEN];
 char fname[MAXPATHLEN];
 
+char slash;
+#ifdef _WIN32
+slash = '\\';
+#else
+slash = '/';
+#endif
+
 	NX_LOG(" >> Entering stage %d: '%s'.\n", stage_no, stages[stage_no].stagename);
 	game.curmap = stage_no;		// do it now so onspawn events will have it
 	
@@ -36,18 +43,18 @@ char fname[MAXPATHLEN];
 	// get the base name of the stage without extension
 	const char *mapname = stages[stage_no].filename;
 	if (!strcmp(mapname, "lounge")) mapname = "Lounge";
-	sprintf(stage, "%s/%s", stage_dir, mapname);
+	sprintf(stage, "%s%c%s", stage_dir, slash, mapname);
 	
-	sprintf(fname, "%s/%s.pxm", g_dir, stage);
+	sprintf(fname, "%s%c%s.pxm", g_dir, slash, stage);
 	if (load_map(fname)) return 1;
 	
-	sprintf(fname, "%s/%s/%s.pxa", g_dir, stage_dir, tileset_names[stages[stage_no].tileset]);
+	sprintf(fname, "%s%c%s%c%s.pxa", g_dir, slash, stage_dir, slash, tileset_names[stages[stage_no].tileset]);
 	if (load_tileattr(fname)) return 1;
 	
-	sprintf(fname, "%s/%s.pxe", g_dir, stage);
+	sprintf(fname, "%s%c%s.pxe", g_dir, slash, stage);
 	if (load_entities(fname)) return 1;
 	
-	sprintf(fname, "%s/%s.tsc", g_dir, stage);
+	sprintf(fname, "%s%c%s.tsc", g_dir, slash, stage);
 	if (tsc_load(fname, SP_MAP) == -1) return 1;
 	
 	map_set_backdrop(stages[stage_no].bg_no);
@@ -444,14 +451,19 @@ int i, x;
 static bool LoadBackdropIfNeeded(int backdrop_no)
 {
 char fname[MAXPATHLEN];
-
+char slash;
+#ifdef _WIN32
+slash = '\\';
+#else
+slash = '/';
+#endif
 	// load backdrop now if it hasn't already been loaded
 	if (!backdrop[backdrop_no])
 	{
 		// use chromakey (transparency) on bkwater, all others don't
 		bool use_chromakey = (backdrop_no == 8);
 		
-		sprintf(fname, "%s/%s/%s.pbm", g_dir, data_dir, backdrop_names[backdrop_no]);
+		sprintf(fname, "%s%c%s%c%s.pbm", g_dir, slash, data_dir, slash, backdrop_names[backdrop_no]);
 		
 		backdrop[backdrop_no] = NXSurface::FromFile(fname, use_chromakey);
 		if (!backdrop[backdrop_no])
