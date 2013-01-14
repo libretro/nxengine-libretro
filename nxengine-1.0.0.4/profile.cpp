@@ -16,25 +16,22 @@
 // load savefile #num into the given Profile structure.
 bool profile_load(const char *pfname, Profile *file)
 {
-        char pfname_tmp[1024];
 	int i, curweaponslot;
 	FILE *fp;
 
 	stat("Loading profile from %s...", pfname);
 	memset(file, 0, sizeof(Profile));
 
-	retro_create_path_string(pfname_tmp, sizeof(pfname_tmp), g_dir, pfname);
-	
-	fp = fopen(pfname_tmp, "rb");
+	fp = fopen(pfname, "rb");
 	if (!fp)
 	{
-		staterr("profile_load: unable to open '%s'", pfname_tmp);
+		staterr("profile_load: unable to open '%s'", pfname);
 		return 1;
 	}
 	
 	if (!fverifystring(fp, "Do041220"))
 	{
-		staterr("profile_load: invalid savegame format: '%s'", pfname_tmp);
+		staterr("profile_load: invalid savegame format: '%s'", pfname);
 		fclose(fp);
 		return 1;
 	}
@@ -126,17 +123,15 @@ bool profile_load(const char *pfname, Profile *file)
 
 bool profile_save(const char *pfname, Profile *file)
 {
-char pfname_tmp[1024];
-FILE *fp;
-int i;
+   FILE *fp;
+   int i;
 
-	retro_create_path_string(pfname_tmp, sizeof(pfname_tmp), g_dir, pfname);
-	stat("Writing saved game to %s...", pfname_tmp);
+	stat("Writing saved game to %s...", pfname);
 
-	fp = fopen(pfname_tmp, "wb");
+	fp = fopen(pfname, "wb");
 	if (!fp)
 	{
-		staterr("profile_save: unable to open %s", pfname_tmp);
+		staterr("profile_save: unable to open %s", pfname);
 		return 1;
 	}
 	
@@ -234,10 +229,16 @@ void c------------------------------() {}
 // returns the filename for a save file given it's number
 const char *GetProfileName(int num)
 {
+   char pfname_tmp[1024];
+   char profile_name[1024];
+
 	if (num == 0)
-		return "profile.dat";
+      snprintf(profile_name, sizeof(profile_name), "profile.dat");
 	else
-		return stprintf("profile%d.dat", num+1);
+      snprintf(profile_name, sizeof(profile_name), "profile%d.dat", num+1);
+
+	retro_create_path_string(pfname_tmp, sizeof(pfname_tmp), g_dir, profile_name);
+   return pfname_tmp;
 }
 
 // returns whether the given save file slot exists
