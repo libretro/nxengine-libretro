@@ -4,6 +4,7 @@
 #include "tileset.h"
 #include "tileset.fdh"
 #include "libretro_shared.h"
+#include "../nx.h"
 
 using namespace Graphics;
 
@@ -53,7 +54,7 @@ char fname[MAXPATHLEN];
 
 		retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
 
-		stat("Tileset::Load: %s", fname_tmp);
+		NX_LOG("Tileset::Load: %s\n", fname_tmp);
 		
 		// always use SDL_DisplayFormat on tilesets; they need to come out of 8-bit
 		// so that we can replace the destroyable star tiles without them palletizing.

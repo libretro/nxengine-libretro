@@ -10,6 +10,7 @@
 #include "../common/StringList.h"
 #include "../dirnames.h"
 #include "../settings.h"
+#include "../nx.h"
 using namespace Graphics;
 
 #include "sprites.h"
@@ -69,7 +70,7 @@ static void Sprites::LoadSheetIfNeeded(int sheetno)
 	{
                 char pbm_name[1024];
 		retro_create_subpath_string(pbm_name, sizeof(pbm_name), g_dir, data_dir, sheetfiles.StringAt(sheetno));
-		stat("LoadSheetIfNeeded: %s", pbm_name);
+		NX_LOG("LoadSheetIfNeeded: %s\n", pbm_name);
 
 		spritesheet[sheetno] = new NXSurface;
 		spritesheet[sheetno]->LoadImage(pbm_name, true);
@@ -222,13 +223,13 @@ int sheetdatalength, spritesdatalength;
 	
 	if (!(sheetdata = sif.FindSection(SIF_SECTION_SHEETS, &sheetdatalength)))
 	{
-		staterr("load_sif: file '%s' missing SIF_SECTION_SHEETS", fname);
+		NX_ERR("load_sif: file '%s' missing SIF_SECTION_SHEETS\n", fname);
 		return 1;
 	}
 	
 	if (!(spritesdata = sif.FindSection(SIF_SECTION_SPRITES, &spritesdatalength)))
 	{
-		staterr("load_sif: file '%s' missing SIF_SECTION_SPRITES", fname);
+		NX_ERR("load_sif: file '%s' missing SIF_SECTION_SPRITES\n", fname);
 		return 1;
 	}
 	
@@ -241,7 +242,7 @@ int sheetdatalength, spritesdatalength;
 	if (SIFSpritesSect::Decode(spritesdata, spritesdatalength, \
 						&sprites[0], &num_sprites, MAX_SPRITES))
 	{
-		staterr("load_sif: SIFSpritesSect decoder failed");
+		NX_ERR("load_sif: SIFSpritesSect decoder failed\n");
 		return 1;
 	}
 	

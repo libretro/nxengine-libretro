@@ -25,7 +25,7 @@ bool ai_init(void)
 	// of every AI-related module which assign AI logic to objects.
 	if (AIRoutines.CallFunctions())
 	{
-		staterr("ai_init: failed to initialize AIRoutines function pointers");
+		NX_ERR("ai_init: failed to initialize AIRoutines function pointers\n");
 		return 1;
 	}
 	
@@ -39,12 +39,23 @@ char fname[1024];
 const int smoke_amounts[] = { 0, 3, 7, 12 };
 const int nEntries = 361;
 int i;
-	retro_create_path_string(fname, sizeof(fname), g_dir, "data/npc.tbl");
+char slash;
+#ifdef _WIN32
+slash = '\\';
+#else
+slash = '/';
+#endif
+char tmp_str[256];
+snprintf(tmp_str, sizeof(tmp_str), "data%cnpc.tbl", slash);
+	retro_create_path_string(fname, sizeof(fname), g_dir, tmp_str);
 
 	FILE *fp = fopen(fname, "rb");
-	if (!fp) { staterr("load_npc_tbl: %s is missing", fname); return 1; }
+	if (!fp) {
+      NX_ERR("load_npc_tbl: %s is missing\n", fname);
+      return 1;
+   }
 	
-	stat("Reading %s...", fname);
+	NX_LOG("Reading %s...\n", fname);
 	
 	for(i=0;i<nEntries;i++) objprop[i].defaultflags = fgeti(fp);
 	for(i=0;i<nEntries;i++) objprop[i].initial_hp = fgeti(fp);
@@ -68,8 +79,8 @@ int i;
 		
 		if (i == 59)
 		{
-			stat("%d %d %d %d", left, top, right, bottom);
-			stat("sprite %d", objprop[i].sprite);
+			NX_LOG("%d %d %d %d\n", left, top, right, bottom);
+			NX_LOG("sprite %d\n", objprop[i].sprite);
 		}
 	}*/
 	

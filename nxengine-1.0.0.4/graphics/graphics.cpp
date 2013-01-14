@@ -9,6 +9,7 @@
 #include "tileset.h"
 #include "sprites.h"
 #include "../dirnames.h"
+#include "../nx.h"
 #include "graphics.fdh"
 
 NXSurface *screen = NULL;				// created from SDL's screen
@@ -41,7 +42,7 @@ bool Graphics::init(int resolution)
 
 void Graphics::close()
 {
-	stat("Graphics::Close()");
+	NX_LOG("Graphics::Close()\n");
 }
 
 /*
@@ -61,7 +62,7 @@ SDL_Surface *sdl_screen;
 
 	if (!sdl_screen)
 	{
-		staterr("Graphics::InitVideo: error setting video mode");
+		NX_ERR("Graphics::InitVideo: error setting video mode\n");
 		return 1;
 	}
 	
@@ -72,7 +73,7 @@ SDL_Surface *sdl_screen;
 
 bool Graphics::FlushAll()
 {
-	stat("Graphics::FlushAll()");
+	NX_LOG("Graphics::FlushAll()\n");
 	Sprites::FlushSheets();
 	Tileset::Reload();
 	map_flush_graphics();
@@ -90,7 +91,7 @@ void Graphics::SetFullscreen(bool enable)
 // 3 - Windowed scale x3 (960x720)
 bool Graphics::SetResolution(int r, bool restoreOnFailure)
 {
-	stat("Graphics::SetResolution(%d)", r);
+	NX_LOG("Graphics::SetResolution(%d)\n", r);
 	if (r == current_res)
 		return 0;
 	
