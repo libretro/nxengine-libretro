@@ -32,7 +32,7 @@ EXTRACTDIR = extract-auto
 ifeq ($(platform), unix)
    TARGET := libretro.so
    fpic := -fPIC
-   SHARED := -shared -Wl,--version-script=port-libretro/link.T -Wl,-no-undefined
+   SHARED := -shared -Wl,--version-script=libretro/link.T -Wl,-no-undefined
    CFLAGS += -D_GNU_SOURCE=1
 else ifeq ($(platform), osx)
    TARGET := libretro.dylib
@@ -83,7 +83,7 @@ else ifeq ($(platform), wii)
 else
    TARGET := retro.dll
    CC = gcc
-   SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=port-libretro/link.T
+   SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=libretro/link.T
    CFLAGS += -D__WIN32__ -D__WIN32_LIBRETRO__ -Wno-missing-field-initializers
 endif
 
@@ -118,11 +118,11 @@ INTRO_OBJS := intro/intro.o intro/title.o
 
 PAUSE_OBJS := pause/dialog.o pause/message.o pause/objects.o pause/options.o pause/pause.o
 
-LIBRETRO_OBJS := port-libretro/libretro.o
+LIBRETRO_OBJS := libretro/libretro.o
 
-PORT_OBJS := port-libretro/
+PORT_OBJS := libretro/
 
-MAIN_OBJS := port-libretro/main.o
+MAIN_OBJS := libretro/main.o
 
 SIFLIB_OBJS := siflib/sectSprites.o siflib/sectStringArray.o siflib/sif.o siflib/sifloader.o
 
@@ -140,7 +140,7 @@ OBJECTS    := 	caret.o console.o floattext.o game.o input.o inventory.o $(MAIN_O
 
 OBJECTS += $(LIBRETRO_OBJS)
 
-INCLUDES   = -I. -I.. -Igraphics -Iport-libretro -Isdl/include
+INCLUDES   = -I. -I.. -Igraphics -Ilibretro -Isdl/include
 DEFINES    = -DHAVE_INTTYPES_H -D__LIBRETRO__ -DINLINE=inline
 
 ifeq ($(platform), sncps3)

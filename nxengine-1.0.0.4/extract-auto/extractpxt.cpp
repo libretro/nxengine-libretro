@@ -6,7 +6,7 @@
 #include <sys/stat.h>
 #include "../graphics/safemode.h"
 #include "../common/basics.h"
-#include "../port-libretro/libretro_shared.h"
+#include "../libretro/libretro_shared.h"
 #include "../nx_logger.h"
 
 #include "extractpxt.fdh"

@@ -7,7 +7,7 @@
 #include <sys/stat.h>
 #include "../common/StringList.h"
 #include "../common/basics.h"
-#include "../port-libretro/libretro_shared.h"
+#include "../libretro/libretro_shared.h"
 #include "../stagedata.h"
 #include "../maprecord.h"
 #include "extractstages.fdh"
