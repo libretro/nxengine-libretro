@@ -489,7 +489,13 @@ void Replay::GetSlotInfo(int slotno, ReplaySlotInfo *slot)
 const char *GetReplayName(int slotno, char *buffer)
 {
 	if (!buffer) buffer = GetStaticStr();
-	sprintf(buffer, "replay/rep%d.dat", slotno);
+   char slash;
+#ifdef _WIN32
+   slash = '\\';
+#else
+   slash = '/';
+#endif
+	sprintf(buffer, "replay%crep%d.dat", slash, slotno);
 	return buffer;
 }
 

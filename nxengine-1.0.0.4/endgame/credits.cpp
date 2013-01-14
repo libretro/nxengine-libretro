@@ -276,11 +276,17 @@ char fname[MAXPATHLEN];
 	imgno = 0;
 	state = BI_CLEAR;
 	memset(images, 0, sizeof(images));
+   char slash;
+#ifdef _WIN32
+   slash = '\\';
+#else
+   slash = '/';
+#endif
 	
 	// load any images present
 	for(int i=0;i<MAX_BIGIMAGES;i++)
 	{
-		sprintf(fname, "%s/%s/credit%02d.bmp", g_dir, pic_dir, i);
+		sprintf(fname, "%s%c%s%ccredit%02d.bmp", g_dir, slash, pic_dir, slash, i);
 		if (file_exists(fname))
 		{
 			images[i] = NXSurface::FromFile(fname, false);

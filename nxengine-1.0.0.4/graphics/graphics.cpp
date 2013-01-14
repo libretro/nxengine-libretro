@@ -159,8 +159,14 @@ void Graphics::ShowLoadingScreen()
 {
 NXSurface loading;
 char fname[MAXPATHLEN];
+char slash;
+#ifdef _WIN32
+slash = '\\';
+#else
+slash = '/';
+#endif
 	
-	sprintf(fname, "%s/Loading.pbm", data_dir);
+	sprintf(fname, "%s%cLoading.pbm", data_dir, slash);
 	if (loading.LoadImage(fname))
 		return;
 	
