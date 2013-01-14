@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include "FileBuffer.h"
+#include "../nx.h"
 
 FileBuffer::FileBuffer()
 {
@@ -50,13 +51,13 @@ void FileBuffer::CheckFlush(int maxsize)
 	{
 		if (fFP)
 		{
-			//stat("CheckFlush wrote %d bytes", fBuffer.Length());
+			//NX_LOG("CheckFlush wrote %d bytes", fBuffer.Length()\n);
 			fwrite(fBuffer.Data(), fBuffer.Length(), 1, fFP);
 			fBuffer.Clear();
 		}
 		else
 		{
-			staterr("CheckFlush: no file");
+			NX_ERR("CheckFlush: no file\n");
 		}
 	}
 }

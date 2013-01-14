@@ -12,7 +12,7 @@ bool IrregularBBox::init(Object *associatedObject, int max_rectangles)
 	if (num_bboxes >= IB_MAX_BBOXES)
 	{
 		num_bboxes = IB_MAX_BBOXES;
-		staterr("IrregularBBox::Init(): too many rectangles (%d given): max is %d", max_rectangles, IB_MAX_BBOXES);
+		NX_ERR("IrregularBBox::Init(): too many rectangles (%d given): max is %d\n", max_rectangles, IB_MAX_BBOXES);
 		return 1;
 	}
 	
@@ -87,7 +87,7 @@ void IrregularBBox::set_bbox(int index, int x, int y, int w, int h, uint32_t fla
 {
 	if (index < 0 || index >= num_bboxes)
 	{
-		staterr("IrregularBBox::set_bbox: index out of range: %d", index);
+		NX_ERR("IrregularBBox::set_bbox: index out of range: %d\n", index);
 		return;
 	}
 	

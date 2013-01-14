@@ -8,6 +8,7 @@
 // all the function pointers etc for the various creatures.
 #include "InitList.h"
 #include "InitList.fdh"
+#include "../nx.h"
 
 void InitList::AddFunction(void (*func)(void))
 {
@@ -38,11 +39,11 @@ int i;
 
 	if (fCount >= MAX_INIT_RECORDS)
 	{
-		stat("InitList::CallFunctions(%08x): too many initializers", this);
+		NX_ERR("InitList::CallFunctions(%08x): too many initializers\n", this);
 		return 1;
 	}
 	
-	stat("InitList::CallFunctions(%08x): executing %d functions...", this, fCount);
+	NX_LOG("InitList::CallFunctions(%08x): executing %d functions...\n", this, fCount);
 	
 	for(i=0;i<fCount;i++)
 	{

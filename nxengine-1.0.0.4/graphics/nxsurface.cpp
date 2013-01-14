@@ -7,6 +7,7 @@
 #include "nxsurface.h"
 #include "nxsurface.fdh"
 #include "../port-libretro/libretro.h"
+#include "../nx.h"
 
 #define SCREEN_BPP 15
 
@@ -45,7 +46,7 @@ NXSurface::~NXSurface()
 // static function, and requires a reload of all surfaces
 void NXSurface::SetScale(int factor)
 {
-	staterr("NXSurface::SetScale: CONFIG_MUTABLE_SCALE not set");
+	NX_ERR("NXSurface::SetScale: CONFIG_MUTABLE_SCALE not set\n");
 }
 
 /*
@@ -61,7 +62,7 @@ bool NXSurface::AllocNew(int wd, int ht, NXFormat *format)
 	
 	if (!fSurface)
 	{
-		staterr("NXSurface::AllocNew: failed to allocate RGB surface");
+		NX_ERR("NXSurface::AllocNew: failed to allocate RGB surface\n");
 		return 1;
 	}
 	
@@ -77,12 +78,12 @@ bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey, int use_displ
 	Free();
 	char filename[1024];
 
-	stat("filename: %s\n", pbm_name);
+	NX_ERR("filename: %s\n", pbm_name);
 	
 	image = SDL_LoadBMP(pbm_name);
 	if (!image)
 	{
-		staterr("NXSurface::LoadImage: load failed of '%s'!", filename);
+		NX_ERR("NXSurface::LoadImage: load failed of '%s'!\n", filename);
 		return 1;
 	}
 	

@@ -140,13 +140,13 @@ void StringList::DumpContents()
 	int i, count = CountItems();
 
 #ifdef DEBUG
-	stat("StringList %08x; %d entries", this, count);
+	NX_LOG("StringList %08x; %d entries\n", this, count);
 #endif
 	for(i=0;i<count;i++)
 	{
 		char *str = StringAt(i);
 #ifdef DEBUG
-		stat("(%d) <%08x>: '%s'", i, str, str ? str : "(null)");
+		NX_LOG("(%d) <%08x>: '%s'\n", i, str, str ? str : "(null)");
 #endif
 	}
 }
