@@ -154,12 +154,19 @@ uint16_t version;
 		NX_LOG("load_drumtable: cache gone; rebuilding drums...\n");
 		
 		pxt_initsynth();
+
+      char slash;
+#ifdef _WIN32
+      slash = '\\';
+#else
+      slash = '/';
+#endif
 		
 		for(d=0;d<NUM_DRUMS;d++)
 		{
 			if (drum_pxt[d])
 			{
-				sprintf(fname, "%s/fx%02x.pxt", pxt_path, drum_pxt[d]);
+				sprintf(fname, "%s%cfx%02x.pxt", pxt_path, slash, drum_pxt[d]);
 				if (load_drum_pxt(fname, d)) return 1;
 			}
 		}
@@ -273,11 +280,11 @@ FILE *fp;
 signed char buffer[BUF_SIZE + 1];
 signed char *ptr;
 
-        stat("load_wavetable: %s\n", fname);
+   NX_LOG("load_wavetable: %s\n", fname);
 	fp = fopen(fname, "rb");
 	if (!fp)
 	{
-		stat("Unable to open wavetable.dat!!");
+		NX_ERR("Unable to open wavetable.dat!!\n");
 		return 1;
 	}
 	
@@ -345,10 +352,17 @@ FILE *fp;
 int i, j;
 
 	fp = fopen(fname, "rb");
-	if (!fp) { visible_warning("org_load: no such file: '%s'", fname); return 1; }
+	if (!fp) {
+      NX_WARN("org_load: no such file: '%s'\n", fname);
+      return 1;
+   }
 	
 	for(i=0;i<6;i++) { buf[i] = fgetc(fp); } buf[i] = 0;
-	if (strcmp(buf, magic)) { visible_warning("org-load: not an org file (got '%s')", buf); fclose(fp); return 1; }
+	if (strcmp(buf, magic)) {
+      NX_WARN("org-load: not an org file (got '%s')\n", buf);
+      fclose(fp);
+      return 1;
+   }
 	NX_LOG("%s: %s detected\n", fname, magic);
 	
 	fseek(fp, 0x06, SEEK_SET);
