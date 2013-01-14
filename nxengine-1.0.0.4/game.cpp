@@ -447,7 +447,7 @@ bool game_load(int num)
 {
 Profile p;
 
-	stat("game_load: loading savefile %d", num);
+	NX_LOG("game_load: loading savefile %d\n", num);
 	
 	if (profile_load(GetProfileName(num), &p))
 		return 1;
@@ -492,7 +492,7 @@ int i;
 		int scriptno = p->teleslots[i].scriptno;
 		
 		textbox.StageSelect.SetSlot(slotno, scriptno);
-		stat(" - Read Teleporter Slot %d: slotno=%d scriptno=%d", i, slotno, scriptno);
+		NX_LOG(" - Read Teleporter Slot %d: slotno=%d scriptno=%d\n", i, slotno, scriptno);
 	}
 	
 	// have to load the stage last AFTER the flags are loaded because
@@ -514,7 +514,7 @@ bool game_save(int num)
 {
 Profile p;
 
-	stat("game_save: writing savefile %d", num);
+	NX_LOG("game_save: writing savefile %d\n", num);
 	
 	if (game_save(&p))
 		return 1;

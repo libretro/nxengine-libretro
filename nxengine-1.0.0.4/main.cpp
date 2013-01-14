@@ -36,7 +36,7 @@ SetLogFilename("debug.txt");
 #endif
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
 	{
-		staterr("ack, sdl_init failed: %s.", SDL_GetError());
+		NX_ERR("ack, sdl_init failed: %s.\n", SDL_GetError());
 		error = 1;
 		return;
 	}
@@ -49,8 +49,8 @@ SetLogFilename("debug.txt");
 	// so we know the initial screen resolution.
 	settings_load();
 	
-	if (Graphics::init(settings->resolution)) { staterr("Failed to initialize graphics."); error = 1; return; }
-	if (font_init()) { staterr("Failed to load font."); error = 1; return; }
+	if (Graphics::init(settings->resolution)) { NX_ERR("Failed to initialize graphics.\n"); error = 1; return; }
+	if (font_init()) { NX_ERR("Failed to load font.\n"); error = 1; return; }
 	
 	//speed_test();
 	//return;
@@ -119,7 +119,7 @@ SetLogFilename("debug.txt");
 	game.running = true;
 	freshstart = true;
 	
-	stat("Entering main loop...");
+	NX_LOG("Entering main loop...\n");
 	
 	//speed_test();
 	//return;
@@ -204,7 +204,7 @@ void run_main(void)
 		if (game.switchstage.mapno == LOAD_GAME_FROM_MENU)
 			freshstart = true;
 
-		stat("= Loading game =");
+		NX_LOG("= Loading game =\n");
 		if (game_load(settings->last_save_slot))
 		{
 			fatal("savefile error");
@@ -220,7 +220,7 @@ void run_main(void)
 	}
 	else if (game.switchstage.mapno == START_REPLAY)
 	{
-		stat(">> beginning replay '%s'", GetReplayName(game.switchstage.param));
+		NX_LOG(">> beginning replay '%s'\n", GetReplayName(game.switchstage.param));
 
 		StopScripts();
 		if (Replay::begin_playback(GetReplayName(game.switchstage.param)))
@@ -296,10 +296,10 @@ shutdown: ;
 	return error;
 	
 ingame_error: ;
-	stat("");
-	stat(" ************************************************");
-	stat(" * An in-game error occurred. Game shutting down.");
-	stat(" ************************************************");
+	NX_ERR("\n");
+	NX_ERR(" ************************************************\n");
+	NX_ERR(" * An in-game error occurred. Game shutting down.\n");
+	NX_ERR(" ************************************************\n");
 	error = 1;
 	goto shutdown;
 }
@@ -438,7 +438,7 @@ void update_fps()
 
 void InitNewGame(bool with_intro)
 {
-	stat("= Beginning new game =");
+	NX_LOG("= Beginning new game =\n");
 	
 	memset(game.flags, 0, sizeof(game.flags));
 	memset(game.skipflags, 0, sizeof(game.skipflags));
@@ -468,7 +468,7 @@ void InitNewGame(bool with_intro)
 
 void AppMinimized(void)
 {
-	stat("Game minimized or lost focus--pausing...");
+	NX_LOG("Game minimized or lost focus--pausing...\n");
 	SDL_PauseAudio(1);
 	
 	for(;;)
@@ -483,7 +483,7 @@ void AppMinimized(void)
 	}
 	
 	SDL_PauseAudio(0);
-	stat("Focus regained, resuming play...");
+	NX_LOG("Focus regained, resuming play...\n");
 }
 
 
@@ -493,7 +493,7 @@ void c------------------------------() {}
 
 static void fatal(const char *str)
 {
-	staterr("fatal: '%s'", str);
+	NX_ERR("fatal: '%s'\n", str);
 	
 	if (!safemode::init())
 	{
@@ -566,7 +566,6 @@ void speed_test(void)
 		
 		if (SDL_GetTicks() >= end)
 		{
-			stat("%d fps", fps);
 			fps = 0;
 			end = SDL_GetTicks() + 1000;
 			
@@ -584,7 +583,7 @@ void org_test_miniloop(void)
 uint32_t start = 0, curtime;
 uint32_t counter;
 
-	stat("Starting org test");
+	NX_LOG("Starting org test\n");
 	
 	font_draw(5, 5, "ORG test in progress...", 0, &greenfont);
 	font_draw(5, 15, "Logging statistics to nx.log", 0, &greenfont);
