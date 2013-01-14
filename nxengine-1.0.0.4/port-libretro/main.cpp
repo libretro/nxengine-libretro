@@ -11,7 +11,11 @@
 #endif
 
 const char *data_dir = "data";
+#ifdef _WIN32
+const char *stage_dir = "data\\Stage";
+#else
 const char *stage_dir = "data/Stage";
+#endif
 const char *pic_dir = "endpic";
 const char *nxdata_dir = ".";
 
