@@ -186,7 +186,7 @@ slash = '/';
 		FILE *fpo = fopen(outfilename, "wb");
 		if (!fpo)
 		{
-			stat("failed to open %s", outfilename);
+			NX_ERR("failed to open %s\n", outfilename);
 			return 1;
 		}
 		
@@ -211,7 +211,7 @@ slash = '/';
 			// skip padding between sections
 			if (fgetl(fp) != 0)
 			{
-				stat("PXT out of sync");
+				NX_ERR("PXT out of sync\n");
 				return 1;
 			}
 		}

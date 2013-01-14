@@ -98,7 +98,7 @@ int i;
 	FILE *fpo = fopen(stage_dat, "wb");
 	if (!fpo)
 	{
-		stat("failed to open stage.dat for writing");
+		NX_ERR("failed to open stage.dat for writing\n");
 		return 1;
 	}
 	
