@@ -11,6 +11,7 @@
 #include "../stagedata.h"
 #include "../maprecord.h"
 #include "extractstages.fdh"
+#include "../nx_logger.h"
 
 #ifdef _WIN32
 #include "msvc_compat.h"
@@ -54,7 +55,7 @@ int i;
 
 	char stage_dat[1024];
 	retro_create_path_string(stage_dat, sizeof(stage_dat), g_dir, "stage.dat");
-	stat("[ %s ]", stage_dat);
+	NX_LOG("[ %s ]\n", stage_dat);
 	
 	// load raw data into struct
 	fseek(exefp, DATA_OFFSET, SEEK_SET);
@@ -87,8 +88,8 @@ int i;
 
 	if (error)
 	{
-		stat("didn't recognize map %s name", error);
-		stat("on stage %d", i);
+		NX_ERR("didn't recognize map %s name\n", error);
+		NX_ERR("on stage %d\n", i);
 		
 		return 1;
 	}
