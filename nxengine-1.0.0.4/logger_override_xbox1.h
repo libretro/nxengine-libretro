@@ -17,9 +17,13 @@
 #ifndef __MSVC_71_H
 #define __MSVC_71_H
 
+#ifdef _XBOX
+#include <xtl.h>
+#endif
+
 #include <stdarg.h>
 
-#include "../msvc_compat.h"
+#include "port-libretro/msvc_compat.h"
 
 static inline void NX_LOG(const char *msg, ...)
 {
