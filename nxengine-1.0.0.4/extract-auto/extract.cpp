@@ -10,7 +10,7 @@
 
 static int extract_do(void)
 {
-        char filename[1024];
+   char filename[1024];
 	FILE *fp;
 
 	NX_LOG("= Extracting Files =\n");

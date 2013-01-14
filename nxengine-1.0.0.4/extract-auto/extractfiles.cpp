@@ -263,15 +263,17 @@ bool first_crc_failure = true;
 static void createdir(const char *fname)
 {
 	char *dir = strdup(fname);
+#if defined(_WIN32)
+	char *ptr = strrchr(dir, '\\');
+#else
 	char *ptr = strrchr(dir, '/');
+#endif
 	if (ptr)
 	{
 		*ptr = 0;
 		
-		#if defined(__MINGW32__)
-			mkdir(dir);
-#elif defined(_XBOX)
-      CreateDirectory(dir, NULL);
+		#if defined(_WIN32)
+			_mkdir(dir);
 		#else
 			mkdir(dir, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
 		#endif
