@@ -8,6 +8,7 @@
 #include <string.h>
 #include "../common/basics.h"
 
+#include "../nx_logger.h"
 #include "sslib.h"
 #include "sslib.fdh"
 
@@ -126,7 +127,7 @@ char SSInit(void)
 	for(int i=0;i<SS_NUM_CHANNELS;i++)
 		channel[i].volume = SDL_MIX_MAXVOLUME;
 	
-	stat("sslib: initilization was successful.");
+	NX_LOG("sslib: initilization was successful.\n");
 	
 	lockcount = 0;
 	return 0;
@@ -178,7 +179,7 @@ SSChunk *chunk;
 
 	if (c >= SS_NUM_CHANNELS)
 	{
-		staterr("SSEnqueueChunk: channel %d is higher than SS_NUM_CHANNELS", c);
+		NX_ERR("SSEnqueueChunk: channel %d is higher than SS_NUM_CHANNELS\n", c);
 		return -1;
 	}
 	
@@ -187,7 +188,7 @@ SSChunk *chunk;
 	if (c < 0) c = SSFindFreeChannel();
 	if (c==-1)
 	{
-		staterr("SSEnqueueChunk: no available sound channels!");
+		NX_ERR("SSEnqueueChunk: no available sound channels!\n");
 		SSUnlockAudio();
 		return -1;
 	}
@@ -211,7 +212,7 @@ SSChunk *chunk;
 	
 	if (chan->tail==chan->head)
 	{
-		staterr("SS: overqueued channel %d; Bad Things about to happen", c);
+		NX_ERR("SS: overqueued channel %d; Bad Things about to happen\n", c);
 		SSUnlockAudio();
 		return -1;
 	}
@@ -258,7 +259,7 @@ int result;
 	}
 	else
 	{
-		staterr("SSGetUserData: channel %d is not playing!\n", c);
+		NX_ERR("SSGetUserData: channel %d is not playing!\n", c);
 		result = -1;
 	}
 	

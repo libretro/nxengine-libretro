@@ -58,7 +58,14 @@ bool sound_init(void)
 
 	if (pxt_LoadSoundFX(pxt_dirname, sndcache_tmp, NUM_SOUNDS)) return 1;
 
-        snprintf(org_wavetable_fname, sizeof(org_wavetable_fname), "%s/%s", g_dir, org_wavetable);
+   char slash;
+#ifdef _WIN32
+   slash = '\\';
+#else
+   slash = '/';
+#endif
+
+        snprintf(org_wavetable_fname, sizeof(org_wavetable_fname), "%s%c%s", g_dir, slash, org_wavetable);
 	
 	if (org_init(org_wavetable_fname, pxt_dirname, ORG_VOLUME))
 	{
@@ -207,7 +214,13 @@ static void start_track(int songno)
 	}
 	
 	retro_create_path_string(fname_dir, sizeof(fname_dir), g_dir, org_dir);
-        snprintf(fname, sizeof(fname), "%s/%s.org", fname_dir, org_names[songno]);
+   char slash;
+#ifdef _WIN32
+   slash = '\\';
+#else
+   slash = '/';
+#endif
+        snprintf(fname, sizeof(fname), "%s%c%s.org", fname_dir, slash, org_names[songno]);
         stat("start_track: %s\n", fname);
 	
 	if (!org_load(fname))
