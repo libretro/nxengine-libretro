@@ -129,9 +129,15 @@ CredReader::CredReader()
 bool CredReader::OpenFile(void)
 {
 char fname[MAXPATHLEN];
+char slash;
+#ifdef _WIN32
+slash = '\\';
+#else
+slash = '/';
+#endif
 
 	if (data) CloseFile();
-	sprintf(fname, "%s/%s/Credit.tsc", g_dir, data_dir);
+	sprintf(fname, "%s%c%s%cCredit.tsc", g_dir, slash, data_dir, slash);
 	
 	data = tsc_decrypt(fname, &datalen);
 	if (!data)

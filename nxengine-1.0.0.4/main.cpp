@@ -9,7 +9,11 @@
 #include "main.fdh"
 
 const char *data_dir = "data";
+#ifdef _WIN32
+const char *stage_dir = "data\\Stage";
+#else
 const char *stage_dir = "data/Stage";
+#endif
 const char *pic_dir = "endpic";
 const char *nxdata_dir = ".";
 
@@ -511,8 +515,13 @@ static void fatal(const char *str)
 static bool check_data_exists()
 {
 char fname[MAXPATHLEN];
-
-	sprintf(fname, "%s/npc.tbl", data_dir);
+char slash;
+#ifdef _WIN32
+slash = '\\';
+#else
+slash = '/';
+#endif
+	sprintf(fname, "%s%cnpc.tbl", data_dir, slash);
 	if (file_exists(fname)) return 0;
 	
 	if (!safemode::init())
