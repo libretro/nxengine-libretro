@@ -72,6 +72,14 @@ static void Sprites::LoadSheetIfNeeded(int sheetno)
 		retro_create_subpath_string(pbm_name, sizeof(pbm_name), g_dir, data_dir, sheetfiles.StringAt(sheetno));
 		NX_LOG("LoadSheetIfNeeded: %s\n", pbm_name);
 
+#ifdef _WIN32
+      for (unsigned i = 0; i < sizeof(pbm_name); i++)
+      {
+         if (pbm_name[i] == '/')
+            pbm_name[i] = '\\';
+      }
+#endif
+
 		spritesheet[sheetno] = new NXSurface;
 		spritesheet[sheetno]->LoadImage(pbm_name, true);
 		
