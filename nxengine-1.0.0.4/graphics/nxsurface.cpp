@@ -78,7 +78,7 @@ bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey, int use_displ
 	Free();
 	char filename[1024];
 
-	NX_ERR("filename: %s\n", pbm_name);
+	NX_LOG("filename: %s\n", pbm_name);
 	
 	image = SDL_LoadBMP(pbm_name);
 	if (!image)
