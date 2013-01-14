@@ -2,7 +2,7 @@
 #include "nx.h"
 #include "profile.h"
 #include "profile.fdh"
-#include "libretro_shared.h"
+#include "port-libretro/libretro_shared.h"
 
 #define PF_WEAPONS_OFFS		0x38
 #define PF_CURWEAPON_OFFS	0x24
