@@ -94,7 +94,7 @@ static int MnemonicToOpcode(char *str)
 		if (index != 0xff) return index;
 	}
 	
-	staterr("MnemonicToOpcode: No such command '%s'", str);
+	NX_ERR("MnemonicToOpcode: No such command '%s'\n", str);
 	return -1;
 }
 
@@ -140,7 +140,7 @@ bool tsc_load(const char *fname, int pageno)
 	char *buf;
 	bool result;
 #ifdef DEBUG
-	stat("tsc_load: loading '%s' to page %d", fname, pageno);
+	NX_LOG("tsc_load: loading '%s' to page %d\n", fname, pageno);
 #endif
 	if (curscript.running && curscript.pageno == pageno)
 		StopScript(&curscript);
@@ -151,7 +151,7 @@ bool tsc_load(const char *fname, int pageno)
 	buf = tsc_decrypt(fname, &fsize);
 	if (!buf)
 	{
-		staterr("tsc_load: failed to load file: '%s'", fname);
+		NX_ERR("tsc_load: failed to load file: '%s'\n", fname);
 		return 1;
 	}
 	
@@ -172,7 +172,7 @@ int fsize, i;
 	fp = fopen(fname, "rb");
 	if (!fp)
 	{
-		staterr("tsc_decrypt: no such file: '%s'!", fname);
+		NX_ERR("tsc_decrypt: no such file: '%s'!\n", fname);
 		return NULL;
 	}
 	
@@ -212,7 +212,7 @@ bool tsc_compile(const char *buf, int bufsize, int pageno)
 	char cmdbuf[4] = { 0 };
 
 #ifdef DEBUG
-	//stat("<> tsc_compile bufsize = %d pageno = %d", bufsize, pageno);
+	//NX_LOG("<> tsc_compile bufsize = %d pageno = %d\n", bufsize, pageno);
 #endif
 	
 	while(buf <= buf_end)
@@ -230,7 +230,7 @@ bool tsc_compile(const char *buf, int bufsize, int pageno)
 			int scriptno = ReadNumber(&buf, buf_end);
 			if (scriptno >= 10000 || scriptno < 0)
 			{
-				staterr("tsc_compile: invalid script number: %d", scriptno);
+				NX_ERR("tsc_compile: invalid script number: %d\n", scriptno);
 				return 1;
 			}
 			
@@ -242,11 +242,11 @@ bool tsc_compile(const char *buf, int bufsize, int pageno)
 			}
 			
 #ifdef DEBUG
-			//stat("Parsing script #%04d", scriptno);
+			//NX_LOG("Parsing script #%04d\n", scriptno);
 #endif
 			if (page->scripts.get(scriptno))
 			{
-				staterr("tsc_compile WARNING: duplicate script #%04d; ignoring", scriptno);
+				NX_ERR("tsc_compile WARNING: duplicate script #%04d; ignoring\n", scriptno);
 				// because script is left null, we'll ignore everything until we see another #
 			}
 			else
@@ -265,7 +265,7 @@ bool tsc_compile(const char *buf, int bufsize, int pageno)
 			int cmd = MnemonicToOpcode(cmdbuf);
 			if (cmd == -1) return 1;
 			
-			//stat("Command '%s', parameters %d", cmdbuf, cmd_table[cmd].nparams);
+			//NX_LOG("Command '%s', parameters %d\n", cmdbuf, cmd_table[cmd].nparams);
 			script->Append8(cmd);
 			
 			// read all parameters expected by that command
@@ -412,7 +412,7 @@ int found_pageno;
 	program = FindScriptData(scriptno, pageno, &found_pageno);
 	if (!program)
 	{
-		staterr("StartScript: no script at position #%04d page %d!", scriptno, pageno);
+		NX_ERR("StartScript: no script at position #%04d page %d!\n", scriptno, pageno);
 		return NULL;
 	}
 	
@@ -420,7 +420,7 @@ int found_pageno;
 	if (player->dead && found_pageno != SP_HEAD)
 	{
 #ifdef DEBUG
-		stat("Not starting script %d; player is dead", scriptno);
+		NX_LOG("Not starting script %d; player is dead\n", scriptno);
 #endif
 		return NULL;
 	}
@@ -437,7 +437,7 @@ int found_pageno;
 	
 	textbox.ResetState();
 #ifdef DEBUG
-	stat("  - Started script %04d", scriptno);
+	NX_LOG("  - Started script %04d\n", scriptno);
 #endif
 	
 	RunScripts();
@@ -451,7 +451,7 @@ void StopScript(ScriptInstance *s)
 	
 	s->running = false;
 #ifdef DEBUG
-	stat("  - Stopped script %04d", s->scriptno);
+	NX_LOG("  - Stopped script %04d\n", s->scriptno);
 #endif
 	
 	// TRA is really supposed to be a jump, not a script restart--
@@ -477,7 +477,7 @@ ScriptInstance *s = &curscript;
 		pageno = s->pageno;
 	
 #ifdef DEBUG
-	stat("JumpScript: moving to script #%04d page %d", newscriptno, pageno);
+	NX_LOG("JumpScript: moving to script #%04d page %d\n", newscriptno, pageno);
 #endif
 	
 	s->program = FindScriptData(newscriptno, pageno, &s->pageno);
@@ -486,7 +486,7 @@ ScriptInstance *s = &curscript;
 	
 	if (!s->program)
 	{
-		staterr("JumpScript: missing script #%04d! Script terminated.", newscriptno);
+		NX_ERR("JumpScript: missing script #%04d! Script terminated.\n", newscriptno);
 		StopScript(s);
 		return 1;
 	}
@@ -611,7 +611,7 @@ int cmdip;
 	}
 	
 #ifdef DEBUG
-	//stat("<> Entering script execution loop at ip = %d", s->ip);
+	//NX_LOG("<> Entering script execution loop at ip = %d\n", s->ip);
 #endif
 	
 	// main execution loop
@@ -644,7 +644,7 @@ int cmdip;
 		else
 		{
 #ifdef DEBUG
-			stat("%04d:%d  %s", s->scriptno, cmdip, debugbuffer);
+			NX_LOG("%04d:%d  %s\n", s->scriptno, cmdip, debugbuffer);
 #endif
 		}
 		#endif
@@ -722,7 +722,7 @@ int cmdip;
 				bool waslocked = (player->inputs_locked || game.frozen);
 				
 #ifdef DEBUG
-				stat("******* Executing <TRA to stage %d", parm[0]);
+				NX_LOG("******* Executing <TRA to stage %d\n", parm[0]);
 #endif
 				game.switchstage.mapno = parm[0];
 				game.switchstage.eventonentry = parm[1];
@@ -810,7 +810,7 @@ int cmdip;
 				if (game.stageboss.object)
 					map_focus(game.stageboss.object, parm[1]);
 				else
-					staterr("tsc: <FOB without stage boss");
+					NX_ERR("tsc: <FOB without stage boss\n");
 			}
 			break;
 			case OP_FOM:	// focus back to player (mychar)
@@ -855,7 +855,7 @@ int cmdip;
 				{	// <BSL0000 means the stage boss
 					target = game.stageboss.object;
 					if (!game.stageboss.object)
-						staterr("<BSL0000 but no stage boss present");
+						NX_ERR("<BSL0000 but no stage boss present\n");
 				}
 				else
 				{
@@ -871,7 +871,7 @@ int cmdip;
 				}
 				else
 				{
-					staterr("Target of <BSL not found");
+					NX_ERR("Target of <BSL not found\n");
 				}
 			}
 			break;
@@ -1013,14 +1013,14 @@ int cmdip;
 				if (contains_non_cr(str))
 				{
 #ifdef DEBUG
-					//stat("<> Pausing script execution to display message.");
+					//NX_LOG("<> Pausing script execution to display message.\n");
 #endif
 					return;
 				}
 				/*else
 				{
 #ifdef DEBUG
-					stat("<> Message is only CR's, continuing script...");
+					NX_LOG("<> Message is only CR's, continuing script...\n");
 #endif
 				}*/
 			}
@@ -1173,7 +1173,7 @@ const int cdir_to_nxdir[4] = { LEFT, UP, RIGHT, DOWN };
 	if (csdir >= 0 && csdir < 4)
 		return cdir_to_nxdir[csdir];
 	
-	staterr("CVTDir: invalid direction %d, returning LEFT", csdir);
+	NX_ERR("CVTDir: invalid direction %d, returning LEFT\n", csdir);
 	return LEFT;
 }
 
@@ -1209,7 +1209,7 @@ void SetCSDir(Object *o, int csdir)
 	}
 	else
 	{
-		staterr("SetCSDir: warning: invalid direction %04d passed as dirparam only", csdir);
+		NX_ERR("SetCSDir: warning: invalid direction %04d passed as dirparam only\n", csdir);
 	}
 	
 	// a few late-game objects, such as statues in the statue room,
@@ -1284,7 +1284,7 @@ void DoANP(Object *o, int p1, int p2)		// ANIMATE (set) object's state to p1 and
 {
 	#ifdef TRACE_SCRIPT
 #ifdef DEBUG
-		stat("ANP: Obj %08x (%s): setting state: %d and dir: %s", \
+		NX_LOG("ANP: Obj %08x (%s): setting state: %d and dir: %s\n", \
 			o, DescribeObjectType(o->type), p1, DescribeCSDir(p2));
 #endif
 	#endif
@@ -1297,7 +1297,7 @@ void DoCNP(Object *o, int p1, int p2)		// CHANGE object to p1 and set dir to p2
 {
 	#ifdef TRACE_SCRIPT
 #ifdef DEBUG
-		stat("CNP: Obj %08x changing from %s to %s, new dir = %s",
+		NX_LOG("CNP: Obj %08x changing from %s to %s, new dir = %s\n",
 			o, DescribeObjectType(o->type), DescribeObjectType(p1), DescribeCSDir(p2));
 #endif
 	#endif
@@ -1312,7 +1312,7 @@ void DoDNP(Object *o, int p1, int p2)		// DELETE object
 {
 	#ifdef TRACE_SCRIPT
 #ifdef DEBUG
-		stat("DNP: %08x (%s) deleted", o, DescribeObjectType(o->type));
+		NX_LOG("DNP: %08x (%s) deleted\n", o, DescribeObjectType(o->type));
 #endif
 	#endif
 	

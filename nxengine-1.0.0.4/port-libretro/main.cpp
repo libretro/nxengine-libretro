@@ -56,8 +56,8 @@ SetLogFilename(debug_fname);
 		}
 	}
 	
-	if (Graphics::init(settings->resolution)) { staterr("Failed to initialize graphics."); error = 1; return; }
-	if (font_init()) { staterr("Failed to load font."); error = 1; return; }
+	if (Graphics::init(settings->resolution)) { NX_ERR("Failed to initialize graphics.\n"); error = 1; return; }
+	if (font_init()) { NX_ERR("Failed to load font.\n"); error = 1; return; }
 	
 	//return;
 	
@@ -125,7 +125,7 @@ SetLogFilename(debug_fname);
 	game.running = true;
 	freshstart = true;
 	
-	stat("Entering main loop...");
+	NX_LOG("Entering main loop...\n");
 	
 	//return;
 }
@@ -180,7 +180,7 @@ bool run_main(void)
 		if (game.switchstage.mapno == LOAD_GAME_FROM_MENU)
 			freshstart = true;
 
-		stat("= Loading game =");
+		NX_LOG("= Loading game =\n");
 		if (game_load(settings->last_save_slot))
 		{
 			fatal("savefile error");
@@ -196,7 +196,7 @@ bool run_main(void)
 	}
 	else if (game.switchstage.mapno == START_REPLAY)
 	{
-		stat(">> beginning replay '%s'", GetReplayName(game.switchstage.param));
+		NX_LOG(">> beginning replay '%s'\n", GetReplayName(game.switchstage.param));
 
 		StopScripts();
 		if (Replay::begin_playback(GetReplayName(game.switchstage.param)))
@@ -280,10 +280,10 @@ check_error: ;
 	else
 		goto loop;
 ingame_error: ;
-	stat("");
-	stat(" ************************************************");
-	stat(" * An in-game error occurred. Game shutting down.");
-	stat(" ************************************************");
+	NX_LOG("\n");
+	NX_LOG(" ************************************************\n");
+	NX_LOG(" * An in-game error occurred. Game shutting down.\n");
+	NX_LOG(" ************************************************\n");
 	error = 1;
 	goto shutdown;
 }
@@ -329,7 +329,7 @@ static inline void run_tick()
 
 void InitNewGame(bool with_intro)
 {
-	stat("= Beginning new game =");
+	NX_LOG("= Beginning new game =\n");
 	
 	memset(game.flags, 0, sizeof(game.flags));
 	memset(game.skipflags, 0, sizeof(game.skipflags));
@@ -362,7 +362,7 @@ void c------------------------------() {}
 
 static void fatal(const char *str)
 {
-	staterr("fatal: '%s'", str);
+	NX_ERR("fatal: '%s'\n", str);
 	
 #ifdef USE_SAFEMODE
 	if (!safemode::init())
@@ -377,8 +377,8 @@ static void fatal(const char *str)
 		safemode::close();
 	}
 #else
-		stat("Fatal Error");
-		stat("%s", str);
+		NX_LOG("Fatal Error\n");
+		NX_LOG("%s\n", str);
 #endif
 }
 
@@ -386,7 +386,7 @@ static bool check_data_exists()
 {
         char fname[1024];
 	retro_create_subpath_string(fname, sizeof(fname), g_dir, data_dir, "npc.tbl");
-	stat("check_data_exists: %s", fname);
+	NX_LOG("check_data_exists: %s\n", fname);
 
 	if (file_exists(fname)) return 0;
 	
@@ -404,10 +404,10 @@ static bool check_data_exists()
 		safemode::close();
 	}
 #else
-		stat("Fatal Error");
+		NX_LOG("Fatal Error\n");
 		
-		stat("Missing \"%s\" directory.", data_dir);
-		stat("Please copy it over from a Doukutsu installation.");
+		NX_LOG("Missing \"%s\" directory.\n", data_dir);
+		NX_LOG("Please copy it over from a Doukutsu installation.\n");
 #endif
 	
 	return 1;

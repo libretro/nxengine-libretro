@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../nx.h"
 #include "../common/DBuffer.h"
 #include "../common/bufio.h"
 
@@ -28,16 +29,16 @@ int i, f, nsprites;
 	
 	if (nsprites >= maxsprites)
 	{
-		staterr("SIFSpritesSect::Decode: too many sprites in file (nsprites=%d, maxsprites=%d)", nsprites, maxsprites);
+		NX_ERR("SIFSpritesSect::Decode: too many sprites in file (nsprites=%d, maxsprites=%d)\n", nsprites, maxsprites);
 		return 1;
 	}
 	
-	stat("SIFSpritesSect: loading %d sprites", nsprites);
+	NX_LOG("SIFSpritesSect: loading %d sprites\n", nsprites);
 	for(i=0;i<nsprites;i++)
 	{
 		if (data > data_end)
 		{
-			staterr("SIFSpritesSect::Decode: section corrupt: overran end of data");
+			NX_ERR("SIFSpritesSect::Decode: section corrupt: overran end of data\n");
 			return 1;
 		}
 		
@@ -51,7 +52,7 @@ int i, f, nsprites;
 		
 		if (sprites[i].ndirs > SIF_MAX_DIRS)
 		{
-			staterr("SIFSpritesSect::Decode: SIF_MAX_DIRS exceeded on sprite %d (ndirs=%d)", i, sprites[i].ndirs);
+			NX_ERR("SIFSpritesSect::Decode: SIF_MAX_DIRS exceeded on sprite %d (ndirs=%d)\n", i, sprites[i].ndirs);
 			return 1;
 		}
 		
@@ -108,7 +109,7 @@ bool SIFSpritesSect::LoadFrame(SIFFrame *frame, int ndirs, \
 				break;
 				
 				default:
-					stat("SIFSpriteSect::LoadFrame: encountered unknown optional field type %d", t);
+					NX_LOG("SIFSpriteSect::LoadFrame: encountered unknown optional field type %d\n", t);
 				return 1;
 			}
 		}
@@ -140,7 +141,7 @@ void SIFSpritesSect::LoadPointList(SIFPointList *lst, const uint8_t **data, cons
 	lst->count = read_U8(data, data_end);
 	if (lst->count > SIF_MAX_BLOCK_POINTS)
 	{
-		staterr("SIFSpritesSect::LoadPointList: too many block points (%d, max=%d)", lst->count, SIF_MAX_BLOCK_POINTS);
+		NX_ERR("SIFSpritesSect::LoadPointList: too many block points (%d, max=%d)\n", lst->count, SIF_MAX_BLOCK_POINTS);
 		return;
 	}
 	

@@ -19,19 +19,19 @@ bool profile_load(const char *pfname, Profile *file)
 	int i, curweaponslot;
 	FILE *fp;
 
-	stat("Loading profile from %s...", pfname);
+	NX_LOG("Loading profile from %s...\n", pfname);
 	memset(file, 0, sizeof(Profile));
 
 	fp = fopen(pfname, "rb");
 	if (!fp)
 	{
-		staterr("profile_load: unable to open '%s'", pfname);
+		NX_ERR("profile_load: unable to open '%s'\n", pfname);
 		return 1;
 	}
 	
 	if (!fverifystring(fp, "Do041220"))
 	{
-		staterr("profile_load: invalid savegame format: '%s'", pfname);
+		NX_ERR("profile_load: invalid savegame format: '%s'\n", pfname);
 		fclose(fp);
 		return 1;
 	}
@@ -105,7 +105,7 @@ bool profile_load(const char *pfname, Profile *file)
 	fseek(fp, PF_FLAGS_OFFS, SEEK_SET);
 	if (!fverifystring(fp, "FLAG"))
 	{
-		staterr("profile_load: missing 'FLAG' marker");
+		NX_ERR("profile_load: missing 'FLAG' marker\n");
 		fclose(fp);
 		return 1;
 	}
@@ -126,12 +126,12 @@ bool profile_save(const char *pfname, Profile *file)
    FILE *fp;
    int i;
 
-	stat("Writing saved game to %s...", pfname);
+	NX_LOG("Writing saved game to %s...\n", pfname);
 
 	fp = fopen(pfname, "wb");
 	if (!fp)
 	{
-		staterr("profile_save: unable to open %s", pfname);
+		NX_ERR("profile_save: unable to open %s\n", pfname);
 		return 1;
 	}
 	

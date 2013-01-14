@@ -5,6 +5,7 @@
 #include <string.h>
 #include <math.h>
 
+#include "../nx.h"
 #include "../common/basics.h"
 #include "org.h"
 #include "pxt.h"			// for loading drums
@@ -77,7 +78,7 @@ static int pitch[NUM_NOTES];
 
 static void init_pitch(void)
 {
-	stat("Calculating pitch scale...");
+	NX_LOG("Calculating pitch scale...\n");
 	
 	for(int i=0;i<NUM_NOTES;i++)
 	{
@@ -145,12 +146,12 @@ uint16_t version;
 					fread(drumtable[d].samples, drumtable[d].nsamples*2, 1, fp);
 				}
 				fclose(fp);
-				stat("-- Drums loaded from cache");
+				NX_LOG("-- Drums loaded from cache\n");
 				return 0;
 			}
 		}
 		
-		stat("load_drumtable: cache gone; rebuilding drums...");
+		NX_LOG("load_drumtable: cache gone; rebuilding drums...\n");
 		
 		pxt_initsynth();
 		
@@ -195,14 +196,14 @@ int i, read_pt;
 int left,right;
 signed short *abuf;
 
-	//stat("load_drum: loading %s into drum index %d", fname, d);
+	//NX_LOG("load_drum: loading %s into drum index %d\n", fname, d);
 	if (!(chunk = Mix_LoadWAV(fname)))
 	{
-		staterr("Missing drum sample: '%s'", fname);
+		NX_ERR("Missing drum sample: '%s'\n", fname);
 		return 1;
 	}
 	
-	//stat("chunk: %d bytes in chunk", chunk->alen);
+	//NX_LOG("chunk: %d bytes in chunk\n", chunk->alen);
 	drumtable[d].nsamples = chunk->alen / 2 / 2;	// 16-bit stereo sound
 	drumtable[d].samples = malloc(drumtable[d].nsamples * 2);
 	
@@ -348,7 +349,7 @@ int i, j;
 	
 	for(i=0;i<6;i++) { buf[i] = fgetc(fp); } buf[i] = 0;
 	if (strcmp(buf, magic)) { visible_warning("org-load: not an org file (got '%s')", buf); fclose(fp); return 1; }
-	stat("%s: %s detected", fname, magic);
+	NX_LOG("%s: %s detected\n", fname, magic);
 	
 	fseek(fp, 0x06, SEEK_SET);
 	
@@ -558,7 +559,7 @@ void org_resume(void)
 
 void org_fade(void)
 {
-	stat("org_fade");
+	NX_LOG("org_fade\n");
 	song.fading = true;
 	song.last_fade_time = 0;
 }
@@ -888,7 +889,7 @@ int i;
 		chan->phaseacc += chan->sample_inc;
 		if ((int)chan->phaseacc > drumtable[wave].nsamples)
 		{
-			staterr(" **ERROR-phaseacc ran over end of drumsample %.2f %d", chan->phaseacc, drumtable[wave].nsamples);
+			NX_ERR(" **ERROR-phaseacc ran over end of drumsample %.2f %d\n", chan->phaseacc, drumtable[wave].nsamples);
 			break;
 		}
 	}

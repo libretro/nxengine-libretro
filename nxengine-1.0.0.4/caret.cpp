@@ -242,7 +242,7 @@ int i;
 		break;
 		
 		default:
-			staterr("effect: invalid effect type %d", effectno);
+			NX_ERR("effect: invalid effect type %d\n", effectno);
 			return NULL;
 	}
 	

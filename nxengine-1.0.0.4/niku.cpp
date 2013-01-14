@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include "nx.h"
 #include "niku.fdh"
 #include "libretro_shared.h"
 
@@ -27,7 +28,7 @@ int i, j;
 	if (!fp)
 	{
 #ifdef DEBUG
-		stat("niku_load: couldn't open file '%s'", fname_tmp);
+		NX_ERR("niku_load: couldn't open file '%s'", fname_tmp);
 #endif
 		if (value_out) *value_out = 0;
 		return 1;
@@ -52,14 +53,14 @@ int i, j;
 		(result[0] != result[3]))
 	{
 #ifdef DEBUG
-		stat("niku_load: value mismatch; '%s' corrupt", fname_tmp);
+		NX_ERR("niku_load: value mismatch; '%s' corrupt", fname_tmp);
 #endif
 		if (value_out) *value_out = 0;
 	}
 	else
 	{
 #ifdef DEBUG
-		stat("niku_load: loaded value 0x%x from %s", *result, fname_tmp);
+		NX_LOG("niku_load: loaded value 0x%x from %s", *result, fname_tmp);
 #endif
 		if (value_out) *value_out = *result;
 	}
@@ -105,7 +106,7 @@ uint32_t *buf_dword = (uint32_t *)buf_byte;
 	FILE *fp = fopen(fname_tmp, "wb");
 	if (!fp)
 	{
-		staterr("niku_save: failed to open '%s'", fname_tmp);
+		NX_ERR("niku_save: failed to open '%s'", fname_tmp);
 		return 1;
 	}
 	
@@ -113,7 +114,7 @@ uint32_t *buf_dword = (uint32_t *)buf_byte;
 	fclose(fp);
 	
 #ifdef DEBUG
-	stat("niku_save: wrote value 0x%08x", value);
+	NX_LOG("niku_save: wrote value 0x%08x", value);
 #endif
 	return 0;
 }

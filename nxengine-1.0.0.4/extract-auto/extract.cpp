@@ -6,24 +6,23 @@
 #include <stdlib.h>
 #include "extract.fdh"
 #include "libretro_shared.h"
+#include "../nx_logger.h"
 
 static int extract_do(void)
 {
         char filename[1024];
 	FILE *fp;
 
-	stat("= Extracting Files =");
+	NX_LOG("= Extracting Files =\n");
 
 	retro_create_path_string(filename, sizeof(filename), g_dir, "Doukutsu.exe");
 	
 	fp = fopen(filename, "rb");
 	if (!fp)
 	{
-		stat("cannot find executable %s", filename);
-		stat("");
-		stat("");
-		stat("Please put it and it's \"data\" directory");
-		stat("into the same folder as this program.");
+		NX_ERR("cannot find executable %s\n", filename);
+		NX_ERR("Please put it and it's \"data\" directory\n");
+		NX_ERR("into the same folder as this program.\n");
 		return 1;
 	}
 	
@@ -54,28 +53,28 @@ int extract_main()
 
 void introduction()
 {
-	stat("I need to extract some game data");
-	stat("before I can start up for the first time.");
-	stat("");
-	stat("Before beginning, you should have the Aeon Genesis");
-	stat("English translation of version 1.0.0.6, and drop");
-	stat("Doukutsu.exe and it's \"data\" directory into the same");
-	stat("folder as the \"nx.bin\" file you just ran.");
-	stat("");
-	stat("If you haven't done that yet, please press ESCAPE now");
-	stat("and come back in a moment. Otherwise, you can");
-	stat("press any other button to start the extraction.");
+	NX_LOG("I need to extract some game data\n");
+	NX_LOG("before I can start up for the first time.\n");
+	NX_LOG("\n");
+	NX_LOG("Before beginning, you should have the Aeon Genesis\n");
+	NX_LOG("English translation of version 1.0.0.6, and drop");
+	NX_LOG("Doukutsu.exe and it's \"data\" directory into the same");
+	NX_LOG("folder as the \"nx.bin\" file you just ran.");
+	NX_LOG("\n");
+	NX_LOG("If you haven't done that yet, please press ESCAPE now\n");
+	NX_LOG("and come back in a moment. Otherwise, you can\n");
+	NX_LOG("press any other button to start the extraction.\n");
 }
 
 void conclusion()
 {
-	stat("Success!");
-	stat("");
-	stat("You can now remove the Doukutsu.exe file");
-	stat("if you like, as it isn't needed anymore.");
-	stat("Please leave the \"data\" directory though.");
-	stat("");
-	stat("Press any button to begin");
+	NX_LOG("Success!\n");
+	NX_LOG("\n");
+	NX_LOG("You can now remove the Doukutsu.exe file\n");
+	NX_LOG("if you like, as it isn't needed anymore.\n");
+	NX_LOG("Please leave the \"data\" directory though.\n");
+	NX_LOG("\n");
+	NX_LOG("Press any button to begin\n");
 }
 
 /*
@@ -171,7 +170,7 @@ uint32_t crc;
 		
 		if (offset == 0)
 		{
-			staterr("couldn't find file %s", fileinfo[i].filename);
+			NX_ERR("couldn't find file %s.\n", fileinfo[i].filename);
 			return 1;
 		}
 		
@@ -203,7 +202,7 @@ int len;
 	fp = fopen(fname, "rb");
 	if (!fp)
 	{
-		staterr("can't open %s", fname);
+		NX_ERR("can't open %s\n", fname);
 		return 0;
 	}
 	
@@ -217,7 +216,7 @@ int len;
 	*crc_out = crc_calc(buffer, len);
 	*len_out = len;
 	
-	stat("searching for '%s'; %d bytes", fname, len);
+	NX_LOG("searching for '%s'; %d bytes\n", fname, len);
 	
 	int match = 0;
 	fseek(exefp, 0, SEEK_SET);
@@ -232,7 +231,7 @@ recheck: ;
 			if (match >= len)
 			{
 				hit = (ftell(exefp) - len);
-				stat("hit at 0x%06x", hit);
+				NX_LOG("hit at 0x%06x\n", hit);
 				match = 0;
 			}
 		}

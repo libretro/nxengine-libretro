@@ -7,6 +7,8 @@
 #include <ctype.h>
 //#include <sys/param.h>
 //#include <limits.h>
+//
+#include "nx_logger.h"
 
 #include "config.h"
 #include "common/basics.h"

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../nx.h"
 #include "../common/DBuffer.h"
 #include "../common/DString.h"
 #include "../common/bufio.h"
@@ -23,7 +24,7 @@ int i, nstrings;
 	{
 		if (data > data_end)
 		{
-			staterr("SIFStringArraySect::Decode: section corrupt: overran end of data");
+			NX_ERR("SIFStringArraySect::Decode: section corrupt: overran end of data\n");
 			return 1;
 		}
 		
@@ -44,7 +45,7 @@ DBuffer buf;
 
 	if (strings->CountItems() > 65535)
 	{
-		staterr("SIFStringArraySect::Encode: too many strings in list");
+		NX_ERR("SIFStringArraySect::Encode: too many strings in list\n");
 		return NULL;
 	}
 	

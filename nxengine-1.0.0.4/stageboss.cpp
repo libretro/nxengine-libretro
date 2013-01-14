@@ -25,14 +25,14 @@ void c------------------------------() {}
 
 bool StageBossManager::SetType(int newtype)
 {
-	stat("StageBossManager::SetType(%d)", newtype);
+	NX_LOG("StageBossManager::SetType(%d)\n", newtype);
 	
 	if (fBoss)
 	{
 		delete fBoss;
 		if (game.stageboss.object)
 		{
-			staterr(" ** warning: game.stageboss.object not properly cleaned up in OnMapExit");
+			NX_ERR(" ** warning: game.stageboss.object not properly cleaned up in OnMapExit\n");
 			game.stageboss.object->Delete();
 			game.stageboss.object = NULL;
 		}
@@ -56,7 +56,7 @@ bool StageBossManager::SetType(int newtype)
 		case BOSS_BALLOS: fBoss = new BallosBoss; break;
 		
 		default:
-			staterr("StageBossManager::SetType: unhandled boss type %d", newtype);
+			NX_ERR("StageBossManager::SetType: unhandled boss type %d\n", newtype);
 			fBossType = BOSS_NONE;
 			return 1;
 	}
@@ -105,7 +105,7 @@ void StageBossManager::SetState(int newstate)
 	}
 	else
 	{
-		staterr("StageBossManager::SetState(%d): no stageboss object in existance!", newstate);
+		NX_ERR("StageBossManager::SetState(%d): no stageboss object in existance!\n", newstate);
 	}
 }
 
@@ -123,7 +123,7 @@ void StageBoss::SetState(int newstate)
 	}
 	else
 	{
-		staterr("StageBoss::SetState(%d): no stageboss object!", newstate);
+		NX_ERR("StageBoss::SetState(%d): no stageboss object!\n", newstate);
 	}
 }
 
