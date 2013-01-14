@@ -29,7 +29,7 @@ int ch, i;
 	
 	if (!data)
 	{
-		staterr("CredReader: ReadNextCommand called but file is not loaded!");
+		NX_ERR("CredReader: ReadNextCommand called but file is not loaded!\n");
 		return 1;
 	}
 	
@@ -67,7 +67,7 @@ int ch, i;
 		
 		default:
 		{
-			staterr("CredReader: unknown command type '%c'", ch);
+			NX_ERR("CredReader: unknown command type '%c'\n", ch);
 			cmd->type = -1;
 			return 1;
 		}
@@ -108,7 +108,7 @@ struct CredCommand
 
 void CredCommand::DumpContents()
 {
-	stat("CC '%c': [%s]:%04d:%04d", type, text, parm, parm2);
+	NX_LOG("CC '%c': [%s]:%04d:%04d\n", type, text, parm, parm2);
 }
 
 void CredReader::Rewind()
@@ -136,18 +136,18 @@ char fname[MAXPATHLEN];
 	data = tsc_decrypt(fname, &datalen);
 	if (!data)
 	{
-		staterr("CredReader: couldn't open '%s'!", fname);
+		NX_ERR("CredReader: couldn't open '%s'!\n", fname);
 		return 1;
 	}
 	
-	stat("CredReader: '%s' loaded ok!", fname);
+	NX_LOG("CredReader: '%s' loaded ok!\n", fname);
 	dataindex = 0;
 	return 0;
 }
 
 void CredReader::CloseFile()
 {
-	stat("CredReader: closing file");
+	NX_LOG("CredReader: closing file\n");
 	
 	if (data)
 	{

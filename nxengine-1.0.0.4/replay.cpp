@@ -27,7 +27,7 @@ Profile profile;
 	end_record();
 	memset(&rec, 0, sizeof(rec));
 	
-	stat("begin_record('%s')", fname);
+	NX_LOG("begin_record('%s')\n", fname);
 	
 	// grab a savefile record of the game state and write it at the start of the file
 	// just like a regular profile.dat.
@@ -37,7 +37,7 @@ Profile profile;
 	fp = fopen(fname, "r+");
 	if (!fp)
 	{
-		staterr("begin_record: failed to open file %s", fname);
+		NX_ERR("begin_record: failed to open file %s\n", fname);
 		return 1;
 	}
 	
@@ -82,7 +82,7 @@ bool Replay::end_record()
 	fwrite(&rec.hdr, sizeof(ReplayHeader), 1, rec.fp);
 	fclose(rec.fp);
 	
-	stat("end_record(): wrote %d frames", rec.hdr.total_frames);
+	NX_LOG("end_record(): wrote %d frames\n", rec.hdr.total_frames);
 	memset(&rec, 0, sizeof(rec));
 	return 0;
 }
@@ -100,7 +100,7 @@ Profile profile;
 	end_playback();
 	memset(&play, 0, sizeof(play));
 	
-	stat("begin_playback('%s')", fname);
+	NX_LOG("begin_playback('%s')\n", fname);
 	
 	if (profile_load(fname, &profile))
 		return 1;
@@ -108,7 +108,7 @@ Profile profile;
 	fp = fopen(fname, "rb");
 	if (!fp)
 	{
-		staterr("begin_playback: failed to open file %s", fname);
+		NX_ERR("begin_playback: failed to open file %s\n", fname);
 		return 1;
 	}
 	
@@ -117,7 +117,7 @@ Profile profile;
 	
 	if (play.hdr.magick != REPLAY_MAGICK)
 	{
-		staterr("begin_playback: magick mismatch on file '%s' (%x shouldbe %x)", fname, play.hdr.magick, REPLAY_MAGICK);
+		NX_ERR("begin_playback: magick mismatch on file '%s' (%x shouldbe %x)\n", fname, play.hdr.magick, REPLAY_MAGICK);
 		return 1;
 	}
 	
@@ -379,7 +379,7 @@ void c------------------------------() {}
 // called from main after a game is loaded or a new game is begun.
 void Replay::OnGameStarting()
 {
-	stat("Replay::OnGameStarting()");
+	NX_LOG("Replay::OnGameStarting()\n");
 	
 	if (!IsPlaying())
 		begin_record_next();
@@ -391,11 +391,11 @@ bool Replay::begin_record_next()
 	int slot = GetAvailableSlot();
 	if (slot == -1)
 	{
-		stat("begin_record_next: all slots locked; not recording a replay");
+		NX_LOG("begin_record_next: all slots locked; not recording a replay\n");
 		return 1;
 	}
 	
-	stat("begin_record_next: starting record to slot %d", slot);
+	NX_LOG("begin_record_next: starting record to slot %d\n", slot);
 	return begin_record(GetReplayName(slot));
 }
 
@@ -459,7 +459,7 @@ int i, numUnlocked;
 			return i;
 	}
 	
-	staterr("GetAvailableSlot: deleted one but still none available???");
+	NX_ERR("GetAvailableSlot: deleted one but still none available???\n");
 	return -1;
 }
 
@@ -500,7 +500,7 @@ FILE *fp;
 	fp = fopen(fname, "rb");
 	if (!fp)
 	{
-		staterr("LoadHeader: can't open file '%s'", fname);
+		NX_ERR("LoadHeader: can't open file '%s'\n", fname);
 		return 1;
 	}
 	
@@ -518,7 +518,7 @@ FILE *fp;
 	fp = fopen(fname, "r+");
 	if (!fp)
 	{
-		staterr("SaveHeader: can't open file '%s'", fname);
+		NX_ERR("SaveHeader: can't open file '%s'\n", fname);
 		return 1;
 	}
 	
@@ -703,13 +703,13 @@ static void dump_replay()
 		
 		if (keys == lastkeys)
 		{
-			staterr(" -- impossible key repeat");
+			NX_ERR(" -- impossible key repeat\n");
 			if (runlength < 0x200000) break;
 		}
 		
 		if (runlength >= 0x200000)
 		{
-			staterr(" -- bogus runlength %08x", runlength);
+			NX_ERR(" -- bogus runlength %08x\n", runlength);
 			break;
 		}
 		
@@ -717,8 +717,8 @@ static void dump_replay()
 	}
 	
 	//total_frames--;
-	stat("total frames count: %d", total_frames);
-	stat("frames reported: %d", play.hdr.total_frames);
+	NX_LOG("total frames count: %d\n", total_frames);
+	NX_LOG("frames reported: %d\n", play.hdr.total_frames);
 	exit(1);
 }
 

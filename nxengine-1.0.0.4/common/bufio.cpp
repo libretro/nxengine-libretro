@@ -3,13 +3,14 @@
 #include <string.h>
 #include "DBuffer.h"
 
+#include "../nx.h"
 #include "bufio.fdh"
 
 uint8_t read_U8(const uint8_t **data, const uint8_t *data_end)
 {
 	if (*data > data_end)
 	{
-		staterr("read_U8: read past end of buffer: *data > data_end");
+		NX_ERR("read_U8: read past end of buffer: *data > data_end\n");
 		return 0xfe;
 	}
 	
@@ -22,7 +23,7 @@ uint16_t read_U16(const uint8_t **data, const uint8_t *data_end)
 	
 	if ((ptr + 1) > data_end)
 	{
-		staterr("read_U16: read past end of buffer: *data + 1 > data_end");
+		NX_ERR("read_U16: read past end of buffer: *data + 1 > data_end\n");
 		return 0xfefe;
 	}
 	
@@ -38,7 +39,7 @@ uint32_t read_U32(const uint8_t **data, const uint8_t *data_end)
 	
 	if ((ptr + 3) > data_end)
 	{
-		staterr("read_U32: read past end of buffer: *data + 3 > data_end");
+		NX_ERR("read_U32: read past end of buffer: *data + 3 > data_end\n");
 		return 0xfefefefe;
 	}
 	
@@ -117,7 +118,7 @@ char ch;
 	{
 		if (*data > data_end)
 		{
-			staterr("read_nonblank_char: read past end of buffer: *data > data_end");
+			NX_ERR("read_nonblank_char: read past end of buffer: *data > data_end\n");
 			return 254;
 		}
 		
@@ -146,7 +147,7 @@ void read_Variable(DBuffer *out, const uint8_t **data, const uint8_t *data_end)
 	
 	if ((ptr + (len - 1)) > data_end)
 	{
-		staterr("read_Variable: read past end of buffer: *ptr+len > data_end");
+		NX_ERR("read_Variable: read past end of buffer: *ptr+len > data_end\n");
 		return;
 	}
 	
@@ -163,7 +164,7 @@ void write_Variable(DBuffer *out, const uint8_t *data, int len)
 {
 	if (len > 255)
 	{
-		staterr("write_Variable: input length > 255");
+		NX_ERR("write_Variable: input length > 255\n");
 		len = 255;
 	}
 	
@@ -179,7 +180,7 @@ void read_Variable16(DBuffer *out, const uint8_t **data, const uint8_t *data_end
 	
 	if ((ptr + (len - 1)) > data_end)
 	{
-		staterr("read_Variable16: read past end of buffer: *ptr+len > data_end");
+		NX_ERR("read_Variable16: read past end of buffer: *ptr+len > data_end\n");
 		return;
 	}
 	
@@ -192,7 +193,7 @@ void write_Variable16(DBuffer *out, DBuffer *in)
 	int len = in->Length();
 	if (len > 65535)
 	{
-		staterr("write_Variable16: input length > 65535");
+		NX_ERR("write_Variable16: input length > 65535\n");
 		len = 65535;
 	}
 	

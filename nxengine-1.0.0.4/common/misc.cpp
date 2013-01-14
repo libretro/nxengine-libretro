@@ -9,6 +9,7 @@
 
 #include "basics.h"
 #include "misc.fdh"
+#include "../nx.h"
 
 #ifdef _WIN32
 #include "msvc_compat.h"
@@ -258,7 +259,7 @@ int range, val;
 	
 	if (max < min)
 	{
-		staterr("random(): warning: max < min [%d, %d]", min, max);
+		NX_ERR("random(): warning: max < min [%d, %d]\n", min, max);
 		min ^= max;
 		max ^= min;
 		min ^= max;
@@ -268,7 +269,7 @@ int range, val;
 	
 	if (range >= RAND_MAX)
 	{
-		staterr("random(): range > RAND_MAX", min, max);
+		NX_ERR("random(): range > RAND_MAX\n", min, max);
 		return 0;
 	}
 	

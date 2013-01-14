@@ -102,7 +102,7 @@ bool Game::initlevel()
 		PHandleAttributes();
 		PSelectFrame();
 		
-		stat("-- Starting on-entry script %d", game.switchstage.eventonentry);
+		NX_LOG("-- Starting on-entry script %d\n", game.switchstage.eventonentry);
 		StartScript(game.switchstage.eventonentry);
 		game.switchstage.eventonentry = 0;
 	}
@@ -114,7 +114,7 @@ bool Game::createplayer()
 {
 	if (player)
 	{
-		staterr("game.createplayer: player already exists!");
+		NX_ERR("game.createplayer: player already exists!\n");
 		return 1;
 	}
 	
@@ -146,7 +146,7 @@ bool Game::setmode(int newmode, int param, bool force)
 	if (game.mode == newmode && !force)
 		return 0;
 	
-	stat("Setting tick function to type %d param %d", newmode, param);
+	NX_LOG("Setting tick function to type %d param %d\n", newmode, param);
 	
 	if (tickfunctions[game.mode].OnExit)
 		tickfunctions[game.mode].OnExit();
@@ -157,7 +157,7 @@ bool Game::setmode(int newmode, int param, bool force)
 	{
 		if (tickfunctions[game.mode].OnEnter(param))
 		{
-			staterr("game.setmode: initilization failed for mode %d", newmode);
+			NX_ERR("game.setmode: initilization failed for mode %d\n", newmode);
 			game.mode = GM_NONE;
 			return 1;
 		}
@@ -171,7 +171,7 @@ bool Game::pause(int pausemode, int param)
 	if (game.paused == pausemode)
 		return 0;
 	
-	stat("Setting pause: type %d param %d", pausemode, param);
+	NX_LOG("Setting pause: type %d param %d\n", pausemode, param);
 	
 	if (tickfunctions[game.paused].OnExit)
 		tickfunctions[game.paused].OnExit();
@@ -182,7 +182,7 @@ bool Game::pause(int pausemode, int param)
 	{
 		if (tickfunctions[game.paused].OnEnter(param))
 		{
-			staterr("game.pause: initilization failed for mode %d", pausemode);
+			NX_ERR("game.pause: initilization failed for mode %d\n", pausemode);
 			game.paused = 0;
 			return 1;
 		}
@@ -393,7 +393,7 @@ extern int flipacceltime;
 			}
 			else
 			{
-				staterr("%s:%d: Max Objects Overflow", __FILE__, __LINE__);
+				NX_ERR("%s:%d: Max Objects Overflow\n", __FILE__, __LINE__);
 				return;
 			}
 			

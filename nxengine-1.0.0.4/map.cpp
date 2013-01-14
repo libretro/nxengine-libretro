@@ -27,7 +27,7 @@ bool load_stage(int stage_no)
 char stage[MAXPATHLEN];
 char fname[MAXPATHLEN];
 
-	stat(" >> Entering stage %d: '%s'.", stage_no, stages[stage_no].stagename);
+	NX_LOG(" >> Entering stage %d: '%s'.\n", stage_no, stages[stage_no].stagename);
 	game.curmap = stage_no;		// do it now so onspawn events will have it
 	
 	if (Tileset::Load(stages[stage_no].tileset))
@@ -67,18 +67,18 @@ bool load_map(const char *fname)
 	FILE *fp;
 	int x, y;
 
-        stat("load_map: %s\n", fname);
+   NX_LOG("load_map: %s\n", fname);
 
 	fp = fopen(fname, "rb");
 	if (!fp)
 	{
-		staterr("load_map: no such file: '%s'", fname);
+		NX_ERR("load_map: no such file: '%s'\n", fname);
 		return 1;
 	}
 	
 	if (!fverifystring(fp, "PXM"))
 	{
-		staterr("load_map: invalid map format: '%s'", fname);
+		NX_ERR("load_map: invalid map format: '%s'\n", fname);
 		return 1;
 	}
 	
@@ -90,13 +90,13 @@ bool load_map(const char *fname)
 	
 	if (map.xsize > MAP_MAXSIZEX || map.ysize > MAP_MAXSIZEY)
 	{
-		staterr("load_map: map is too large -- size %dx%d but max is %dx%d", map.xsize, map.ysize, MAP_MAXSIZEX, MAP_MAXSIZEY);
+		NX_ERR("load_map: map is too large -- size %dx%d but max is %dx%d\n", map.xsize, map.ysize, MAP_MAXSIZEX, MAP_MAXSIZEY);
 		fclose(fp);
 		return 1;
 	}
 	else
 	{
-		stat("load_map: level size %dx%d", map.xsize, map.ysize);
+		NX_LOG("load_map: level size %dx%d\n", map.xsize, map.ysize);
 	}
 	
 	for(y=0;y<map.ysize;y++)
@@ -110,7 +110,7 @@ bool load_map(const char *fname)
 	map.maxxscroll = (((map.xsize * TILE_W) - SCREEN_WIDTH) - 8) << CSF;
 	map.maxyscroll = (((map.ysize * TILE_H) - SCREEN_HEIGHT) - 8) << CSF;
 	
-	stat("load_map: '%s' loaded OK! - %dx%d", fname, map.xsize, map.ysize);
+	NX_LOG("load_map: '%s' loaded OK! - %dx%d\n", fname, map.xsize, map.ysize);
 	return 0;
 }
 
@@ -126,18 +126,18 @@ int nEntities;
 	Objects::DestroyAll(false);
 	FloatText::ResetAll();
 
-	stat("load_entities: reading in %s", fname);
+	NX_LOG("load_entities: reading in %s\n", fname);
 	// now we can load in the new objects
 	fp = fopen(fname, "rb");
 	if (!fp)
 	{
-		staterr("load_entities: no such file: '%s'", fname);
+		NX_ERR("load_entities: no such file: '%s'\n", fname);
 		return 1;
 	}
 	
 	if (!fverifystring(fp, "PXE"))
 	{
-		staterr("load_entities: not a PXE: '%s'", fname);
+		NX_ERR("load_entities: not a PXE: '%s'\n", fname);
 		return 1;
 	}
 	
@@ -169,7 +169,7 @@ int nEntities;
 				if (game.flags[id1])
 				{
 					addobject = true;
-					stat(" -- Appearing object %02d (%s) because flag %d is set", id2, DescribeObjectType(type), id1);
+					NX_LOG(" -- Appearing object %02d (%s) because flag %d is set\n", id2, DescribeObjectType(type), id1);
 				}
 			}
 			else if (flags & FLAG_DISAPPEAR_ON_FLAGID)
@@ -180,7 +180,7 @@ int nEntities;
 				}
 				else
 				{
-					stat(" -- Disappearing object %02d (%s) because flag %d is set", id2, DescribeObjectType(type), id1);
+					NX_LOG(" -- Disappearing object %02d (%s) because flag %d is set\n", id2, DescribeObjectType(type), id1);
 				}
 			}
 			else
@@ -210,7 +210,7 @@ int nEntities;
 		}
 	}
 	
-	//stat("load_entities: loaded %d objects", nEntities);
+	//NX_LOG("load_entities: loaded %d objects\n", nEntities);
 	fclose(fp);
 	return 0;
 }
@@ -239,11 +239,11 @@ unsigned char tc;
 
 	map.nmotiontiles = 0;
 
-	stat("load_pxa: reading in %s", fname);
+	NX_LOG("load_pxa: reading in %s\n", fname);
 	fp = fopen(fname, "rb");
 	if (!fp)
 	{
-		staterr("load_pxa: no such file: '%s'", fname);
+		NX_ERR("load_pxa: no such file: '%s'\n", fname);
 		return 1;
 	}
 	
@@ -252,7 +252,7 @@ unsigned char tc;
 		tc = fgetc(fp);
 		tilecode[i] = tc;
 		tileattr[i] = tilekey[tc];
-		//stat("Tile %02x   TC %02x    Attr %08x   tilekey[%02x] = %08x", i, tc, tileattr[i], tc, tilekey[tc]);
+		//NX_LOG("Tile %02x   TC %02x    Attr %08x   tilekey[%02x] = %08x\n", i, tc, tileattr[i], tc, tilekey[tc]);
 		
 		//FIXME: Destroyable star tiles not showing up right now
 		if (tc == 0x43)	// destroyable block - have to replace graphics
@@ -268,7 +268,7 @@ unsigned char tc;
 			map.motiontiles[map.nmotiontiles].sprite = SPR_WATER_CURRENT;
 			
 			map.nmotiontiles++;
-			stat("Added tile %02x to animation list, tc=%02x", i, tc);
+			NX_LOG("Added tile %02x to animation list, tc=%02x\n", i, tc);
 		}
 	}
 	
@@ -286,7 +286,7 @@ bool load_stages(void)
 	fp = fopen(fname, "rb");
 	if (!fp)
 	{
-		staterr("%s(%d): failed to open %s", __FILE__, __LINE__, fname);
+		NX_ERR("%s(%d): failed to open %s\n", __FILE__, __LINE__, fname);
 		num_stages = 0;
 		return 1;
 	}
@@ -307,10 +307,10 @@ bool initmapfirsttime(void)
 
 	retro_create_path_string(fname, sizeof(fname), g_dir, "tilekey.dat");
 
-	stat("initmapfirsttime: loading %s.", fname);
+	NX_LOG("initmapfirsttime: loading %s.\n", fname);
 	if (!(fp = fopen(fname, "rb")))
 	{
-		staterr("%s is missing!", fname);
+		NX_ERR("%s is missing!\n", fname);
 		return 1;
 	}
 	
@@ -393,7 +393,7 @@ int x, y;
 		
 		default:
 			map.parscroll_x = map.parscroll_y = 0;
-			staterr("map_draw_backdrop: unhandled map scrolling type %d", map.scrolltype);
+			NX_ERR("map_draw_backdrop: unhandled map scrolling type %d\n", map.scrolltype);
 		break;
 	}
 	
@@ -456,7 +456,7 @@ char fname[MAXPATHLEN];
 		backdrop[backdrop_no] = NXSurface::FromFile(fname, use_chromakey);
 		if (!backdrop[backdrop_no])
 		{
-			staterr("Failed to load backdrop '%s'", fname);
+			NX_ERR("Failed to load backdrop '%s'\n", fname);
 			return 1;
 		}
 	}
@@ -912,9 +912,9 @@ Object *FindObjectByID2(int id2)
 	Object *result = ID2Lookup[id2];
 	
 	if (result)
-		staterr("FindObjectByID2: ID2 %04d found: type %s; coords: (%d, %d)", id2, DescribeObjectType(ID2Lookup[id2]->type), ID2Lookup[id2]->x>>CSF,ID2Lookup[id2]->y>>CSF);
+		NX_LOG("FindObjectByID2: ID2 %04d found: type %s; coords: (%d, %d)\n", id2, DescribeObjectType(ID2Lookup[id2]->type), ID2Lookup[id2]->x>>CSF,ID2Lookup[id2]->y>>CSF);
 	else
-		staterr("FindObjectByID2: no such object %04d", id2);
+		NX_ERR("FindObjectByID2: no such object %04d\n", id2);
 	
 	return result;
 }
