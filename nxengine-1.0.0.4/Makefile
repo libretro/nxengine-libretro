@@ -1,6 +1,6 @@
 DEBUG=0
 SAFEMODE=0
-DEBUGLOG=1
+DEBUGLOG=0
 
 ifeq ($(platform),)
 platform = unix
