@@ -13,7 +13,7 @@ int curtable, opposing_table;
 int inverttable, invertfliptable;
 int flipmx, flipy;
 
-	stat("initslopetable: generating slopetables.");
+	NX_LOG("initslopetable: generating slopetables.\n");
 	memset(slopetable, 0, sizeof(slopetable));
 	
 	ya = TILE_H-1;
@@ -371,7 +371,7 @@ void dumpslopetable(int t)
 int x, y;
 char buffer[80];
 
-	stat("\nDumping slope table %d:", t);
+	NX_LOG("\nDumping slope table %d:\n", t);
 	for(y=0;y<TILE_H;y++)
 	{
 		for(x=0;x<TILE_W;x++)
@@ -379,7 +379,7 @@ char buffer[80];
 			buffer[x] = slopetable[t].table[x][y] + '0';
 		}
 		buffer[x] = 0;
-		stat("%s", buffer);
+		NX_LOG("%s\n", buffer);
 	}
 }
 #endif
