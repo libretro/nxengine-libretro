@@ -6,7 +6,7 @@
 #include "graphics.h"
 #include "nxsurface.h"
 #include "nxsurface.fdh"
-#include "../port-libretro/libretro.h"
+#include "../libretro/libretro.h"
 #include "../nx.h"
 
 #define SCREEN_BPP 15
