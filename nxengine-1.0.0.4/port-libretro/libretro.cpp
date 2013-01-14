@@ -112,7 +112,7 @@ static void extract_directory(char *buf, const char *path, size_t size)
 bool retro_load_game(const struct retro_game_info *game)
 {
    extract_directory(g_dir, game->path, sizeof(g_dir));
-   stat("g_dir: %s\n", g_dir);
+   NX_LOG("g_dir: %s\n", g_dir);
 
    pre_main();
 

@@ -7,9 +7,12 @@
 #include "../graphics/safemode.h"
 #include "../common/basics.h"
 #include "../port-libretro/libretro_shared.h"
+#include "../nx_logger.h"
+
 #include "extractpxt.fdh"
 
 #ifdef _WIN32
+#include <direct.h>
 #include "msvc_compat.h"
 #endif
 
@@ -158,20 +161,25 @@ struct
 } chan[4];
 int s, c, i;
 
+char slash;
+#ifdef _WIN32
+slash = '\\';
+#else
+slash = '/';
+#endif
+
 	for(s=0;;s++)
 	{
 		if (!snd[s].id) break;
 		
 		char outfilename[MAXPATHLEN];
       char outpath[MAXPATHLEN];
-		snprintf(outfilename, sizeof(outfilename), "%s/pxt/fx%02x.pxt", g_dir, snd[s].id);
-		snprintf(outpath, sizeof(outpath), "%s/pxt", g_dir);
-		stat("[ %s ]", outfilename);
+		snprintf(outfilename, sizeof(outfilename), "%s%cpxt%cfx%02x.pxt", g_dir, slash, slash, snd[s].id);
+		snprintf(outpath, sizeof(outpath), "%s%cpxt", g_dir, slash);
+		NX_LOG("[ %s ]\n", outfilename);
 
-#if defined(_WIN32) && !defined(_XBOX)
-		mkdir(outpath);
-#elif defined(_XBOX)
-      CreateDirectory(outpath, NULL);
+#if defined(_WIN32)
+		_mkdir(outpath);
 #else
 		mkdir(outpath, 0755);
 #endif
