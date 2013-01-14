@@ -23,7 +23,7 @@
 
 #include <stdarg.h>
 
-#include "port-libretro/msvc_compat.h"
+#include "libretro/msvc_compat.h"
 
 static inline void NX_LOG(const char *msg, ...)
 {
