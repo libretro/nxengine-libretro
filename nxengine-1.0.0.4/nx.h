@@ -35,7 +35,6 @@ using Tileset::draw_tile;
 
 #define CSF				9
 class Object;
-extern bool retro_60hz;
 
 #include "trig.h"
 #include "autogen/sprites.h"
