@@ -23,7 +23,7 @@ int fps = 0;
 static int fps_so_far = 0;
 static uint32_t fpstimer = 0;
 
-#define GAME_WAIT			(1000/ fps)	// sets framerate
+#define GAME_WAIT			(1000/GAME_FPS)	// sets framerate
 #define VISFLAGS			(SDL_APPACTIVE | SDL_APPINPUTFOCUS)
 int framecount = 0;
 bool freezeframe = false;
@@ -148,7 +148,7 @@ void post_main(void)
 	textbox.Deinit();
 }
 
-static bool gameloop(uint32_t fps)
+static bool gameloop(void)
 {
 	uint32_t gametimer;
 
@@ -165,7 +165,7 @@ static bool gameloop(uint32_t fps)
 
 static bool in_gameloop = false;
 
-bool run_main(uint32_t fps)
+bool run_main(void)
 {
 	if (in_gameloop)
 		goto loop;
@@ -253,7 +253,7 @@ bool run_main(uint32_t fps)
 	game.switchstage.mapno = -1;
 loop:
 	in_gameloop = true;
-	if (gameloop(fps))
+	if (gameloop())
 		return true;	
 	in_gameloop = false;
 
