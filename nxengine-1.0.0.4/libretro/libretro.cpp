@@ -10,7 +10,7 @@
 #include "../nx.h"
 
 void post_main();
-bool run_main();
+bool run_main(uint32_t fps);
 
 retro_video_refresh_t video_cb;
 static retro_input_poll_t poll_cb;
@@ -83,8 +83,16 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
    info->geometry.base_height = SCREEN_HEIGHT;
    info->geometry.max_width = SCREEN_WIDTH; 
    info->geometry.max_height = SCREEN_HEIGHT;
-   info->timing.fps = 60.0;
-   info->timing.sample_rate = ((2 * 22050) / 60 + 1) * 30;
+   if (retro_60hz)
+   {
+      info->timing.fps = 60.0;
+      info->timing.sample_rate = ((2 * 22050) / 60 + 1) * 30;
+   }
+   else
+   {
+      info->timing.fps = 50.0;
+      info->timing.sample_rate = ((2 * 22050) / 50 + 1) * 30;
+   }
 }
 
 void retro_init(void)
@@ -138,12 +146,12 @@ void retro_run(void)
 
    static unsigned frame_cnt = 0;
    if (retro_60hz)
-      while (!run_main());
+      while (!run_main(60));
    else
    {
       frame_cnt = (frame_cnt + 1) % 6;
       if (frame_cnt)
-         while (!run_main());
+         while (!run_main(50));
    }
 
    int16_t samples[(2 * 22050) / 60 + 1] = {0};
