@@ -66,7 +66,7 @@ void retro_set_input_state(retro_input_state_t cb)
 
 void retro_get_system_info(struct retro_system_info *info)
 {
-   info->need_fullpath = false;
+   info->need_fullpath = true;
    info->valid_extensions = "bin|BIN|exe|EXE|zip|ZIP";
    info->library_version = "1.0.0.4";
    info->library_name = "NXEngine";
@@ -84,7 +84,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
    info->geometry.max_width = SCREEN_WIDTH; 
    info->geometry.max_height = SCREEN_HEIGHT;
    info->timing.fps = 60.0;
-   info->timing.sample_rate = ((2 * 22050) / 60 + 1) * 30;
+   info->timing.sample_rate = 22050.0;
 }
 
 void retro_init(void)
@@ -144,11 +144,17 @@ void retro_run(void)
       frame_cnt = (frame_cnt + 1) % 6;
       if (frame_cnt)
          while (!run_main());
+      else
+         video_cb(NULL, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH * sizeof(uint16_t)); // Dupe every 6th frame.
    }
 
    int16_t samples[(2 * 22050) / 60 + 1] = {0};
-   mixaudio(samples, sizeof(samples) / sizeof(int16_t));
-   audio_batch_cb(samples, sizeof(samples) >> 2);
+
+   // Average audio frames / video frame: 367.5.
+   unsigned frames = (22050 + (frame_cnt & 1 ? 30 : -30)) / 60;
+   mixaudio(samples, frames * 2);
+
+   audio_batch_cb(samples, frames);
 
    g_frame_cnt++;
 }
