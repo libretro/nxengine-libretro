@@ -179,14 +179,15 @@ void retro_run(void)
    }
    else
    {
-      frame_cnt = (frame_cnt + 1) % 6;
-      if (frame_cnt)
+      if (frame_cnt % 6)
       {
          while (!run_main());
          video_cb(retro_frame_buffer, retro_frame_buffer_width, retro_frame_buffer_height, retro_frame_buffer_pitch);
       }
       else
          video_cb(NULL, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH * sizeof(uint16_t)); // Dupe every 6th frame.
+
+      frame_cnt++;
    }
 
    int16_t samples[(2 * 22050) / 60 + 1] = {0};
