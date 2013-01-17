@@ -7,10 +7,17 @@
 
 static int text_draw(int x, int y, const char *text, int spacing=0, NXFont *font=&whitefont);
 
+#ifdef FRONTEND_SUPPORTS_RGB565
+#define SCREEN_BPP 16
+#define RED_SHIFT 11
+#define GREEN_SHIFT 5
+#define BLUE_SHIFT 0
+#else
 #define SCREEN_BPP 15
 #define RED_SHIFT 10
 #define GREEN_SHIFT 5
 #define BLUE_SHIFT 0
+#endif
 
 static SDL_Surface *sdl_screen = NULL;
 static SDL_Surface *shadesfc = NULL;
@@ -137,8 +144,11 @@ bool NXFont::InitChars(SDL_Surface *font, uint32_t color)
 	{
 		str[0] = i;
 
-		letter = SDL_CreateRGBSurface(0, 6, 10, SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0,
-				0);
+#ifdef FRONTEND_SUPPORTS_RGB565
+      letter = SDL_CreateRGBSurface(0, 6, 10, SCREEN_BPP, 0x1f << 11 , 0x7e0, 0x1f << 0, 0);
+#else
+		letter = SDL_CreateRGBSurface(0, 6, 10, SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
+#endif
 
 		SDL_Rect src = {0};
 

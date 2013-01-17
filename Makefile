@@ -143,7 +143,7 @@ OBJECTS    := 	$(NX_DIR)/caret.o $(NX_DIR)/console.o $(NX_DIR)/floattext.o $(NX_
 OBJECTS += $(LIBRETRO_OBJS)
 
 INCLUDES   = -I. -I$(NX_DIR) -I$(NX_DIR)/graphics -I$(NX_DIR)/libretro -I$(NX_DIR)/sdl/include
-DEFINES    = -DHAVE_INTTYPES_H -D__LIBRETRO__ -DINLINE=inline
+DEFINES    = -DHAVE_INTTYPES_H -D__LIBRETRO__ -DINLINE=inline -DFRONTEND_SUPPORTS_RGB565
 
 ifeq ($(platform), sncps3)
 WARNINGS_DEFINES =
