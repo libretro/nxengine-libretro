@@ -246,11 +246,17 @@ NXFormat *NXSurface::Format()
 	return fSurface->format;
 }
 
-extern retro_video_refresh_t video_cb;
+extern void* retro_frame_buffer;
+extern unsigned retro_frame_buffer_width;
+extern unsigned retro_frame_buffer_height;
+extern unsigned retro_frame_buffer_pitch;
 
 void NXSurface::Flip()
 {
-	video_cb((const uint16_t*)fSurface->pixels, fSurface->w, fSurface->h, fSurface->pitch);
+   retro_frame_buffer = fSurface->pixels;
+   retro_frame_buffer_width = fSurface->w;
+   retro_frame_buffer_height = fSurface->h;
+   retro_frame_buffer_pitch = fSurface->pitch;
 }
 
 /*

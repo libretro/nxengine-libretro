@@ -150,9 +150,9 @@ void post_main(void)
 
 static bool gameloop(void)
 {
-	uint32_t gametimer;
+	//uint32_t gametimer;
 
-	gametimer = -GAME_WAIT*10;
+	//gametimer = -GAME_WAIT*10;
 
 	if(game.switchstage.mapno < 0)
 	{
@@ -320,15 +320,12 @@ static inline void run_tick()
 
 	Replay::DrawStatus();
 
+	org_run();
+
 	//platform_sync_to_vblank();
 	screen->Flip();
 
 	memcpy(lastinputs, inputs, sizeof(lastinputs));
-	
-	// immediately after a game tick is when we have the most amount of time before
-	// the game needs to run again. so now's as good a time as any for some
-	// BGM audio processing, wouldn't you say?
-	org_run();
 }
 
 void InitNewGame(bool with_intro)

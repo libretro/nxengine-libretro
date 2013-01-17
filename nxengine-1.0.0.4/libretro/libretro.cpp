@@ -12,7 +12,12 @@
 void post_main();
 bool run_main();
 
-retro_video_refresh_t video_cb;
+void *retro_frame_buffer;
+unsigned retro_frame_buffer_width;
+unsigned retro_frame_buffer_height;
+unsigned retro_frame_buffer_pitch;
+
+static retro_video_refresh_t video_cb;
 static retro_input_poll_t poll_cb;
 retro_input_state_t input_cb;
 static retro_audio_sample_t audio_cb;
@@ -140,18 +145,46 @@ void retro_reset(void)
 
 void mixaudio(int16_t *stream, size_t len_samples);
 
+#if 0
+#include <time.h>
+static int64_t get_usec(void)
+{
+   struct timespec tv;
+   clock_gettime(CLOCK_MONOTONIC, &tv);
+   return (int64_t)tv.tv_sec * 1000000 + (int64_t)tv.tv_nsec / 1000;
+}
+#endif
+
 void retro_run(void)
 {
    poll_cb();
-
    static unsigned frame_cnt = 0;
+
+   //fprintf(stderr, "[NX]: Start frame.\n");
+   //int64_t start_time = get_usec();
+
    if (retro_60hz)
+   {
+      //int64_t start_time_frame = get_usec();
       while (!run_main());
+      //int64_t total_time_frame = get_usec() - start_time_frame;
+      //fprintf(stderr, "[NX]: total_time_frame took %lld usec.\n", (long long)total_time_frame);
+
+      //int64_t start_time_frame_cb = get_usec();
+      video_cb(retro_frame_buffer, retro_frame_buffer_width, retro_frame_buffer_height, retro_frame_buffer_pitch);
+      //int64_t total_time_frame_cb = get_usec() - start_time_frame_cb;
+      //fprintf(stderr, "[NX]: total_time_frame_cb took %lld usec.\n", (long long)total_time_frame_cb);
+
+      frame_cnt++;
+   }
    else
    {
       frame_cnt = (frame_cnt + 1) % 6;
       if (frame_cnt)
+      {
          while (!run_main());
+         video_cb(retro_frame_buffer, retro_frame_buffer_width, retro_frame_buffer_height, retro_frame_buffer_pitch);
+      }
       else
          video_cb(NULL, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH * sizeof(uint16_t)); // Dupe every 6th frame.
    }
@@ -160,11 +193,14 @@ void retro_run(void)
 
    // Average audio frames / video frame: 367.5.
    unsigned frames = (22050 + (frame_cnt & 1 ? 30 : -30)) / 60;
-   mixaudio(samples, frames * 2);
 
+   mixaudio(samples, frames * 2);
    audio_batch_cb(samples, frames);
 
    g_frame_cnt++;
+
+   //int64_t total_time = get_usec() - start_time;
+   //fprintf(stderr, "[NX]: Frame took %lld usec.\n", (long long)total_time);
 }
 
 void retro_unload_cartridge(void) {}
