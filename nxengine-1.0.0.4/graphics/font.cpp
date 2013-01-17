@@ -12,11 +12,17 @@ static int text_draw(int x, int y, const char *text, int spacing=0, NXFont *font
 #define RED_SHIFT 11
 #define GREEN_SHIFT 5
 #define BLUE_SHIFT 0
+#define RED_MASK (0x1f << 11)
+#define GREEN_MASK (0x3f << 5)
+#define BLUE_MASK (0x1f << 0)
 #else
 #define SCREEN_BPP 15
 #define RED_SHIFT 10
 #define GREEN_SHIFT 5
 #define BLUE_SHIFT 0
+#define RED_MASK (0x1f << 10)
+#define GREEN_MASK (0x1f << 5)
+#define BLUE_MASK (0x1f << 0)
 #endif
 
 static SDL_Surface *sdl_screen = NULL;
@@ -144,11 +150,7 @@ bool NXFont::InitChars(SDL_Surface *font, uint32_t color)
 	{
 		str[0] = i;
 
-#ifdef FRONTEND_SUPPORTS_RGB565
-      letter = SDL_CreateRGBSurface(0, 6, 10, SCREEN_BPP, 0x1f << 11 , 0x7e0, 0x1f << 0, 0);
-#else
-		letter = SDL_CreateRGBSurface(0, 6, 10, SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
-#endif
+      letter = SDL_CreateRGBSurface(0, 6, 10, SCREEN_BPP, RED_MASK, GREEN_MASK, BLUE_MASK, 0);
 
 		SDL_Rect src = {0};
 
@@ -204,10 +206,8 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 
 		uint16_t blue = 0x1f;
 
-		top = SDL_CreateRGBSurface(0, 6, 10, SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0,
-				0);
-		bottom = SDL_CreateRGBSurface(0, 6, 10, SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0,
-				0);
+		top = SDL_CreateRGBSurface(0, 6, 10, SCREEN_BPP, RED_MASK, GREEN_MASK, BLUE_MASK, 0);
+		bottom = SDL_CreateRGBSurface(0, 6, 10, SCREEN_BPP, RED_MASK, GREEN_MASK, BLUE_MASK, 0);
 
 		SDL_FillRect(top, NULL, blue);
 		SDL_FillRect(bottom, NULL, blue);
@@ -240,8 +240,7 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 		set_color(bottom, color_bg, blue);
 
 		letters[i] = SDL_CreateRGBSurface(0, top->w, top->h+offset,
-				SCREEN_BPP, 0x1f << 10, 0x1f << 5,
-				0x1f << 0, 0);
+				SCREEN_BPP, RED_MASK, GREEN_MASK, BLUE_MASK, 0);
 
 		SDL_SetColorKey(letters[i], SDL_SRCCOLORKEY, blue);
 		SDL_FillRect(letters[i], NULL, blue);
@@ -350,7 +349,7 @@ static bool create_shade_sfc(void)
 	
 	SDL_PixelFormat *format = sdl_screen->format;
 	shadesfc = SDL_CreateRGBSurface(SDL_SRCALPHA | SDL_SWSURFACE, SCREEN_WIDTH, ht,
-	SCREEN_BPP, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
+	SCREEN_BPP, RED_MASK, GREEN_MASK, BLUE_MASK, 0);
 	
 	if (!shadesfc)
 		return 1;
