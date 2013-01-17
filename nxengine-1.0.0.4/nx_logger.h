@@ -17,6 +17,12 @@
 #ifndef __NX_LOGGER_H
 #define __NX_LOGGER_H
 
+#ifdef RELEASE_BUILD
+#define NX_LOG(...)
+#define NX_ERR(...)
+#define NX_WARN(...)
+#else
+
 #if defined(ANDROID) && defined(HAVE_LOGGER)
 #include <android/log.h>
 #endif
@@ -122,6 +128,8 @@
    } while (0)
 #endif
 #endif
+#endif
+
 #endif
 
 #endif

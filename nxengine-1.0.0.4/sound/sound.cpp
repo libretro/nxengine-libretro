@@ -69,7 +69,7 @@ bool sound_init(void)
 	
 	if (org_init(org_wavetable_fname, pxt_dirname, ORG_VOLUME))
 	{
-		staterr("Music failed to initialize");
+		NX_ERR("Music failed to initialize\n");
 		return 1;
 	}
 	
@@ -146,11 +146,11 @@ void music(int songno)
 	lastsong = cursong;
 	cursong = songno;
 	
-	stat(" >> music(%d)", songno);
+	NX_LOG(" >> music(%d)\n", songno);
 	
 	if (songno != 0 && !should_music_play(songno, settings->music_enabled))
 	{
-		stat("Not playing track %d because music_enabled is %d", songno, settings->music_enabled);
+		NX_WARN("Not playing track %d because music_enabled is %d\n", songno, settings->music_enabled);
 		org_stop();
 		return;
 	}
@@ -187,7 +187,7 @@ void music_set_enabled(int newstate)
 {
 	if (newstate != settings->music_enabled)
 	{
-		stat("music_set_enabled(%d)", newstate);
+		NX_LOG("music_set_enabled(%d)\n", newstate);
 		
 		settings->music_enabled = newstate;
 		bool play = should_music_play(cursong, newstate);
@@ -221,7 +221,7 @@ static void start_track(int songno)
    slash = '/';
 #endif
         snprintf(fname, sizeof(fname), "%s%c%s.org", fname_dir, slash, org_names[songno]);
-        stat("start_track: %s\n", fname);
+        NX_LOG("start_track: %s\n\n", fname);
 	
 	if (!org_load(fname))
 	{

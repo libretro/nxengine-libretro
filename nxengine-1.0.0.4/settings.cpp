@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "settings.h"
+#include "nx.h"
 #include "replay.h"
 #include "settings.fdh"
 
@@ -24,9 +25,7 @@ bool settings_load(Settings *setfile)
 	
 	if (tryload(settings))
 	{
-#ifdef DEBUG
-		stat("No saved settings; using defaults.");
-#endif
+		NX_LOG("No saved settings; using defaults.\n");
 		
 		memset(setfile, 0, sizeof(Settings));
 		setfile->resolution = 2;		// 640x480 Windowed, should be safe value
@@ -69,18 +68,14 @@ static bool tryload(Settings *setfile)
         char setfilename_tmp[1024];
 	FILE *fp;
 
-#ifdef DEBUG
-	stat("Loading settings...");
-#endif
+	NX_LOG("Loading settings...\n");
 
 	retro_create_path_string(setfilename_tmp, sizeof(setfilename_tmp), g_dir, setfilename);
 	
 	fp = fopen(setfilename_tmp, "rb");
 	if (!fp)
 	{
-#ifdef DEBUG
-		stat("Couldn't open file %s.", setfilename_tmp);
-#endif
+		NX_ERR("Couldn't open file %s.\n", setfilename_tmp);
 		return 1;
 	}
 	
@@ -88,9 +83,7 @@ static bool tryload(Settings *setfile)
 	fread(setfile, sizeof(Settings), 1, fp);
 	if (setfile->version != SETTINGS_VERSION)
 	{
-#ifdef DEBUG
-		stat("Wrong settings version %04x.", setfile->version);
-#endif
+		NX_ERR("Wrong settings version %04x.\n", setfile->version);
 		return 1;
 	}
 	
@@ -109,15 +102,11 @@ FILE *fp;
 
 	retro_create_path_string(setfilename_tmp, sizeof(setfilename_tmp), g_dir, setfilename);
 	
-#ifdef DEBUG
-	stat("Writing settings...");
-#endif
+	NX_LOG("Writing settings...\n");
 	fp = fopen(setfilename_tmp, "wb");
 	if (!fp)
 	{
-#ifdef DEBUG
-		stat("Couldn't open file %s.", setfilename_tmp);
-#endif
+		NX_ERR("Couldn't open file %s.\n", setfilename_tmp);
 		return 1;
 	}
 	

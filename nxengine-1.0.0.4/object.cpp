@@ -178,7 +178,7 @@ void Object::PushBehind(int objtype)
 	if (target)
 		PushBehind(target);
 	else
-		staterr("PushBehind: could not find any objects of type %s", DescribeObjectType(objtype));
+		NX_ERR("PushBehind: could not find any objects of type %s\n", DescribeObjectType(objtype));
 }
 
 /*
@@ -830,9 +830,7 @@ Object * const &o = this;
 				if (GetCurrentScript() == -1 &&		// no override other scripts
 					game.switchstage.mapno == -1)	// no repeat exec after <TRA
 				{
-#ifdef DEBUG
-					stat("On-touch script %d triggered", o->id2);
-#endif
+					NX_LOG("On-touch script %d triggered\n", o->id2);
 					StartScript(o->id2);
 				}
 			}

@@ -44,7 +44,7 @@ INITFUNC(AIRoutines)
 
 void XBoss::OnMapEntry(void)
 {
-	stat("XBoss::OnMapEntry()");
+	NX_LOG("XBoss::OnMapEntry()\n");
 	
 	memset(&X, 0, sizeof(X));
 	memset(&body, 0, sizeof(body));

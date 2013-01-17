@@ -333,7 +333,7 @@ void ai_npc_sue(Object *o)
 			// find Igor
 			o->sue.carried_by = FindObjectByID2(501);
 			if (!o->sue.carried_by)
-				staterr("-- Could not find entity carrying Sue (ID 501)");
+				NX_ERR("-- Could not find entity carrying Sue (ID 501)\n");
 		case 14:	// being carried--see aftermove routine
 			o->frame = 9;
 		break;
@@ -406,7 +406,7 @@ void ai_npc_sue(Object *o)
 		break;
 		
 		/*default:
-			staterr("-- Sue entered unhandled state %d (0x%02x)", o->state, o->state);
+			NX_ERR("-- Sue entered unhandled state %d (0x%02x)\n", o->state, o->state);
 			exit(1);*/
 	}
 	

@@ -253,7 +253,7 @@ bool IsBlockedInShotDir(Object *o)
 		case DOWN: 	return o->blockd;
 	}
 	
-	staterr("IsBlockedInShotDir(%x): invalid direction %d", o, o->shot.dir);
+	NX_ERR("IsBlockedInShotDir(%x): invalid direction %d\n", o, o->shot.dir);
 	return 0;
 }
 

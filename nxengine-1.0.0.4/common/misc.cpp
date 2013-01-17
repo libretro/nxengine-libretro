@@ -15,8 +15,6 @@
 #include "msvc_compat.h"
 #endif
 
-void stat(const char *fmt, ...);
-
 #ifndef MSB_FIRST
 uint16_t fgeti(FILE *fp)
 {

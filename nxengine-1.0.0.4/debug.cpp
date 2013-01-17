@@ -254,7 +254,7 @@ int ObjectNameToType(const char *name_in)
 		}
 	}
 	
-	stat("ObjectNameToType: couldn't find object 'OBJ_%s'", searchstring);
+	NX_ERR("ObjectNameToType: couldn't find object 'OBJ_%s'\n", searchstring);
 	free(name);
 	return -1;
 }

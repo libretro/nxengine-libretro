@@ -1087,7 +1087,7 @@ void ai_scroll_controller(Object *o)
 				
 				if (!o->linkedobject)
 				{
-					staterr("sctrl: no stageboss object!");
+					NX_ERR("sctrl: no stageboss object!\n");
 					o->Delete();
 				}
 			}
@@ -1097,11 +1097,11 @@ void ai_scroll_controller(Object *o)
 				
 				if (o->linkedobject)
 				{
-					staterr("sctrl: successfully linked to object %08x", o->linkedobject);
+					NX_LOG("sctrl: successfully linked to object %08x\n", o->linkedobject);
 				}
 				else
 				{
-					staterr("sctrl: failed to link to id2 %d: object not found", o->id2);
+					NX_ERR("sctrl: failed to link to id2 %d: object not found\n", o->id2);
 					o->Delete();
 				}
 			}

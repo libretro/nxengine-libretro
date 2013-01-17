@@ -28,7 +28,7 @@ void ai_waterlevel(Object *o)
 	
 	if (map.wlforcestate)
 	{
-		stat("Forced WL state to %d", map.wlforcestate);
+		NX_LOG("Forced WL state to %d\n", map.wlforcestate);
 		o->state = map.wlforcestate;
 		map.wlforcestate = 0;
 	}
