@@ -77,7 +77,7 @@ void c------------------------------() {}
 
 void DebugConsole::SetVisible(bool newstate)
 {
-	//stat("DebugConsole::SetVisible(%s)", newstate?"true":"false");
+	//NX_LOG("DebugConsole::SetVisible(%s)\n", newstate?"true":"false");
 	
 	if (fVisible != newstate)
 	{
@@ -250,7 +250,7 @@ void DebugConsole::Print(const char *fmt, ...)
 	vsnprintf(fResponse, sizeof(fResponse), fmt, ar);
 	va_end(ar);
 	
-	stat("%s", fResponse);
+	NX_LOG("%s\n", fResponse);
 	fResponseTimer = 60;
 #endif
 }
@@ -261,7 +261,7 @@ void c------------------------------() {}
 
 bool DebugConsole::Execute(const char *line)
 {
-	stat("DebugConsole::Execute('%s')", line);
+	NX_LOG("DebugConsole::Execute('%s')\n", line);
 	
 	// record command in backbuffer
 	if (fBackBuffer.CountItems() >= CONSOLE_MAX_BACK)
@@ -452,7 +452,7 @@ static void __warp(StringList *args, int num)
 			stagename.AppendString(args->StringAt(i));
 		}
 		
-		stat("Looking for '%s'", stagename.String());
+		NX_LOG("Looking for '%s'\n", stagename.String());
 		for(num=0;;num++)
 		{
 			if (num >= num_stages)

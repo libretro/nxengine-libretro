@@ -96,7 +96,11 @@ void c------------------------------() {}
 void AddInventory(int item)
 {
 	if (player->ninventory+1 >= MAX_INVENTORY)
-		{ staterr("<<<AddInventory: inventory is full>>"); game.running = 0; return; }
+   {
+      NX_ERR("<<<AddInventory: inventory is full>>\n");
+      game.running = 0;
+      return;
+   }
 	
 	player->inventory[player->ninventory++] = item;
 	sound(SND_GET_ITEM);

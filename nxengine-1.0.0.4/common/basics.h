@@ -12,13 +12,11 @@
 
 typedef unsigned char		uchar;
 
-void stat(const char *fmt, ...);
-void staterr(const char *fmt, ...);
 #define ASSERT(X)	\
 {	\
 	if (!(X))	\
 	{	\
-		staterr("** ASSERT FAILED: '%s' at %s(%d)", #X, __FILE__, __LINE__);	\
+		NX_ERR("** ASSERT FAILED: '%s' at %s(%d)\n", #X, __FILE__, __LINE__);	\
 		exit(1); 	\
 	}	\
 }

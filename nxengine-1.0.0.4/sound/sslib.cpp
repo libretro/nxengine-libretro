@@ -283,7 +283,7 @@ int result;
 	}
 	else
 	{
-		staterr("SSGetSamplePos: channel %d is not playing!", c);
+		NX_ERR("SSGetSamplePos: channel %d is not playing!\n", c);
 		result = -1;
 	}
 	

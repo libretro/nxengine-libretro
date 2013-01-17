@@ -177,7 +177,7 @@ static void handle_input()
 				{
 					if (ProfileExists(i))
 					{
-						stat("Last save file %d missing. Defaulting to %d instead.", settings->last_save_slot, i);
+						NX_WARN("Last save file %d missing. Defaulting to %d instead.\n", settings->last_save_slot, i);
 						settings->last_save_slot = i;
 						foundslot = true;
 					}
@@ -186,7 +186,7 @@ static void handle_input()
 				// there are no save files. Start a new game instead.
 				if (!foundslot)
 				{
-					stat("No save files found. Starting new game instead.");
+					NX_WARN("No save files found. Starting new game instead.\n");
 					choice = 0;
 				}
 			}

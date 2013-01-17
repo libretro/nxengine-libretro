@@ -22,7 +22,7 @@ void InitList::AddFunction(bool (*func)(void))
 
 void InitList::AddFunction(void *func)
 {
-	//stat("AddFunction (void)%08x [%d]", func, fCount);
+	//NX_LOG("AddFunction (void)%08x [%d]\n", func, fCount);
 	if (fCount >= MAX_INIT_RECORDS)
 		return;
 	

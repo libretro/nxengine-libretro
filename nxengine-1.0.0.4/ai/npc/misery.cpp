@@ -146,8 +146,8 @@ Object *target;
 			o->state = 1;
 			
 			// correct values: 0x3F0, 0xAE
-			stat("Computed toss values xi: 0x%x, 0x%x", o->xinertia, o->yinertia);
-			stat("Target x/y: 0x%x, 0x%x", target->x, target->y);
+			NX_LOG("Computed toss values xi: 0x%x, 0x%x\n", o->xinertia, o->yinertia);
+			NX_LOG("Target x/y: 0x%x, 0x%x\n", target->x, target->y);
 		}
 		case 1:
 			ANIMATE(1, 0, 1);
@@ -185,7 +185,7 @@ static Object *mbubble_find_target(void)
 	Object *target = FindObjectByID2(1000);
 	if (!target)
 	{
-		staterr("ai_miserys_bubble: failed to find a target object with ID2=1000");
+		NX_ERR("ai_miserys_bubble: failed to find a target object with ID2=1000\n");
 		return NULL;
 	}
 	

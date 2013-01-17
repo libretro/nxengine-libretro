@@ -214,9 +214,7 @@ signed short *abuf;
 	drumtable[d].nsamples = chunk->alen / 2 / 2;	// 16-bit stereo sound
 	drumtable[d].samples = malloc(drumtable[d].nsamples * 2);
 	
-	#ifndef QUIET
-		stat("drum0%X [%s]: %d samples", d, fname, drumtable[d].nsamples);
-	#endif
+   NX_LOG("drum0%X [%s]: %d samples\n", d, fname, drumtable[d].nsamples);
 	
 	read_pt = 0;
 	abuf = (signed short *)chunk->abuf;
@@ -240,7 +238,7 @@ int i;
 signed short sample;
 stPXSound snd;
 
-	stat("load_drum: loading %s into drum index %d", fname, d);
+	NX_LOG("load_drum: loading %s into drum index %d\n", fname, d);
 	
 	if (pxt_load(fname, &snd)) return 1;
 	pxt_Render(&snd);
@@ -249,7 +247,7 @@ stPXSound snd;
 	drumtable[d].samples = (signed short *)malloc(snd.final_size * 2);		// *2 - it is 16-bit
 	
 	#ifndef QUIET
-		stat("drum0%X [%s]: %d samples", d, fname, drumtable[d].nsamples);
+		NX_LOG("drum0%X [%s]: %d samples\n", d, fname, drumtable[d].nsamples);
 	#endif
 	
 	// read data out of pxt's render result and put it into our drum sample table
@@ -626,7 +624,7 @@ static void mix_buffers(void)
 	len = buffer_samples * 2;
 	final = final_buffer[current_buffer].samples;
 	
-	//stat("mixing %d samples", len);
+	//NX_LOG("mixing %d samples\n", len);
 	for(cursample=0;cursample<len;cursample++)
 	{
 		// first mix instruments
@@ -717,7 +715,7 @@ static void ForceSamplePos(int m, int desired_samples)
 		}
 		else
 		{	// this should NEVER actually happen!!
-			stat("ForceSamplePos: WARNING: !!! truncated channel %d from %d to %d samples !!!", m, note_channel[m].samples_so_far, desired_samples);
+			NX_WARN("ForceSamplePos: WARNING: !!! truncated channel %d from %d to %d samples !!!\n", m, note_channel[m].samples_so_far, desired_samples);
 			note_channel[m].samples_so_far = desired_samples;
 			note_channel[m].outpos = desired_samples * 2;
 		}
@@ -730,7 +728,7 @@ static void silence_gen(stNoteChannel *chan, int num_samples)
 {
 int clear_bytes;
 
-	//stat("silence_gen: making %d samples of silence", num_samples);
+	//NX_LOG("silence_gen: making %d samples of silence\n", num_samples);
 	
 	clear_bytes = (num_samples * 2 * 2);		// clear twice as many shorts as = num_samples
 	memset(&chan->outbuffer[chan->outpos], 0, clear_bytes);
@@ -787,7 +785,7 @@ double iratio;
 	//statbuild("Entering note_gen with phaseacc=%.2f and sample_inc=%.2f", chan->phaseacc, chan->sample_inc);
 	//statbuild(", using buffer %08x\n", chan->outbuffer);
 	
-	//stat("note_gen(%d, %d)", chan->number, num_samples);
+	//NX_LOG("note_gen(%d, %d)\n", chan->number, num_samples);
 	
 	// generate however many output samples we were asked for
 	for(i=0;i<num_samples;i++)
@@ -882,7 +880,7 @@ int i;
 	volume_right_ratio = chan->volume_right_ratio;
 	wave = chan->wave;
 	
-	//stat("drum_gen(%d, %d)", m_channel, num_samples);
+	//NX_LOG("drum_gen(%d, %d)\n", m_channel, num_samples);
 	
 	// generate the drum sound
 	for(i=0;i<num_samples;i++)
@@ -936,7 +934,7 @@ int m;
 int beats_left;
 int out_position;
 
-	//stat("generate_music: cb=%d buffer_beats=%d", current_buffer, buffer_beats);
+	//NX_LOG("generate_music: cb=%d buffer_beats=%d\n", current_buffer, buffer_beats);
 	
 	// save beat # of the first beat in buffer for calculating current beat for TrackFuncs
 	final_buffer[current_buffer].firstbeat = song.beat;
@@ -948,7 +946,7 @@ int out_position;
 		note_channel[m].outpos = 0;
 	}
 	
-	//stat("generate_music: generating %d beats of music\n", buffer_beats);
+	//NX_LOG("generate_music: generating %d beats of music\n", buffer_beats);
 	beats_left = buffer_beats;
 	out_position = 0;
 	
@@ -1022,7 +1020,7 @@ int len;
 		// 1st- start notes as we arrive at their beat
 		if (song.beat == note->beat)
 		{
-			//stat(" Beat/Note: %d/%d   Chan: %d   Note: %d  length=%d vol=%d pan=%d wave=%d", song.beat, curnote, m, note->note, note->length, note->volume, note->panning, song.instrument[m].wave);
+			//NX_LOG(" Beat/Note: %d/%d   Chan: %d   Note: %d  length=%d vol=%d pan=%d wave=%d\n", song.beat, curnote, m, note->note, note->length, note->volume, note->panning, song.instrument[m].wave);
 			
 			if (note->volume != 0xff) chan->volume = note->volume;
 			if (note->panning != 0xff) chan->panning = note->panning;

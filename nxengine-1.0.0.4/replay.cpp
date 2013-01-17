@@ -411,7 +411,7 @@ int i, numUnlocked;
 	for(i=MAX_REPLAYS-1;i>=0;i--)
 	{
 		GetSlotInfo(i, &slotinfo[i]);
-		//stat("Read status of slot %d: [ %d ]", i, slotinfo[i].status);
+		//NX_LOG("Read status of slot %d: [ %d ]\n", i, slotinfo[i].status);
 		
 		if (slotinfo[i].status == RS_UNUSED)
 			return i;
@@ -647,19 +647,18 @@ void c------------------------------() {}
 
 static void dump_replay()
 {
-	stat("=== Header ===");
-	stat("magick: %04x (%s)", play.hdr.magick, (play.hdr.magick == REPLAY_MAGICK) ? "correct" : "not correct");
-	stat("randseed: %08x", play.hdr.randseed);
-	stat("locked: %d", play.hdr.locked);
-	stat("total_frames: %d (%d secs)", play.hdr.total_frames, play.hdr.total_frames / 50);
-	stat("stageno: %d (%s)", play.hdr.stageno, map_get_stage_name(play.hdr.stageno));
-	stat("createstamp: %010llx", play.hdr.createstamp);
-	stat("=== End Header ===");
-	stat("");
+	NX_LOG("=== Header ===\n");
+	NX_LOG("magick: %04x (%s)\n", play.hdr.magick, (play.hdr.magick == REPLAY_MAGICK) ? "correct" : "not correct");
+	NX_LOG("randseed: %08x\n", play.hdr.randseed);
+	NX_LOG("locked: %d\n", play.hdr.locked);
+	NX_LOG("total_frames: %d (%d secs)\n", play.hdr.total_frames, play.hdr.total_frames / 50);
+	NX_LOG("stageno: %d (%s)\n", play.hdr.stageno, map_get_stage_name(play.hdr.stageno));
+	NX_LOG("createstamp: %010llx\n", play.hdr.createstamp);
+	NX_LOG("=== End Header ===\n");
 	
-	stat("resolution: %d", play.hdr.settings.resolution);
-	stat("last_save_slot: %d", play.hdr.settings.last_save_slot);
-	stat("multisave: %d", play.hdr.settings.multisave);
+	//stat("resolution: %d", play.hdr.settings.resolution);
+	NX_LOG("last_save_slot: %d\n", play.hdr.settings.last_save_slot);
+	NX_LOG("multisave: %d\n", play.hdr.settings.multisave);
 	/*int resolution;
 	int last_save_slot;
 	bool multisave;
@@ -687,8 +686,8 @@ static void dump_replay()
 	}*/
 	
 	fseek(play.fp, ftell(play.fp) - 0x2b, SEEK_SET);	// 0x6a9
-	stat("First Read %08x", fgetl(play.fp));
-	stat("Starting read at offset %04x", ftell(play.fp));
+	NX_LOG("First Read %08x\n", fgetl(play.fp));
+	NX_LOG("Starting read at offset %04x\n", ftell(play.fp));
 	//exit(1);
 	
 	//exit(1);
@@ -705,7 +704,7 @@ static void dump_replay()
 		if (runlength == 0xffffffff || feof(play.fp)) break;
 		total_frames += runlength;
 		
-		stat("%04d  len %08x:  keys %08x     offset %08x", record++, runlength, keys, ftell(play.fp)-8);
+		NX_LOG("%04d  len %08x:  keys %08x     offset %08x\n", record++, runlength, keys, ftell(play.fp)-8);
 		
 		if (keys == lastkeys)
 		{

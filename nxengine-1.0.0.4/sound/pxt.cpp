@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../nx.h"
 #include "../config.h"
 #include "pxt.h"
 #include "sslib.h"
@@ -178,7 +179,7 @@ int i;
 
 	if (inited)
 	{
-		staterr("pxt_init: pxt module already initialized");
+		NX_ERR("pxt_init: pxt module already initialized\n");
 		return 0;
 	}
 	else inited = 1;
@@ -215,7 +216,7 @@ char pxt_SetModel(stPXWave *pxwave, int m)
 	}
 	else
 	{
-		staterr("pxt_SetModel: invalid sound model '%d'", m);
+		NX_ERR("pxt_SetModel: invalid sound model '%d'\n", m);
 		return 1;
 	}
 }
@@ -595,7 +596,7 @@ int i;
 			snd->chan[i].buffer = (signed char *)malloc(snd->chan[i].size_blocks);
 			if (!snd->chan[i].buffer)
 			{
-				staterr("AllocBuffers (pxt): out of memory (1)!");
+				NX_ERR("AllocBuffers (pxt): out of memory (1)!\n");
 				return -1;
 			}
 			
@@ -608,7 +609,7 @@ int i;
 	snd->final_buffer = (signed char *)malloc(topbufsize);
 	if (!snd->final_buffer)
 	{
-		staterr("AllocBuffers (pxt): out of memory (2)!");
+		NX_ERR("AllocBuffers (pxt): out of memory (2)!\n");
 		return -1;
 	}
 	
@@ -763,13 +764,13 @@ int pxt_PlayWithCallback(int chan, int slot, char loop, void (*FinishedCB)(int, 
 		
 		if (chan < 0)
 		{
-			staterr("pxt_Play: SSPlayChunk returned error");
+			NX_ERR("pxt_Play: SSPlayChunk returned error\n");
 		}
 		return chan;
 	}
 	else
 	{
-		staterr("pxt_Play: sound slot 0x%02x not rendered", slot);
+		NX_ERR("pxt_Play: sound slot 0x%02x not rendered\n", slot);
 		return -1;
 	}
 }
@@ -824,7 +825,7 @@ int slot;
 stPXSound snd;
 FILE *fp = NULL;
 
-	stat("Loading Sound FX...");
+	NX_LOG("Loading Sound FX...\n");
 	load_top = top;
 	
 	if (cache_name)
@@ -838,7 +839,7 @@ FILE *fp = NULL;
 		fp = fopen(cache_name, "wb");
 		if (!fp)
 		{
-			staterr("LoadSoundFX: failed open: '%s'", cache_name);
+			NX_ERR("LoadSoundFX: failed open: '%s'\n", cache_name);
 			return 1;
 		}
 		
@@ -880,7 +881,7 @@ FILE *fp = NULL;
 	
 	if (fp)
 	{
-		stat(" - created %s; %d bytes", cache_name, ftell(fp));
+		NX_LOG(" - created %s; %d bytes\n", cache_name, ftell(fp));
 		fclose(fp);
 	}
 	
@@ -900,7 +901,7 @@ stPXSound snd;
 	fp = fopen(fname, "rb");
 	if (!fp)
 	{
-		stat("LoadFXCache: audio cache %s not exist", fname);
+		NX_ERR("LoadFXCache: audio cache %s not exist\n", fname);
 		return 1;
 	}
 	
@@ -910,14 +911,14 @@ stPXSound snd;
 	fread(&magick, sizeof(magick), 1, fp);
 	if (magick != PXCACHE_MAGICK)
 	{
-		stat("LoadFXCache: %s is incorrect format: expected %08x, got %08x", fname, PXCACHE_MAGICK, magick);
+		NX_ERR("LoadFXCache: %s is incorrect format: expected %08x, got %08x\n", fname, PXCACHE_MAGICK, magick);
 		fclose(fp);
 		return 1;
 	}
 	
 	if (fgeti(fp) != top)
 	{
-		stat("LoadFXCache: # of sounds has changed since cache creation");
+		NX_ERR("LoadFXCache: # of sounds has changed since cache creation\n");
 		fclose(fp);
 		return 1;
 	}
@@ -925,7 +926,7 @@ stPXSound snd;
 	int allocd_size = 0;
 	snd.final_buffer = NULL;
 	
-	stat("LoadFXCache: restoring pxts from cache");
+	NX_LOG("LoadFXCache: restoring pxts from cache\n");
 	for(;;)
 	{
 		snd.final_size = fgetl(fp);
@@ -940,7 +941,7 @@ stPXSound snd;
 			snd.final_buffer = (signed char *)malloc(allocd_size);
 			if (!snd.final_buffer)
 			{
-				staterr("LoadFXCache: out of memory!");
+				NX_ERR("LoadFXCache: out of memory!\n");
 				return 1;
 			}
 		}
@@ -1014,7 +1015,11 @@ int i, cc;
 #define BRACK		'{'		// my damn IDE is borking up the Function List if i put this inline
 
 	fp = fopen(fname, "rb");
-	if (!fp) { staterr("pxt_load: file '%s' not found.", fname); return 1; }
+	if (!fp)
+   {
+      NX_ERR("pxt_load: file '%s' not found.\n", fname);
+      return 1;
+   }
 	
 	//lprintf("pxt_load: reading %s...\n", fname);
 	
@@ -1039,7 +1044,7 @@ int i, cc;
 		{	// opening a new channel
 			if (cc >= PXT_NO_CHANNELS)
 			{
-				staterr("pxt_load: sound '%s' contains too many channels!", fname);
+				NX_ERR("pxt_load: sound '%s' contains too many channels!\n", fname);
 				goto error;
 			}
 			
@@ -1065,7 +1070,7 @@ int i, cc;
 	
 	if (load_extended_section)
 	{
-		stat("pxt_load: extended section found, loading it");
+		NX_LOG("pxt_load: extended section found, loading it\n");
 		if (ReadToBracket(fp)) return 1;
 		for(cc=0;cc<PXT_NO_CHANNELS;cc++)
 		{
@@ -1074,7 +1079,7 @@ int i, cc;
 	}
 	else
 	{
-		//stat("No extended section found; setting compatibility values.");
+		//NX_WARN("No extended section found; setting compatibility values.\n");
 		for(i=0;i<PXT_NO_CHANNELS;i++)
 		{
 			memset(&snd->chan[i].pitch2, 0, sizeof(stPXWave));
@@ -1082,7 +1087,7 @@ int i, cc;
 		}
 	}
 	
-	//stat("pxt_load: '%s' parsed ok", fname);
+	//NX_LOG("pxt_load: '%s' parsed ok\n", fname);
 	fclose(fp);
 	return 0;
 	
@@ -1121,7 +1126,7 @@ uchar ch;
 		
 		if (feof(fp))
 		{
-			staterr("pxt_load: file is in incorrect file format [failed to find '{']");
+			NX_ERR("pxt_load: file is in incorrect file format [failed to find '{']\n");
 			fclose(fp);
 			return 1;
 		}
@@ -1138,7 +1143,7 @@ int i, j;
 	fp = fopen(fname, "wb");
 	if (!fp)
 	{
-		stat("save_pxt: unable to open '%s'", fname);
+		NX_ERR("save_pxt: unable to open '%s'\n", fname);
 		return 1;
 	}
 	
@@ -1206,7 +1211,7 @@ int i, j;
 	}
 	
 	fclose(fp);
-	stat("pxt save ok '%s'", fname);
+	NX_LOG("pxt save ok '%s'\n", fname);
 	return 0;
 }
 

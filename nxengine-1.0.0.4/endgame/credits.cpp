@@ -149,7 +149,7 @@ bool Credits::Jump(int label)
 CredCommand cmd;
 bool tried_rewind = false;
 
-	stat("- Jump to label %04d", label);
+	NX_LOG("- Jump to label %04d\n", label);
 	
 	for(;;)
 	{
@@ -291,9 +291,9 @@ char fname[MAXPATHLEN];
 		{
 			images[i] = NXSurface::FromFile(fname, false);
 			if (!images[i])
-				staterr("BigImage::Init: image '%s' exists but seems corrupt!", fname);
+				NX_ERR("BigImage::Init: image '%s' exists but seems corrupt!\n", fname);
 			else
-				stat("BigImage: loaded %s ok", fname);
+				NX_LOG("BigImage: loaded %s ok\n", fname);
 		}
 	}
 	
@@ -306,7 +306,7 @@ BigImage::~BigImage()
 	{
 		if (images[i])
 		{
-			staterr("BigImage: freeing image %d", i);
+			NX_ERR("BigImage: freeing image %d\n", i);
 			delete images[i];
 			images[i] = NULL;
 		}
@@ -324,7 +324,7 @@ void BigImage::Set(int num)
 	}
 	else
 	{
-		staterr("BigImage::Set: invalid image number %d", num);
+		NX_ERR("BigImage::Set: invalid image number %d\n", num);
 		state = BI_CLEAR;
 	}
 }
@@ -377,7 +377,7 @@ bool credit_init(int parameter)
 	credits = new Credits;
 	if (credits->Init())
 	{
-		staterr("Credits initilization failed");
+		NX_ERR("Credits initilization failed\n");
 		return 1;
 	}
 	

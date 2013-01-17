@@ -125,7 +125,7 @@ bool button_down;
 		int scriptno;
 		if (!GetSlotByIndex(fSelectionIndex, NULL, &scriptno))
 		{
-			stat("StageSelect: starting activation script %d", scriptno);
+			NX_LOG("StageSelect: starting activation script %d\n", scriptno);
 			JumpScript(scriptno, SP_MAP);
 		}
 		else
@@ -187,13 +187,9 @@ void c------------------------------() {}
 void TB_StageSelect::SetSlot(int slotno, int scriptno)
 {
 	if (slotno >= 0 && slotno < NUM_TELEPORTER_SLOTS)
-	{
 		fSlots[slotno] = scriptno;
-	}
 	else
-	{
-		stat("StageSelect::SetSlot: invalid slotno %d", slotno);
-	}
+		NX_LOG("StageSelect::SetSlot: invalid slotno %d\n", slotno);
 }
 
 void TB_StageSelect::ClearSlots()

@@ -64,7 +64,7 @@ void c------------------------------() {}
 // initilize all the pieces of the Core boss.
 void CoreBoss::OnMapEntry(void)
 {
-	stat("CoreBoss::OnMapEntry");
+	NX_LOG("CoreBoss::OnMapEntry\n");
 	
 	o = CreateObject(0, 0, OBJ_CORE_CONTROLLER);
 	game.stageboss.object = o;
@@ -141,7 +141,7 @@ bool do_thrust = false;
 int i;
 
 	if (!o) return;
-	//stat("state = %d", o->state);
+	//NX_LOG("state = %d\n", o->state);
 	
 	switch(o->state)
 	{

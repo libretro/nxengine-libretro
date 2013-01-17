@@ -105,7 +105,7 @@ void BallosBoss::OnMapEntry(void)
 	objprop[OBJ_BALLOS_EYE].shaketime = 0;
 	
 	// initilize parameters
-	stat("BallosBoss::OnMapEntry()");
+	NX_LOG("BallosBoss::OnMapEntry()\n");
 }
 
 /*

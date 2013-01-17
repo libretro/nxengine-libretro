@@ -88,7 +88,7 @@ uint32_t magick;
 		entry->data = NULL;				// we won't load it until asked
 		
 		fIndex.AddItem(entry);
-		//stat("  - Sect%02d @ %04x", entry->type, entry->foffset);
+		//NX_LOG("  - Sect%02d @ %04x\n", entry->type, entry->foffset);
 	}
 	
 	// ..leave file handle open, its ok
