@@ -88,7 +88,15 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 }
 
 void retro_init(void)
-{ }
+{
+   enum retro_pixel_format rgb565;
+
+#ifdef FRONTEND_SUPPORTS_RGB565
+   rgb565 = RETRO_PIXEL_FORMAT_RGB565;
+   if(environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &rgb565))
+      fprintf(stderr, "Frontend supports RGB565 - will use that instead of XRGB1555.\n");
+#endif
+}
 
 static void extract_directory(char *buf, const char *path, size_t size)
 {
