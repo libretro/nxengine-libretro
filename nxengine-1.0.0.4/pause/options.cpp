@@ -145,8 +145,8 @@ Dialog *dlg = opt.dlg;
 	
 	dlg->AddSeparator();
 	
-	dlg->AddItem("Enable Debug Keys", _debug_change, _debug_get);
-	dlg->AddItem("Save Slots: ", _save_change, _save_get);
+	//dlg->AddItem("Enable Debug Keys", _debug_change, _debug_get);
+	//dlg->AddItem("Save Slots: ", _save_change, _save_get);
 	
 	dlg->AddSeparator();
 	
@@ -168,6 +168,7 @@ void LeavingMainMenu()
 	opt.InMainMenu = false;
 }
 
+#if 0
 void _debug_change(ODItem *item, int dir)
 {
 	settings->enable_debug_keys ^= 1;
@@ -180,7 +181,6 @@ void _debug_get(ODItem *item)
 	strcpy(item->suffix, strs[settings->enable_debug_keys]);
 }
 
-
 void _save_change(ODItem *item, int dir)
 {
 	settings->multisave ^= 1;
@@ -192,6 +192,7 @@ void _save_get(ODItem *item)
 	static const char *strs[] = { "1", "5" };
 	strcpy(item->suffix, strs[settings->multisave]);
 }
+#endif
 
 
 void _sound_change(ODItem *item, int dir)

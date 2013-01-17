@@ -250,6 +250,7 @@ static void draw_title()
 	int wd = GetFontWidth(VERSION, SPACING);
 	cx = (SCREEN_WIDTH / 2) - (wd / 2);
 	font_draw(cx, acc_y + sprites[SPR_PIXEL_FOREVER].h + 4, VERSION, SPACING);
+   font_draw(cx, acc_y + sprites[SPR_PIXEL_FOREVER].h + 16, "Libretro v. 1.0", SPACING);
 	
 	// draw Nikumaru display
 	if (title.besttime != 0xffffffff)
