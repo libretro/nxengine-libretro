@@ -9,11 +9,17 @@
 #include "../libretro/libretro.h"
 #include "../nx.h"
 
+#ifdef FRONTEND_SUPPORTS_RGB565
+#define SCREEN_BPP 16
+#define RED_SHIFT 11
+#define GREEN_SHIFT 5
+#define BLUE_SHIFT 0
+#else
 #define SCREEN_BPP 15
-
 #define RED_SHIFT 10
 #define GREEN_SHIFT 5
 #define BLUE_SHIFT 0
+#endif
 
 extern char g_dir[1024];
 
@@ -58,7 +64,11 @@ bool NXSurface::AllocNew(int wd, int ht, NXFormat *format)
 {
 	Free();
 	
+#ifdef FRONTEND_SUPPORTS_RGB565
+	fSurface = SDL_CreateRGBSurface(SDL_SRCCOLORKEY, wd, ht, 16, 0x1f << 11, 0x3f << 5, 0x1f << 0, 0);
+#else
 	fSurface = SDL_CreateRGBSurface(SDL_SRCCOLORKEY, wd, ht, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
+#endif
 	
 	if (!fSurface)
 	{
