@@ -227,7 +227,7 @@ char pxt_SetModel(stPXWave *pxwave, int m)
 static int c = 0;
 char buf[8];
 int i;
-	sprintf(buf, "%d", val);
+	snprintf(buf, sizeof(buf), "%d", val);
 	for(i=0;i<4-strlen(buf);i++) lprintf(" ");
 	lprintf("%s  ", buf);
 	
@@ -240,7 +240,7 @@ static int c = 0;
 char buf[80];
 int i;
 
-	sprintf(buf, "%02x", val);
+	snprintf(buf, sizeof(buf), "%02x", val);
 	i = strlen(buf) - 2;
 	lprintf("%s  ", &buf[i]);
 	
@@ -299,7 +299,7 @@ char buf[80];
 	
 	if (caption[0])
 	{
-		sprintf(buf, " %s   len = %d", caption, size_blocks);
+		snprintf(buf, sizeof(buf), " %s   len = %d", caption, size_blocks);
 		font_draw_shaded(4, ((centerline+(ysize/2))-16), buf, 0, &greenfont);
 	}
 	
@@ -850,10 +850,16 @@ FILE *fp = NULL;
 	
 	// get ready to do synthesis
 	pxt_initsynth();
+
+#ifdef _WIN32
+   char slash = '\\';
+#else
+   char slash = '/';
+#endif
 	
 	for(slot=1;slot<=top;slot++)
 	{
-		sprintf(fname, "%s/fx%02x.pxt", path, slot);
+		snprintf(fname, sizeof(fname), "%s%cfx%02x.pxt", path, slash, slot);
 		
 		if (pxt_load(fname, &snd)) continue;
 		pxt_Render(&snd);

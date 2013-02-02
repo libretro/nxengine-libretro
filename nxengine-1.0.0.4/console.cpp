@@ -222,7 +222,7 @@ void DebugConsole::Draw()
 		char buffer[CONSOLE_MAXCMDLEN + 10];
 		fLine[fLineLen] = 0;
 		
-		sprintf(buffer, "-> %s%c",
+		snprintf(buffer, sizeof(buffer), "-> %s%c",
 			fLine, (fCursorTimer < 20) ? '_' : ' ');
 		
 		this->DrawText(buffer);

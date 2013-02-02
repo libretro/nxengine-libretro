@@ -421,11 +421,11 @@ void DrawPercentage(int x, int y, int fill_sprite, int fsframe, int curvalue, in
 // the numbers are drawn right-aligned to "x".
 void DrawNumberRAlign(int x, int y, int s, int num)
 {
-char str[50];
-int i, len;
-int fontwidth = sprites[s].w;
+   char str[50];
+   int i, len;
+   int fontwidth = sprites[s].w;
 
-	sprintf(str, "%d", num);
+	snprintf(str, sizeof(str), "%d", num);
 	x -= strlen(str) * fontwidth;
 	
 	len = strlen(str);

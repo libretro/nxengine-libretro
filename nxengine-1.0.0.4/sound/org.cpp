@@ -120,7 +120,7 @@ uint16_t version;
 	#ifndef DRUM_PXT
 		for(d=0;d<NUM_DRUMS;d++)
 		{
-			sprintf(fname, "./drums/%s.wav", drum_names[d]);
+			snprintf(fname, sizeof(fname), "./drums/%s.wav", drum_names[d]);
 			if (load_drum(fname, d)) return 1;
 		}
 	#else
@@ -166,7 +166,7 @@ uint16_t version;
 		{
 			if (drum_pxt[d])
 			{
-				sprintf(fname, "%s%cfx%02x.pxt", pxt_path, slash, drum_pxt[d]);
+				snprintf(fname, sizeof(fname), "%s%cfx%02x.pxt", pxt_path, slash, drum_pxt[d]);
 				if (load_drum_pxt(fname, d)) return 1;
 			}
 		}
@@ -1138,7 +1138,7 @@ static char static_buffer[16];
 static const char *note_names[] =
 	{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 	
-	sprintf(static_buffer, "%s%d", \
+	snprintf(static_buffer, sizeof(static_buffer), "%s%d", \
 			note_names[note % KEYS_OCTAVE], \
 			note / KEYS_OCTAVE);
 	

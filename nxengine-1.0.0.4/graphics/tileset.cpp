@@ -44,13 +44,12 @@ char fname[MAXPATHLEN];
 			current_tileset = -1;
 		}
 		
-      char slash;
 #ifdef _WIN32
-      slash = '\\';
+      char slash = '\\';
 #else
-      slash = '/';
+      char slash = '/';
 #endif
-		sprintf(fname, "%s%cPrt%s.pbm", stage_dir, slash, tileset_names[new_tileset]);
+		snprintf(fname, sizeof(fname), "%s%cPrt%s.pbm", stage_dir, slash, tileset_names[new_tileset]);
 
 		retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
 
