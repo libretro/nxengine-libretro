@@ -366,7 +366,7 @@ int tapepos;
 	#ifdef USE_FRAMESKIP
 	if (game.ffwdtime) mode = "FFWD";
 	#endif
-	sprintf(buf, "> %s : %05d", mode, play.elapsed_frames);
+	snprintf(buf, sizeof(buf), "> %s : %05d", mode, play.elapsed_frames);
 	
 	y -= GetFontHeight();
 	font_draw_shaded(x, y, buf, 0, &greenfont);
@@ -495,7 +495,7 @@ const char *GetReplayName(int slotno, char *buffer)
 #else
    slash = '/';
 #endif
-	sprintf(buffer, "replay%crep%d.dat", slash, slotno);
+	snprintf(buffer, sizeof(buffer), "replay%crep%d.dat", slash, slotno);
 	return buffer;
 }
 
@@ -549,7 +549,7 @@ int mins, secs;
 	secs = (secs % 60);
 	if (mins > 99) mins = 99;
 	
-	sprintf(buffer, "[%02d:%02d]", mins, secs);
+	snprintf(buffer, sizeof(buffer), "[%02d:%02d]", mins, secs);
 }
 
 // returns a value between 0 and max which is like a percentage

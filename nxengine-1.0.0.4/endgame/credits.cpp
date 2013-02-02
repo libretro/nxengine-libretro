@@ -286,7 +286,7 @@ char fname[MAXPATHLEN];
 	// load any images present
 	for(int i=0;i<MAX_BIGIMAGES;i++)
 	{
-		sprintf(fname, "%s%c%s%ccredit%02d.bmp", g_dir, slash, pic_dir, slash, i);
+		snprintf(fname, sizeof(fname), "%s%c%s%ccredit%02d.bmp", g_dir, slash, pic_dir, slash, i);
 		if (file_exists(fname))
 		{
 			images[i] = NXSurface::FromFile(fname, false);

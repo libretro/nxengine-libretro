@@ -117,15 +117,15 @@ char fname[MAXPATHLEN];
 	for(int i=0;i<NUM_SCRIPT_PAGES;i++)
 	
 	// load the "common" TSC scripts available to all maps
-	sprintf(fname, "%s%c%s%cHead.tsc", g_dir, slash, data_dir, slash);
+	snprintf(fname, sizeof(fname), "%s%c%s%cHead.tsc", g_dir, slash, data_dir, slash);
 	if (tsc_load(fname, SP_HEAD)) return 1;
 	
 	// load the inventory screen scripts
-	sprintf(fname, "%s%c%s%cArmsItem.tsc", g_dir, slash, data_dir, slash);
+	snprintf(fname, sizeof(fname), "%s%c%s%cArmsItem.tsc", g_dir, slash, data_dir, slash);
 	if (tsc_load(fname, SP_ARMSITEM)) return 1;
 	
 	// load stage select/teleporter scripts
-	sprintf(fname, "%s%c%s%cStageSelect.tsc", g_dir, slash, data_dir, slash);
+	snprintf(fname, sizeof(fname), "%s%c%s%cStageSelect.tsc", g_dir, slash, data_dir, slash);
 	if (tsc_load(fname, SP_STAGESELECT)) return 1;
 	
 	return 0;
@@ -1107,7 +1107,7 @@ int cmdip;
 			case OP_NUM:
 			{	// seems to show the last value that was used with "AM+"
 				char buf[16];
-				sprintf(buf, "%d", lastammoinc);
+				snprintf(buf, sizeof(buf), "%d", lastammoinc);
 				
 				textbox.AddText(buf);
 			}

@@ -101,6 +101,11 @@ FILE *fpo;
 		else { lprintf("Endofsound fail %02x xpect 6a\n", ch); goto fail; }
 	}
 	
+#ifdef _WIN32
+char slash = '\\';
+#else
+char slash = '/';
+#endif
 	
 	// now pull out the sound data
 	lprintf("%d sounds\n", ns);
@@ -109,7 +114,7 @@ FILE *fpo;
 		fseek(fp, snd[s].offs, SEEK_SET);
 		//lprintf("id %02x chanl %d offs %08x\n", snd[s].id, snd[s].chan, snd[s].offs);
 		
-		sprintf(outfname, "pxt/fx%02x.pxt", snd[s].id);
+		snprintf(outfname, sizeof(outfname), "pxt%cfx%02x.pxt", slash, snd[s].id);
 		fpo = fopen(outfname, "wb");
 		if (!fpo) { lprintf("extract_pxt: failed to open %s\n", fname); goto fail; }
 		

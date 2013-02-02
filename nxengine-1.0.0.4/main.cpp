@@ -375,7 +375,7 @@ static int frameskip = 0;
 		if (freezeframe)
 		{
 			char buf[1024];
-			sprintf(buf, "[] Tick %d", framecount++);
+			snprintf(buf, sizeof(buf), "[] Tick %d", framecount++);
 			font_draw_shaded(4, (SCREEN_HEIGHT-GetFontHeight()-4), buf, 0, &greenfont);
 			can_tick = false;
 		}
@@ -433,7 +433,7 @@ void update_fps()
 	}
 	
 	char fpstext[64];
-	sprintf(fpstext, "%d fps", fps);
+	snprintf(fpstext, sizeof(fpstext), "%d fps", fps);
 	
 	int x = (SCREEN_WIDTH - 4) - GetFontWidth(fpstext, 0, true);
 	font_draw_shaded(x, 4, fpstext, 0, &greenfont);
@@ -521,7 +521,7 @@ slash = '\\';
 #else
 slash = '/';
 #endif
-	sprintf(fname, "%s%cnpc.tbl", data_dir, slash);
+	snprintf(fname, sizeof(fname), "%s%cnpc.tbl", data_dir, slash);
 	if (file_exists(fname)) return 0;
 	
 	if (!safemode::init())

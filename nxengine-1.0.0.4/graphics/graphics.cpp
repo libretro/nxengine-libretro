@@ -170,7 +170,7 @@ slash = '\\';
 slash = '/';
 #endif
 	
-	sprintf(fname, "%s%cLoading.pbm", data_dir, slash);
+	snprintf(fname, sizeof(fname), "%s%cLoading.pbm", data_dir, slash);
 	if (loading.LoadImage(fname))
 		return;
 	
