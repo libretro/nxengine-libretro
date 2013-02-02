@@ -33,58 +33,58 @@ EXTRACTDIR = $(NX_DIR)/extract-auto
 CC         = gcc
 
 ifeq ($(platform), unix)
-   TARGET := libretro.so
+   TARGET := nxengine_libretro.so
    fpic := -fPIC
    SHARED := -shared -Wl,--version-script=$(NX_DIR)/libretro/link.T -Wl,-no-undefined
    CFLAGS += -D_GNU_SOURCE=1
 else ifeq ($(platform), osx)
-   TARGET := libretro.dylib
+   TARGET := nxengine_libretro.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
 else ifeq ($(platform), ps3)
-   TARGET := libretro_ps3.a
+   TARGET := nxengine_libretro_ps3.a
    CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
    CXX = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-g++.exe
    AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe
    CFLAGS += -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
 else ifeq ($(platform), sncps3)
-   TARGET := libretro_ps3.a
+   TARGET := nxengine_libretro_ps3.a
    CC = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    CXX = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    AR = $(CELL_SDK)/host-win32/sn/bin/ps3snarl.exe
    CFLAGS +=  -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
 else ifeq ($(platform), psl1ght)
-   TARGET := libretro_psl1ght.a
+   TARGET := nxengine_libretro_psl1ght.a
    CC = $(PS3DEV)/ppu/bin/ppu-gcc$(EXE_EXT)
    CXX = $(PS3DEV)/ppu/bin/ppu-g++$(EXE_EXT)
    AR = $(PS3DEV)/ppu/bin/ppu-ar$(EXE_EXT)
    CFLAGS += -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
 else ifeq ($(platform), psp1)
-   TARGET := libretro_psp1.a
+   TARGET := nxengine_libretro_psp1.a
    CC = psp-gcc$(EXE_EXT)
    CXX = psp-g++$(EXE_EXT)
    AR = psp-ar$(EXE_EXT)
    CFLAGS += -DGNU_SOURCE=1 -G0
 else ifeq ($(platform), xenon)
-   TARGET := libretro_xenon360.a
+   TARGET := nxengine_libretro_xenon360.a
    CC = xenon-gcc$(EXE_EXT)
    CXX = xenon-g++$(EXE_EXT)
    AR = xenon-ar$(EXE_EXT)
    CFLAGS += -D__LIBXENON__ -D__ppc_ -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
 else ifeq ($(platform), ngc)
-   TARGET := libretro_ngc.a
+   TARGET := nxengine_libretro_ngc.a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
    CFLAGS += -DGEKKO -DHW_DOL -mrvl -mcpu=750 -meabi -mhard-float -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
 else ifeq ($(platform), wii)
-   TARGET := libretro_wii.a
+   TARGET := nxengine_libretro_wii.a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
    CFLAGS += -DGEKKO _DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
 else
-   TARGET := retro.dll
+   TARGET := nxengine_retro.dll
    CC = gcc
    SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=libretro/link.T
    CFLAGS += -D__WIN32__ -D__WIN32_LIBRETRO__ -Wno-missing-field-initializers
