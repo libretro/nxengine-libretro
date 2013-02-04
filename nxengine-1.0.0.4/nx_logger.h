@@ -36,11 +36,6 @@
 #ifndef NX_LOG
 #if defined(ANDROID) && defined(HAVE_LOGGER)
 #define  NX_LOG(...)  __android_log_print(ANDROID_LOG_INFO, "RetroArch: ", __VA_ARGS__)
-#elif defined(IS_SALAMANDER)
-#define NX_LOG(...) do { \
-      fprintf(LOG_FILE, "RetroArch Salamander: " __VA_ARGS__); \
-      fflush(LOG_FILE); \
-   } while (0)
 #else
 #define NX_LOG(...) do { \
    fprintf(LOG_FILE, "RetroArch: " __VA_ARGS__); \
@@ -52,11 +47,6 @@
 #ifndef NX_LOG_OUTPUT
 #if defined(ANDROID) && defined(HAVE_LOGGER)
 #define  NX_LOG_OUTPUT(...)  __android_log_print(ANDROID_LOG_INFO,"stderr: ",__VA_ARGS__)
-#elif defined(IS_SALAMANDER)
-#define NX_LOG_OUTPUT(...) do { \
-      fprintf(LOG_FILE, "stderr: " __VA_ARGS__); \
-      fflush(LOG_FILE); \
-   } while (0)
 #else
 #define NX_LOG_OUTPUT(...) do { \
    fprintf(LOG_FILE, __VA_ARGS__); \
@@ -68,11 +58,6 @@
 #ifndef NX_ERR
 #if defined(ANDROID) && defined(HAVE_LOGGER)
 #define  NX_ERR(...)  __android_log_print(ANDROID_LOG_INFO, "RetroArch [ERROR] :: ", __VA_ARGS__)
-#elif defined(IS_SALAMANDER)
-#define NX_ERR(...) do { \
-      fprintf(LOG_FILE, "RetroArch Salamander [ERROR] :: " __VA_ARGS__); \
-      fflush(LOG_FILE); \
-   } while (0)
 #else
 #define NX_ERR(...) do { \
       fprintf(LOG_FILE, "RetroArch [ERROR] :: " __VA_ARGS__); \
@@ -84,11 +69,6 @@
 #ifndef NX_ERR_OUTPUT
 #if defined(ANDROID) && defined(HAVE_LOGGER)
 #define  NX_ERR_OUTPUT(...)  __android_log_print(ANDROID_LOG_INFO, "stderr [ERROR] :: ", __VA_ARGS__)
-#elif defined(IS_SALAMANDER)
-#define NX_ERR_OUTPUT(...) do { \
-      fprintf(LOG_FILE, "stderr [ERROR] :: " __VA_ARGS__); \
-      fflush(LOG_FILE); \
-   } while (0)
 #else
 #define NX_ERR_OUTPUT(...) do { \
       fprintf(LOG_FILE, "stderr [ERROR] :: " __VA_ARGS__); \
@@ -100,11 +80,6 @@
 #ifndef NX_WARN
 #if defined(ANDROID) && defined(HAVE_LOGGER)
 #define  NX_WARN(...)  __android_log_print(ANDROID_LOG_INFO, "RetroArch [WARN] :: ", __VA_ARGS__)
-#elif defined(IS_SALAMANDER)
-#define NX_WARN(...) do { \
-      fprintf(LOG_FILE, "RetroArch Salamander [WARN] :: " __VA_ARGS__); \
-      fflush(LOG_FILE); \
-   } while (0)
 #else
 #define NX_WARN(...) do { \
       fprintf(LOG_FILE, "RetroArch [WARN] :: " __VA_ARGS__); \
@@ -116,11 +91,6 @@
 #ifndef NX_WARN
 #if defined(ANDROID) && defined(HAVE_LOGGER)
 #define  NX_WARN_OUTPUT(...)  __android_log_print(ANDROID_LOG_INFO, "stderr [WARN] :: ", __VA_ARGS__)
-#elif defined(IS_SALAMANDER)
-#define NX_WARN_OUTPUT(...) do { \
-      fprintf(LOG_FILE, "stderr [WARN] :: " __VA_ARGS__); \
-      fflush(LOG_FILE); \
-   } while (0)
 #else
 #define NX_WARN_OUTPUT(...) do { \
       fprintf(LOG_FILE, "stderr [WARN] :: " __VA_ARGS__); \
