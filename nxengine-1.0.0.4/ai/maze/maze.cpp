@@ -148,12 +148,14 @@ void ai_boulder(Object *o)
 		// shaking
 		case 10:
 		{
+         NX_LOG("ai_boulder - state 10.\n");
 			o->state = 11;
 			o->timer = 0;
 			o->xmark = o->x;
 		}
 		case 11:
 		{
+         NX_LOG("ai_boulder - state 11.\n");
 			if ((++o->timer % 3) != 0)
 				o->x = o->xmark + (1 << CSF);
 			else
@@ -164,6 +166,7 @@ void ai_boulder(Object *o)
 		// thrown away by Balrog
 		case 20:
 		{
+         NX_LOG("ai_boulder - state 20.\n");
 			o->yinertia = -0x400;
 			o->xinertia = 0x100;
 			sound(SND_FUNNY_EXPLODE);
@@ -173,6 +176,7 @@ void ai_boulder(Object *o)
 		}
 		case 21:
 		{
+         NX_LOG("ai_boulder - state 21.\n");
 			o->yinertia += 0x10;
 			
 			if (o->blockd && o->yinertia >= 0)
