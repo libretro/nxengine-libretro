@@ -35,10 +35,10 @@
 
 #ifndef NX_LOG
 #if defined(ANDROID) && defined(HAVE_LOGGER)
-#define  NX_LOG(...)  __android_log_print(ANDROID_LOG_INFO, "RetroArch: ", __VA_ARGS__)
+#define  NX_LOG(...)  __android_log_print(ANDROID_LOG_INFO, "NX: ", __VA_ARGS__)
 #else
 #define NX_LOG(...) do { \
-   fprintf(LOG_FILE, "RetroArch: " __VA_ARGS__); \
+   fprintf(LOG_FILE, "NX: " __VA_ARGS__); \
    fflush(LOG_FILE); \
    } while (0)
 #endif
@@ -57,10 +57,10 @@
 
 #ifndef NX_ERR
 #if defined(ANDROID) && defined(HAVE_LOGGER)
-#define  NX_ERR(...)  __android_log_print(ANDROID_LOG_INFO, "RetroArch [ERROR] :: ", __VA_ARGS__)
+#define  NX_ERR(...)  __android_log_print(ANDROID_LOG_INFO, "NX [ERROR] :: ", __VA_ARGS__)
 #else
 #define NX_ERR(...) do { \
-      fprintf(LOG_FILE, "RetroArch [ERROR] :: " __VA_ARGS__); \
+      fprintf(LOG_FILE, "NX [ERROR] :: " __VA_ARGS__); \
       fflush(LOG_FILE); \
    } while (0)
 #endif
@@ -79,10 +79,10 @@
 
 #ifndef NX_WARN
 #if defined(ANDROID) && defined(HAVE_LOGGER)
-#define  NX_WARN(...)  __android_log_print(ANDROID_LOG_INFO, "RetroArch [WARN] :: ", __VA_ARGS__)
+#define  NX_WARN(...)  __android_log_print(ANDROID_LOG_INFO, "NX [WARN] :: ", __VA_ARGS__)
 #else
 #define NX_WARN(...) do { \
-      fprintf(LOG_FILE, "RetroArch [WARN] :: " __VA_ARGS__); \
+      fprintf(LOG_FILE, "NX [WARN] :: " __VA_ARGS__); \
       fflush(LOG_FILE); \
    } while (0)
 #endif
