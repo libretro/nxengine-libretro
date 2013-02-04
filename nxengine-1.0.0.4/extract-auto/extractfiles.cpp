@@ -6,7 +6,6 @@
 #include <string.h>
 #include <sys/stat.h>
 #include "../common/basics.h"
-#include "../graphics/safemode.h"
 #include "../libretro/libretro_shared.h"
 #include "extractfiles.fdh"
 #include "../nx_logger.h"

@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <sys/stat.h>
-#include "../graphics/safemode.h"
 #include "../common/basics.h"
 #include "../libretro/libretro_shared.h"
 #include "../nx_logger.h"
