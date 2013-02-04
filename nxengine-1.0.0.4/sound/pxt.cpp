@@ -19,24 +19,26 @@
 
 // gets the next byte from wave "wave", scales it by the waves volume, and places result in "out".
 // x * (y / z) = (x * y) / z
-#define GETWAVEBYTE(wave, out)	\
-{	\
-	if (wave->model_no != MOD_WHITE)	\
-	{		\
-		out = wave->model[(unsigned char)wave->phaseacc];	\
-	}		\
-	else	\
-	{	\
-		out = white[wave->white_ptr];		\
-		if (++wave->white_ptr >= WHITE_LEN) wave->white_ptr = 0;	\
-	}	\
-	out *= wave->volume;			\
-	out /= 64;	\
-}
-
 
 #define WHITE_LEN		22050
 int8_t white[WHITE_LEN];
+
+inline void GETWAVEBYTE(stPXWave *wave, int& out)
+{
+	if (wave->model_no != MOD_WHITE)
+	{
+      volatile unsigned char index = (unsigned char)wave->phaseacc;
+		out = wave->model[index];
+	}
+	else
+	{
+		out = white[wave->white_ptr];
+		if (++wave->white_ptr >= WHITE_LEN) wave->white_ptr = 0;
+	}
+	out *= wave->volume;
+	out /= 64;
+}
+
 
 // the final sounds ready to play (after pxt_PrepareToPlay)
 static struct
