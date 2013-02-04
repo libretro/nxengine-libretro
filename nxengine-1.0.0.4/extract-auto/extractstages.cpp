@@ -13,10 +13,6 @@
 #include "extractstages.fdh"
 #include "../nx_logger.h"
 
-#ifdef _WIN32
-#include "msvc_compat.h"
-#endif
-
 #define NMAPS			95
 #define DATA_OFFSET		0x937B0
 

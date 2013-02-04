@@ -12,7 +12,6 @@
 
 #ifdef _WIN32
 #include <direct.h>
-#include "msvc_compat.h"
 #endif
 
 #ifdef _XBOX

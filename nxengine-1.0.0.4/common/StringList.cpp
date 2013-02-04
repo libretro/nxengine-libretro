@@ -6,9 +6,8 @@
 #include "StringList.fdh"
 
 #ifdef _WIN32
-#include "msvc_compat.h"
+#include "../libretro/msvc_compat.h"
 #endif
-
 
 StringList::~StringList()
 {
