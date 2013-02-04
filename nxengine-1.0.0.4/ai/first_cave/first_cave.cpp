@@ -21,10 +21,12 @@ void ai_bat_up_down(Object *o)
 	switch(o->state)
 	{
 		case 0:
+         NX_LOG("ai_bat_up_down - state 0.\n");
 			o->ymark = o->y;
 			o->timer = random(0, 50);
 			o->state = 1;
 		case 1:
+         NX_LOG("ai_bat_up_down - state 1.\n");
 			if (!o->timer--)
 			{
 				o->state = 2;
@@ -33,6 +35,7 @@ void ai_bat_up_down(Object *o)
 		break;
 		
 		case 2:
+         NX_LOG("ai_bat_up_down - state 2.\n");
 		{
 			if (o->y >= o->ymark)
 				o->yinertia -= 0x10;
