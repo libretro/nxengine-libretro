@@ -109,9 +109,6 @@ struct Game
 	} curlytarget;
 	
 	int fullscreen;
-#ifdef USE_FRAMESKIP
-	int ffwdtime;		// debug option: disables speed-limiting for ffwdtime ticks
-#endif
 	
 // ---------------------------------------
 

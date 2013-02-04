@@ -25,9 +25,6 @@ static uint32_t fpstimer = 0;
 #define VISFLAGS			(SDL_APPACTIVE | SDL_APPINPUTFOCUS)
 int framecount = 0;
 bool freezeframe = false;
-#ifdef USE_FRAMESKIP
-int flipacceltime = 0;
-#endif
 
 static bool inhibit_loadfade = false;
 static bool error = false;
@@ -155,20 +152,9 @@ void gameloop(void)
 		int32_t curtime = SDL_GetTicks();
 		int32_t timeRemaining = nexttick - curtime;
 		
-		#ifdef USE_FRAMESKIP
-		if (timeRemaining <= 0 || game.ffwdtime)
-		#else
 		if (timeRemaining <= 0)
-		#endif
 		{
 			run_tick();
-			
-			#ifdef USE_FRAMESKIP
-			// try to "catch up" if something else on the system bogs us down for a moment.
-			// but if we get really far behind, it's ok to start dropping frames
-			if (game.ffwdtime)
-				game.ffwdtime--;
-			#endif
 			
 			nexttick = curtime + GAME_WAIT;
 			
@@ -313,9 +299,6 @@ static inline void run_tick()
 static bool can_tick = true;
 static bool last_freezekey = false;
 static bool last_framekey = false;
-#ifdef USE_FRAMESKIP
-static int frameskip = 0;
-#endif
 
 	input_poll();
 	
@@ -360,14 +343,6 @@ static int frameskip = 0;
 		last_framekey = inputs[FRAME_ADVANCE_KEY];
 	}
 	
-	#ifdef USE_FRAMESKIP
-	// fast-forward key (F5)
-	if (inputs[FFWDKEY] && (settings->enable_debug_keys || Replay::IsPlaying()))
-	{
-		game.ffwdtime = 2;
-	}
-	#endif
-	
 	if (can_tick)
 	{
 		game.tick();
@@ -389,24 +364,8 @@ static int frameskip = 0;
 			update_fps();
 		}
 		
-		#ifdef USE_FRAMESKIP
-		if (!flipacceltime)
-		{
-		#endif
-			//platform_sync_to_vblank();
-			screen->Flip();
-		#ifdef USE_FRAMESKIP
-		}
-		else
-		{
-			flipacceltime--;
-			if (--frameskip < 0)
-			{
-				screen->Flip();
-				frameskip = 256;
-			}
-		}
-		#endif
+      //platform_sync_to_vblank();
+      screen->Flip();
 		
 		memcpy(lastinputs, inputs, sizeof(lastinputs));
 	}
