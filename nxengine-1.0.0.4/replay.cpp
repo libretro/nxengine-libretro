@@ -13,9 +13,6 @@ static ReplayPlaying play;
 static int next_ffwdto = 0;
 static int next_stopat = 0;
 static bool next_accel = false;
-#ifdef USE_FRAMESKIP
-extern int flipacceltime;
-#endif
 
 // begin recording a replay into the given file,
 // creating the save-profile section from the current game state.
@@ -220,15 +217,6 @@ static void Replay::run_playback()
 		return;
 	}
 	
-	#ifdef USE_FRAMESKIP
-	if (play.ffwdto && play.elapsed_frames < play.ffwdto)
-	{
-		game.ffwdtime = 2;
-		if (play.ffwd_accel)
-			flipacceltime = 2;	// global variable from main; disables screen->Flip()
-	}
-	#endif
-	
 	// RLE decoding
 	if (play.runlength == 0)
 	{
@@ -363,9 +351,6 @@ int tapepos;
 	font_draw_shaded(x, y, buf, 0, &greenfont);
 	
 	const char *mode = ((play.elapsed_frames % 40) < 20) ? "PLAY" : "    ";
-	#ifdef USE_FRAMESKIP
-	if (game.ffwdtime) mode = "FFWD";
-	#endif
 	snprintf(buf, sizeof(buf), "> %s : %05d", mode, play.elapsed_frames);
 	
 	y -= GetFontHeight();

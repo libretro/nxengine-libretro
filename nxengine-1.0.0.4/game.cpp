@@ -330,9 +330,6 @@ void megaquake(int quaketime, int snd)
 void DrawScene(void)
 {
 int scr_x, scr_y;
-#ifdef USE_FRAMESKIP
-extern int flipacceltime;
-#endif
 	
 	// sporidically-used animated tile feature,
 	// e.g. water currents in Waterway
@@ -340,15 +337,8 @@ extern int flipacceltime;
 		AnimateMotionTiles();
 	
 	// draw background map tiles
-#ifdef USE_FRAMESKIP
-	if (!flipacceltime)
-	{
-#endif
 		map_draw_backdrop();
 		map_draw(false);
-#ifdef USE_FRAMESKIP
-	}
-#endif
 	
 	// draw all objects following their z-order
 	nOnscreenObjects = 0;
@@ -421,10 +411,7 @@ extern int flipacceltime;
 	DrawPlayer();
 	
 	// draw foreground map tiles
-#ifdef USE_FRAMESKIP
-	if (!flipacceltime)
-#endif
-		map_draw(TA_FOREGROUND);
+   map_draw(TA_FOREGROUND);
 	
 	// draw carets (always-on-top effects such as boomflash)
 	Carets::DrawAll();
@@ -435,7 +422,7 @@ extern int flipacceltime;
 	// draw all floattext (rising damage and XP amounts)
 	FloatText::DrawAll();
 	
-	if (game.debug.DrawBoundingBoxes) DrawBoundingBoxes();
+	//if (game.debug.DrawBoundingBoxes) DrawBoundingBoxes();
 	//if (game.debug.debugmode) DrawAttrPoints();
 }
 
