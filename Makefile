@@ -110,13 +110,6 @@ EXTRACT_OBJS := $(EXTRACTDIR)/crc.o $(EXTRACTDIR)/extract.o $(EXTRACTDIR)/extrac
 
 GRAPHICS_OBJS := $(NX_DIR)/graphics/graphics.o $(NX_DIR)/graphics/nxsurface.o $(NX_DIR)/graphics/font.o $(NX_DIR)/graphics/sprites.o $(NX_DIR)/graphics/tileset.o
 
-ifeq ($(SAFEMODE), 1)
-SAFEMODE_OBJS := $(NX_DIR)/graphics/safemode.o
-CFLAGS += -DUSE_SAFEMODE=1
-else
-SAFEMODE_OBJS :=
-endif
-
 ifeq ($(DEBUGLOG), 1)
 CFLAGS += -DDEBUG_LOG=1
 endif

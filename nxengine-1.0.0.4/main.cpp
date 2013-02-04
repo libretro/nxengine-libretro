@@ -1,8 +1,5 @@
 
 #include "../nx.h"
-#ifdef USE_SAFEMODE
-#include "../graphics/safemode.h"
-#endif
 #include "../main.fdh"
 #include "libretro_shared.h";
 
@@ -363,53 +360,22 @@ void c------------------------------() {}
 
 static void fatal(const char *str)
 {
-	NX_ERR("fatal: '%s'\n", str);
-	
-#ifdef USE_SAFEMODE
-	if (!safemode::init())
-	{
-		safemode::moveto(SM_UPPER_THIRD);
-		safemode::print("Fatal Error");
-		
-		safemode::moveto(SM_CENTER);
-		safemode::print("%s", str);
-		
-		safemode::run_until_key();
-		safemode::close();
-	}
-#else
-		NX_LOG("Fatal Error\n");
-		NX_LOG("%s\n", str);
-#endif
+	NX_ERR("Fatal error: '%s'\n", str);
 }
 
 static bool check_data_exists()
 {
-        char fname[1024];
+   char fname[1024];
 	retro_create_subpath_string(fname, sizeof(fname), g_dir, data_dir, "npc.tbl");
 	NX_LOG("check_data_exists: %s\n", fname);
 
-	if (file_exists(fname)) return 0;
+	if (file_exists(fname))
+      return 0;
 	
-#ifdef USE_SAFEMODE
-	if (!safemode::init())
-	{
-		safemode::moveto(SM_UPPER_THIRD);
-		safemode::print("Fatal Error");
-		
-		safemode::moveto(SM_CENTER);
-		safemode::print("Missing \"%s\" directory.", data_dir);
-		safemode::print("Please copy it over from a Doukutsu installation.");
-		
-		safemode::run_until_key();
-		safemode::close();
-	}
-#else
-		NX_LOG("Fatal Error\n");
-		
-		NX_LOG("Missing \"%s\" directory.\n", data_dir);
-		NX_LOG("Please copy it over from a Doukutsu installation.\n");
-#endif
+   NX_ERR("Fatal Error\n");
+
+   NX_ERR("Missing \"%s\" directory.\n", data_dir);
+   NX_ERR("Please copy it over from a Doukutsu installation.\n");
 	
 	return 1;
 }
@@ -427,10 +393,3 @@ char buffer[80];
 	console.Print(buffer);
 #endif
 }
-
-#if 0
-void SDL_Delay(int ms)
-{
-	usleep(ms * 1000);
-}
-#endif

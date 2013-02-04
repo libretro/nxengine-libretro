@@ -35,13 +35,6 @@ EXTRACT_OBJS := $(EXTRACTDIR)/crc.cpp $(EXTRACTDIR)/extract.cpp $(EXTRACTDIR)/ex
 
 GRAPHICS_OBJS := $(NX_DIR)/graphics/graphics.cpp $(NX_DIR)/graphics/nxsurface.cpp $(NX_DIR)/graphics/font.cpp $(NX_DIR)/graphics/sprites.cpp $(NX_DIR)/graphics/tileset.cpp
 
-ifeq ($(SAFEMODE), 1)
-SAFEMODE_OBJS := $(NX_DIR)/graphics/safemode.cpp
-CFLAGS += -DUSE_SAFEMODE=1
-else
-SAFEMODE_OBJS :=
-endif
-
 ifeq ($(DEBUGLOG), 1)
 CFLAGS += -DDEBUG_LOG=1
 endif
