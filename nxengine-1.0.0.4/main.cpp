@@ -1,12 +1,14 @@
-#include "nx.h"
-#include <stdarg.h>
 
-#ifndef _WIN32
-#include <unistd.h>
+#include "../nx.h"
+#ifdef USE_SAFEMODE
+#include "../graphics/safemode.h"
 #endif
+#include "../main.fdh"
+#include "libretro_shared.h";
 
-#include "graphics/safemode.h"
-#include "main.fdh"
+#ifdef _WIN32
+#include "msvc_compat.h"
+#endif
 
 const char *data_dir = "data";
 #ifdef _WIN32
@@ -33,16 +35,10 @@ static bool freshstart;
 void pre_main(void)
 {
 #ifdef DEBUG_LOG
-SetLogFilename("debug.txt");
+char debug_fname[1024];
+retro_create_path_string(debug_fname, sizeof(debug_fname), g_dir, "debug.txt");
+SetLogFilename(debug_fname);
 #endif
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
-	{
-		NX_ERR("ack, sdl_init failed: %s.\n", SDL_GetError());
-		error = 1;
-		return;
-	}
-	atexit(SDL_Quit);
-	
 	// start up inputs first thing because settings_load may remap them
 	input_init();
 	
@@ -50,10 +46,23 @@ SetLogFilename("debug.txt");
 	// so we know the initial screen resolution.
 	settings_load();
 	
+	if (!settings->files_extracted)
+	{
+		if (extract_main())
+		{
+			error = 1;
+			return;
+		}
+		else
+		{
+			settings->files_extracted = true;
+			settings_save();
+		}
+	}
+	
 	if (Graphics::init(settings->resolution)) { NX_ERR("Failed to initialize graphics.\n"); error = 1; return; }
 	if (font_init()) { NX_ERR("Failed to load font.\n"); error = 1; return; }
 	
-	//speed_test();
 	//return;
 	
 	#ifdef CONFIG_DATA_EXTRACTOR
@@ -122,7 +131,6 @@ SetLogFilename("debug.txt");
 	
 	NX_LOG("Entering main loop...\n");
 	
-	//speed_test();
 	//return;
 }
 
@@ -140,45 +148,27 @@ void post_main(void)
 	textbox.Deinit();
 }
 
-void gameloop(void)
+static bool gameloop(void)
 {
-	int32_t nexttick = 0;
+	//uint32_t gametimer;
 
-	game.switchstage.mapno = -1;
-	
-	while(game.running && game.switchstage.mapno < 0)
+	//gametimer = -GAME_WAIT*10;
+
+	if(game.switchstage.mapno < 0)
 	{
-		// get time until next tick
-		int32_t curtime = SDL_GetTicks();
-		int32_t timeRemaining = nexttick - curtime;
-		
-		if (timeRemaining <= 0)
-		{
-			run_tick();
-			
-			nexttick = curtime + GAME_WAIT;
-			
-			// pause game if window minimized
-			if ((SDL_GetAppState() & VISFLAGS) != VISFLAGS)
-			{
-				AppMinimized();
-				nexttick = 0;
-			}
-		}
-		else
-		{
-			// don't needlessly hog CPU, but don't sleep for entire
-			// time left, some CPU's/kernels will fall asleep for
-			// too long and cause us to run slower than we should
-			timeRemaining /= 2;
-			if (timeRemaining)
-				SDL_Delay(timeRemaining);
-		}
+		run_tick();
+		return true;
 	}
+	else
+		return false;
 }
 
-void run_main(void)
+static bool in_gameloop = false;
+
+bool run_main(void)
 {
+	if (in_gameloop)
+		goto loop;
 	// SSS/SPS persists across stage transitions until explicitly
 	// stopped, or you die & reload. It seems a bit risky to me,
 	// but that's the spec.
@@ -200,7 +190,7 @@ void run_main(void)
 			fatal("savefile error");
 			game.running = false;
 			error = 1;
-			return;
+			return false;
 		}
 
 		Replay::OnGameStarting();
@@ -218,7 +208,7 @@ void run_main(void)
 			fatal("error starting playback");
 			game.running = false;
 			error = 1;
-			return;
+			return false;
 		}
 	}
 	else
@@ -226,7 +216,7 @@ void run_main(void)
 		if (game.switchstage.mapno == NEW_GAME || \
 				game.switchstage.mapno == NEW_GAME_FROM_MENU)
 		{
-			bool show_intro = (game.switchstage.mapno == NEW_GAME_FROM_MENU);
+			static bool show_intro = (game.switchstage.mapno == NEW_GAME_FROM_MENU);
 			InitNewGame(show_intro);
 		}
 
@@ -242,7 +232,7 @@ void run_main(void)
 		{
 			game.running = false;
 			error = 1;
-			return;
+			return false;
 		}
 
 		player->x = (game.switchstage.playerx * TILE_W) << CSF;
@@ -254,17 +244,24 @@ void run_main(void)
 	{
 		game.running = false;
 		error = 1;
-		return;
+		return false;
 	}
 
 	if (freshstart)
 		weapon_introslide();
 
-	gameloop();
+	game.switchstage.mapno = -1;
+loop:
+	in_gameloop = true;
+	if (gameloop())
+		return true;	
+	in_gameloop = false;
+
 	game.stageboss.OnMapExit();
 	freshstart = false;
 }
 
+#ifndef __LIBRETRO__
 int main(int argc, char *argv[])
 {
 
@@ -273,33 +270,32 @@ int main(int argc, char *argv[])
 	if(error)
 		goto ingame_error;	
 	
-	while(game.running)
+loop:
+	while (!run_main());
+shutdown: ;
+	if(!game.running)
 	{
-		run_main();
+		post_main();
+		return error;
 	}
-
+check_error: ;
 	if(error)
 		goto ingame_error;
-	
-shutdown: ;
-	post_main();
-	return error;
-	
+	else
+		goto loop;
 ingame_error: ;
-	NX_ERR("\n");
-	NX_ERR(" ************************************************\n");
-	NX_ERR(" * An in-game error occurred. Game shutting down.\n");
-	NX_ERR(" ************************************************\n");
+	NX_LOG("\n");
+	NX_LOG(" ************************************************\n");
+	NX_LOG(" * An in-game error occurred. Game shutting down.\n");
+	NX_LOG(" ************************************************\n");
 	error = 1;
 	goto shutdown;
 }
+#endif
+
 
 static inline void run_tick()
 {
-static bool can_tick = true;
-static bool last_freezekey = false;
-static bool last_framekey = false;
-
 	input_poll();
 	
 	// input handling for a few global things
@@ -320,84 +316,17 @@ static bool last_framekey = false;
 	}
 	
 	// freeze frame
-	if (settings->enable_debug_keys)
-	{
-		if (inputs[FREEZE_FRAME_KEY] && !last_freezekey)
-		{
-			can_tick = true;
-			freezeframe ^= 1;
-			framecount = 0;
-		}
-		
-		if (inputs[FRAME_ADVANCE_KEY] && !last_framekey)
-		{
-			can_tick = true;
-			if (!freezeframe)
-			{
-				freezeframe = 1;
-				framecount = 0;
-			}
-		}
-		
-		last_freezekey = inputs[FREEZE_FRAME_KEY];
-		last_framekey = inputs[FRAME_ADVANCE_KEY];
-	}
-	
-	if (can_tick)
-	{
-		game.tick();
-		
-		if (freezeframe)
-		{
-			char buf[1024];
-			snprintf(buf, sizeof(buf), "[] Tick %d", framecount++);
-			font_draw_shaded(4, (SCREEN_HEIGHT-GetFontHeight()-4), buf, 0, &greenfont);
-			can_tick = false;
-		}
-		else
-		{
-			Replay::DrawStatus();
-		}
-		
-		if (settings->show_fps)
-		{
-			update_fps();
-		}
-		
-      //platform_sync_to_vblank();
-      screen->Flip();
-		
-		memcpy(lastinputs, inputs, sizeof(lastinputs));
-	}
-	else
-	{	// frame is frozen; don't hog CPU
-		SDL_Delay(20);
-	}
-	
-	// immediately after a game tick is when we have the most amount of time before
-	// the game needs to run again. so now's as good a time as any for some
-	// BGM audio processing, wouldn't you say?
+	game.tick();
+
+	Replay::DrawStatus();
+
 	org_run();
-}
 
-void update_fps()
-{
-	fps_so_far++;
-	
-	if ((SDL_GetTicks() - fpstimer) >= 500)
-	{
-		fpstimer = SDL_GetTicks();
-		fps = (fps_so_far << 1);
-		fps_so_far = 0;
-	}
-	
-	char fpstext[64];
-	snprintf(fpstext, sizeof(fpstext), "%d fps", fps);
-	
-	int x = (SCREEN_WIDTH - 4) - GetFontWidth(fpstext, 0, true);
-	font_draw_shaded(x, 4, fpstext, 0, &greenfont);
-}
+	//platform_sync_to_vblank();
+	screen->Flip();
 
+	memcpy(lastinputs, inputs, sizeof(lastinputs));
+}
 
 void InitNewGame(bool with_intro)
 {
@@ -428,28 +357,6 @@ void InitNewGame(bool with_intro)
 	fade.set_full(FADE_OUT);
 }
 
-
-void AppMinimized(void)
-{
-	NX_LOG("Game minimized or lost focus--pausing...\n");
-	SDL_PauseAudio(1);
-	
-	for(;;)
-	{
-		if ((SDL_GetAppState() & VISFLAGS) == VISFLAGS)
-		{
-			break;
-		}
-		
-		input_poll();
-		SDL_Delay(20);
-	}
-	
-	SDL_PauseAudio(0);
-	NX_LOG("Focus regained, resuming play...\n");
-}
-
-
 /*
 void c------------------------------() {}
 */
@@ -458,6 +365,7 @@ static void fatal(const char *str)
 {
 	NX_ERR("fatal: '%s'\n", str);
 	
+#ifdef USE_SAFEMODE
 	if (!safemode::init())
 	{
 		safemode::moveto(SM_UPPER_THIRD);
@@ -469,20 +377,21 @@ static void fatal(const char *str)
 		safemode::run_until_key();
 		safemode::close();
 	}
+#else
+		NX_LOG("Fatal Error\n");
+		NX_LOG("%s\n", str);
+#endif
 }
 
 static bool check_data_exists()
 {
-char fname[MAXPATHLEN];
-char slash;
-#ifdef _WIN32
-slash = '\\';
-#else
-slash = '/';
-#endif
-	snprintf(fname, sizeof(fname), "%s%cnpc.tbl", data_dir, slash);
+        char fname[1024];
+	retro_create_subpath_string(fname, sizeof(fname), g_dir, data_dir, "npc.tbl");
+	NX_LOG("check_data_exists: %s\n", fname);
+
 	if (file_exists(fname)) return 0;
 	
+#ifdef USE_SAFEMODE
 	if (!safemode::init())
 	{
 		safemode::moveto(SM_UPPER_THIRD);
@@ -495,12 +404,19 @@ slash = '/';
 		safemode::run_until_key();
 		safemode::close();
 	}
+#else
+		NX_LOG("Fatal Error\n");
+		
+		NX_LOG("Missing \"%s\" directory.\n", data_dir);
+		NX_LOG("Please copy it over from a Doukutsu installation.\n");
+#endif
 	
 	return 1;
 }
 
 void visible_warning(const char *fmt, ...)
 {
+#ifndef _XBOX1
 va_list ar;
 char buffer[80];
 
@@ -509,82 +425,12 @@ char buffer[80];
 	va_end(ar);
 	
 	console.Print(buffer);
+#endif
 }
 
-/*
-void c------------------------------() {}
-*/
-
-void speed_test(void)
-{
-	SDL_Rect textrect;
-	SDL_Surface *vram = screen->GetSDLSurface();
-	int click = 0;
-	
-	uint32_t end = 0;
-	fps = 0;
-	
-	SDL_FillRect(vram, NULL, SDL_MapRGB(vram->format, 255, 0, 0));
-	int c = 0;
-	
-	game.running = true;
-	while(game.running)
-	{
-		//SDL_FillRect(vram, NULL, c ^= 255);
-		
-		if (SDL_GetTicks() >= end)
-		{
-			fps = 0;
-			end = SDL_GetTicks() + 1000;
-			
-			if (++click > 3)
-				break;
-		}
-		
-		screen->Flip();
-		fps++;
-	}
-}
-
-void org_test_miniloop(void)
-{
-uint32_t start = 0, curtime;
-uint32_t counter;
-
-	NX_LOG("Starting org test\n");
-	
-	font_draw(5, 5, "ORG test in progress...", 0, &greenfont);
-	font_draw(5, 15, "Logging statistics to nx.log", 0, &greenfont);
-	font_draw(5, 25, "Press any button to quit", 0, &greenfont);
-	screen->Flip();
-	
-	music_set_enabled(1);
-	music(32);
-	
-	last_sdl_key = -1;
-	
-	for(;;)
-	{
-		org_run();
-		
-		if (++counter > 1024)
-		{
-			counter = 0;
-			
-			curtime = SDL_GetTicks();
-			if ((curtime - start) >= 100)
-			{
-				start = curtime;
-				input_poll();
-				
-				if (last_sdl_key != -1)
-					return;
-			}
-		}
-	}
-}
-
+#if 0
 void SDL_Delay(int ms)
 {
 	usleep(ms * 1000);
 }
+#endif

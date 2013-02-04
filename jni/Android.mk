@@ -54,7 +54,7 @@ LIBRETRO_OBJS := $(NX_DIR)/libretro/libretro.cpp
 
 PORT_OBJS := $(NX_DIR)/libretro/
 
-MAIN_OBJS := $(NX_DIR)/libretro/main.cpp
+MAIN_OBJS := $(NX_DIR)/main.cpp
 
 SIFLIB_OBJS := $(NX_DIR)/siflib/sectSprites.cpp $(NX_DIR)/siflib/sectStringArray.cpp $(NX_DIR)/siflib/sif.cpp $(NX_DIR)/siflib/sifloader.cpp
 

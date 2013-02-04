@@ -599,7 +599,7 @@
 						RelativePath="..\..\libretro.cpp">
 					</File>
 					<File
-						RelativePath="..\..\main.cpp">
+						RelativePath="..\..\..\main.cpp">
 						<FileConfiguration
 							Name="Debug|Xbox">
 							<Tool
