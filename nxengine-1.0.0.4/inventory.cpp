@@ -301,9 +301,12 @@ char toggle = 0;
 			inv.lockinput = 1;
 		}
 		
-		if (justpushed(INVENTORYKEY) || justpushed(FIREKEY))
+		if (justpushed(FIREKEY))
 			ExitInventory();
 	}
+
+   if (justpushed(INVENTORYKEY))
+			ExitInventory();
 }
 
 static void ExitInventory(void)
