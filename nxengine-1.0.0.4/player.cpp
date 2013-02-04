@@ -280,6 +280,7 @@ void PDoPhysics(void)
 void PUpdateInput(void)
 {
 int i;
+static unsigned inventory_delay = 0;
 
 	if (player->inputs_locked || player->disabled)
 	{
@@ -295,15 +296,21 @@ int i;
 			for(i=0;i<INPUT_COUNT;i++)
 				lastpinputs[i] |= pinputs[i];
 		}
-		
-		// allow entering inventory
-		if (justpushed(INVENTORYKEY))
-		{
-			if (!game.frozen && !player->dead && GetCurrentScript() == -1)
-			{
-				game.setmode(GM_INVENTORY);
-			}
-		}
+
+      if (inventory_delay != 0)
+         inventory_delay--;
+      else
+      {
+         // allow entering inventory
+         if (justpushed(INVENTORYKEY))
+         {
+            if (!game.frozen && !player->dead && GetCurrentScript() == -1)
+            {
+               game.setmode(GM_INVENTORY);
+               inventory_delay = 15;
+            }
+         }
+      }
 		
 		// Map System
 		if (justpushed(MAPSYSTEMKEY))
