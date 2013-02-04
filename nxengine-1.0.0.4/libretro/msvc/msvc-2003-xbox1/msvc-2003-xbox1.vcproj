@@ -22,7 +22,7 @@
 				Optimization="0"
 				OptimizeForProcessor="2"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\msvc-2003-xbox1&quot;;&quot;$(SolutionDir)\..\..\sdl\include&quot;;&quot;$(SolutionDir)\..\&quot;"
-				PreprocessorDefinitions="_DEBUG;_XBOX;_LIB;_XBOX1;__LIBRETRO__;INLINE=_inline;LSB_FIRST"
+				PreprocessorDefinitions="_DEBUG;_XBOX;_LIB;_XBOX1;__LIBRETRO__;INLINE=_inline;LSB_FIRST;FRONTEND_SUPPORTS_RGB565"
 				MinimalRebuild="TRUE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -56,7 +56,7 @@
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="2"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\msvc-2003-xbox1&quot;;&quot;$(SolutionDir)\..\..\sdl\include&quot;;&quot;$(SolutionDir)\..\&quot;"
-				PreprocessorDefinitions="NDEBUG;_XBOX;PROFILE;_LIB;_XBOX1;__LIBRETRO__;INLINE=_inline;LSB_FIRST"
+				PreprocessorDefinitions="NDEBUG;_XBOX;PROFILE;_LIB;_XBOX1;__LIBRETRO__;INLINE=_inline;LSB_FIRST;FRONTEND_SUPPORTS_RGB565"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="TRUE"
@@ -91,7 +91,7 @@
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="2"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\msvc-2003-xbox1&quot;;&quot;$(SolutionDir)\..\..\sdl\include&quot;;&quot;$(SolutionDir)\..\&quot;"
-				PreprocessorDefinitions="NDEBUG;_XBOX;PROFILE;FASTCAP;_LIB;_XBOX1;__LIBRETRO__;INLINE=_inline;LSB_FIRST"
+				PreprocessorDefinitions="NDEBUG;_XBOX;PROFILE;FASTCAP;_LIB;_XBOX1;__LIBRETRO__;INLINE=_inline;LSB_FIRST;FRONTEND_SUPPORTS_RGB565"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="TRUE"
@@ -127,7 +127,7 @@
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="2"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\msvc-2003-xbox1&quot;;&quot;$(SolutionDir)\..\..\sdl\include&quot;;&quot;$(SolutionDir)\..\&quot;"
-				PreprocessorDefinitions="NDEBUG;_XBOX;_LIB;_XBOX1;__LIBRETRO__;INLINE=_inline;LSB_FIRST"
+				PreprocessorDefinitions="NDEBUG;_XBOX;_LIB;_XBOX1;__LIBRETRO__;INLINE=_inline;LSB_FIRST;FRONTEND_SUPPORTS_RGB565"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="TRUE"
@@ -163,7 +163,7 @@
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="2"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\msvc-2003-xbox1&quot;;&quot;$(SolutionDir)\..\..\sdl\include&quot;;&quot;$(SolutionDir)\..\&quot;"
-				PreprocessorDefinitions="NDEBUG;_XBOX;LTCG;_LIB;_XBOX1;__LIBRETRO__;INLINE=_inline;LSB_FIRST"
+				PreprocessorDefinitions="NDEBUG;_XBOX;LTCG;_LIB;_XBOX1;__LIBRETRO__;INLINE=_inline;LSB_FIRST;FRONTEND_SUPPORTS_RGB565"
 				StringPooling="TRUE"
 				RuntimeLibrary="0"
 				BufferSecurityCheck="TRUE"
@@ -393,9 +393,6 @@
 						RelativePath="..\..\..\ai\maze\maze.cpp">
 					</File>
 					<File
-						RelativePath="..\..\..\ai\final_battle\misery.cpp">
-					</File>
-					<File
 						RelativePath="..\..\..\ai\npc\misery.cpp">
 						<FileConfiguration
 							Name="Debug|Xbox">
@@ -427,6 +424,9 @@
 								Name="VCCLCompilerTool"
 								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\..\ai\final_battle\misery.cpp">
 					</File>
 					<File
 						RelativePath="..\..\..\ai\weapons\missile.cpp">
