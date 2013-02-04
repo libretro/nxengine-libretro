@@ -4,6 +4,8 @@
 
 #define MAX_INIT_RECORDS		100
 
+#include "../nx.h"
+
 class InitList
 {
 public:
@@ -20,15 +22,15 @@ private:
 class InitAdder
 {
 public:
-	InitAdder(InitList *initlist, void (*func)(void)) { initlist->AddFunction(func); }
-	InitAdder(InitList *initlist, bool (*func)(void)) { initlist->AddFunction(func); }
-	InitAdder(InitList &initlist, void (*func)(void)) { initlist.AddFunction(func); }
-	InitAdder(InitList &initlist, bool (*func)(void)) { initlist.AddFunction(func); }
+	InitAdder(InitList *initlist, void (*func)(void), const char *file = 0) { NX_LOG("InitAdder from %s.\n", file ? file : "null"); initlist->AddFunction(func); }
+	InitAdder(InitList *initlist, bool (*func)(void), const char *file = 0) { NX_LOG("InitAdder from %s.\n", file ? file : "null"); initlist->AddFunction(func); }
+	InitAdder(InitList &initlist, void (*func)(void), const char *file = 0) { NX_LOG("InitAdder from %s.\n", file ? file : "null"); initlist.AddFunction(func); }
+	InitAdder(InitList &initlist, bool (*func)(void), const char *file = 0) { NX_LOG("InitAdder from %s.\n", file ? file : "null"); initlist.AddFunction(func); }
 };
 
 #define INITFUNC(TARGET)	\
 	static void __InitFunc(void);	\
-	static InitAdder _ia(TARGET, __InitFunc);	\
+	static InitAdder _ia(TARGET, __InitFunc, __FILE__);	\
 	static void __InitFunc(void)	\
 
 #endif
