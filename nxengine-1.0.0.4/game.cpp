@@ -33,13 +33,13 @@ tickfunctions[] =
 	//old_options_tick,		old_options_init,	old_options_close	// GP_OPTIONS
 };
 
-static Object *onscreen_objects[MAX_OBJECTS];
+Object *onscreen_objects[MAX_OBJECTS];
 int nOnscreenObjects;
 
 Game game;
 TextBox textbox;
 DebugConsole console;
-static ObjProp objprop[OBJ_LAST];
+ObjProp objprop[OBJ_LAST];
 
 // init Game object: only called once during startup
 bool Game::init()
