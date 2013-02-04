@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "extract.fdh"
-#include "libretro_shared.h"
+#include "../libretro/libretro_shared.h"
 #include "../nx_logger.h"
 
 static int extract_do(void)

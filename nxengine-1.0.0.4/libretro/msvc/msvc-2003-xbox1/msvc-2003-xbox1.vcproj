@@ -393,6 +393,9 @@
 						RelativePath="..\..\..\ai\maze\maze.cpp">
 					</File>
 					<File
+						RelativePath="..\..\..\ai\final_battle\misery.cpp">
+					</File>
+					<File
 						RelativePath="..\..\..\ai\npc\misery.cpp">
 						<FileConfiguration
 							Name="Debug|Xbox">
@@ -424,9 +427,6 @@
 								Name="VCCLCompilerTool"
 								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\..\..\ai\final_battle\misery.cpp">
 					</File>
 					<File
 						RelativePath="..\..\..\ai\weapons\missile.cpp">
@@ -765,9 +765,6 @@
 								Name="VCCLCompilerTool"
 								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\..\..\common\stat.cpp">
 					</File>
 					<File
 						RelativePath="..\..\..\common\StringList.cpp">
