@@ -81,7 +81,7 @@ else ifeq ($(platform), wii)
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
-   CFLAGS += -DGEKKO _DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
+   CFLAGS += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
 else
    TARGET := nxengine_retro.dll
    CC = gcc
