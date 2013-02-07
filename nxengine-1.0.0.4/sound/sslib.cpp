@@ -120,7 +120,7 @@ void mixaudio(int16_t *stream, size_t len_samples)
 
 char SSInit(void)
 {
-	mixbuffer = (uint8_t *)malloc(4096 * 2);
+	mixbuffer = (uint8_t *)malloc(4096 * 2 * 2);
 	
 	// zero everything in all channels
 	memset(channel, 0, sizeof(channel));
