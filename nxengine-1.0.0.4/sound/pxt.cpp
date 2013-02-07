@@ -7,6 +7,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if defined(_XBOX360) || defined(__CELLOS_LV2__) || defined(GEKKO)
+#define htole16(x) ((((x) & 0xff00) >> 8) | (((x) & 0x00ff) << 8))
+#endif
+
 #include "../nx.h"
 #include "../config.h"
 #include "pxt.h"
