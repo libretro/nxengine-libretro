@@ -40,6 +40,13 @@ else ifeq ($(platform), osx)
    TARGET := nxengine_libretro.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
+else ifeq ($(platform), ios)
+   TARGET := nxengine_libretro.dylib
+   fpic := -fPIC
+   SHARED := -dynamiclib
+
+   CC = clang -arch armv7 -isysroot $(IOSSDK)
+   CXX = clang++ -arch armv7 -isysroot $(IOSSDK)
 else ifeq ($(platform), ps3)
    TARGET := nxengine_libretro_ps3.a
    CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
