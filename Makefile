@@ -47,6 +47,16 @@ else ifeq ($(platform), ios)
 
    CC = clang -arch armv7 -isysroot $(IOSSDK)
    CXX = clang++ -arch armv7 -isysroot $(IOSSDK)
+else ifeq ($(platform), qnx)
+   TARGET := nxengine_libretro.so
+   fpic := -fPIC
+   SHARED := -shared -Wl,--version-script=$(NX_DIR)/libretro/link.T -Wl,-no-undefined
+   CFLAGS += -D_GNU_SOURCE=1
+
+   CC = qcc -Vgcc_ntoarmv7le
+   CXX = QCC -Vgcc_ntoarmv7le
+   AR = QCC -Vgcc_ntoarmv7le
+	CFLAGS += -D__BLACKBERRY_QNX__ -marm -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=softfp
 else ifeq ($(platform), ps3)
    TARGET := nxengine_libretro_ps3.a
    CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
