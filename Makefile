@@ -54,7 +54,7 @@ else ifeq ($(platform), qnx)
    CFLAGS += -D_GNU_SOURCE=1
 
    CC = qcc -Vgcc_ntoarmv7le
-   CXX = QCC -Vgcc_ntoarmv7le
+   CXX = QCC -Vgcc_ntoarmv7le_cpp
    AR = QCC -Vgcc_ntoarmv7le
 	CFLAGS += -D__BLACKBERRY_QNX__ -marm -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=softfp
 else ifeq ($(platform), ps3)
