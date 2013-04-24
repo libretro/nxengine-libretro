@@ -38,18 +38,18 @@ NXFont greenfont;
 NXFont bluefont;		// used for "F3:Options" text on pause screen
 NXFont shadowfont;		// white letters w/ drop shadow
 
+#include "../libretro/bitmap_font.h"
+
 bool font_init(void)
 {
-        char fontfile_name[1024];
 	bool error = false;
-
-	retro_create_subpath_string(fontfile_name, sizeof(fontfile_name), g_dir, "data", "font.bmp");
+   SDL_RWops *rw = SDL_RWFromMem(font_bmp, sizeof(font_bmp));
 
 	// we'll be bypassing the NXSurface automatic scaling features
 	// and drawing at the real resolution so we can get better-looking fonts.
 	sdl_screen = screen->GetSDLSurface();
 
-	SDL_Surface *font = SDL_LoadBMP(fontfile_name);
+	SDL_Surface *font = SDL_LoadBMP_RW(rw, 1);
 	SDL_SetColorKey(font, SDL_SRCCOLORKEY, 0);
 
 	error |= whitefont.InitChars(font, 0xffffff);
