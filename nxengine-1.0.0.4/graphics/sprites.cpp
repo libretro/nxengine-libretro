@@ -258,7 +258,20 @@ int sheetdatalength, spritesdatalength;
 	
 	create_slope_boxes();
 	offset_by_draw_points();
-	expand_single_dir_sprites();
+
+   // for sprites which only have 1 dir (no separate frames for left & right),
+   // create a 2nd identical dir as the rest of the engine doesn't bother
+   // with this complication.
+  
+	for(int s=0;s<num_sprites;s++)
+	{
+		if (sprites[s].ndirs == 1)
+		{
+			sprites[s].ndirs = 2;
+			for(int f=0;f<sprites[s].nframes;f++)
+				sprites[s].frame[f].dir[1] = sprites[s].frame[f].dir[0];
+		}
+	}
 	
 	return 0;
 }
@@ -325,22 +338,3 @@ static void offset_by_draw_points()
 		}
 	}
 }
-
-// for sprites which only have 1 dir (no separate frames for left & right),
-// create a 2nd identical dir as the rest of the engine doesn't bother
-// with this complication.
-static void expand_single_dir_sprites()
-{
-	for(int s=0;s<num_sprites;s++)
-	{
-		if (sprites[s].ndirs == 1)
-		{
-			sprites[s].ndirs = 2;
-			for(int f=0;f<sprites[s].nframes;f++)
-				sprites[s].frame[f].dir[1] = sprites[s].frame[f].dir[0];
-		}
-	}
-}
-
-
-
