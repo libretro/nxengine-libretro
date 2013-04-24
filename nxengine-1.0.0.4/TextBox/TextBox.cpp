@@ -244,6 +244,8 @@ void TextBox::DrawTextBox()
 	// overflow during scrolling, etc.
 	set_clip_rect(CONTENT_X, text_top, SCREEN_WIDTH, 48);
 	
+	//SDL_FillRect(screen, &cliprect, SDL_MapRGB(screen->format,0,0,255));
+	
 	// draw face
 	if (fFace != 0)
 	{
