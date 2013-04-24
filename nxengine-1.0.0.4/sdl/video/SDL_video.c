@@ -246,68 +246,9 @@ static void SDL_ClearSurface(SDL_Surface *surface)
 
 	black = SDL_MapRGB(surface->format, 0, 0, 0);
 	SDL_FillRect(surface, NULL, black);
-	if ((surface->flags&SDL_HWSURFACE) && (surface->flags&SDL_DOUBLEBUF)) {
-		SDL_Flip(surface);
-		SDL_FillRect(surface, NULL, black);
-	}
 	if (surface->flags&SDL_FULLSCREEN) {
 		SDL_Flip(surface);
 	}
-}
-
-/*
- * Create a shadow surface suitable for fooling the app. :-)
- */
-static void SDL_CreateShadowSurface(int depth)
-{
-	Uint32 Rmask, Gmask, Bmask;
-
-	/* Allocate the shadow surface */
-	if ( depth == (SDL_VideoSurface->format)->BitsPerPixel ) {
-		Rmask = (SDL_VideoSurface->format)->Rmask;
-		Gmask = (SDL_VideoSurface->format)->Gmask;
-		Bmask = (SDL_VideoSurface->format)->Bmask;
-	} else {
-		Rmask = Gmask = Bmask = 0;
-	}
-	SDL_ShadowSurface = SDL_CreateRGBSurface(SDL_SWSURFACE,
-				SDL_VideoSurface->w, SDL_VideoSurface->h,
-						depth, Rmask, Gmask, Bmask, 0);
-	if ( SDL_ShadowSurface == NULL ) {
-		return;
-	}
-
-	/* 8-bit shadow surfaces report that they have exclusive palette */
-	if ( SDL_ShadowSurface->format->palette ) {
-		SDL_ShadowSurface->flags |= SDL_HWPALETTE;
-		if ( depth == (SDL_VideoSurface->format)->BitsPerPixel ) {
-			SDL_memcpy(SDL_ShadowSurface->format->palette->colors,
-				SDL_VideoSurface->format->palette->colors,
-				SDL_VideoSurface->format->palette->ncolors*
-							sizeof(SDL_Color));
-		} else {
-			SDL_DitherColors(
-			SDL_ShadowSurface->format->palette->colors, depth);
-		}
-	}
-
-	/* If the video surface is resizable, the shadow should say so */
-	if ( (SDL_VideoSurface->flags & SDL_RESIZABLE) == SDL_RESIZABLE ) {
-		SDL_ShadowSurface->flags |= SDL_RESIZABLE;
-	}
-	/* If the video surface has no frame, the shadow should say so */
-	if ( (SDL_VideoSurface->flags & SDL_NOFRAME) == SDL_NOFRAME ) {
-		SDL_ShadowSurface->flags |= SDL_NOFRAME;
-	}
-	/* If the video surface is fullscreen, the shadow should say so */
-	if ( (SDL_VideoSurface->flags & SDL_FULLSCREEN) == SDL_FULLSCREEN ) {
-		SDL_ShadowSurface->flags |= SDL_FULLSCREEN;
-	}
-	/* If the video surface is flippable, the shadow should say so */
-	if ( (SDL_VideoSurface->flags & SDL_DOUBLEBUF) == SDL_DOUBLEBUF ) {
-		SDL_ShadowSurface->flags |= SDL_DOUBLEBUF;
-	}
-	return;
 }
 
 #ifdef __QNXNTO__
@@ -431,40 +372,13 @@ void SDL_UpdateRect(SDL_Surface *screen, Sint32 x, Sint32 y, Uint32 w, Uint32 h)
 		SDL_UpdateRects(screen, 1, &rect);
 	}
 }
+
 void SDL_UpdateRects (SDL_Surface *screen, int numrects, SDL_Rect *rects)
 {
 	int i;
 	SDL_VideoDevice *video = current_video;
 	SDL_VideoDevice *this = current_video;
 
-	if ( screen == SDL_ShadowSurface ) {
-		/* Blit the shadow surface using saved mapping */
-		SDL_Palette *pal = screen->format->palette;
-		SDL_Color *saved_colors = NULL;
-		if ( pal && !(SDL_VideoSurface->flags & SDL_HWPALETTE) ) {
-			/* simulated 8bpp, use correct physical palette */
-			saved_colors = pal->colors;
-			if ( video->gammacols ) {
-				/* gamma-corrected palette */
-				pal->colors = video->gammacols;
-			} else if ( video->physpal ) {
-				/* physical palette different from logical */
-				pal->colors = video->physpal->colors;
-			}
-		}
-		{
-			for ( i=0; i<numrects; ++i ) {
-				SDL_LowerBlit(SDL_ShadowSurface, &rects[i], 
-						SDL_VideoSurface, &rects[i]);
-			}
-		}
-		if ( saved_colors ) {
-			pal->colors = saved_colors;
-		}
-
-		/* Fall through to video surface update */
-		screen = SDL_VideoSurface;
-	}
 	if ( screen == SDL_VideoSurface ) {
 		/* Update the video surface */
 		if ( screen->offset ) {
@@ -488,43 +402,7 @@ void SDL_UpdateRects (SDL_Surface *screen, int numrects, SDL_Rect *rects)
  */
 int SDL_Flip(SDL_Surface *screen)
 {
-	SDL_VideoDevice *video = current_video;
-	/* Copy the shadow surface to the video surface */
-	if ( screen == SDL_ShadowSurface ) {
-		SDL_Rect rect;
-		SDL_Palette *pal = screen->format->palette;
-		SDL_Color *saved_colors = NULL;
-		if ( pal && !(SDL_VideoSurface->flags & SDL_HWPALETTE) ) {
-			/* simulated 8bpp, use correct physical palette */
-			saved_colors = pal->colors;
-			if ( video->gammacols ) {
-				/* gamma-corrected palette */
-				pal->colors = video->gammacols;
-			} else if ( video->physpal ) {
-				/* physical palette different from logical */
-				pal->colors = video->physpal->colors;
-			}
-		}
-
-		rect.x = 0;
-		rect.y = 0;
-		rect.w = screen->w;
-		rect.h = screen->h;
-		SDL_LowerBlit(SDL_ShadowSurface, &rect,
-				SDL_VideoSurface, &rect);
-		if ( saved_colors ) {
-			pal->colors = saved_colors;
-		}
-
-		/* Fall through to video surface update */
-		screen = SDL_VideoSurface;
-	}
-	if ( (screen->flags & SDL_DOUBLEBUF) == SDL_DOUBLEBUF ) {
-		SDL_VideoDevice *this  = current_video;
-		return(video->FlipHWSurface(this, SDL_VideoSurface));
-	} else {
-		SDL_UpdateRect(screen, 0, 0, 0, 0);
-	}
+   SDL_UpdateRect(screen, 0, 0, 0, 0);
 	return(0);
 }
 
