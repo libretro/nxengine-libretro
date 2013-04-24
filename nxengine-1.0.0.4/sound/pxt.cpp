@@ -700,7 +700,7 @@ int malc_size;
 		value = buffer[i];
 		value *= 200;
 
-#ifndef LSB_FIRST
+#ifdef MSB_FIRST
       value = (value << 8) | (value >> 8);
 #endif
 		
