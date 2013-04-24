@@ -223,118 +223,6 @@ char pxt_SetModel(stPXWave *pxwave, int m)
 	}
 }
 
-
-/*void cout(int val)
-{
-static int c = 0;
-char buf[8];
-int i;
-	snprintf(buf, sizeof(buf), "%d", val);
-	for(i=0;i<4-strlen(buf);i++) lprintf(" ");
-	lprintf("%s  ", buf);
-	
-	if (++c > 16) {c=0; lprintf("\n");}
-}
-
-void couthx(int val)
-{
-static int c = 0;
-char buf[80];
-int i;
-
-	snprintf(buf, sizeof(buf), "%02x", val);
-	i = strlen(buf) - 2;
-	lprintf("%s  ", &buf[i]);
-	
-	if (++c > 24) { c=0; lprintf("\n"); }
-}*/
-
-
-
-/*static void display_audio(signed char *buffer, int size_blocks, int centerline, int ysize, char *caption, char is_env, int r, int g, int b)
-{
-double ratio, yratio;
-double curpos;
-int x, y;
-int lastx, lasty;
-signed char value;
-int wd = 315;
-int xoff = 2;
-char buf[80];
-
-#define scale_sample(value)	 (centerline + (int)((double)value * yratio))
-
-	//lprintf("display_audio: displaying buffer of len %d\n", size_blocks);
-	
-	ratio = (double)size_blocks / (double)wd;
-	yratio = (double)ysize / (double)(127+127);
-	//lprintf("ratio = %.2f yratio = %.2f\n", ratio, yratio);
-	
-	DrawSDLLine(SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT, 18,18,18);
-	DrawSDLLine(xoff, centerline, xoff+wd, centerline, 255,0,0);
-	y = scale_sample(TOPAMP); DrawSDLLine(xoff, y, xoff+wd, y, 68,68,68);
-	y = scale_sample(BTMAMP); DrawSDLLine(xoff, y, xoff+wd, y, 68,68,68);
-	
-	curpos = 0;
-	lastx = -1;
-	for(x=xoff;x<wd+xoff;x++)
-	{
-		value = buffer[(int)curpos];
-		curpos += ratio;
-		
-		// envelope is 0-63, so scale it to 0-127
-		if (is_env) value = -value * 2;
-		
-		y = scale_sample(value);
-		
-		if (lastx==-1 || abs(lasty - y) < 2)
-		{
-			PlotSDLPixel(x, y, r,g,b);
-		}
-		else
-		{
-			DrawSDLLine(lastx, lasty, x, y, r,g,b);
-		}
-		
-		lastx = x; lasty = y;
-	}
-	
-	if (caption[0])
-	{
-		snprintf(buf, sizeof(buf), " %s   len = %d", caption, size_blocks);
-		font_draw_shaded(4, ((centerline+(ysize/2))-16), buf, 0, &greenfont);
-	}
-	
-	flip();
-}
-
-void debugshowsound(stPXSound *snd)
-{
-uchar r[4] = { 250, 49,  250, 0 };
-uchar g[4] = { 250, 179, 127, 200 };
-uchar b[4] = { 0,   49,  127, 180 };
-int c;
-char *capt1 = "", *capt2 = "";
-
-	for(c=3;c>=0;c--)
-	{
-		if (snd->chan[c].enabled)
-		{
-			display_audio(snd->chan[c].buffer, snd->chan[c].size_blocks, 60, 80, capt1, 0,  r[c], g[c], b[c]);
-			display_audio(snd->chan[c].envbuffer, 256, 170, 80, capt2, 1,  r[c], g[c], b[c]);
-		}
-		
-		if (c==1)
-		{
-			capt1 = "Output";
-			capt2 = "Envelope";
-		}
-	}
-	
-	flip();
-}
-*/
-
 // sets the given envelope to default values
 void pxt_SetDefaultEnvelope(stPXEnvelope *env)
 {
@@ -1144,10 +1032,9 @@ uchar ch;
 
 char pxt_save(const char *fname, stPXSound *snd)
 {
-FILE *fp;
-int i, j;
+   int i, j;
 
-	fp = fopen(fname, "wb");
+	FILE *fp = fopen(fname, "wb");
 	if (!fp)
 	{
 		NX_ERR("save_pxt: unable to open '%s'\n", fname);

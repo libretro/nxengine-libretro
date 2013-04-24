@@ -1129,27 +1129,3 @@ int org_GetCurrentBuffer(void)
 	if (!SSChannelPlaying(ORG_CHANNEL)) return -1;
 	return SSGetCurUserData(ORG_CHANNEL);
 }
-
-
-// returns the musical name of an org note number
-/*char *org_GetNoteName(int note)
-{
-static char static_buffer[16];
-static const char *note_names[] =
-	{ "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
-	
-	snprintf(static_buffer, sizeof(static_buffer), "%s%d", \
-			note_names[note % KEYS_OCTAVE], \
-			note / KEYS_OCTAVE);
-	
-	return static_buffer;
-}
-*/
-// returns true if a note is a sharp note
-/*bool org_IsSharp(int note)
-{
-	static const bool sharps[] = { 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0 };
-	return (sharps[note % KEYS_OCTAVE]);
-}
-*/
-
