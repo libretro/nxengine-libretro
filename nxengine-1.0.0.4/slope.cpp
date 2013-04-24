@@ -357,10 +357,12 @@ extern SDL_Surface *tileset;
 			
 			if (slopetable[table].table[x][y])
 			{
-				if (table > 4)	// floor slopes
-					SDL_FillRect(tileset, &dstrect, SDL_MapRGB(tileset->format, 0, 255, 0));
+            uint32_t color = SET_COLORFORMAT(tileset, 0, 255, 0); 
+               if (table > 4)	// floor slopes
 				else
-					SDL_FillRect(tileset, &dstrect, SDL_MapRGB(tileset->format, 255, 0, 0));
+               color = SET_COLORFORMAT(tileset, 255, 0, 0);
+
+            SDL_FillRect(tileset, &dstrect, color);
 			}
 		}
 	}

@@ -67,4 +67,7 @@ class Object;
 
 const char *strhex(int value);
 
+#define SET_COLORFORMAT(tileset, r, g, b) ((r >> tileset->format->Rloss) << tileset->format->Rshift | (g >> tileset->format->Gloss) << tileset->format->Gshift | (b >> tileset->format->Bloss) << tileset->format->Bshift | tileset->format->Amask)
+
+
 #endif
