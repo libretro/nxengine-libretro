@@ -49,12 +49,6 @@ NXSurface::~NXSurface()
 	Free();
 }
 
-// static function, and requires a reload of all surfaces
-void NXSurface::SetScale(int factor)
-{
-	NX_ERR("NXSurface::SetScale: CONFIG_MUTABLE_SCALE not set\n");
-}
-
 /*
 void c------------------------------() {}
 */
@@ -97,7 +91,7 @@ bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey, int use_displ
 		return 1;
 	}
 	
-	fSurface = Scale(image, SCALE, use_colorkey, true, use_display_format);
+	fSurface = Scale(image, use_colorkey, true, use_display_format);
 	return (fSurface == NULL);
 }
 
@@ -125,13 +119,13 @@ void NXSurface::DrawSurface(NXSurface *src, \
 {
 SDL_Rect srcrect, dstrect;
 
-	srcrect.x = srcx * SCALE;
-	srcrect.y = srcy * SCALE;
-	srcrect.w = wd * SCALE;
-	srcrect.h = ht * SCALE;
+	srcrect.x = srcx;
+	srcrect.y = srcy;
+	srcrect.w = wd;
+	srcrect.h = ht;
 	
-	dstrect.x = dstx * SCALE;
-	dstrect.y = dsty * SCALE;
+	dstrect.x = dstx;
+	dstrect.y = dsty;
 	
 	SDL_BlitSurface(src->fSurface, &srcrect, fSurface, &dstrect);
 }
@@ -153,11 +147,11 @@ SDL_Rect srcrect, dstrect;
 
 	srcrect.x = 0;
 	srcrect.w = src->fSurface->w;
-	srcrect.y = (y_src * SCALE);
-	srcrect.h = (height * SCALE);
+	srcrect.y = (y_src);
+	srcrect.h = (height);
 	
-	int x = (x_dst * SCALE);
-	int y = (y_dst * SCALE);
+	int x = (x_dst);
+	int y = (y_dst);
 	int destwd = fSurface->w;
 	
 	do
@@ -183,22 +177,22 @@ SDL_Rect rect;
 	uint32_t color = r << RED_SHIFT | g << GREEN_SHIFT | b << BLUE_SHIFT;
 
 	// top and bottom
-	rect.x = x1 * SCALE;
-	rect.y = y1 * SCALE;
-	rect.w = ((x2 - x1) + 1) * SCALE;
-	rect.h = SCALE;
+	rect.x = x1;
+	rect.y = y1;
+	rect.w = ((x2 - x1) + 1);
+	rect.h = 1;
 	SDL_FillRect(fSurface, &rect, color);
 	
-	rect.y = y2 * SCALE;
+	rect.y = y2;
 	SDL_FillRect(fSurface, &rect, color);
 	
 	// left and right
-	rect.y = y1 * SCALE;
-	rect.w = SCALE;
-	rect.h = ((y2 - y1) + 1) * SCALE;
+	rect.y = y1;
+	rect.w = 1;
+	rect.h = ((y2 - y1) + 1);
 	SDL_FillRect(fSurface, &rect, color);
 	
-	rect.x = x2 * SCALE;
+	rect.x = x2;
 	SDL_FillRect(fSurface, &rect, color);
 }
 
@@ -208,10 +202,10 @@ void NXSurface::FillRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, u
 SDL_Rect rect;
 	uint32_t color = r << RED_SHIFT | g << GREEN_SHIFT | b << BLUE_SHIFT;
 
-	rect.x = x1 * SCALE;
-	rect.y = y1 * SCALE;
-	rect.w = ((x2 - x1) + 1) * SCALE;
-	rect.h = ((y2 - y1) + 1) * SCALE;
+	rect.x = x1;
+	rect.y = y1;
+	rect.w = ((x2 - x1) + 1);
+	rect.h = ((y2 - y1) + 1);
 	
 	SDL_FillRect(fSurface, &rect, color);
 }
@@ -265,7 +259,7 @@ void c------------------------------() {}
 
 void NXSurface::set_clip_rect(int x, int y, int w, int h)
 {
-	NXRect rect(x * SCALE, y * SCALE, w * SCALE, h * SCALE);
+	NXRect rect(x, y, w, h);
 	SDL_SetClipRect(fSurface, &rect);
 }
 
@@ -284,8 +278,8 @@ void c------------------------------() {}
 */
 
 // internal function which scales the given SDL surface by the given factor.
-SDL_Surface *NXSurface::Scale(SDL_Surface *original, int factor, \
-		bool use_colorkey, bool free_original, bool use_display_format)
+SDL_Surface *NXSurface::Scale(SDL_Surface *original, bool use_colorkey,
+      bool free_original, bool use_display_format)
 {
 	uint8_t color = SDL_MapRGB(original->format, 0, 0, 0);
 
@@ -297,31 +291,6 @@ SDL_Surface *NXSurface::Scale(SDL_Surface *original, int factor, \
 	}
 	
 	return original;
-}
-
-void NXSurface::Scale8(SDL_Surface *src, SDL_Surface *dst, int factor)
-{
-int x, y, i;
-
-	for(y=0;y<src->h;y++)
-	{
-		uint8_t *srcline = (uint8_t *)src->pixels + (y * src->pitch);
-		uint8_t *dstline = (uint8_t *)dst->pixels + (y * factor * dst->pitch);
-		uint8_t *dstptr = dstline;
-		
-		for(x=0;x<src->w;x++)
-		{
-			for(i=0;i<factor;i++)
-				*(dstptr++) = srcline[x];
-		}
-		
-		dstptr = dstline;
-		for(i=1;i<factor;i++)
-		{
-			dstptr += dst->pitch;
-			memcpy(dstptr, dstline, dst->pitch);
-		}
-	}
 }
 
 /*
