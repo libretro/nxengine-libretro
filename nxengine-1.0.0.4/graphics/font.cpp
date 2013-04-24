@@ -47,7 +47,7 @@ bool font_init(void)
 
 	// we'll be bypassing the NXSurface automatic scaling features
 	// and drawing at the real resolution so we can get better-looking fonts.
-	sdl_screen = screen->fSurface;
+	sdl_screen = screen->GetSDLSurface();
 
 	SDL_Surface *font = SDL_LoadBMP_RW(rw, 1);
 	SDL_SetColorKey(font, SDL_SRCCOLORKEY, 0);

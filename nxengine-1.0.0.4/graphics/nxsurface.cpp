@@ -212,8 +212,7 @@ SDL_Rect rect;
 
 void NXSurface::Clear(uint8_t r, uint8_t g, uint8_t b)
 {
-   uint8_t color = SET_COLORFORMAT(fSurface, r, g, b);
-	SDL_FillRect(fSurface, NULL, color);
+	SDL_FillRect(fSurface, NULL, MapColor(r, g, b));
 }
 
 
@@ -282,11 +281,14 @@ void c------------------------------() {}
 SDL_Surface *NXSurface::Scale(SDL_Surface *original, bool use_colorkey,
       bool free_original, bool use_display_format)
 {
-	uint8_t color = SET_COLORFORMAT(original, 0, 0, 0);
+	uint8_t color = SDL_MapRGB(original->format, 0, 0, 0);
 
 	// set colorkey to black if requested
 	if (use_colorkey)
+	{	// don't use SDL_RLEACCEL--it seems to actually make things a lot slower,
+		// especially on maps with motion tiles.
 		SDL_SetColorKey(original, SDL_SRCCOLORKEY, color);
+	}
 	
 	return original;
 }
@@ -297,9 +299,14 @@ void c------------------------------() {}
 
 void NXSurface::EnableColorKey()
 {
-   uint8_t color = SET_COLORFORMAT(fSurface, 0, 0, 0);
-	SDL_SetColorKey(fSurface, SDL_SRCCOLORKEY, color);
+	SDL_SetColorKey(fSurface, SDL_SRCCOLORKEY, SDL_MapRGB(fSurface->format, 0, 0, 0));
 }
+
+uint32_t NXSurface::MapColor(uint8_t r, uint8_t g, uint8_t b)
+{
+	return SDL_MapRGB(fSurface->format, r, g, b);
+}
+
 
 void NXSurface::Free()
 {
