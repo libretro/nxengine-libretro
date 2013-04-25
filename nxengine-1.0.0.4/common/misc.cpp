@@ -39,6 +39,32 @@ void fputl(uint32_t word, FILE *fp)
 {
 	fwrite(&word, 4, 1, fp);
 }
+
+double fgetfloat(FILE *fp)
+{
+char buf[8];
+double *float_ptr;
+int i;
+
+	for(i=0;i<4;i++) fgetc(fp);
+	for(i=0;i<8;i++) buf[i] = fgetc(fp);
+	
+	float_ptr = (double *)&buf[0];
+	return *float_ptr;
+}
+
+void fputfloat(double q, FILE *fp)
+{
+char *float_ptr;
+int i;
+
+	float_ptr = (char *)&q;
+	
+	for(i=0;i<4;i++) fputc(0, fp);
+	for(i=0;i<8;i++) fputc(float_ptr[i], fp);
+	
+	return;
+}
 #else
 uint16_t fgeti(FILE *fp)
 {
@@ -71,18 +97,15 @@ void fputl(uint32_t word, FILE *fp)
 	fputc(word >> 16, fp);
 	fputc(word >> 24, fp);
 }
-#endif		// __BYTE_ORDER  == __LITTLE_ENDIAN
-
-
 
 double fgetfloat(FILE *fp)
 {
-char buf[16];
+char buf[8];
 double *float_ptr;
 int i;
 
 	for(i=0;i<4;i++) fgetc(fp);
-	for(i=0;i<8;i++) buf[i] = fgetc(fp);
+	for(i=0;i<8;i++) buf[7 - i] = fgetc(fp);
 	
 	float_ptr = (double *)&buf[0];
 	return *float_ptr;
@@ -96,11 +119,11 @@ int i;
 	float_ptr = (char *)&q;
 	
 	for(i=0;i<4;i++) fputc(0, fp);
-	for(i=0;i<8;i++) fputc(float_ptr[i], fp);
+	for(i=0;i<8;i++) fputc(float_ptr[7 - i], fp);
 	
 	return;
 }
-
+#endif		// __BYTE_ORDER  == __LITTLE_ENDIAN
 
 // read a string from a file until a null is encountered
 void freadstring(FILE *fp, char *buf, int max)
