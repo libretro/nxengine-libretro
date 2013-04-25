@@ -44,6 +44,16 @@ const char *npcsetnames[] =
 	"press", "priest", "ballos", "island", NULL
 };
 
+static int find_index(const char *fname, const char *list[])
+{
+	for(int i=0;list[i];i++)
+   {
+      if (!strcasecmp(list[i], fname))
+         return i;
+   }
+	
+	return 0xff;
+}
 
 bool extract_stages(FILE *exefp)
 {
@@ -86,18 +96,4 @@ bool extract_stages(FILE *exefp)
 	}
 	
 	return 0;
-}
-
-
-static int find_index(const char *fname, const char *list[])
-{
-	for(int i=0;list[i];i++)
-	{
-		if (!strcasecmp(list[i], fname))
-		{
-			return i;
-		}
-	}
-	
-	return 0xff;
 }
