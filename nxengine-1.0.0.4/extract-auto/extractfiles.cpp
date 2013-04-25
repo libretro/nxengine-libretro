@@ -184,6 +184,7 @@ files[] =
 };
 #endif
 
+extern signed short wavetable[100][256];
 
 bool extract_files(FILE *exefp)
 {
@@ -229,6 +230,21 @@ bool first_crc_failure = true;
 				first_crc_failure = false;
 			}
 		}
+      
+      fprintf(stderr, "file: %s\n", files[i].filename);
+      if (strcmp(files[i].filename, "wavetable.dat") == 0)
+      {
+         fprintf(stderr, "found wavetable.dat\n");
+         // wavetable.dat
+         signed char *ptr = (signed char*)&buffer[0];
+         int wav, sampl;
+
+         for(wav=0;wav<100;wav++)
+            for(sampl=0;sampl<256;sampl++)
+               wavetable[wav][sampl] = (signed short)((int)(*ptr++) << 8); // 256 = (32768 / 128)-- convert to 16-bit
+
+         continue;
+      }
 		
 		// write out the file
 		createdir(outfilename);
