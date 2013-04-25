@@ -226,15 +226,6 @@ bool first_crc_failure = true;
 			if (crc != files[i].crc)
 			{
 				NX_ERR("File '%s' failed CRC check.\n", outfilename);
-				NX_ERR("\n");
-				
-					NX_ERR("[I]gnore\n");
-					NX_ERR("Ignore [A]ll\n");
-					NX_ERR("[S]top\n");
-					#define IGNORE_BTN		SDLK_i
-					#define IGNORE_ALL_BTN	SDLK_a
-					#define STOP_BTN		SDLK_s
-				
 				first_crc_failure = false;
 			}
 		}
@@ -282,13 +273,3 @@ static void createdir(const char *fname)
 	
 	free(dir);
 }
-
-
-
-
-
-
-
-
-
-
