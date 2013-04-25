@@ -32,7 +32,7 @@ void SSClose(void);
 /* located in sound/org.cpp */
 
 //------------------[referenced from sound/sound.cpp]----------------//
-int org_init(const char *wavetable_fname, const char *drum_pxt_dir, int org_volume);
+int org_init(const char *drum_pxt_dir, int org_volume);
 void org_stop(void);
 bool org_is_playing(void);
 char org_load(char *fname);

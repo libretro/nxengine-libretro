@@ -46,10 +46,7 @@ static bool buffers_full;
 
 static int OrgVolume;
 
-static struct
-{
-	signed short samples[256];
-} wavetable[100];
+signed short wavetable[100][256];
 
 #ifdef DRUM_PXT
 	// sound effect numbers which correspond to the drums
@@ -268,48 +265,14 @@ stPXSound snd;
 #endif
 
 
-
-
-static bool load_wavetable(const char *fname)
-{
-int wav, sampl;
-FILE *fp;
-#define BUF_SIZE		(100 * 256)
-signed char buffer[BUF_SIZE + 1];
-signed char *ptr;
-
-   NX_LOG("load_wavetable: %s\n", fname);
-	fp = fopen(fname, "rb");
-	if (!fp)
-	{
-		NX_ERR("Unable to open wavetable.dat!!\n");
-		return 1;
-	}
-	
-	fread(buffer, BUF_SIZE, 1, fp);
-	fclose(fp);
-	
-	ptr = &buffer[0];
-	for(wav=0;wav<100;wav++)
-	{
-		for(sampl=0;sampl<256;sampl++)
-		{
-			// 256 = (32768 / 128)-- convert to 16-bit
-			wavetable[wav].samples[sampl] = (signed short)((int)(*ptr++) << 8);
-		}
-	}
-	
-	return 0;
-}
-
 /*
 void c------------------------------() {}
 */
 
 
-int org_init(const char *wavetable_fname, const char *drum_pxt_dir, int org_volume)
+int org_init(const char *drum_pxt_dir, int org_volume)
 {
-int i;
+   int i;
 	
 	SSReserveChannel(ORG_CHANNEL);
 	OrgVolume = org_volume;
@@ -321,7 +284,6 @@ int i;
 	for(i=0;i<2;i++) final_buffer[i].samples = NULL;
 	
 	init_pitch();
-	if (load_wavetable(wavetable_fname)) return 1;
 	if (load_drumtable(drum_pxt_dir)) return 1;
 	
 	song.playing = false;
@@ -795,7 +757,7 @@ double iratio;
 		pos2 = pos1 + 1;		// since pos1&2 are chars, this wraps at 255
 		iratio = chan->phaseacc - (int)chan->phaseacc;
 		
-		audioval = Interpolate(wavetable[wave].samples[pos1], wavetable[wave].samples[pos2], iratio);
+		audioval = Interpolate(wavetable[wave][pos1], wavetable[wave][pos2], iratio);
 		audioval *= master_volume_ratio;
 		
 		chan->outbuffer[chan->outpos++] = (int)(audioval * volume_left_ratio);

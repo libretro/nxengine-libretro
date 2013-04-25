@@ -43,13 +43,11 @@ static const char bossmusic[] = { 4, 7, 10, 11, 15, 16, 17, 18, 21, 22, 31, 33, 
 static const char *pxt_dir = "pxt";
 static const char *org_dir = "org";
 static const char *sndcache = "sndcache.pcm";
-static const char *org_wavetable = "wavetable.dat";
 
 bool sound_init(void)
 {
         char pxt_dirname[1024];
         char sndcache_tmp[1024];
-        char org_wavetable_fname[1024];
 	if (SSInit()) return 1;
 	if (pxt_init()) return 1;
 
@@ -65,9 +63,7 @@ bool sound_init(void)
    slash = '/';
 #endif
 
-        snprintf(org_wavetable_fname, sizeof(org_wavetable_fname), "%s%c%s", g_dir, slash, org_wavetable);
-	
-	if (org_init(org_wavetable_fname, pxt_dirname, ORG_VOLUME))
+	if (org_init(pxt_dirname, ORG_VOLUME))
 	{
 		NX_ERR("Music failed to initialize\n");
 		return 1;

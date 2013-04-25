@@ -27,7 +27,6 @@ static int extract_do(void)
 	}
 	
 	if (extract_pxt(fp)) return 1;
-	if (extract_files(fp)) return 1;
 	
 	fclose(fp);
 	return 0;
