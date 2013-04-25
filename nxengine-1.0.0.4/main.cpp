@@ -29,6 +29,8 @@ static bool inhibit_loadfade = false;
 static bool error = false;
 static bool freshstart;
 
+extern bool extract_stages(FILE *exefp);
+
 void pre_main(void)
 {
 #ifdef DEBUG_LOG
@@ -42,6 +44,18 @@ SetLogFilename(debug_fname);
 	// load settings, or at least get the defaults,
 	// so we know the initial screen resolution.
 	settings_load();
+
+   char filename[1024];
+	FILE *fp;
+
+	NX_LOG("= Extracting Files =\n");
+
+	retro_create_path_string(filename, sizeof(filename), g_dir, "Doukutsu.exe");
+	fp = fopen(filename, "rb");
+
+	extract_stages(fp);
+
+	fclose(fp);
 	
 	if (!settings->files_extracted)
 	{

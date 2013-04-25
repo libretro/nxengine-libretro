@@ -6,7 +6,7 @@
 
 stMap map;
 
-MapRecord stages[MAX_STAGES];
+extern MapRecord stages[MAX_STAGES];
 int num_stages;
 
 #define MAX_BACKDROPS			32
@@ -285,22 +285,7 @@ unsigned char tc;
 
 bool load_stages(void)
 {
-        char fname[1024];
-	FILE *fp;
-
-	retro_create_path_string(fname, sizeof(fname), g_dir, "stage.dat");
-
-	fp = fopen(fname, "rb");
-	if (!fp)
-	{
-		NX_ERR("%s(%d): failed to open %s\n", __FILE__, __LINE__, fname);
-		num_stages = 0;
-		return 1;
-	}
-	
-	num_stages = fgetc(fp);
-	for(int i=0;i<num_stages;i++)
-		fread(&stages[i], sizeof(MapRecord), 1, fp);
+	num_stages = MAX_STAGES;
 	
 	return 0;
 }
