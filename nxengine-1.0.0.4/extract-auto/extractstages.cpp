@@ -47,12 +47,7 @@ const char *npcsetnames[] =
 
 bool extract_stages(FILE *exefp)
 {
-int i;
-
-	char stage_dat[1024];
-	retro_create_path_string(stage_dat, sizeof(stage_dat), g_dir, "stage.dat");
-	NX_LOG("[ %s ]\n", stage_dat);
-	
+   int i;
 	// load raw data into struct
 	fseek(exefp, DATA_OFFSET, SEEK_SET);
 	fread(exemapdata, sizeof(EXEMapRecord), NMAPS, exefp);
