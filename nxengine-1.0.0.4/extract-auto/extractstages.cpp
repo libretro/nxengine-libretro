@@ -29,7 +29,7 @@ struct EXEMapRecord
 };
 
 EXEMapRecord exemapdata[NMAPS];
-MapRecord mapdata[NMAPS];
+MapRecord stages[MAX_STAGES];
 
 // the NPC set system isn't used by NXEngine, but the information
 // is used in a few places to figure out which sprite to be drawn.
@@ -58,28 +58,28 @@ int i;
 	fread(exemapdata, sizeof(EXEMapRecord), NMAPS, exefp);
 	
 	// convert the data
-	memset(mapdata, 0, sizeof(mapdata));
+	memset(stages, 0, sizeof(stages));
 	const char *error = NULL;
 	
 	for(i=0;i<NMAPS;i++)
 	{
-		strcpy(mapdata[i].filename, exemapdata[i].filename);
-		strcpy(mapdata[i].stagename, exemapdata[i].caption);
+		strcpy(stages[i].filename, exemapdata[i].filename);
+		strcpy(stages[i].stagename, exemapdata[i].caption);
 		
-		mapdata[i].scroll_type = exemapdata[i].scroll_type;
-		mapdata[i].bossNo = exemapdata[i].bossNo;
+		stages[i].scroll_type = exemapdata[i].scroll_type;
+		stages[i].bossNo = exemapdata[i].bossNo;
 		
-		mapdata[i].tileset = find_index(exemapdata[i].tileset, tileset_names);
-		if (mapdata[i].tileset == 0xff) { error = "tileset"; break; }
+		stages[i].tileset = find_index(exemapdata[i].tileset, tileset_names);
+		if (stages[i].tileset == 0xff) { error = "tileset"; break; }
 		
-		mapdata[i].bg_no   = find_index(exemapdata[i].background, backdrop_names);
-		if (mapdata[i].bg_no == 0xff) { error = "backdrop"; break; }
+		stages[i].bg_no   = find_index(exemapdata[i].background, backdrop_names);
+		if (stages[i].bg_no == 0xff) { error = "backdrop"; break; }
 		
-		mapdata[i].NPCset1 = find_index(exemapdata[i].NPCset1, npcsetnames);
-		if (mapdata[i].NPCset1 == 0xff) { error = "NPCset1"; break; }
+		stages[i].NPCset1 = find_index(exemapdata[i].NPCset1, npcsetnames);
+		if (stages[i].NPCset1 == 0xff) { error = "NPCset1"; break; }
 		
-		mapdata[i].NPCset2 = find_index(exemapdata[i].NPCset2, npcsetnames);
-		if (mapdata[i].NPCset2 == 0xff) { error = "NPCset2"; break; }
+		stages[i].NPCset2 = find_index(exemapdata[i].NPCset2, npcsetnames);
+		if (stages[i].NPCset2 == 0xff) { error = "NPCset2"; break; }
 	}
 
 	if (error)
@@ -90,19 +90,6 @@ int i;
 		return 1;
 	}
 	
-	// write out
-	FILE *fpo = fopen(stage_dat, "wb");
-	if (!fpo)
-	{
-		NX_ERR("failed to open stage.dat for writing\n");
-		return 1;
-	}
-	
-	fputc(NMAPS, fpo);
-	for(i=0;i<NMAPS;i++)
-		fwrite(&mapdata[i], sizeof(MapRecord), 1, fpo);
-	
-	fclose(fpo);
 	return 0;
 }
 
@@ -119,7 +106,3 @@ static int find_index(const char *fname, const char *list[])
 	
 	return 0xff;
 }
-
-
-
-

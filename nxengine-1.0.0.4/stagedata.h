@@ -2,8 +2,7 @@
 #ifndef _STAGEDATA_H
 #define _STAGEDATA_H
 
-//#define NMAPS	 120
-//extern MapRecord stages[NMAPS];
+#define NMAPS	 120
 
 #define NUM_BACKDROPS		12
 #define NUM_TILESETS		22
