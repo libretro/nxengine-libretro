@@ -155,6 +155,7 @@ static bool load_drum_pxt(FILE *fd, int s, int d)
 void c------------------------------() {}
 */
 
+extern bool extract_org(FILE *exefp);
 
 int org_init(int org_volume)
 {
@@ -168,9 +169,20 @@ int org_init(int org_volume)
 	memset(drumtable, 0, sizeof(drumtable));
 	for(i=0;i<16;i++) note_channel[i].outbuffer = NULL;
 	for(i=0;i<2;i++) final_buffer[i].samples = NULL;
+
+	FILE *fp;
+   char filename[1024];
+
+	retro_create_path_string(filename, sizeof(filename), g_dir, "Doukutsu.exe");
+	fp = fopen(filename, "rb");
+
+   extract_org(fp);
+
+	fclose(fp);
 	
 	init_pitch();
-	if (load_drumtable()) return 1;
+	if (load_drumtable())
+      return 1;
 	
 	song.playing = false;
 	org_inited = true;
