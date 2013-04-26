@@ -75,18 +75,21 @@ bool NXSurface::AllocNew(int wd, int ht, NXFormat *format)
 // load the surface from a .pbm or bitmap file
 bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey)
 {
-	SDL_Surface *image;
-
 	Free();
 
-	image = SDL_LoadBMP(pbm_name);
-	if (!image)
+	fSurface = SDL_LoadBMP(pbm_name);
+	if (!fSurface)
 	{
 		NX_ERR("NXSurface::LoadImage: load failed of '%s'!\n", pbm_name);
 		return 1;
 	}
 	
-	fSurface = Scale(image, use_colorkey);
+	uint8_t color = SDL_MapRGB(fSurface->format, 0, 0, 0);
+
+	// set colorkey to black if requested
+	if (use_colorkey)
+		SDL_SetColorKey(fSurface, SDL_SRCCOLORKEY, color);
+
 	return (fSurface == NULL);
 }
 
