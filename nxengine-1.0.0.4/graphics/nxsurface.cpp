@@ -73,31 +73,28 @@ bool NXSurface::AllocNew(int wd, int ht, NXFormat *format)
 
 
 // load the surface from a .pbm or bitmap file
-bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey, int use_display_format)
+bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey)
 {
 	SDL_Surface *image;
 
 	Free();
-	char filename[1024];
 
-	NX_LOG("filename: %s\n", pbm_name);
-	
 	image = SDL_LoadBMP(pbm_name);
 	if (!image)
 	{
-		NX_ERR("NXSurface::LoadImage: load failed of '%s'!\n", filename);
+		NX_ERR("NXSurface::LoadImage: load failed of '%s'!\n", pbm_name);
 		return 1;
 	}
 	
-	fSurface = Scale(image, use_colorkey, true, use_display_format);
+	fSurface = Scale(image, use_colorkey);
 	return (fSurface == NULL);
 }
 
 
-NXSurface *NXSurface::FromFile(const char *pbm_name, bool use_colorkey, int use_display_format)
+NXSurface *NXSurface::FromFile(const char *pbm_name, bool use_colorkey)
 {
 	NXSurface *sfc = new NXSurface;
-	if (sfc->LoadImage(pbm_name, use_colorkey, use_display_format))
+	if (sfc->LoadImage(pbm_name, use_colorkey))
 	{
 		delete sfc;
 		return NULL;
@@ -276,17 +273,13 @@ void c------------------------------() {}
 */
 
 // internal function which scales the given SDL surface by the given factor.
-SDL_Surface *NXSurface::Scale(SDL_Surface *original, bool use_colorkey,
-      bool free_original, bool use_display_format)
+SDL_Surface *NXSurface::Scale(SDL_Surface *original, bool use_colorkey)
 {
 	uint8_t color = SDL_MapRGB(original->format, 0, 0, 0);
 
 	// set colorkey to black if requested
 	if (use_colorkey)
-	{	// don't use SDL_RLEACCEL--it seems to actually make things a lot slower,
-		// especially on maps with motion tiles.
 		SDL_SetColorKey(original, SDL_SRCCOLORKEY, color);
-	}
 	
 	return original;
 }
