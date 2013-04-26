@@ -60,8 +60,8 @@ public:
 	~NXSurface();
 	
 	bool AllocNew(int wd, int ht, NXFormat *format = screen->Format());
-	bool LoadImage(const char *pbm_name, bool use_colorkey=false, int use_display_format=-1);
-	static NXSurface *FromFile(const char *pbm_name, bool use_colorkey=false, int use_display_format=-1);
+	bool LoadImage(const char *pbm_name, bool use_colorkey=false);
+	static NXSurface *FromFile(const char *pbm_name, bool use_colorkey=false);
 	
 	// blitting
 	void DrawSurface(NXSurface *src, int dstx, int dsty);
@@ -96,7 +96,7 @@ public:
 	void Flip();
 	SDL_Surface *GetSDLSurface() { return fSurface; }
 private:
-	static SDL_Surface *Scale(SDL_Surface *original, bool use_colorkey, bool free_original, bool use_display_format);
+	static SDL_Surface *Scale(SDL_Surface *original, bool use_colorkey);
 	
 	inline uint32_t MapColor(uint8_t r, uint8_t g, uint8_t b);
 	void Free();

@@ -57,11 +57,9 @@ char fname[MAXPATHLEN];
 		
 		// always use SDL_DisplayFormat on tilesets; they need to come out of 8-bit
 		// so that we can replace the destroyable star tiles without them palletizing.
-		tileset = NXSurface::FromFile(fname_tmp, true, true);
+		tileset = NXSurface::FromFile(fname_tmp, true);
 		if (!tileset)
-		{
 			return 1;
-		}
 		
 		current_tileset = new_tileset;
 	}
