@@ -275,22 +275,6 @@ void NXSurface::clear_clip_rect()
 void c------------------------------() {}
 */
 
-// internal function which scales the given SDL surface by the given factor.
-SDL_Surface *NXSurface::Scale(SDL_Surface *original, bool use_colorkey)
-{
-	uint8_t color = SDL_MapRGB(original->format, 0, 0, 0);
-
-	// set colorkey to black if requested
-	if (use_colorkey)
-		SDL_SetColorKey(original, SDL_SRCCOLORKEY, color);
-	
-	return original;
-}
-
-/*
-void c------------------------------() {}
-*/
-
 void NXSurface::Free()
 {
 	if (fSurface)
