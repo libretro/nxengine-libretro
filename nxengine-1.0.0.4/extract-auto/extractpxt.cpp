@@ -168,7 +168,6 @@ slash = '\\';
 #else
 slash = '/';
 #endif
-      printf("s: %d\n", s);
    for (i = 0; i < sizeof(snd) / sizeof(snd[0]); i++)
    {
       if (snd[i].id == s)
@@ -180,8 +179,6 @@ slash = '/';
    }
    if (!found)
       return 1;
-      
-      printf("id: %d\n", snd[s].id);
 
 		fseek(fp, snd[s].offset, SEEK_SET);
 		memset(chan, 0, sizeof(chan));
