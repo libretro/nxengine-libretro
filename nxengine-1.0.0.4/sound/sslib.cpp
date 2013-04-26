@@ -29,9 +29,7 @@ static int AddBuffer(SSChannel *chan, int bytes)
 	SSChunk *chunk = &chan->chunks[chan->head];
 	
 	if (bytes > chunk->bytelength)
-	{
 		bytes = chunk->bytelength;
-	}
 	
 	// don't copy past end of chunk
 	if (chunk->bytepos+bytes > chunk->bytelength)
@@ -41,12 +39,10 @@ static int AddBuffer(SSChannel *chan, int bytes)
 		
 		// only add what's left. and advance the head pointer to the next chunk.
 		bytes = chunk->bytelength - chunk->bytepos;
-		if (++chan->head >= MAX_QUEUED_CHUNKS) chan->head = 0;
-		
-		//stat("AddBuffer: reached end of chunk %d; new head is %d, and tail is %d", c, chan->head, chan->tail);
+		if (++chan->head >= MAX_QUEUED_CHUNKS)
+         chan->head = 0;
 	}
 	
-//	stat("%d: Channel %d: Copying %d bytes from chunk %d @ %08x -- pos=%d, len=%d", SDL_GetTicks(), cnn, bytes, c, chunk->bytebuffer, chunk->bytepos, chunk->bytelength);
 	memcpy(&mixbuffer[mix_pos], &chunk->bytebuffer[chunk->bytepos], bytes);
 	mix_pos += bytes;
 	chunk->bytepos += bytes;
@@ -76,12 +72,9 @@ void mixaudio(int16_t *stream, size_t len_samples)
 			bytestogo -= bytes_copied;
 			
 			if (channel[c].head==channel[c].tail)
-			{		// ran out of chunks before buffer full
-				// clear remaining portion of mixbuffer
+			{
 				if (bytestogo)
-				{
 					memset(&mixbuffer[mix_pos], 0, bytestogo);
-				}
 				
 				break;
 			}
@@ -108,10 +101,7 @@ void mixaudio(int16_t *stream, size_t len_samples)
 		if (channel[c].FinishedCB)
 		{
 			for(i=0;i<channel[c].nFinishedChunks;i++)
-			{
-				//stat("Telling channel %d's handler that chunk %d finished", c, channel[c].FinishedChunkUserdata[i]);
-				(*channel[c].FinishedCB)(c, channel[c].FinishedChunkUserdata[i]);
-			}
+            (*channel[c].FinishedCB)(c, channel[c].FinishedChunkUserdata[i]);
 		}
 		
 		channel[c].nFinishedChunks = 0;
@@ -218,7 +208,6 @@ SSChunk *chunk;
 	}
 	SSUnlockAudio();
 	
-	//stat("SSEnqueued buffer %d: %08x of %d bytes to channel %d (containing %d samples); UD %d", loc, buffer, chunk->bytelength, c, len, chunk->userdata);
 	return c;
 }
 

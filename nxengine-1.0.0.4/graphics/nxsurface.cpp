@@ -21,8 +21,6 @@
 #define BLUE_SHIFT 0
 #endif
 
-extern char g_dir[1024];
-
 NXSurface::NXSurface()
 {
 	fSurface = NULL;
