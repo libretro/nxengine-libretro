@@ -61,7 +61,6 @@ class Object;
 #include "player.h"
 #include "p_arms.h"
 #include "replay.h"
-#include "platform.h"
 
 #include "sound/sound.h"
 
