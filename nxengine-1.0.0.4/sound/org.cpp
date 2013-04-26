@@ -90,9 +90,8 @@ static int SamplesToMS(int samples)
 }
 
 
-static bool load_drumtable(const char *pxt_path)		// pxt_path = the path where drum pxt files can be found
+static bool load_drumtable(void)		// pxt_path = the path where drum pxt files can be found
 {
-   printf("load_drumtable\n");
    char fname[80];
    char drum_cache_fname[1024];
    int d;
@@ -119,8 +118,6 @@ static bool load_drumtable(const char *pxt_path)		// pxt_path = the path where d
 
    fclose(fp);
 
-   //for(d=0;d<256;d++) { lprintf("%d ", drumtable[0].samples[d]); if (d%32==0) lprintf("\n"); }
-   //lprintf("\n");
    printf("return 0\n");
    return 0;
 }
@@ -159,7 +156,7 @@ void c------------------------------() {}
 */
 
 
-int org_init(const char *drum_pxt_dir, int org_volume)
+int org_init(int org_volume)
 {
    int i;
 	
@@ -173,7 +170,7 @@ int org_init(const char *drum_pxt_dir, int org_volume)
 	for(i=0;i<2;i++) final_buffer[i].samples = NULL;
 	
 	init_pitch();
-	if (load_drumtable(drum_pxt_dir)) return 1;
+	if (load_drumtable()) return 1;
 	
 	song.playing = false;
 	org_inited = true;
