@@ -31,6 +31,7 @@ static bool freshstart;
 
 extern bool extract_files(FILE *exefp);
 extern bool extract_stages(FILE *exefp);
+extern bool extract_org(FILE *exefp);
 
 void pre_main(void)
 {
@@ -55,46 +56,18 @@ SetLogFilename(debug_fname);
 	fp = fopen(filename, "rb");
 
    extract_files(fp);
+   extract_org(fp);
 	extract_stages(fp);
 
 	fclose(fp);
 	
-	if (!settings->files_extracted)
-	{
-		if (extract_main())
-		{
-			error = 1;
-			return;
-		}
-		else
-		{
-			settings->files_extracted = true;
-			settings_save();
-		}
-	}
+   settings->files_extracted = true;
+   settings_save();
 	
 	if (Graphics::init(settings->resolution)) { NX_ERR("Failed to initialize graphics.\n"); error = 1; return; }
 	if (font_init()) { NX_ERR("Failed to load font.\n"); error = 1; return; }
 	
 	//return;
-	
-	#ifdef CONFIG_DATA_EXTRACTOR
-	if (!settings->files_extracted)
-	{
-		if (extract_main())
-		{
-			Graphics::close();
-			font_close();
-			error = 1;
-			return;
-		}
-		else
-		{
-			settings->files_extracted = true;
-			settings_save();
-		}
-	}
-	#endif
 	
 	if (check_data_exists())
 	{

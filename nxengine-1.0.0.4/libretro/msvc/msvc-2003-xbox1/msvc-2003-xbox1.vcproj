@@ -794,7 +794,7 @@
 					RelativePath="..\..\..\extract-auto\crc.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\extract-auto\extract.cpp">
+					RelativePath="..\..\..\extract-auto\extractorg.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\extract-auto\extractfiles.cpp">
