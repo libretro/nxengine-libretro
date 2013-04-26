@@ -705,60 +705,60 @@ char pxt_IsPlaying(int slot)
 // render all pxt files under "path" up to slot "top".
 // get them all ready to play in their sound slots.
 // if cache_name is specified the pcm audio data is cached under the given filename.
-char pxt_LoadSoundFX(const char *path, const char *cache_name, int top)
+char pxt_LoadSoundFX(int top)
 {
-int slot;
-stPXSound snd;
+   int slot;
+   stPXSound snd;
 
-	NX_LOG("Loading Sound FX...\n");
-	load_top = top;
-	
-	// get ready to do synthesis
-	pxt_initsynth();
+   NX_LOG("Loading Sound FX...\n");
+   load_top = top;
+
+   // get ready to do synthesis
+   pxt_initsynth();
 
 #ifdef _WIN32
    char slash = '\\';
 #else
    char slash = '/';
 #endif
-	
+
    char filename[1024];
-	FILE *fp;
+   FILE *fp;
 
-	NX_LOG("= Extracting Files =\n");
+   NX_LOG("= Extracting Files =\n");
 
-	retro_create_path_string(filename, sizeof(filename), g_dir, "Doukutsu.exe");
-	
-	fp = fopen(filename, "rb");
-	if (!fp)
-	{
-		NX_ERR("cannot find executable %s\n", filename);
-		NX_ERR("Please put it and it's \"data\" directory\n");
-		NX_ERR("into the same folder as this program.\n");
-		return 1;
-	}
+   retro_create_path_string(filename, sizeof(filename), g_dir, "Doukutsu.exe");
 
-	for(slot=1;slot<=top;slot++)
-	{		
-		if (pxt_load(fp, &snd, slot)) continue;
-		pxt_Render(&snd);
-		
-		// dirty hack; lower the pitch of the Stream Sounds
-		// to match the way they actually sound in the game
-		// with the SSS0400 command.
-		if (slot == 40)
-			pxt_ChangePitch(&snd, 5.0f);
-		if (slot == 41)
-			pxt_ChangePitch(&snd, 6.0f);
-		
-		// upscale the sound to 16-bit for SDL_mixer then throw away the now unnecessary 8-bit data
-		pxt_PrepareToPlay(&snd, slot);
-		FreePXTBuf(&snd);
-	}
-	
+   fp = fopen(filename, "rb");
+   if (!fp)
+   {
+      NX_ERR("cannot find executable %s\n", filename);
+      NX_ERR("Please put it and it's \"data\" directory\n");
+      NX_ERR("into the same folder as this program.\n");
+      return 1;
+   }
+
+   for(slot=1;slot<=top;slot++)
+   {		
+      if (pxt_load(fp, &snd, slot)) continue;
+      pxt_Render(&snd);
+
+      // dirty hack; lower the pitch of the Stream Sounds
+      // to match the way they actually sound in the game
+      // with the SSS0400 command.
+      if (slot == 40)
+         pxt_ChangePitch(&snd, 5.0f);
+      if (slot == 41)
+         pxt_ChangePitch(&snd, 6.0f);
+
+      // upscale the sound to 16-bit for SDL_mixer then throw away the now unnecessary 8-bit data
+      pxt_PrepareToPlay(&snd, slot);
+      FreePXTBuf(&snd);
+   }
+
    fclose(fp);
-	
-	return 0;
+
+   return 0;
 }
 
 
