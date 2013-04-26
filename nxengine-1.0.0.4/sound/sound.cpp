@@ -197,19 +197,16 @@ static void start_track(int songno)
 	}
 	
 	retro_create_path_string(fname_dir, sizeof(fname_dir), g_dir, org_dir);
-   char slash;
 #ifdef _WIN32
-   slash = '\\';
+   char slash = '\\';
 #else
-   slash = '/';
+   char slash = '/';
 #endif
-        snprintf(fname, sizeof(fname), "%s%c%s.org", fname_dir, slash, org_names[songno]);
-        NX_LOG("start_track: %s\n\n", fname);
+   snprintf(fname, sizeof(fname), "%s%c%s.org", fname_dir, slash, org_names[songno]);
+   NX_LOG("start_track: %s\n\n", fname);
 	
 	if (!org_load(fname))
-	{
 		org_start(0);
-	}
 }
 
 int music_cursong()		{ return cursong; }

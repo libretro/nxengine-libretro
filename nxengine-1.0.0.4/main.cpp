@@ -31,7 +31,6 @@ static bool freshstart;
 
 extern bool extract_files(FILE *exefp);
 extern bool extract_stages(FILE *exefp);
-extern bool extract_org(FILE *exefp);
 
 void pre_main(void)
 {
@@ -56,7 +55,6 @@ SetLogFilename(debug_fname);
 	fp = fopen(filename, "rb");
 
    extract_files(fp);
-   extract_org(fp);
 
 	if (sound_init()) { fatal("Failed to initialize sound."); error = 1; return; }
    
