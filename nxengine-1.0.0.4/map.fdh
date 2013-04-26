@@ -27,7 +27,6 @@ void map_draw(uint8_t foreground);
 void scroll_normal(void);
 void map_scroll_do(void);
 void run_phase_compensator(void);
-void dump_phase_data();
 void map_sanitycheck(void);
 void map_scroll_jump(int x, int y);
 void map_scroll_lock(bool lockstate);
