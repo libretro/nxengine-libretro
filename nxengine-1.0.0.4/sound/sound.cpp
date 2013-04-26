@@ -30,12 +30,49 @@ static int cursong = 0;
 const char *org_names[] =
 {
 	NULL,
-	"egg", "safety", "gameover", "gravity", "grasstown", "meltdown2", "eyesofflame",
-	"gestation", "town", "fanfale1", "balrog", "cemetary", "plant", "pulse", "fanfale2",
-	"fanfale3", "tyrant", "run", "jenka1", "labyrinth", "access", "oppression", "geothermal",
-	"theme", "oside", "heroend", "scorching", "quiet", "lastcave", "balcony", "charge",
-	"lastbattle", "credits", "zombie", "breakdown", "hell", "jenka2", "waterway", "seal",
-	"toroko", "white", "azarashi", NULL
+	"egg",
+   "safety",
+   "gameover",
+   "gravity",
+   "grasstown",
+   "meltdown2",
+   "eyesofflame",
+	"gestation",
+   "town",
+   "fanfale1",
+   "balrog",
+   "cemetary",
+   "plant",
+   "pulse",
+   "fanfale2",
+	"fanfale3",
+   "tyrant",
+   "run",
+   "jenka1",
+   "labyrinth",
+   "access",
+   "oppression",
+   "geothermal",
+	"theme",
+   "oside",
+   "heroend",
+   "scorching",
+   "quiet",
+   "lastcave",
+   "balcony",
+   "charge",
+	"lastbattle",
+   "credits",
+   "zombie",
+   "breakdown",
+   "hell",
+   "jenka2",
+   "waterway",
+   "seal",
+	"toroko",
+   "white",
+   "azarashi",
+   NULL
 };
 
 static const char bossmusic[] = { 4, 7, 10, 11, 15, 16, 17, 18, 21, 22, 31, 33, 35, 0 };
@@ -187,25 +224,15 @@ void music_set_enabled(int newstate)
 
 static void start_track(int songno)
 {
-	char fname_dir[MAXPATHLEN];
-        char fname[MAXPATHLEN];
-
 	if (songno == 0)
 	{
 		org_stop();
 		return;
 	}
 	
-	retro_create_path_string(fname_dir, sizeof(fname_dir), g_dir, org_dir);
-#ifdef _WIN32
-   char slash = '\\';
-#else
-   char slash = '/';
-#endif
-   snprintf(fname, sizeof(fname), "%s%c%s.org", fname_dir, slash, org_names[songno]);
-   NX_LOG("start_track: %s\n\n", fname);
+   NX_LOG("start_track: %d\n\n", songno);
 	
-	if (!org_load(fname))
+	if (!org_load(songno))
 		org_start(0);
 }
 

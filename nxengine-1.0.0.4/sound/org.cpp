@@ -189,35 +189,64 @@ int d;
 		if (drumtable[d].samples) free(drumtable[d].samples);
 }
 
+int mgetc(char **fp)
+{
+   unsigned char *f = *((unsigned char **)fp);
+   unsigned char c = *f;
+   (*fp)++;
+   return c;
+}
 
-char org_load(char *fname)
+uint16_t mgeti(char **fp)
+{
+uint16_t a, b;
+	a = mgetc(fp);
+	b = mgetc(fp);
+	return (b << 8) | a;
+}
+
+uint32_t mgetl(char **fp)
+{
+uint32_t a, b, c, d;
+	a = mgetc(fp);
+	b = mgetc(fp);
+	c = mgetc(fp);
+	d = mgetc(fp);
+	return (d<<24)|(c<<16)|(b<<8)|(a);
+}
+
+extern char *org_data[42];
+
+char org_load(int songno)
 {
 static const char *magic = "Org-02";
 char buf[8];
-FILE *fp;
+char *f;
+char **fp;
 int i, j;
 
-	fp = fopen(fname, "rb");
+	f = org_data[songno];
+   fp = &f;
 	if (!fp) {
-      NX_WARN("org_load: no such file: '%s'\n", fname);
+      NX_WARN("org_load: no such file: '%d'\n", songno);
       return 1;
    }
 	
-	for(i=0;i<6;i++) { buf[i] = fgetc(fp); } buf[i] = 0;
+	for(i=0;i<6;i++) { buf[i] = mgetc(fp); } buf[i] = 0;
 	if (strcmp(buf, magic)) {
       NX_WARN("org-load: not an org file (got '%s')\n", buf);
-      fclose(fp);
+      //fclose(fp);
       return 1;
    }
-	NX_LOG("%s: %s detected\n", fname, magic);
+	NX_LOG("%d: %s detected\n", songno, magic);
 	
-	fseek(fp, 0x06, SEEK_SET);
+	//fseek(fp, 0x06, SEEK_SET);
 	
-	song.ms_per_beat = fgeti(fp);
-	song.steps_per_bar = fgetc(fp);
-	song.beats_per_step = fgetc(fp);
-	song.loop_start = fgetl(fp);
-	song.loop_end = fgetl(fp);
+	song.ms_per_beat = mgeti(fp);
+	song.steps_per_bar = mgetc(fp);
+	song.beats_per_step = mgetc(fp);
+	song.loop_start = mgetl(fp);
+	song.loop_end = mgetl(fp);
 	
 	//song.ms_per_beat = 500;
 	//song.loop_start = 64;
@@ -225,7 +254,7 @@ int i, j;
 	if (song.loop_end < song.loop_start)
 	{
 		visible_warning("org_load: loop end is before loop start");
-		fclose(fp);
+		//fclose(fp);
 		return 1;
 	}
 	
@@ -243,15 +272,15 @@ int i, j;
 	
 	for(i=0;i<16;i++)
 	{
-		song.instrument[i].pitch = fgeti(fp);
-		song.instrument[i].wave = fgetc(fp);
-		song.instrument[i].pi = fgetc(fp);
-		song.instrument[i].nnotes = fgeti(fp);
+		song.instrument[i].pitch = mgeti(fp);
+		song.instrument[i].wave = mgetc(fp);
+		song.instrument[i].pi = mgetc(fp);
+		song.instrument[i].nnotes = mgeti(fp);
 		
 		if (song.instrument[i].nnotes >= MAX_SONG_LENGTH)
 		{
 			visible_warning(" * org_load: instrument %d has too many notes! (has %d, max %d)", i, song.instrument[i].nnotes, MAX_SONG_LENGTH);
-			fclose(fp);
+			//fclose(fp);
 			return 1;
 		}
 		
@@ -277,14 +306,14 @@ int i, j;
 	
 	for(i=0;i<16;i++)
 	{
-		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].beat = fgetl(fp);
-		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].note = fgetc(fp);
-		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].length = fgetc(fp);
-		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].volume = fgetc(fp);
-		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].panning = fgetc(fp);
+		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].beat = mgetl(fp);
+		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].note = mgetc(fp);
+		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].length = mgetc(fp);
+		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].volume = mgetc(fp);
+		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].panning = mgetc(fp);
 	}
 	
-	fclose(fp);
+	//fclose(fp);
 	return init_buffers();
 }
 

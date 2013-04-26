@@ -35,7 +35,7 @@ void SSClose(void);
 int org_init(int org_volume);
 void org_stop(void);
 bool org_is_playing(void);
-char org_load(char *fname);
+char org_load(int songno);
 bool org_start(int startbeat);
 
 
