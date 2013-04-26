@@ -57,6 +57,9 @@ SetLogFilename(debug_fname);
 
    extract_files(fp);
    extract_org(fp);
+
+	if (sound_init()) { fatal("Failed to initialize sound."); error = 1; return; }
+   
 	extract_stages(fp);
 
 	fclose(fp);
@@ -76,7 +79,6 @@ SetLogFilename(debug_fname);
 	}
 	
 	//Graphics::ShowLoadingScreen();
-	if (sound_init()) { fatal("Failed to initialize sound."); error = 1; return; }
 	if (trig_init()) { fatal("Failed trig module init."); error = 1; return; }
 	
 	if (tsc_init()) { fatal("Failed to initialize script engine."); error = 1; return; }

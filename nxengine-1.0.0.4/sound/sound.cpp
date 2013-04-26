@@ -40,27 +40,15 @@ const char *org_names[] =
 
 static const char bossmusic[] = { 4, 7, 10, 11, 15, 16, 17, 18, 21, 22, 31, 33, 35, 0 };
 
-static const char *pxt_dir = "pxt";
 static const char *org_dir = "org";
-static const char *sndcache = "sndcache.pcm";
 
 bool sound_init(void)
 {
-   char pxt_dirname[1024];
-   char sndcache_tmp[1024];
 	if (SSInit()) return 1;
 	if (pxt_init()) return 1;
 
-	retro_create_path_string(pxt_dirname, sizeof(pxt_dirname), g_dir, pxt_dir);
-	retro_create_path_string(sndcache_tmp, sizeof(sndcache_tmp), g_dir, sndcache);
-
-	if (pxt_LoadSoundFX(pxt_dirname, sndcache_tmp, NUM_SOUNDS)) return 1;
-
-#ifdef _WIN32
-   char slash = '\\';
-#else
-   char slash = '/';
-#endif
+	if (pxt_LoadSoundFX(NUM_SOUNDS))
+      return 1;
 
 	if (org_init(ORG_VOLUME))
 	{
