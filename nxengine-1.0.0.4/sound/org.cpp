@@ -90,35 +90,18 @@ static int SamplesToMS(int samples)
 }
 
 
-static bool load_drumtable(void)		// pxt_path = the path where drum pxt files can be found
+static bool load_drumtable(FILE *fp)		// pxt_path = the path where drum pxt files can be found
 {
-   char fname[80];
-   char drum_cache_fname[1024];
-   int d;
-   FILE *fp;
-#define DRUM_VERSION	0x0001
-   uint16_t version;
-
-   retro_create_path_string(drum_cache_fname, sizeof(drum_cache_fname), g_dir, "Doukutsu.exe");
-
-   // try and load the drums from cache instead of synthing them
-   fp = fopen(drum_cache_fname, "rb");
-   if (!fp)
-      return 1;
-
    NX_LOG("load_drumtable: cache gone; rebuilding drums...\n");
 
    pxt_initsynth();
 
-   for(d=0;d<NUM_DRUMS;d++)
+   for (int d = 0; d < NUM_DRUMS; d++)
    {
       if (drum_pxt[d])
          if (load_drum_pxt(fp, drum_pxt[d], d)) return 1;
    }
 
-   fclose(fp);
-
-   printf("return 0\n");
    return 0;
 }
 
@@ -167,8 +150,10 @@ int org_init(int org_volume)
 	// set all buffer pointers and things to NULL, so if something fails to load,
 	// we won't crash on org_close.
 	memset(drumtable, 0, sizeof(drumtable));
-	for(i=0;i<16;i++) note_channel[i].outbuffer = NULL;
-	for(i=0;i<2;i++) final_buffer[i].samples = NULL;
+	for(i=0;i<16;i++)
+      note_channel[i].outbuffer = NULL;
+	for(i=0;i<2;i++)
+      final_buffer[i].samples = NULL;
 
 	FILE *fp;
    char filename[1024];
@@ -178,11 +163,14 @@ int org_init(int org_volume)
 
    extract_org(fp);
 
-	fclose(fp);
-	
 	init_pitch();
-	if (load_drumtable())
+	if (load_drumtable(fp))
+   {
+      fclose(fp);
       return 1;
+   }
+
+   fclose(fp);
 	
 	song.playing = false;
 	org_inited = true;
