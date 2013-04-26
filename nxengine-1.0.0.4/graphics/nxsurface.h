@@ -93,14 +93,9 @@ public:
 	NXFormat *Format();
 	
 	void Flip();
-	SDL_Surface *GetSDLSurface() { return fSurface; }
-private:
-	static SDL_Surface *Scale(SDL_Surface *original, bool use_colorkey);
-	
-	void Free();
-	
 	SDL_Surface *fSurface;
 	bool fFreeSurface;
+	void Free();
 };
 
 void inline
