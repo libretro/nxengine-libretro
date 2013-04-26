@@ -243,7 +243,7 @@ int cp, sz;
 
 bool file_exists(const char *fname)
 {
-FILE *fp;
+   FILE *fp;
 
 	fp = fopen(fname, "rb");
 	if (!fp) return 0;

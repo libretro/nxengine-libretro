@@ -247,39 +247,6 @@ loop:
 	freshstart = false;
 }
 
-#ifndef __LIBRETRO__
-int main(int argc, char *argv[])
-{
-
-	pre_main();
-
-	if(error)
-		goto ingame_error;	
-	
-loop:
-	while (!run_main());
-shutdown: ;
-	if(!game.running)
-	{
-		post_main();
-		return error;
-	}
-check_error: ;
-	if(error)
-		goto ingame_error;
-	else
-		goto loop;
-ingame_error: ;
-	NX_LOG("\n");
-	NX_LOG(" ************************************************\n");
-	NX_LOG(" * An in-game error occurred. Game shutting down.\n");
-	NX_LOG(" ************************************************\n");
-	error = 1;
-	goto shutdown;
-}
-#endif
-
-
 static inline void run_tick()
 {
 	input_poll();
