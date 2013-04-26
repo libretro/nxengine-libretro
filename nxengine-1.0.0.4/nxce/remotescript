@@ -1,3 +1,0 @@
-send ../nxce.exe \nxce\nxce.exe
-exec \nxce\nxce.exe
-exit

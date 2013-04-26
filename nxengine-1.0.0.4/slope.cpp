@@ -2,7 +2,6 @@
 #include "nx.h"
 #include "slope.fdh"
 
-//#define DEBUG_SLOPE
 static SlopeTable slopetable[SLOPE_LAST+1];
 
 // creates the slope tables
@@ -65,10 +64,6 @@ int mx, my;
 int slopetype;
 uint8_t t;
 
-	#ifdef DEBUG_SLOPE
-		DrawSlopeTablesOnTiles();
-	#endif
-	
 	// convert coordinates into a tile and check if the tile is a slope tile
 	mx = (x / TILE_W);
 	my = (y / TILE_H);
@@ -311,75 +306,3 @@ char blocked_wall;
 	
 	return blocked_wall;
 }
-
-
-/*
-void c------------------------------() {}
-*/
-
-#ifdef DEBUG_SLOPE
-// debug crap
-
-void DrawSlopeTablesOnTiles()
-{
-	static int lastmap = -1;
-	
-	if (game.curmap != lastmap)
-	{
-		lastmap = game.curmap;
-		for(int i=0;i<256;i++)
-		{
-			if (tileattr[i] & TA_SLOPE)
-			{
-				DrawSlopeTableOnTile((tilecode[i]&7)+1, i);
-			}
-		}
-	}
-}
-
-void DrawSlopeTableOnTile(int table, int tile)
-{
-SDL_Rect dstrect;
-int x, y;
-extern SDL_Surface *tileset;
-
-	for(y=0;y<TILE_H;y++)
-	{
-		for(x=0;x<TILE_W;x++)
-		{
-			dstrect.x = (tile & 15) << 5;
-			dstrect.y = (tile >> 4) << 5;
-			dstrect.w = 2;
-			dstrect.h = 2;
-			
-			dstrect.x += x*2;
-			dstrect.y += y*2;
-			
-			if (slopetable[table].table[x][y])
-			{
-				if (table > 4)	// floor slopes
-					SDL_FillRect(tileset, &dstrect, SDL_MapRGB(tileset->format, 0, 255, 0));
-				else
-					SDL_FillRect(tileset, &dstrect, SDL_MapRGB(tileset->format, 255, 0, 0));
-			}
-		}
-	}
-}
-
-void dumpslopetable(int t)
-{
-int x, y;
-char buffer[80];
-
-	NX_LOG("\nDumping slope table %d:\n", t);
-	for(y=0;y<TILE_H;y++)
-	{
-		for(x=0;x<TILE_W;x++)
-		{
-			buffer[x] = slopetable[t].table[x][y] + '0';
-		}
-		buffer[x] = 0;
-		NX_LOG("%s\n", buffer);
-	}
-}
-#endif
