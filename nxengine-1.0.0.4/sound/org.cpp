@@ -191,8 +191,8 @@ int d;
 
 int mgetc(char **fp)
 {
-   unsigned char *f = *((unsigned char **)fp);
-   unsigned char c = *f;
+   unsigned char volatile *f = *((unsigned char volatile **)fp);
+   unsigned char volatile c = *f;
    (*fp)++;
    return c;
 }
