@@ -46,8 +46,8 @@ static const char *sndcache = "sndcache.pcm";
 
 bool sound_init(void)
 {
-        char pxt_dirname[1024];
-        char sndcache_tmp[1024];
+   char pxt_dirname[1024];
+   char sndcache_tmp[1024];
 	if (SSInit()) return 1;
 	if (pxt_init()) return 1;
 
@@ -56,14 +56,13 @@ bool sound_init(void)
 
 	if (pxt_LoadSoundFX(pxt_dirname, sndcache_tmp, NUM_SOUNDS)) return 1;
 
-   char slash;
 #ifdef _WIN32
-   slash = '\\';
+   char slash = '\\';
 #else
-   slash = '/';
+   char slash = '/';
 #endif
 
-	if (org_init(pxt_dirname, ORG_VOLUME))
+	if (org_init(ORG_VOLUME))
 	{
 		NX_ERR("Music failed to initialize\n");
 		return 1;
