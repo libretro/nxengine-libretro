@@ -12,7 +12,7 @@
 #include "msvc_compat.h"
 #endif
 
-#define TRACE_SCRIPT
+//#define TRACE_SCRIPT
 
 // which textbox options are enabled by the "<TUR" script command.
 #define TUR_PARAMS		(TB_LINE_AT_ONCE | TB_VARIABLE_WIDTH_CHARS | TB_CURSOR_NEVER_SHOWN)
@@ -638,22 +638,6 @@ int cmdip;
 				snprintf(debugbuffer, sizeof(debugbuffer), "%s %04d", debugbuffer, val);
 			}
 		}
-		#ifdef TRACE_SCRIPT
-		else
-		{
-			char debugbuffer2[10000];
-			crtoslashn((char *)&s->program[s->ip], debugbuffer2);
-			snprintf(debugbuffer, sizeof(debugbuffer), "TEXT  '%s'", debugbuffer2);
-		}
-		
-		if (cmd == OP_TEXT && !textbox.IsVisible() && !strcmp(debugbuffer, "TEXT  '\n'")) { }
-		else
-		{
-#ifdef DEBUG
-			NX_LOG("%04d:%d  %s\n", s->scriptno, cmdip, debugbuffer);
-#endif
-		}
-		#endif
 		
 		switch(cmd)
 		{
@@ -1288,26 +1272,12 @@ void NPCDo(int id2, int p1, int p2, void (*action_function)(Object *o, int p1, i
 
 void DoANP(Object *o, int p1, int p2)		// ANIMATE (set) object's state to p1 and set dir to p2
 {
-	#ifdef TRACE_SCRIPT
-#ifdef DEBUG
-		NX_LOG("ANP: Obj %08x (%s): setting state: %d and dir: %s\n", \
-			o, DescribeObjectType(o->type), p1, DescribeCSDir(p2));
-#endif
-	#endif
-	
 	o->state = p1;
 	SetCSDir(o, p2);
 }
 
 void DoCNP(Object *o, int p1, int p2)		// CHANGE object to p1 and set dir to p2
 {
-	#ifdef TRACE_SCRIPT
-#ifdef DEBUG
-		NX_LOG("CNP: Obj %08x changing from %s to %s, new dir = %s\n",
-			o, DescribeObjectType(o->type), DescribeObjectType(p1), DescribeCSDir(p2));
-#endif
-	#endif
-	
 	// Must set direction BEFORE changing type, so that the Carried Puppy object
 	// gets priority over the direction to use while the game is <PRI'd.
 	SetCSDir(o, p2);
@@ -1316,12 +1286,6 @@ void DoCNP(Object *o, int p1, int p2)		// CHANGE object to p1 and set dir to p2
 
 void DoDNP(Object *o, int p1, int p2)		// DELETE object
 {
-	#ifdef TRACE_SCRIPT
-#ifdef DEBUG
-		NX_LOG("DNP: %08x (%s) deleted\n", o, DescribeObjectType(o->type));
-#endif
-	#endif
-	
 	o->Delete();
 }
 
