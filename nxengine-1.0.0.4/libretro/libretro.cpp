@@ -243,22 +243,20 @@ size_t retro_get_memory_size(unsigned id) { return 0; }
 
 void retro_create_subpath_string(char *fname, size_t fname_size, const char * dir, const char * subdir, const char * filename)
 {
-	char slash;
 #ifdef _WIN32
-	slash = '\\';
+	char slash = '\\';
 #else
-	slash = '/';
+	char slash = '/';
 #endif
 	snprintf(fname, fname_size, "%s%c%s%c%s", dir, slash, subdir, slash, filename);
 }
 
 void retro_create_path_string(char *fname, size_t fname_size, const char * dir, const char * filename)
 {
-	char slash;
 #ifdef _WIN32
-	slash = '\\';
+	char slash = '\\';
 #else
-	slash = '/';
+	char slash = '/';
 #endif
 	snprintf(fname, fname_size, "%s%c%s", dir, slash, filename);
 }
