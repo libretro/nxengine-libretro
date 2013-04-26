@@ -508,6 +508,11 @@ int i;
 	return topbufsize;
 }
 
+#define CLAMP16( io )\
+{\
+	if ( (int16_t) io != io )\
+		io = (io >> 31) ^ 0x7FFF;\
+}
 
 // generate 8-bit signed PCM audio from a PXT sound, put it in it's final_buffer.
 char pxt_Render(stPXSound *snd)
@@ -556,8 +561,7 @@ int bufsize;
 	{
 		mixed_sample = middle_buffer[s];
 		
-		if (mixed_sample > 127) mixed_sample = 127;
-		else if (mixed_sample < -127) mixed_sample = -127;
+      CLAMP16(mixed_sample);
 		
 		snd->final_buffer[s] = (char)mixed_sample;
 	}
