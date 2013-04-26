@@ -103,7 +103,7 @@ else ifeq ($(platform), wii)
 else
    TARGET := $(TARGET_NAME)_retro.dll
    CC = gcc
-   SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=libretro/link.T
+   SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=$(NX_DIR)/libretro/link.T
    CFLAGS += -D__WIN32__ -D__WIN32_LIBRETRO__ -Wno-missing-field-initializers
 endif
 

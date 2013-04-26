@@ -11,6 +11,7 @@
 #include "../nx_logger.h"
 
 #ifdef __MINGW32__
+	#include <direct.h>
 	#include <io.h>
 #endif
 
