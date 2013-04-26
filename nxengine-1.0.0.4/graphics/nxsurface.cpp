@@ -207,7 +207,7 @@ SDL_Rect rect;
 
 void NXSurface::Clear(uint8_t r, uint8_t g, uint8_t b)
 {
-	SDL_FillRect(fSurface, NULL, MapColor(r, g, b));
+	SDL_FillRect(fSurface, NULL, SDL_MapRGB(fSurface->format, r, g, b));
 }
 
 
@@ -287,17 +287,6 @@ SDL_Surface *NXSurface::Scale(SDL_Surface *original, bool use_colorkey)
 /*
 void c------------------------------() {}
 */
-
-void NXSurface::EnableColorKey()
-{
-	SDL_SetColorKey(fSurface, SDL_SRCCOLORKEY, SDL_MapRGB(fSurface->format, 0, 0, 0));
-}
-
-uint32_t NXSurface::MapColor(uint8_t r, uint8_t g, uint8_t b)
-{
-	return SDL_MapRGB(fSurface->format, r, g, b);
-}
-
 
 void NXSurface::Free()
 {
