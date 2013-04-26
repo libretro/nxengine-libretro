@@ -222,21 +222,6 @@ int nEntities;
 	return 0;
 }
 
-/*const int ta[] =
-{ 0, TA_SOLID, TA_SOLID, TA_SOLID, TA_SOLID,
-  TA_SLOPE_BACK1|TA_FOREGROUND, TA_SLOPE_BACK2|TA_FOREGROUND, TA_SLOPE_FWD1|TA_FOREGROUND, TA_SLOPE_FWD2|TA_FOREGROUND,
-  TA_FOREGROUND, 0,0,0, TA_FOREGROUND,TA_FOREGROUND,TA_FOREGROUND, 0, TA_SOLID, TA_SOLID, TA_FOREGROUND, TA_FOREGROUND,
-  TA_SOLID,TA_SOLID,TA_SOLID,TA_SOLID,TA_FOREGROUND,0,0,0,TA_FOREGROUND,TA_FOREGROUND,TA_FOREGROUND,
-  0,TA_SOLID,TA_FOREGROUND,TA_DESTROYABLE|TA_SOLID,TA_SOLID,TA_FOREGROUND,TA_FOREGROUND,TA_FOREGROUND,TA_FOREGROUND,TA_FOREGROUND,TA_SLOPE_CEIL_BACK1|TA_FOREGROUND,TA_SOLID,TA_SOLID,TA_SLOPE_CEIL_FWD2|TA_FOREGROUND,TA_SLOPE_FWD1|TA_FOREGROUND,TA_SLOPE_FWD2|TA_FOREGROUND,
-  TA_FOREGROUND,TA_FOREGROUND,TA_SLOPE_CEIL_FWD1|TA_FOREGROUND,TA_SLOPE_CEIL_FWD2|TA_FOREGROUND,TA_SLOPE_CEIL_BACK1|TA_FOREGROUND,TA_SLOPE_CEIL_BACK2|TA_FOREGROUND,TA_FOREGROUND,TA_FOREGROUND,TA_FOREGROUND,0,0,TA_SOLID,TA_SOLID,TA_FOREGROUND,TA_SOLID,TA_SOLID,
-  TA_SOLID,TA_SOLID,TA_FOREGROUND|TA_SLOPE_BACK1,TA_SLOPE_BACK2|TA_FOREGROUND,TA_SLOPE_FWD1|TA_FOREGROUND,TA_SLOPE_FWD2|TA_FOREGROUND,TA_SPIKES,TA_SPIKES,TA_SPIKES,TA_SPIKES,0,TA_SOLID,TA_SOLID,0,TA_SOLID,TA_SOLID,
-  0,TA_SOLID,0,TA_SOLID,TA_SOLID,0,0,0,0,0,0,TA_SOLID,TA_SOLID,TA_SOLID,TA_SOLID,TA_SOLID,
-  TA_SOLID,TA_FOREGROUND,TA_FOREGROUND,0,0,0,0,0,0,0,0,0,TA_SOLID,TA_SOLID,TA_SOLID,TA_SOLID
-};
-	memset(tileattr, 0, sizeof(tileattr));
-	memcpy(&tileattr, &ta, sizeof(ta));
-*/
-
 // loads a pxa (tileattr) file
 bool load_tileattr(const char *fname)
 {
@@ -666,7 +651,6 @@ void map_scroll_do(void)
 	if (doing_normal_scroll)
 	{
 		run_phase_compensator();
-		//dump_phase_data();
 	}
 	else
 	{
@@ -751,21 +735,6 @@ void run_phase_compensator(void)
 				map.phase_adj = phase_offs;
 		}
 	}
-}
-
-// debug function
-void dump_phase_data()
-{
-	int phase_offs = abs(map.real_xscroll - player->x) % 512;
-	int final_phase = abs(map.displayed_xscroll - player->x) % 512;
-	debug("phase_offs: %d", phase_offs);
-	debug("");
-	debug("real xscroll: %d", map.real_xscroll);
-	debug("displayed xscroll: %d", map.displayed_xscroll);
-	debug("difference: %d", map.real_xscroll - map.displayed_xscroll);
-	debug("");
-	debug("phase_adj: %d", map.phase_adj);
-	debug("final_phase: %d", final_phase);
 }
 
 /*
