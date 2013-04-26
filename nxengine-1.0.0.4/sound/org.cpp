@@ -14,14 +14,9 @@
 
 #include "libretro_shared.h"
 
-//#define QUIET
 #define DRUM_PXT
 
-#ifdef DRUM_PXT
-	#define drumK		22050
-#else
-	#define drumK		30050
-#endif
+#define drumK		22050
 
 static bool org_inited = false;
 
@@ -48,21 +43,12 @@ static int OrgVolume;
 
 signed short wavetable[100][256];
 
-#ifdef DRUM_PXT
-	// sound effect numbers which correspond to the drums
-	static const unsigned char drum_pxt[] =
-	{
-		0x96, 0, 0x97, 0, 0x9a, 0x98,
-		0x99, 0, 0x9b, 0, 0, 0
-	};
-#else
-	// names of the WAV files to load for each drum slot
-	static const char *drum_names[] =
-	{
-		"Bass01", "Bass02", "Snare01", "Snare02", "Tom01", "HiClose",
-		"HiOpen", "Crash", "Per01", "Per02", "Bass03", "Tom02"
-	};
-#endif
+// sound effect numbers which correspond to the drums
+static const unsigned char drum_pxt[] =
+{
+   0x96, 0, 0x97, 0, 0x9a, 0x98,
+   0x99, 0, 0x9b, 0, 0, 0
+};
 
 static struct
 {
@@ -106,127 +92,67 @@ static int SamplesToMS(int samples)
 
 static bool load_drumtable(const char *pxt_path)		// pxt_path = the path where drum pxt files can be found
 {
-printf("load_drumtable\n");
-char fname[80];
-char drum_cache_fname[1024];
-int d;
-FILE *fp;
+   printf("load_drumtable\n");
+   char fname[80];
+   char drum_cache_fname[1024];
+   int d;
+   FILE *fp;
 #define DRUM_VERSION	0x0001
-uint16_t version;
+   uint16_t version;
 
-	#ifndef DRUM_PXT
-		for(d=0;d<NUM_DRUMS;d++)
-		{
-			snprintf(fname, sizeof(fname), "./drums/%s.wav", drum_names[d]);
-			if (load_drum(fname, d)) return 1;
-		}
-	#else
+   retro_create_path_string(drum_cache_fname, sizeof(drum_cache_fname), g_dir, "Doukutsu.exe");
 
-		retro_create_path_string(drum_cache_fname, sizeof(drum_cache_fname), g_dir, "Doukutsu.exe");
-		
-		// try and load the drums from cache instead of synthing them
-		fp = fopen(drum_cache_fname, "rb");
-		if (!fp)
-		{
-			return 1;
-		}
-		
-		NX_LOG("load_drumtable: cache gone; rebuilding drums...\n");
-		
-		pxt_initsynth();
-		
-		for(d=0;d<NUM_DRUMS;d++)
-		{
-			if (drum_pxt[d])
-			{
-				if (load_drum_pxt(fp, drum_pxt[d], d)) return 1;
-			}
-		}
-   
-      fclose(fp);
-		
-		//load_drumtable(pxt_path);
-	#endif
-	
-	//for(d=0;d<256;d++) { lprintf("%d ", drumtable[0].samples[d]); if (d%32==0) lprintf("\n"); }
-	//lprintf("\n");
-	printf("return 0\n");
-	return 0;
+   // try and load the drums from cache instead of synthing them
+   fp = fopen(drum_cache_fname, "rb");
+   if (!fp)
+      return 1;
+
+   NX_LOG("load_drumtable: cache gone; rebuilding drums...\n");
+
+   pxt_initsynth();
+
+   for(d=0;d<NUM_DRUMS;d++)
+   {
+      if (drum_pxt[d])
+         if (load_drum_pxt(fp, drum_pxt[d], d)) return 1;
+   }
+
+   fclose(fp);
+
+   //for(d=0;d<256;d++) { lprintf("%d ", drumtable[0].samples[d]); if (d%32==0) lprintf("\n"); }
+   //lprintf("\n");
+   printf("return 0\n");
+   return 0;
 }
-
-#ifndef DRUM_PXT
-
-static bool load_drum(char *fname, int d)
-{
-Mix_Chunk *chunk;
-int i, read_pt;
-int left,right;
-signed short *abuf;
-
-	//NX_LOG("load_drum: loading %s into drum index %d\n", fname, d);
-	if (!(chunk = Mix_LoadWAV(fname)))
-	{
-		NX_ERR("Missing drum sample: '%s'\n", fname);
-		return 1;
-	}
-	
-	//NX_LOG("chunk: %d bytes in chunk\n", chunk->alen);
-	drumtable[d].nsamples = chunk->alen / 2 / 2;	// 16-bit stereo sound
-	drumtable[d].samples = malloc(drumtable[d].nsamples * 2);
-	
-   NX_LOG("drum0%X [%s]: %d samples\n", d, fname, drumtable[d].nsamples);
-	
-	read_pt = 0;
-	abuf = (signed short *)chunk->abuf;
-	for(i=0;i<drumtable[d].nsamples;i++)
-	{
-		left = abuf[read_pt++]; right = abuf[read_pt++];
-		
-		drumtable[d].samples[i] = (left + right) / 2;
-		drumtable[d].samples[i] += drumtable[d].samples[i];		// make drums louder--sounds better
-	}
-	
-	Mix_FreeChunk(chunk);
-	return 0;
-}
-
-#else
 
 static bool load_drum_pxt(FILE *fd, int s, int d)
 {
-int i;
-signed short sample;
-stPXSound snd;
+   int i;
+   signed short sample;
+   stPXSound snd;
 
-	NX_LOG("load_drum: loading %s into drum index %d\n", fname, d);
-	
-	if (pxt_load(fd, &snd, s)) return 1;
-	pxt_Render(&snd);
-	
-	drumtable[d].nsamples = snd.final_size;
-	drumtable[d].samples = (signed short *)malloc(snd.final_size * 2);		// *2 - it is 16-bit
-	
-	#ifndef QUIET
-		NX_LOG("drum0%X [%s]: %d samples\n", d, fname, drumtable[d].nsamples);
-	#endif
-	
-	// read data out of pxt's render result and put it into our drum sample table
-	for(i=0;i<drumtable[d].nsamples;i++)
-	{
-		sample = snd.final_buffer[i];
-		//i'm upscaling the 8-bit value to 16-bit;
-		//but this also sets volume of drums relative to music
-		sample *= 200;
-		
-		drumtable[d].samples[i] = sample;
-	}
-	
-	FreePXTBuf(&snd);
-	return 0;
+   NX_LOG("load_drum: loading %s into drum index %d\n", fname, d);
+
+   if (pxt_load(fd, &snd, s)) return 1;
+   pxt_Render(&snd);
+
+   drumtable[d].nsamples = snd.final_size;
+   drumtable[d].samples = (signed short *)malloc(snd.final_size * 2);		// *2 - it is 16-bit
+
+   // read data out of pxt's render result and put it into our drum sample table
+   for(i=0;i<drumtable[d].nsamples;i++)
+   {
+      sample = snd.final_buffer[i];
+      //i'm upscaling the 8-bit value to 16-bit;
+      //but this also sets volume of drums relative to music
+      sample *= 200;
+
+      drumtable[d].samples[i] = sample;
+   }
+
+   FreePXTBuf(&snd);
+   return 0;
 }
-
-#endif
-
 
 /*
 void c------------------------------() {}
@@ -479,21 +405,6 @@ bool org_is_playing(void)
 	return song.playing;
 }
 
-// resume a song paused with org_stop
-#if 0
-void org_resume(void)
-{
-	if (!song.playing)
-	{
-		lprintf("restarting buffer %d\n", last_played_buffer);
-		//StartOrgBuffer(last_played_buffer, &final_buffer[last_played_buffer].chunk);
-		song.playing = 1;
-		song.volume = ORG_VOLUME;
-	}
-}
-#endif
-
-
 void org_fade(void)
 {
 	NX_LOG("org_fade\n");
@@ -543,8 +454,6 @@ static void mix_buffers(void)
 	int mixed_sample;
 	signed short *final;
 
-//	lprintf("mix_buffers: mixing channels into final_buffer[%d]\n", current_buffer);
-	
 	// go up to samples*2 because we're mixing the stereo audio output from calls to WAV_Synth
 	len = buffer_samples * 2;
 	final = final_buffer[current_buffer].samples;
@@ -554,10 +463,10 @@ static void mix_buffers(void)
 	{
 		// first mix instruments
 		mixed_sample = note_channel[0].outbuffer[cursample];
-		for(i=1;i<16;i++) mixed_sample += note_channel[i].outbuffer[cursample];
+		for(i=1;i<16;i++)
+         mixed_sample += note_channel[i].outbuffer[cursample];
 		
-		if (mixed_sample > 32767) mixed_sample = 32767;
-		else if (mixed_sample < -32768) mixed_sample = -32768;
+      CLAMP16(mixed_sample);
 		
 		final[cursample] = mixed_sample;
 	}

@@ -509,11 +509,6 @@ int i;
 	return topbufsize;
 }
 
-#define CLAMP16( io )\
-{\
-	if ( (int16_t) io != io )\
-		io = (io >> 31) ^ 0x7FFF;\
-}
 
 // generate 8-bit signed PCM audio from a PXT sound, put it in it's final_buffer.
 char pxt_Render(stPXSound *snd)
@@ -552,9 +547,7 @@ int bufsize;
 		if (snd->chan[i].enabled)
 		{
 			for(s=0;s<snd->chan[i].size_blocks;s++)
-			{
 				middle_buffer[s] += snd->chan[i].buffer[s];
-			}
 		}
 	}
 	
@@ -768,72 +761,6 @@ stPXSound snd;
 	return 0;
 }
 
-
-// attempts to load all the PXT's out of the given cache file.
-// if succesful, returns 0.
-static char LoadFXCache(const char *fname, int top)
-{
-FILE *fp;
-int slot;
-uint32_t magick;
-stPXSound snd;
-
-	fp = fopen(fname, "rb");
-	if (!fp)
-	{
-		NX_ERR("LoadFXCache: audio cache %s not exist\n", fname);
-		return 1;
-	}
-	
-	// I don't use endian-agnostic fgetl as this file is endian-specific and we
-	// want the check to fail if the file were moved from a little-endian to
-	// big-endian system or vice-versa.
-	fread(&magick, sizeof(magick), 1, fp);
-	if (magick != PXCACHE_MAGICK)
-	{
-		NX_ERR("LoadFXCache: %s is incorrect format: expected %08x, got %08x\n", fname, PXCACHE_MAGICK, magick);
-		fclose(fp);
-		return 1;
-	}
-	
-	if (fgeti(fp) != top)
-	{
-		NX_ERR("LoadFXCache: # of sounds has changed since cache creation\n");
-		fclose(fp);
-		return 1;
-	}
-	
-	int allocd_size = 0;
-	snd.final_buffer = NULL;
-	
-	NX_LOG("LoadFXCache: restoring pxts from cache\n");
-	for(;;)
-	{
-		snd.final_size = fgetl(fp);
-		slot = fgetc(fp);
-		if (slot == -1) break;
-		
-		if (snd.final_size > allocd_size)
-		{
-			allocd_size = (snd.final_size * 10);
-			
-			if (snd.final_buffer) free(snd.final_buffer);
-			snd.final_buffer = (signed char *)malloc(allocd_size);
-			if (!snd.final_buffer)
-			{
-				NX_ERR("LoadFXCache: out of memory!\n");
-				return 1;
-			}
-		}
-		
-		fread(snd.final_buffer, snd.final_size, 1, fp);
-		pxt_PrepareToPlay(&snd, slot);
-	}
-	
-	load_top = slot;
-	free(snd.final_buffer);
-	return 0;
-}
 
 void pxt_freeSoundFX(void)
 {
