@@ -7,6 +7,7 @@
 #include "../common/basics.h"
 #include "../libretro/libretro_shared.h"
 #include "../nx_logger.h"
+#include "../sound/pxt.h"
 
 #include "extractpxt.fdh"
 
@@ -147,7 +148,9 @@ snd[] =
 	0, 0, 0
 };
 
-bool extract_pxt(FILE *fp)
+extern char pxt_SetModel(stPXWave *pxwave, int m);
+
+bool extract_pxt(FILE *fp, int s, stPXSound *outsnd)
 {
 struct
 {
@@ -155,39 +158,31 @@ struct
 	{
 		int intvalue;
 		double fpvalue;
-	} values[50];
+	} values[21];
 } chan[4];
-int s, c, i;
-
+int c, i;
+int found = 0;
 char slash;
 #ifdef _WIN32
 slash = '\\';
 #else
 slash = '/';
 #endif
+      printf("s: %d\n", s);
+   for (i = 0; i < sizeof(snd) / sizeof(snd[0]); i++)
+   {
+      if (snd[i].id == s)
+      {
+         found = 1;
+         s = i;
+         break;
+      }
+   }
+   if (!found)
+      return 1;
+      
+      printf("id: %d\n", snd[s].id);
 
-	for(s=0;;s++)
-	{
-		if (!snd[s].id) break;
-		
-		char outfilename[MAXPATHLEN];
-      char outpath[MAXPATHLEN];
-		snprintf(outfilename, sizeof(outfilename), "%s%cpxt%cfx%02x.pxt", g_dir, slash, slash, snd[s].id);
-		snprintf(outpath, sizeof(outpath), "%s%cpxt", g_dir, slash);
-		NX_LOG("[ %s ]\n", outfilename);
-
-#if defined(_WIN32)
-		_mkdir(outpath);
-#else
-		mkdir(outpath, 0755);
-#endif
-		FILE *fpo = fopen(outfilename, "wb");
-		if (!fpo)
-		{
-			NX_ERR("failed to open %s\n", outfilename);
-			return 1;
-		}
-		
 		fseek(fp, snd[s].offset, SEEK_SET);
 		memset(chan, 0, sizeof(chan));
 		
@@ -213,39 +208,36 @@ slash = '/';
 				return 1;
 			}
 		}
-		
-		// write human-readable section
-		for(c=0;c<4;c++)
-		{
-			for(i=0;fields[i].name;i++)
-			{
-				if (fields[i].is_integer)
-					fprintf(fpo, "%s:%d\r\n", fields[i].name, chan[c].values[i].intvalue);
-				else
-					fprintf(fpo, "%s:%.2f\r\n", fields[i].name, chan[c].values[i].fpvalue);
-			}
-			
-			fprintf(fpo, "\r\n");
-		}
-		
-		// write machine-readable section
-		for(c=0;c<4;c++)
-		{
-			fprintf(fpo, "{");
-			
-			for(i=0;fields[i].name;i++)
-			{
-				const char *suffix = (fields[i+1].name == NULL) ? "},\r\n" : ",";
-				
-				if (fields[i].is_integer)
-					fprintf(fpo, "%d%s", chan[c].values[i].intvalue, suffix);
-				else
-					fprintf(fpo, "%.2f%s", chan[c].values[i].fpvalue, suffix);
-			}
-		}
-		
-		fclose(fpo);
-	}
+   
+      for (c = 0; c < 4; c++)
+      {
+         outsnd->chan[c].enabled = chan[c].values[0].intvalue;
+         outsnd->chan[c].size_blocks = chan[c].values[1].intvalue;
+         
+         pxt_SetModel(&outsnd->chan[c].main, chan[c].values[2].intvalue);
+         outsnd->chan[c].main.repeat = chan[c].values[3].fpvalue;
+         outsnd->chan[c].main.volume = chan[c].values[4].intvalue;
+         outsnd->chan[c].main.offset = chan[c].values[5].intvalue;
+         
+         pxt_SetModel(&outsnd->chan[c].pitch, chan[c].values[6].intvalue);
+         outsnd->chan[c].pitch.repeat = chan[c].values[7].fpvalue;
+         outsnd->chan[c].pitch.volume = chan[c].values[8].intvalue;
+         outsnd->chan[c].pitch.offset = chan[c].values[9].intvalue;
+         
+         pxt_SetModel(&outsnd->chan[c].volume, chan[c].values[10].intvalue);
+         outsnd->chan[c].volume.repeat = chan[c].values[11].fpvalue;
+         outsnd->chan[c].volume.volume = chan[c].values[12].intvalue;
+         outsnd->chan[c].volume.offset = chan[c].values[13].intvalue;
+         
+         outsnd->chan[c].envelope.initial = chan[c].values[14].intvalue;
+
+         outsnd->chan[c].envelope.time[0] = chan[c].values[15].intvalue;
+         outsnd->chan[c].envelope.val[0] = chan[c].values[16].intvalue;
+         outsnd->chan[c].envelope.time[1] = chan[c].values[17].intvalue;
+         outsnd->chan[c].envelope.val[1] = chan[c].values[18].intvalue;
+         outsnd->chan[c].envelope.time[2] = chan[c].values[19].intvalue;
+         outsnd->chan[c].envelope.val[2] = chan[c].values[20].intvalue;
+      }
 	
 	return 0;
 }

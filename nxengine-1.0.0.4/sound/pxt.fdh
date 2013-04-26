@@ -45,7 +45,7 @@ static char LoadFXCache(const char *fname, int top);
 void pxt_freeSoundFX(void);
 void pxt_FreeSound(int slot);
 void FreePXTBuf(stPXSound *snd);
-char pxt_load(const char *fname, stPXSound *snd);
+char pxt_load(FILE *fp, stPXSound *snd, int slot);
 static char LoadComponent(FILE *fp, stPXWave *pxw);
 static char ReadToBracket(FILE *fp);
 char pxt_save(const char *fname, stPXSound *snd);
