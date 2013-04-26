@@ -13,6 +13,7 @@
 #include "sslib.h"
 
 #include "pxt.fdh"
+#include "../libretro/libretro_shared.h"
 
 #define MODEL_SIZE			256
 #define PXCACHE_MAGICK		'PXC1'
@@ -713,33 +714,11 @@ char pxt_IsPlaying(int slot)
 // if cache_name is specified the pcm audio data is cached under the given filename.
 char pxt_LoadSoundFX(const char *path, const char *cache_name, int top)
 {
-char fname[80];
 int slot;
 stPXSound snd;
-FILE *fp = NULL;
 
 	NX_LOG("Loading Sound FX...\n");
 	load_top = top;
-	
-	if (cache_name)
-	{
-		// try to load the cache if we can
-		if (LoadFXCache(cache_name, top) == 0)
-		{
-			return 0;
-		}
-		
-		fp = fopen(cache_name, "wb");
-		if (!fp)
-		{
-			NX_ERR("LoadSoundFX: failed open: '%s'\n", cache_name);
-			return 1;
-		}
-		
-		uint32_t magick = PXCACHE_MAGICK;
-		fwrite(&magick, 4, 1, fp);	// fwrite allows us to verify endianness, as well
-		fputi(top, fp);
-	}
 	
 	// get ready to do synthesis
 	pxt_initsynth();
@@ -750,11 +729,25 @@ FILE *fp = NULL;
    char slash = '/';
 #endif
 	
-	for(slot=1;slot<=top;slot++)
+   char filename[1024];
+	FILE *fp;
+
+	NX_LOG("= Extracting Files =\n");
+
+	retro_create_path_string(filename, sizeof(filename), g_dir, "Doukutsu.exe");
+	
+	fp = fopen(filename, "rb");
+	if (!fp)
 	{
-		snprintf(fname, sizeof(fname), "%s%cfx%02x.pxt", path, slash, slot);
-		
-		if (pxt_load(fname, &snd)) continue;
+		NX_ERR("cannot find executable %s\n", filename);
+		NX_ERR("Please put it and it's \"data\" directory\n");
+		NX_ERR("into the same folder as this program.\n");
+		return 1;
+	}
+
+	for(slot=1;slot<=top;slot++)
+	{		
+		if (pxt_load(fp, &snd, slot)) continue;
 		pxt_Render(&snd);
 		
 		// dirty hack; lower the pitch of the Stream Sounds
@@ -765,24 +758,12 @@ FILE *fp = NULL;
 		if (slot == 41)
 			pxt_ChangePitch(&snd, 6.0f);
 		
-		// save the rendered audio to cache
-		if (fp)
-		{
-			fputl(snd.final_size, fp);
-			fputc(slot, fp);
-			fwrite(snd.final_buffer, snd.final_size, 1, fp);
-		}
-		
 		// upscale the sound to 16-bit for SDL_mixer then throw away the now unnecessary 8-bit data
 		pxt_PrepareToPlay(&snd, slot);
 		FreePXTBuf(&snd);
 	}
 	
-	if (fp)
-	{
-		NX_LOG(" - created %s; %d bytes\n", cache_name, ftell(fp));
-		fclose(fp);
-	}
+   fclose(fp);
 	
 	return 0;
 }
@@ -902,95 +883,28 @@ void FreePXTBuf(stPXSound *snd)
 }
 
 
+extern bool extract_pxt(FILE *fp, int s, stPXSound *outsnd);
 
 // read a .pxt file into memory and return a stPXSound ready to be rendered.
-char pxt_load(const char *fname, stPXSound *snd)
+char pxt_load(FILE *fp, stPXSound *snd, int slot)
 {
-FILE *fp;
-char load_extended_section = 0;
-char ch;
-int i, cc;
-
-#define BRACK		'{'		// my damn IDE is borking up the Function List if i put this inline
-
-	fp = fopen(fname, "rb");
-	if (!fp)
-   {
-      NX_ERR("pxt_load: file '%s' not found.\n", fname);
-      return 1;
-   }
-	
-	//lprintf("pxt_load: reading %s...\n", fname);
-	
-	// set all buffers to non-existant and zero-length to start
+   int i;
 	memset(snd, 0, sizeof(stPXSound));
 	
+	if (extract_pxt(fp, slot, snd))
+      goto error;
 	
-	// skip ahead in the file till we find the machine readable data, denoted by '{'
-	if (ReadToBracket(fp)) return 1;
-	
-	// load all channels we find
-	cc = 0;
-	ch = BRACK;
-	while(!feof(fp))
-	{
-		if (ch=='>')		// extended section
-		{
-			load_extended_section = 1;
-			break;
-		}
-		else if (ch==BRACK)
-		{	// opening a new channel
-			if (cc >= PXT_NO_CHANNELS)
-			{
-				NX_ERR("pxt_load: sound '%s' contains too many channels!\n", fname);
-				goto error;
-			}
-			
-			snd->chan[cc].enabled = fgeticsv(fp);
-			snd->chan[cc].size_blocks = fgeticsv(fp);
-			
-			if (LoadComponent(fp, &snd->chan[cc].main)) goto error;
-			if (LoadComponent(fp, &snd->chan[cc].pitch)) goto error;
-			if (LoadComponent(fp, &snd->chan[cc].volume)) goto error;
-			
-			snd->chan[cc].envelope.initial = fgeticsv(fp);
-			for(i=0;i<PXENV_NUM_VERTICES;i++)
-			{
-				snd->chan[cc].envelope.time[i] = fgeticsv(fp);
-				snd->chan[cc].envelope.val[i] = fgeticsv(fp);
-			}
-			
-			cc++;
-		}
-		
-		ch = fgetc(fp);
-	}
-	
-	if (load_extended_section)
-	{
-		NX_LOG("pxt_load: extended section found, loading it\n");
-		if (ReadToBracket(fp)) return 1;
-		for(cc=0;cc<PXT_NO_CHANNELS;cc++)
-		{
-			if (LoadComponent(fp, &snd->chan[cc].pitch2)) goto error;
-		}
-	}
-	else
-	{
-		//NX_WARN("No extended section found; setting compatibility values.\n");
-		for(i=0;i<PXT_NO_CHANNELS;i++)
-		{
-			memset(&snd->chan[i].pitch2, 0, sizeof(stPXWave));
-			pxt_SetModel(&snd->chan[i].pitch2, 0);
-		}
-	}
+   //NX_WARN("No extended section found; setting compatibility values.\n");
+   for(i=0;i<PXT_NO_CHANNELS;i++)
+   {
+      memset(&snd->chan[i].pitch2, 0, sizeof(stPXWave));
+      pxt_SetModel(&snd->chan[i].pitch2, 0);
+   }
 	
 	//NX_LOG("pxt_load: '%s' parsed ok\n", fname);
-	fclose(fp);
 	return 0;
 	
-error: ;
+error:
 	for(i=0;i<PXT_NO_CHANNELS;i++)
 	{
 		if (snd->chan[i].buffer)
@@ -999,7 +913,6 @@ error: ;
 			snd->chan[i].buffer = NULL;
 		}
 	}
-	if (fp) fclose(fp);
 	
 	return 1;
 }
@@ -1011,25 +924,6 @@ static char LoadComponent(FILE *fp, stPXWave *pxw)
 	pxw->repeat = fgetfcsv(fp);
 	pxw->volume = fgeticsv(fp);
 	pxw->offset = fgeticsv(fp);
-	return 0;
-}
-
-static char ReadToBracket(FILE *fp)
-{
-uchar ch;
-
-	for(;;)
-	{
-		ch = fgetc(fp);
-		if (ch==BRACK) break;
-		
-		if (feof(fp))
-		{
-			NX_ERR("pxt_load: file is in incorrect file format [failed to find '{']\n");
-			fclose(fp);
-			return 1;
-		}
-	}
 	return 0;
 }
 

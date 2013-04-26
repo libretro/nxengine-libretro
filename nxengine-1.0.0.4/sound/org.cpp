@@ -106,11 +106,11 @@ static int SamplesToMS(int samples)
 
 static bool load_drumtable(const char *pxt_path)		// pxt_path = the path where drum pxt files can be found
 {
+printf("load_drumtable\n");
 char fname[80];
 char drum_cache_fname[1024];
 int d;
 FILE *fp;
-static const char *drum_cache = "drum.pcm";
 #define DRUM_VERSION	0x0001
 uint16_t version;
 
@@ -122,72 +122,35 @@ uint16_t version;
 		}
 	#else
 
-		retro_create_path_string(drum_cache_fname, sizeof(drum_cache_fname), g_dir, drum_cache);
+		retro_create_path_string(drum_cache_fname, sizeof(drum_cache_fname), g_dir, "Doukutsu.exe");
 		
 		// try and load the drums from cache instead of synthing them
 		fp = fopen(drum_cache_fname, "rb");
-		if (fp)
+		if (!fp)
 		{
-			// this also checks for correct endianness
-			fread(&version, sizeof(version), 1, fp);
-			if (version != DRUM_VERSION)
-			{
-				printf("%s: version incorrect\n", drum_cache_fname);
-			}
-			else
-			{
-				for(d=0;d<NUM_DRUMS;d++)
-				{
-					drumtable[d].nsamples = fgetl(fp);
-					drumtable[d].samples = (signed short *)malloc(drumtable[d].nsamples * 2);
-					fread(drumtable[d].samples, drumtable[d].nsamples*2, 1, fp);
-				}
-				fclose(fp);
-				NX_LOG("-- Drums loaded from cache\n");
-				return 0;
-			}
+			return 1;
 		}
 		
 		NX_LOG("load_drumtable: cache gone; rebuilding drums...\n");
 		
 		pxt_initsynth();
-
-      char slash;
-#ifdef _WIN32
-      slash = '\\';
-#else
-      slash = '/';
-#endif
 		
 		for(d=0;d<NUM_DRUMS;d++)
 		{
 			if (drum_pxt[d])
 			{
-				snprintf(fname, sizeof(fname), "%s%cfx%02x.pxt", pxt_path, slash, drum_pxt[d]);
-				if (load_drum_pxt(fname, d)) return 1;
+				if (load_drum_pxt(fp, drum_pxt[d], d)) return 1;
 			}
 		}
+   
+      fclose(fp);
 		
-		// cache the drums for next time
-		fp = fopen(drum_cache_fname, "wb");
-		if (fp)
-		{
-			version = DRUM_VERSION;
-			fwrite(&version, sizeof(version), 1, fp);
-			for(d=0;d<NUM_DRUMS;d++)
-			{
-				fputl(drumtable[d].nsamples, fp);
-				fwrite(drumtable[d].samples, drumtable[d].nsamples*2, 1, fp);
-			}
-			fclose(fp);
-		}
-		
-		load_drumtable(pxt_path);
+		//load_drumtable(pxt_path);
 	#endif
 	
 	//for(d=0;d<256;d++) { lprintf("%d ", drumtable[0].samples[d]); if (d%32==0) lprintf("\n"); }
 	//lprintf("\n");
-	
+	printf("return 0\n");
 	return 0;
 }
 
@@ -229,7 +192,7 @@ signed short *abuf;
 
 #else
 
-static bool load_drum_pxt(char *fname, int d)
+static bool load_drum_pxt(FILE *fd, int s, int d)
 {
 int i;
 signed short sample;
@@ -237,7 +200,7 @@ stPXSound snd;
 
 	NX_LOG("load_drum: loading %s into drum index %d\n", fname, d);
 	
-	if (pxt_load(fname, &snd)) return 1;
+	if (pxt_load(fd, &snd, s)) return 1;
 	pxt_Render(&snd);
 	
 	drumtable[d].nsamples = snd.final_size;

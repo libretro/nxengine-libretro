@@ -30,7 +30,7 @@ static int MSToSamples(int ms);
 static int SamplesToMS(int samples);
 static bool load_drumtable(const char *pxt_path);
 static bool load_drum(char *fname, int d);
-static bool load_drum_pxt(char *fname, int d);
+static bool load_drum_pxt(FILE *fd, int s, int d);
 int org_init(const char *drum_pxt_dir, int org_volume);
 void org_close(void);
 char org_load(char *fname);
@@ -65,7 +65,7 @@ int org_GetCurrentBuffer(void);
 
 //-------------------[referenced from sound/org.cpp]-----------------//
 char pxt_initsynth(void);
-char pxt_load(const char *fname, stPXSound *snd);
+char pxt_load(FILE *fp, stPXSound *snd, int slot);
 char pxt_Render(stPXSound *snd);
 void FreePXTBuf(stPXSound *snd);
 
