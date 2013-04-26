@@ -90,7 +90,6 @@ public:
 	
 	int Width();
 	int Height();
-	void EnableColorKey();
 	NXFormat *Format();
 	
 	void Flip();
@@ -98,7 +97,6 @@ public:
 private:
 	static SDL_Surface *Scale(SDL_Surface *original, bool use_colorkey);
 	
-	inline uint32_t MapColor(uint8_t r, uint8_t g, uint8_t b);
 	void Free();
 	
 	SDL_Surface *fSurface;
