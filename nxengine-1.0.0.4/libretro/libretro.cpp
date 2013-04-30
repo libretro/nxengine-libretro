@@ -72,7 +72,7 @@ void retro_set_input_state(retro_input_state_t cb)
 void retro_get_system_info(struct retro_system_info *info)
 {
    info->need_fullpath = true;
-   info->valid_extensions = "exe|EXE|zip|ZIP";
+   info->valid_extensions = "exe";
    info->library_version = "1.0.0.4";
    info->library_name = "NXEngine";
    info->block_extract = false;
