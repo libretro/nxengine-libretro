@@ -49,7 +49,7 @@ else ifeq ($(platform), ios)
    CC = clang -arch armv7 -isysroot $(IOSSDK)
    CXX = clang++ -arch armv7 -isysroot $(IOSSDK)
 else ifeq ($(platform), qnx)
-   TARGET := $(TARGET_NAME)_libretro.so
+   TARGET := $(TARGET_NAME)_libretro_qnx.so
    fpic := -fPIC
    SHARED := -shared -Wl,--version-script=$(NX_DIR)/libretro/link.T -Wl,-no-undefined
    CFLAGS += -D_GNU_SOURCE=1
