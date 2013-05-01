@@ -129,32 +129,6 @@ char text[132];
 	strcpy(text, item->text);
 	strcat(text, item->suffix);
 	
-	// for replay times
-	// comes first because it can trim the text on the left side if needed
-	if (item->raligntext[0])
-	{
-		int rx = (fCoords.x + fCoords.w) - 10;
-		rx -= GetFontWidth(item->raligntext, 5);
-		font_draw(rx, y, item->raligntext, 5);
-		
-		// ... ellipses if too long
-		int maxx = (rx - 4);
-		//FillRect(maxx, 0, maxx, SCREEN_HEIGHT, 0,255,0);
-		for(;;)
-		{
-			int wd = GetFontWidth(text, 0);
-			if (x+wd < maxx) break;
-			
-			int len = strlen(text);
-			if (len <= 3) { *text = 0; break; }
-			
-			text[len-1] = 0;
-			text[len-2] = '.';
-			text[len-3] = '.';
-			text[len-4] = '.';
-		}
-	}
-	
 	font_draw(x, y, text, 0);
 	
 	// for key remaps
