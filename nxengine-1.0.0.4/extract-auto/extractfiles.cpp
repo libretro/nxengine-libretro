@@ -9,6 +9,7 @@
 #include "../libretro/libretro_shared.h"
 #include "extractfiles.fdh"
 #include "../nx_logger.h"
+#include "../common/mwrapper.h"
 
 #ifdef __MINGW32__
 	#include <direct.h>
@@ -182,6 +183,19 @@ bool first_crc_failure = true;
 	
 	free(buffer);
 	return 0;
+}
+
+bool extract_data_files(void)
+{
+#ifdef _WIN32
+   char slash = '\\';
+#else
+   char slash = '/';
+#endif
+   char tmp_str[256];
+   char fname[1024];
+
+   return 0;
 }
 
 
