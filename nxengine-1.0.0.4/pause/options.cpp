@@ -1,6 +1,5 @@
 
 #include "../nx.h"
-#include "../replay.h"
 #include "options.h"
 #include "dialog.h"
 #include "message.h"
@@ -20,7 +19,6 @@ static struct
 	bool InMainMenu;
 	int xoffset;
 	
-	int selected_replay;
 	int remapping_key, new_sdl_key;
 } opt;
 
@@ -141,7 +139,6 @@ Dialog *dlg = opt.dlg;
 	dlg->Clear();
 	
 	dlg->AddItem("Framerate: ", _60hz_change, _60hz_get);
-	dlg->AddItem("Replay", EnterReplayMenu);
 	
 	dlg->AddSeparator();
 	
@@ -219,108 +216,6 @@ void _music_get(ODItem *item)
 {
 	static const char *strs[] = { "Off", "On", "Boss Only" };
 	strcpy(item->suffix, strs[settings->music_enabled]);
-}
-
-/*
-void c------------------------------() {}
-*/
-
-static void EnterReplayMenu(ODItem *item, int dir)
-{
-Dialog *dlg = opt.dlg;
-ReplaySlotInfo slot;
-bool have_replays = false;
-
-	dlg->Clear();
-	sound(SND_MENU_MOVE);
-	
-	for(int i=0;i<MAX_REPLAYS;i++)
-	{
-		Replay::GetSlotInfo(i, &slot);
-		
-		if (slot.status != RS_UNUSED)
-		{
-			const char *mapname = map_get_stage_name(slot.hdr.stageno);
-			dlg->AddItem(mapname, EnterReplaySubmenu, _upd_replay, i);
-			have_replays = true;
-		}
-	}
-	
-	if (!have_replays)
-		dlg->AddDismissalItem("[no replays yet]");
-	
-	dlg->AddSeparator();
-	dlg->AddDismissalItem();
-}
-
-void _upd_replay(ODItem *item)
-{
-ReplaySlotInfo slot;
-
-	Replay::GetSlotInfo(item->id, &slot);
-	
-	Replay::FramesToTime(slot.hdr.total_frames, &item->raligntext[1]);
-	item->raligntext[0] = (slot.hdr.locked) ? '=':' ';
-}
-
-/*
-void c------------------------------() {}
-*/
-
-void EnterReplaySubmenu(ODItem *item, int dir)
-{
-	opt.selected_replay = item->id;
-	sound(SND_MENU_MOVE);
-	
-	opt.subdlg = new Dialog;
-	opt.subdlg->SetSize(80, 60);
-	
-	opt.subdlg->AddItem("Play", _play_replay);
-	opt.subdlg->AddItem("Keep", _keep_replay);
-}
-
-
-void _keep_replay(ODItem *item, int dir)
-{
-        char fname_tmp[1024];
-	char fname[MAXPATHLEN];
-	ReplayHeader hdr;
-
-	GetReplayName(opt.selected_replay, fname);
-
-	retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
-	
-	if (Replay::LoadHeader(fname_tmp, &hdr))
-	{
-		new Message("Failed to load header.");
-		sound(SND_GUN_CLICK);
-		opt.dismiss_on_focus = opt.subdlg;
-		return;
-	}
-	
-	hdr.locked ^= 1;
-	
-	if (Replay::SaveHeader(fname_tmp, &hdr))
-	{
-		new Message("Failed to write header.");
-		sound(SND_GUN_CLICK);
-		opt.dismiss_on_focus = opt.subdlg;
-		return;
-	}
-	
-	sound(SND_MENU_MOVE);
-	opt.subdlg->Dismiss();
-	opt.dlg->Refresh();
-}
-
-
-void _play_replay(ODItem *item, int dir)
-{
-	game.switchstage.param = opt.selected_replay;
-	game.switchmap(START_REPLAY);
-	
-	game.setmode(GM_NORMAL);
-	game.pause(false);
 }
 
 /*

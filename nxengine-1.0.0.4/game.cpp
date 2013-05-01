@@ -206,9 +206,6 @@ void Game::tick(void)
 	}
 	else
 	{
-		// record/playback replays
-		Replay::run();
-		
 		// run scripts
 		RunScripts();
 		
@@ -237,9 +234,6 @@ void Game::reset()
 	memset(inputs, 0, sizeof(inputs));
 	StopLoopSounds();
 	StopScripts();
-	
-	Replay::end_record();
-	Replay::end_playback();
 	
 	game.pause(false);
 	game.setmode(GM_INTRO, 0, true);

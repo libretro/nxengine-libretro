@@ -61,7 +61,7 @@ AUTOGEN_OBJS := $(NX_DIR)/autogen/AssignSprites.cpp $(NX_DIR)/autogen/objnames.c
 
 DEBUG_OBJS := $(NX_DIR)/debug.cpp
 
-OBJECTS    := 	$(NX_DIR)/caret.cpp $(NX_DIR)/console.cpp $(NX_DIR)/floattext.cpp $(NX_DIR)/game.cpp $(NX_DIR)/input.cpp $(NX_DIR)/inventory.cpp $(MAIN_OBJS) $(NX_DIR)/map.cpp $(NX_DIR)/map_system.cpp $(NX_DIR)/niku.cpp $(NX_DIR)/object.cpp $(NX_DIR)/ObjManager.cpp $(NX_DIR)/p_arms.cpp $(NX_DIR)/player.cpp $(NX_DIR)/playerstats.cpp $(NX_DIR)/profile.cpp $(NX_DIR)/replay.cpp $(NX_DIR)/screeneffect.cpp $(NX_DIR)/settings.cpp $(NX_DIR)/slope.cpp $(NX_DIR)/stageboss.cpp $(NX_DIR)/stagedata.cpp $(NX_DIR)/statusbar.cpp $(NX_DIR)/trig.cpp $(NX_DIR)/tsc.cpp  $(AI_OBJS) $(SAFEMODE_OBJS) $(COMMON_OBJS) $(ENDGAME_OBJS) $(EXTRACT_OBJS) $(GRAPHICS_OBJS) $(INTRO_OBJS) $(PAUSE_OBJS) $(SIFLIB_OBJS) $(SOUND_OBJS) $(TEXTBOX_OBJS) $(SDL_OBJS) $(AUTOGEN_OBJS) $(DEBUG_OBJS) $(LIBRETRO_OBJS)
+OBJECTS    := 	$(NX_DIR)/caret.cpp $(NX_DIR)/console.cpp $(NX_DIR)/floattext.cpp $(NX_DIR)/game.cpp $(NX_DIR)/input.cpp $(NX_DIR)/inventory.cpp $(MAIN_OBJS) $(NX_DIR)/map.cpp $(NX_DIR)/map_system.cpp $(NX_DIR)/niku.cpp $(NX_DIR)/object.cpp $(NX_DIR)/ObjManager.cpp $(NX_DIR)/p_arms.cpp $(NX_DIR)/player.cpp $(NX_DIR)/playerstats.cpp $(NX_DIR)/profile.cpp $(NX_DIR)/screeneffect.cpp $(NX_DIR)/settings.cpp $(NX_DIR)/slope.cpp $(NX_DIR)/stageboss.cpp $(NX_DIR)/stagedata.cpp $(NX_DIR)/statusbar.cpp $(NX_DIR)/trig.cpp $(NX_DIR)/tsc.cpp  $(AI_OBJS) $(SAFEMODE_OBJS) $(COMMON_OBJS) $(ENDGAME_OBJS) $(EXTRACT_OBJS) $(GRAPHICS_OBJS) $(INTRO_OBJS) $(PAUSE_OBJS) $(SIFLIB_OBJS) $(SOUND_OBJS) $(TEXTBOX_OBJS) $(SDL_OBJS) $(AUTOGEN_OBJS) $(DEBUG_OBJS) $(LIBRETRO_OBJS)
 
 LOCAL_SRC_FILES := $(OBJECTS)
 
