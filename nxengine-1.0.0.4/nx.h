@@ -60,7 +60,6 @@ class Object;
 #include "slope.h"
 #include "player.h"
 #include "p_arms.h"
-#include "replay.h"
 
 #include "sound/sound.h"
 

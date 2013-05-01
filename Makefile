@@ -153,7 +153,7 @@ AUTOGEN_OBJS := $(NX_DIR)/autogen/AssignSprites.o $(NX_DIR)/autogen/objnames.o
 
 DEBUG_OBJS := $(NX_DIR)/debug.o
 
-OBJECTS    := 	$(NX_DIR)/caret.o $(NX_DIR)/console.o $(NX_DIR)/floattext.o $(NX_DIR)/game.o $(NX_DIR)/input.o $(NX_DIR)/inventory.o $(MAIN_OBJS) $(NX_DIR)/map.o $(NX_DIR)/map_system.o $(NX_DIR)/niku.o $(NX_DIR)/object.o $(NX_DIR)/ObjManager.o $(NX_DIR)/p_arms.o $(NX_DIR)/player.o $(NX_DIR)/playerstats.o $(NX_DIR)/profile.o $(NX_DIR)/replay.o $(NX_DIR)/screeneffect.o $(NX_DIR)/settings.o $(NX_DIR)/slope.o $(NX_DIR)/stageboss.o $(NX_DIR)/stagedata.o $(NX_DIR)/statusbar.o $(NX_DIR)/trig.o $(NX_DIR)/tsc.o  $(AI_OBJS) $(SAFEMODE_OBJS) $(COMMON_OBJS) $(ENDGAME_OBJS) $(EXTRACT_OBJS) $(GRAPHICS_OBJS) $(INTRO_OBJS) $(PAUSE_OBJS) $(SIFLIB_OBJS) $(SOUND_OBJS) $(TEXTBOX_OBJS) $(SDL_OBJS) $(AUTOGEN_OBJS) $(DEBUG_OBJS)
+OBJECTS    := 	$(NX_DIR)/caret.o $(NX_DIR)/console.o $(NX_DIR)/floattext.o $(NX_DIR)/game.o $(NX_DIR)/input.o $(NX_DIR)/inventory.o $(MAIN_OBJS) $(NX_DIR)/map.o $(NX_DIR)/map_system.o $(NX_DIR)/niku.o $(NX_DIR)/object.o $(NX_DIR)/ObjManager.o $(NX_DIR)/p_arms.o $(NX_DIR)/player.o $(NX_DIR)/playerstats.o $(NX_DIR)/profile.o $(NX_DIR)/screeneffect.o $(NX_DIR)/settings.o $(NX_DIR)/slope.o $(NX_DIR)/stageboss.o $(NX_DIR)/stagedata.o $(NX_DIR)/statusbar.o $(NX_DIR)/trig.o $(NX_DIR)/tsc.o  $(AI_OBJS) $(SAFEMODE_OBJS) $(COMMON_OBJS) $(ENDGAME_OBJS) $(EXTRACT_OBJS) $(GRAPHICS_OBJS) $(INTRO_OBJS) $(PAUSE_OBJS) $(SIFLIB_OBJS) $(SOUND_OBJS) $(TEXTBOX_OBJS) $(SDL_OBJS) $(AUTOGEN_OBJS) $(DEBUG_OBJS)
 
 OBJECTS += $(LIBRETRO_OBJS)
 

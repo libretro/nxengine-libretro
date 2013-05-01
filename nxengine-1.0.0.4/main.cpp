@@ -94,21 +94,13 @@ SetLogFilename(debug_fname);
 	// set null stage just to have something to do while we go to intro
 	game.switchstage.mapno = 0;
 	
-	//#define REPLAY
-	#ifdef REPLAY
-		game.switchstage.mapno = START_REPLAY;
-		//Replay::set_ffwd(6000);
-		//Replay::set_stopat(3500);
-		game.switchstage.param = 1;
-	#else
-		//game.switchstage.mapno = LOAD_GAME;
-		//game.pause(GP_OPTIONS);
-		
-		if (settings->skip_intro && file_exists(GetProfileName(settings->last_save_slot)))
-			game.switchstage.mapno = LOAD_GAME;
-		else
-			game.setmode(GM_INTRO);
-	#endif
+   //game.switchstage.mapno = LOAD_GAME;
+   //game.pause(GP_OPTIONS);
+
+   if (settings->skip_intro && file_exists(GetProfileName(settings->last_save_slot)))
+      game.switchstage.mapno = LOAD_GAME;
+   else
+      game.setmode(GM_INTRO);
 	
 	// for debug
 	if (game.paused) { game.switchstage.mapno = 0; game.switchstage.eventonentry = 0; }
@@ -124,7 +116,6 @@ SetLogFilename(debug_fname);
 
 void post_main(void)
 {
-	Replay::close();
 	game.close();
 	Carets::close();
 	
@@ -181,23 +172,8 @@ bool run_main(void)
 			return false;
 		}
 
-		Replay::OnGameStarting();
-
 		if (!inhibit_loadfade) fade.Start(FADE_IN, FADE_CENTER);
 		else inhibit_loadfade = false;
-	}
-	else if (game.switchstage.mapno == START_REPLAY)
-	{
-		NX_LOG(">> beginning replay '%s'\n", GetReplayName(game.switchstage.param));
-
-		StopScripts();
-		if (Replay::begin_playback(GetReplayName(game.switchstage.param)))
-		{
-			fatal("error starting playback");
-			game.running = false;
-			error = 1;
-			return false;
-		}
 	}
 	else
 	{
@@ -272,8 +248,6 @@ static inline void run_tick()
 	
 	// freeze frame
 	game.tick();
-
-	Replay::DrawStatus();
 
 	org_run();
 

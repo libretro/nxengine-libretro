@@ -940,10 +940,7 @@ int cmdip;
 			case OP_SVP:
 			{
 				if (!settings->multisave)
-				{
-					if (!Replay::IsPlaying())
-						game_save(settings->last_save_slot);
-				}
+               game_save(settings->last_save_slot);
 				else
 				{
 					textbox.SaveSelect.SetVisible(true, SS_SAVING);
