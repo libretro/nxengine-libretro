@@ -5,6 +5,7 @@
 #include <string.h>
 #include <math.h>
 
+#include "../common/mwrapper.h"
 #include "../nx.h"
 #include "../common/basics.h"
 #include "org.h"
@@ -187,32 +188,6 @@ int d;
 	
 	for(d=0;d<NUM_DRUMS;d++)
 		if (drumtable[d].samples) free(drumtable[d].samples);
-}
-
-int mgetc(char **fp)
-{
-   unsigned char volatile *f = *((unsigned char volatile **)fp);
-   unsigned char volatile c = *f;
-   (*fp)++;
-   return c;
-}
-
-uint16_t mgeti(char **fp)
-{
-uint16_t a, b;
-	a = mgetc(fp);
-	b = mgetc(fp);
-	return (b << 8) | a;
-}
-
-uint32_t mgetl(char **fp)
-{
-uint32_t a, b, c, d;
-	a = mgetc(fp);
-	b = mgetc(fp);
-	c = mgetc(fp);
-	d = mgetc(fp);
-	return (d<<24)|(c<<16)|(b<<8)|(a);
 }
 
 extern char *org_data[42];
