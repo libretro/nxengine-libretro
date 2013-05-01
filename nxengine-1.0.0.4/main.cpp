@@ -79,7 +79,6 @@ SetLogFilename(debug_fname);
 		return;
 	}
 	
-	//Graphics::ShowLoadingScreen();
 	if (trig_init()) { fatal("Failed trig module init."); error = 1; return; }
 	
 	if (tsc_init()) { fatal("Failed to initialize script engine."); error = 1; return; }

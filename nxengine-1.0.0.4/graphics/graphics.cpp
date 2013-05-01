@@ -158,30 +158,6 @@ NXRect srcrect, dstrect;
 	}
 }
 
-
-void Graphics::ShowLoadingScreen()
-{
-NXSurface loading;
-char fname[MAXPATHLEN];
-char slash;
-#ifdef _WIN32
-slash = '\\';
-#else
-slash = '/';
-#endif
-	
-	snprintf(fname, sizeof(fname), "%s%cLoading.pbm", data_dir, slash);
-	if (loading.LoadImage(fname))
-		return;
-	
-	int x = (SCREEN_WIDTH / 2) - (loading.Width() / 2);
-	int y = (SCREEN_HEIGHT / 2) - loading.Height();
-	
-	ClearScreen(BLACK);
-	DrawSurface(&loading, x, y);
-	drawtarget->Flip();
-}
-
 /*
 void c------------------------------() {}
 */

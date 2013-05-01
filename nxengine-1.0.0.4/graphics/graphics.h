@@ -27,7 +27,6 @@ namespace Graphics
 	// ---------------------------------------
 	
 	void CopySpriteToTile(int spr, int tileno, int offset_x, int offset_y);
-	void ShowLoadingScreen();
 	
 	void BlitSurface(NXSurface *src, NXRect *srcrect, NXSurface *dst, NXRect *dstrect);
 	
