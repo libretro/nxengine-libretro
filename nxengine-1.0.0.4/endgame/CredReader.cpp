@@ -136,7 +136,7 @@ char slash = '/';
 #endif
 
 	if (data) CloseFile();
-	snprintf(fname, sizeof(fname), "%s%c%s%cCredit.tsc", g_dir, slash, data_dir, slash);
+	snprintf(fname, sizeof(fname), "%s%cCredit.tsc", data_dir, slash);
 	
 	data = tsc_decrypt(fname, &datalen);
 	if (!data)
