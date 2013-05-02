@@ -5,7 +5,7 @@
 #include <sys/stat.h>
 #include "../common/basics.h"
 #include "../libretro/libretro_shared.h"
-#include "extractfiles.fdh"
+//#include "extractfiles.fdh"
 #include "../nx_logger.h"
 
 #ifdef __MINGW32__
@@ -97,7 +97,6 @@ bool extract_org(FILE *exefp)
    uint8_t *file;
    uint32_t length;
    uint32_t crc;
-   bool check_crc = true;
    bool first_crc_failure = true;
    
    if (org_extracted)
@@ -106,7 +105,6 @@ bool extract_org(FILE *exefp)
    memset(org_data, 0, sizeof(org_data));
 
    buffer = (uint8_t *)malloc(MAX_FILE_SIZE);
-   crc_init();
 
    for(int i=1;;i++)
    {
@@ -117,16 +115,6 @@ bool extract_org(FILE *exefp)
       // read data from exe
       fseek(exefp, files[i].offset, SEEK_SET);
       fread(file, files[i].length, 1, exefp);
-
-      if (check_crc)
-      {
-         crc = crc_calc(file, files[i].length);
-         if (crc != files[i].crc)
-         {
-            NX_ERR("ORG '%d' failed CRC check.\n", i);
-            first_crc_failure = false;
-         }
-      }
 
       fprintf(stderr, "file: %s\n", files[i].filename);
 

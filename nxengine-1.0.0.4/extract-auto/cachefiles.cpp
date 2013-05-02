@@ -424,11 +424,60 @@ static const char *filenames[] = {
 "data" SLASH "Title.pbm"
 };
 
+// Windows .bmp resources don't include the BMP-file headers
+const uint8_t credit_header[] = \
+{
+   0x42, 0x4D, 0x76, 0x4B, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+   0x76, 0x00, 0x00, 0x00, 0x28, 0x00, 0x00, 0x00, 0xA0, 0x00,
+   0x00, 0x00, 0xF0, 0x00, 0x00
+};
+
+const uint8_t pixel_header[] = \
+{
+   0x42, 0x4D, 0x76, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+   0x76, 0x00, 0x00, 0x00, 0x28, 0x00, 0x00, 0x00, 0xA0, 0x00,
+   0x00, 0x00, 0x10, 0x00, 0x00
+};
+
+static struct
+{
+	const char *filename;
+	uint32_t offset;
+	uint32_t length;
+	uint32_t crc;
+	const uint8_t *header;
+}
+bmp_files[] =
+{
+	"endpic" SLASH "credit01.bmp", 0x117047, 19293, 0xeb87b19b, credit_header,
+	"endpic" SLASH "credit02.bmp", 0x11bbaf, 19293, 0x239c1a37, credit_header,
+	"endpic" SLASH "credit03.bmp", 0x120717, 19293, 0x4398bbda, credit_header,
+	"endpic" SLASH "credit04.bmp", 0x12527f, 19293, 0x44bae3ac, credit_header,
+	"endpic" SLASH "credit05.bmp", 0x129de7, 19293, 0xd1b876ad, credit_header,
+	"endpic" SLASH "credit06.bmp", 0x12e94f, 19293, 0x5a60082e, credit_header,
+	"endpic" SLASH "credit07.bmp", 0x1334b7, 19293, 0xc1e9db91, credit_header,
+	"endpic" SLASH "credit08.bmp", 0x13801f, 19293, 0xcbbcc7fa, credit_header,
+	"endpic" SLASH "credit09.bmp", 0x13cb87, 19293, 0xfa7177b1, credit_header,
+	"endpic" SLASH "credit10.bmp", 0x1416ef, 19293, 0x56390a07, credit_header,
+	"endpic" SLASH "credit11.bmp", 0x146257, 19293, 0xff3d6d83, credit_header,
+	"endpic" SLASH "credit12.bmp", 0x14adbf, 19293, 0x9e948dc2, credit_header,
+	"endpic" SLASH "credit14.bmp", 0x14f927, 19293, 0x32b6ce2d, credit_header,
+	"endpic" SLASH "credit15.bmp", 0x15448f, 19293, 0x88539803, credit_header,
+	"endpic" SLASH "credit16.bmp", 0x158ff7, 19293, 0xc0ef9adf, credit_header,
+	"endpic" SLASH "credit17.bmp", 0x15db5f, 19293, 0x8c5a003d, credit_header,
+	"endpic" SLASH "credit18.bmp", 0x1626c7, 19293, 0x66bcbf22, credit_header,
+	"data" SLASH ".." SLASH "endpic" SLASH "pixel.bmp", 0x16722f, 1373,  0x6181d0a1, pixel_header,
+	"wavetable.dat", 0x110664, 25599, 0xcaa7b1dd, NULL,
+};
+
 static std::map<std::string, CFILE> filemap;
 
-void cachefiles_init()
+extern signed short wavetable[100][256];
+
+void cachefiles_init(FILE *exefp)
 {
-   for (unsigned i = 0; i < sizeof(filenames) / sizeof(filenames[0]); i++)
+   unsigned i;
+   for (i = 0; i < sizeof(filenames) / sizeof(filenames[0]); i++)
    {
       printf("%s\n", filenames[i]);
       // reentrancy test
@@ -466,6 +515,44 @@ void cachefiles_init()
       fclose(f);
 
       filemap[filenames[i]] = fd;
+   }
+
+   
+   for (i = 0; i < sizeof(bmp_files) / sizeof(bmp_files[0]); i++)
+   {
+      // reentrancy test
+      if (filemap.find(bmp_files[i].filename) != filemap.end())
+         continue;
+      printf("%s\n", bmp_files[i].filename);
+      CFILE fd = {0};
+      size_t hoff = bmp_files[i].header ? 25 : 0;
+      fd.size = bmp_files[i].length + hoff;
+      fd.data = (uint8_t *) malloc(fd.size);
+      if (!fd.data)
+         continue;
+
+      if (bmp_files[i].header)
+         memcpy(fd.data, bmp_files[i].header, 25);
+
+      fseek(exefp, bmp_files[i].offset, SEEK_SET);
+      fread(fd.data + hoff, bmp_files[i].length, 1, exefp);
+
+      if (strcmp(bmp_files[i].filename, "wavetable.dat") == 0)
+      {
+         fprintf(stderr, "found wavetable.dat\n");
+         // wavetable.dat
+         signed char *ptr = (signed char*)&fd.data[0];
+         int wav, sampl;
+
+         for(wav=0;wav<100;wav++)
+            for(sampl=0;sampl<256;sampl++)
+               wavetable[wav][sampl] = (signed short)((int)(*ptr++) << 8); // 256 = (32768 / 128)-- convert to 16-bit
+
+         free(fd.data);
+         continue;
+      }
+
+      filemap[bmp_files[i].filename] = fd;
    }
 }
 

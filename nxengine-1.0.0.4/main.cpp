@@ -30,7 +30,7 @@ static bool inhibit_loadfade = false;
 static bool error = false;
 static bool freshstart;
 
-extern bool extract_files(FILE *exefp);
+//extern bool extract_files(FILE *exefp);
 extern bool extract_stages(FILE *exefp);
 
 void pre_main(void)
@@ -55,8 +55,8 @@ SetLogFilename(debug_fname);
 	retro_create_path_string(filename, sizeof(filename), g_dir, "Doukutsu.exe");
 	fp = fopen(filename, "rb");
 
-   extract_files(fp);
-   cachefiles_init();
+   //extract_files(fp);
+   cachefiles_init(fp);
 
 	if (sound_init()) { fatal("Failed to initialize sound."); error = 1; return; }
    

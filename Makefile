@@ -123,7 +123,7 @@ COMMON_OBJS := $(NX_DIR)/common/BList.o $(NX_DIR)/common/bufio.o $(NX_DIR)/commo
 
 ENDGAME_OBJS := $(NX_DIR)/endgame/credits.o $(NX_DIR)/endgame/CredReader.o $(NX_DIR)/endgame/island.o $(NX_DIR)/endgame/misc.o
 
-EXTRACT_OBJS := $(EXTRACTDIR)/crc.o $(EXTRACTDIR)/extractfiles.o $(EXTRACTDIR)/extractpxt.o $(EXTRACTDIR)/extractorg.o $(EXTRACTDIR)/extractstages.o $(EXTRACTDIR)/cachefiles.o
+EXTRACT_OBJS := $(EXTRACTDIR)/extractpxt.o $(EXTRACTDIR)/extractorg.o $(EXTRACTDIR)/extractstages.o $(EXTRACTDIR)/cachefiles.o
 
 GRAPHICS_OBJS := $(NX_DIR)/graphics/graphics.o $(NX_DIR)/graphics/nxsurface.o $(NX_DIR)/graphics/font.o $(NX_DIR)/graphics/sprites.o $(NX_DIR)/graphics/tileset.o
 
