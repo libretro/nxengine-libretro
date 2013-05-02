@@ -7,6 +7,7 @@
 #include "tsc.h"
 #include "tsc.fdh"
 #include "libretro_shared.h"
+#include "extract-auto/cachefiles.h"
 
 #ifdef _WIN32
 #include "msvc_compat.h"
@@ -117,15 +118,15 @@ char fname[MAXPATHLEN];
 	for(int i=0;i<NUM_SCRIPT_PAGES;i++)
 	
 	// load the "common" TSC scripts available to all maps
-	snprintf(fname, sizeof(fname), "%s%c%s%cHead.tsc", g_dir, slash, data_dir, slash);
+	snprintf(fname, sizeof(fname), "%s%cHead.tsc", data_dir, slash);
 	if (tsc_load(fname, SP_HEAD)) return 1;
 	
 	// load the inventory screen scripts
-	snprintf(fname, sizeof(fname), "%s%c%s%cArmsItem.tsc", g_dir, slash, data_dir, slash);
+	snprintf(fname, sizeof(fname), "%s%cArmsItem.tsc", data_dir, slash);
 	if (tsc_load(fname, SP_ARMSITEM)) return 1;
 	
 	// load stage select/teleporter scripts
-	snprintf(fname, sizeof(fname), "%s%c%s%cStageSelect.tsc", g_dir, slash, data_dir, slash);
+	snprintf(fname, sizeof(fname), "%s%cStageSelect.tsc", data_dir, slash);
 	if (tsc_load(fname, SP_STAGESELECT)) return 1;
 	
 	return 0;
@@ -172,25 +173,25 @@ bool tsc_load(const char *fname, int pageno)
 
 char *tsc_decrypt(const char *fname, int *fsize_out)
 {
-FILE *fp;
+CFILE *fp;
 int fsize, i;
 
-	fp = fopen(fname, "rb");
+	fp = copen(fname, "rb");
 	if (!fp)
 	{
 		NX_ERR("tsc_decrypt: no such file: '%s'!\n", fname);
 		return NULL;
 	}
 	
-	fseek(fp, 0, SEEK_END);
-	fsize = ftell(fp);
-	fseek(fp, 0, SEEK_SET);
+	cseek(fp, 0, SEEK_END);
+	fsize = ctell(fp);
+	cseek(fp, 0, SEEK_SET);
 	
 	// load file
 	char *buf = (char *)malloc(fsize+1);
-	fread(buf, fsize, 1, fp);
+	cread(buf, fsize, 1, fp);
 	buf[fsize] = 0;
-	fclose(fp);
+	cclose(fp);
 	
 	// get decryption key, which is actually part of the text
 	int keypos = (fsize / 2);

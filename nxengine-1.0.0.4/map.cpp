@@ -3,6 +3,7 @@
 #include "map.h"
 #include "map.fdh"
 #include "libretro_shared.h"
+#include "../extract-auto/cachefiles.h"
 
 stMap map;
 
@@ -45,16 +46,16 @@ slash = '/';
 	if (!strcmp(mapname, "lounge")) mapname = "Lounge";
 	snprintf(stage, sizeof(stage), "%s%c%s", stage_dir, slash, mapname);
 	
-	snprintf(fname, sizeof(fname), "%s%c%s.pxm", g_dir, slash, stage);
+	snprintf(fname, sizeof(fname), "%s.pxm", stage);
 	if (load_map(fname)) return 1;
 	
-	snprintf(fname, sizeof(fname), "%s%c%s%c%s.pxa", g_dir, slash, stage_dir, slash, tileset_names[stages[stage_no].tileset]);
+	snprintf(fname, sizeof(fname), "%s%c%s.pxa", stage_dir, slash, tileset_names[stages[stage_no].tileset]);
 	if (load_tileattr(fname)) return 1;
 	
-	snprintf(fname, sizeof(fname), "%s%c%s.pxe", g_dir, slash, stage);
+	snprintf(fname, sizeof(fname), "%s.pxe", stage);
 	if (load_entities(fname)) return 1;
 	
-	snprintf(fname, sizeof(fname), "%s%c%s.tsc", g_dir, slash, stage);
+	snprintf(fname, sizeof(fname), "%s.tsc", stage);
 	if (tsc_load(fname, SP_MAP) == -1) return 1;
 	
 	map_set_backdrop(stages[stage_no].bg_no);
@@ -71,19 +72,19 @@ void c------------------------------() {}
 // load a PXM map
 bool load_map(const char *fname)
 {
-	FILE *fp;
+	CFILE *fp;
 	int x, y;
 
    NX_LOG("load_map: %s\n", fname);
 
-	fp = fopen(fname, "rb");
+	fp = copen(fname, "rb");
 	if (!fp)
 	{
 		NX_ERR("load_map: no such file: '%s'\n", fname);
 		return 1;
 	}
 	
-	if (!fverifystring(fp, "PXM"))
+	if (!cverifystring(fp, "PXM"))
 	{
 		NX_ERR("load_map: invalid map format: '%s'\n", fname);
 		return 1;
@@ -91,28 +92,28 @@ bool load_map(const char *fname)
 	
 	memset(&map, 0, sizeof(map));
 	
-	fgetc(fp);
-	map.xsize = fgeti(fp);
-	map.ysize = fgeti(fp);
+	cgetc(fp);
+	map.xsize = cgeti(fp);
+	map.ysize = cgeti(fp);
 	
 	if (map.xsize > MAP_MAXSIZEX || map.ysize > MAP_MAXSIZEY)
 	{
 		NX_ERR("load_map: map is too large -- size %dx%d but max is %dx%d\n", map.xsize, map.ysize, MAP_MAXSIZEX, MAP_MAXSIZEY);
-		fclose(fp);
+		cclose(fp);
 		return 1;
 	}
 	else
 	{
-		NX_LOG("load_map: level size %dx%d\n", map.xsize, map.ysize);
+		printf("load_map: level size %dx%d\n", map.xsize, map.ysize);
 	}
 	
 	for(y=0;y<map.ysize;y++)
 	for(x=0;x<map.xsize;x++)
 	{
-		map.tiles[x][y] = fgetc(fp);
+		map.tiles[x][y] = cgetc(fp);
 	}
 	
-	fclose(fp);
+	cclose(fp);
 	
 	map.maxxscroll = (((map.xsize * TILE_W) - SCREEN_WIDTH) - 8) << CSF;
 	map.maxyscroll = (((map.ysize * TILE_H) - SCREEN_HEIGHT) - 8) << CSF;
@@ -125,7 +126,7 @@ bool load_map(const char *fname)
 // load a PXE (entity list for a map)
 bool load_entities(const char *fname)
 {
-FILE *fp;
+CFILE *fp;
 int i;
 int nEntities;
 
@@ -135,30 +136,30 @@ int nEntities;
 
 	NX_LOG("load_entities: reading in %s\n", fname);
 	// now we can load in the new objects
-	fp = fopen(fname, "rb");
+	fp = copen(fname, "rb");
 	if (!fp)
 	{
 		NX_ERR("load_entities: no such file: '%s'\n", fname);
 		return 1;
 	}
 	
-	if (!fverifystring(fp, "PXE"))
+	if (!cverifystring(fp, "PXE"))
 	{
 		NX_ERR("load_entities: not a PXE: '%s'\n", fname);
 		return 1;
 	}
 	
-	fgetc(fp);
-	nEntities = fgetl(fp);
+	cgetc(fp);
+	nEntities = cgetl(fp);
 	
 	for(i=0;i<nEntities;i++)
 	{
-		int x = fgeti(fp);
-		int y = fgeti(fp);
-		int id1 = fgeti(fp);
-		int id2 = fgeti(fp);
-		int type = fgeti(fp);
-		int flags = fgeti(fp);
+		int x = cgeti(fp);
+		int y = cgeti(fp);
+		int id1 = cgeti(fp);
+		int id2 = cgeti(fp);
+		int type = cgeti(fp);
+		int flags = cgeti(fp);
 		
 		int dir = (flags & FLAG_FACES_RIGHT) ? RIGHT : LEFT;
 		
@@ -218,21 +219,21 @@ int nEntities;
 	}
 	
 	//NX_LOG("load_entities: loaded %d objects\n", nEntities);
-	fclose(fp);
+	cclose(fp);
 	return 0;
 }
 
 // loads a pxa (tileattr) file
 bool load_tileattr(const char *fname)
 {
-FILE *fp;
+CFILE *fp;
 int i;
 unsigned char tc;
 
 	map.nmotiontiles = 0;
 
 	NX_LOG("load_pxa: reading in %s\n", fname);
-	fp = fopen(fname, "rb");
+	fp = copen(fname, "rb");
 	if (!fp)
 	{
 		NX_ERR("load_pxa: no such file: '%s'\n", fname);
@@ -241,7 +242,7 @@ unsigned char tc;
 	
 	for(i=0;i<256;i++)
 	{
-		tc = fgetc(fp);
+		tc = cgetc(fp);
 		tilecode[i] = tc;
 		tileattr[i] = tilekey[tc];
 		//NX_LOG("Tile %02x   TC %02x    Attr %08x   tilekey[%02x] = %08x\n", i, tc, tileattr[i], tc, tilekey[tc]);
@@ -264,7 +265,7 @@ unsigned char tc;
 		}
 	}
 	
-	fclose(fp);
+	cclose(fp);
 	return 0;
 }
 
