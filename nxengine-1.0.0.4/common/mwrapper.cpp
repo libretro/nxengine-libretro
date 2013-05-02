@@ -34,7 +34,6 @@ uint32_t mgetl(char **fp)
 
 /* This routine returns the size of the file it is called with. */
 
-#if 0
 unsigned get_file_size (const char * file_name)
 {
    struct stat sb;
@@ -84,4 +83,3 @@ unsigned char *read_whole_file (const char * file_name)
    }
    return contents;
 }
-#endif
