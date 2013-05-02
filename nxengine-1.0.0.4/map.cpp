@@ -18,7 +18,7 @@ Object *ID2Lookup[65536];
 
 unsigned char tilecode[MAX_TILES];			// tile codes for every tile in current tileset
 unsigned int tileattr[MAX_TILES];			// tile attribute bits for every tile in current tileset
-unsigned int tilekey[MAX_TILES];			// mapping from tile codes -> tile attributes
+unsigned int tilekey[MAX_TILES] = {0, 0, 64, 2, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 39, 48, 103, 34, 32, 33, 32, 32, 32, 32, 32, 33, 33, 33, 33, 544, 544, 544, 544, 544, 544, 544, 544, 32, 32, 32, 32, 32, 32, 32, 32, 160, 39, 176, 32, 34, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 672, 672, 672, 672, 672, 672, 672, 672, 32, 32, 32, 32, 32, 32, 32, 32, 256, 256, 256, 256, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 416, 416, 416, 416, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; // mapping from tile codes -> tile attributes
 
 
 // load stage "stage_no", this entails loading the map (pxm), enemies (pxe), tileset (pbm),
@@ -288,14 +288,15 @@ bool initmapfirsttime(void)
 	NX_LOG("initmapfirsttime: loading %s.\n", fname);
 	if (!(fp = fopen(fname, "rb")))
 	{
-		NX_ERR("%s is missing!\n", fname);
-		return 1;
+		NX_LOG("%s is missing, using default\n", fname);
 	}
-	
-	for(i=0;i<256;i++)
-		tilekey[i] = fgetl(fp);
-	
-	fclose(fp);
+   else
+   {
+      for(i=0;i<256;i++)
+         tilekey[i] = fgetl(fp);
+      
+      fclose(fp);
+   }
 	return load_stages();
 }
 
