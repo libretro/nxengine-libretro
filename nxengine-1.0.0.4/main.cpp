@@ -30,7 +30,6 @@ static bool error = false;
 static bool freshstart;
 
 extern bool extract_files(FILE *exefp);
-extern bool extract_data_files(void);
 extern bool extract_stages(FILE *exefp);
 
 void pre_main(void)
@@ -65,8 +64,6 @@ SetLogFilename(debug_fname);
 	
    settings->files_extracted = true;
    settings_save();
-
-   extract_data_files();
 	
 	if (Graphics::init(settings->resolution)) { NX_ERR("Failed to initialize graphics.\n"); error = 1; return; }
 	if (font_init()) { NX_ERR("Failed to load font.\n"); error = 1; return; }
