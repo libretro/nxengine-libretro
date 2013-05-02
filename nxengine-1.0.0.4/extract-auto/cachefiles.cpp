@@ -545,3 +545,13 @@ bool cverifystring(CFILE *f, const char *str)
 
    return result;
 }
+
+void *cfile_pointer(CFILE *f)
+{
+   return f->data;
+}
+
+size_t cfile_size(CFILE *f)
+{
+   return f->size;
+}

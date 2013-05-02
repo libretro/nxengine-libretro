@@ -5,6 +5,7 @@
 #include "sifloader.h"
 #include "sifloader.fdh"
 #include "../nx.h"
+#include "../extract-auto/cachefiles.h"
 
 #define SIF_MAGICK	'SIF2'		// SIF magick and version denotation; first 4 bytes of file
 
@@ -16,7 +17,7 @@ SIFLoader::SIFLoader()
 SIFLoader::~SIFLoader()
 {
 	ClearIndex();
-	if (fFP) fclose(fFP);
+	if (fFP) cclose(fFP);
 }
 
 /*
@@ -43,7 +44,7 @@ void SIFLoader::CloseFile()
 	
 	if (fFP)
 	{
-		fclose(fFP);
+		cclose(fFP);
 		fFP = NULL;
 	}
 }
@@ -54,13 +55,13 @@ void c------------------------------() {}
 
 bool SIFLoader::LoadHeader(const char *filename)
 {
-FILE *fp;
+CFILE *fp;
 uint32_t magick;
 
 	ClearIndex();
 	
-	if (fFP) fclose(fFP);
-	fp = fFP = fopen(filename, "rb");
+	if (fFP) cclose(fFP);
+	fp = fFP = copen(filename, "rb");
 	
 	if (!fp)
 	{
@@ -68,23 +69,23 @@ uint32_t magick;
 		return 1;
 	}
 	
-	if ((magick = fgetl(fp)) != SIF_MAGICK)
+	if ((magick = cgetl(fp)) != SIF_MAGICK)
 	{
 		NX_ERR("SIFLoader::LoadHeader: magick check failed--this isn't a SIF file or is wrong version?\n");
 		NX_ERR(" (expected %08x, got %08x)\n", SIF_MAGICK, magick);
 		return 1;
 	}
 	
-	int nsections = fgetc(fp);
+	int nsections = cgetc(fp);
 	NX_LOG("SIFLoader::LoadHeader: read index of %d sections\n", nsections);
 	
 	for(int i=0;i<nsections;i++)
 	{
 		SIFIndexEntry *entry = new SIFIndexEntry;
 		
-		entry->type = fgetc(fp);		// section type
-		entry->foffset = fgetl(fp);		// absolute offset in file
-		entry->length = fgetl(fp);		// length of section data
+		entry->type = cgetc(fp);		// section type
+		entry->foffset = cgetl(fp);		// absolute offset in file
+		entry->length = cgetl(fp);		// length of section data
 		entry->data = NULL;				// we won't load it until asked
 		
 		fIndex.AddItem(entry);
@@ -121,8 +122,8 @@ uint8_t *SIFLoader::FindSection(int type, int *length_out)
 				NX_LOG("Loading SIF section %d from address %04x\n", type, entry->foffset);
 				
 				entry->data = (uint8_t *)malloc(entry->length);
-				fseek(fFP, entry->foffset, SEEK_SET);
-				fread(entry->data, entry->length, 1, fFP);
+				cseek(fFP, entry->foffset, SEEK_SET);
+				cread(entry->data, entry->length, 1, fFP);
 			}
 			
 			if (length_out) *length_out = entry->length;

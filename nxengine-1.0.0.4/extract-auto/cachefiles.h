@@ -13,3 +13,5 @@ int cgetc(CFILE *f);
 uint16_t cgeti(CFILE *f);
 uint32_t cgetl(CFILE *f);
 bool cverifystring(CFILE *f, const char *str);
+void *cfile_pointer(CFILE *f);
+size_t cfile_size(CFILE *f);

@@ -37,7 +37,7 @@ char fname[MAXPATHLEN];
 
 	if (new_tileset != current_tileset)
 	{
-                char fname_tmp[1024];
+                //char fname_tmp[1024];
 		if (tileset)
 		{
 			delete tileset;
@@ -51,13 +51,13 @@ char fname[MAXPATHLEN];
 #endif
 		snprintf(fname, sizeof(fname), "%s%cPrt%s.pbm", stage_dir, slash, tileset_names[new_tileset]);
 
-		retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
+		//retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
 
-		NX_LOG("Tileset::Load: %s\n", fname_tmp);
+		NX_LOG("Tileset::Load: %s\n", fname);
 		
 		// always use SDL_DisplayFormat on tilesets; they need to come out of 8-bit
 		// so that we can replace the destroyable star tiles without them palletizing.
-		tileset = NXSurface::FromFile(fname_tmp, true);
+		tileset = NXSurface::FromFile(fname, true);
 		if (!tileset)
 			return 1;
 		

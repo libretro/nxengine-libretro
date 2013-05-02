@@ -8,6 +8,7 @@
 #include "nxsurface.fdh"
 #include "../libretro/libretro.h"
 #include "../nx.h"
+#include "../extract-auto/cachefiles.h"
 
 #ifdef FRONTEND_SUPPORTS_RGB565
 #define SCREEN_BPP 16
@@ -77,7 +78,16 @@ bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey)
 {
 	Free();
 
-	fSurface = SDL_LoadBMP(pbm_name);
+   CFILE *cf = copen(pbm_name, "rb");
+   if (cf)
+   {
+      SDL_RWops *m = SDL_RWFromMem(cfile_pointer(cf), cfile_size(cf));
+      cclose(cf);
+      fSurface = SDL_LoadBMP_RW(m, 1);
+   } else {
+      fSurface = SDL_LoadBMP(pbm_name);
+   }
+
 	if (!fSurface)
 	{
 		NX_ERR("NXSurface::LoadImage: load failed of '%s'!\n", pbm_name);

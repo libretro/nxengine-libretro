@@ -434,7 +434,7 @@ slash = '/';
 		// use chromakey (transparency) on bkwater, all others don't
 		bool use_chromakey = (backdrop_no == 8);
 		
-		snprintf(fname, sizeof(fname), "%s%c%s%c%s.pbm", g_dir, slash, data_dir, slash, backdrop_names[backdrop_no]);
+		snprintf(fname, sizeof(fname), "%s%c%s.pbm", data_dir, slash, backdrop_names[backdrop_no]);
 		
 		backdrop[backdrop_no] = NXSurface::FromFile(fname, use_chromakey);
 		if (!backdrop[backdrop_no])
