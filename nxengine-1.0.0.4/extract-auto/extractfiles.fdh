@@ -5,7 +5,6 @@
 
 //-------------[referenced from extract/extractfiles.cpp]------------//
 bool extract_files(FILE *exefp);
-bool extract_data_files(void);
 static void createdir(const char *fname);
 
 
