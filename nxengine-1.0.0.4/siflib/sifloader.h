@@ -4,6 +4,7 @@
 
 //#include "sif2.h"
 #include "../common/BList.h"
+#include "../extract-auto/cachefiles.h"
 #define SIF_MAX_GROUPS			255		// limitation of SECTION_GROUPS format
 
 /*
@@ -68,7 +69,7 @@ private:
 	void ClearIndex();
 	
 	BList fIndex;			// index table from header (list of SIFIndexEntry)
-	FILE *fFP;				// open file handle
+	CFILE *fFP;				// open file handle
 	
 	uint32_t fTotalDataAdded;	// for saving
 };
