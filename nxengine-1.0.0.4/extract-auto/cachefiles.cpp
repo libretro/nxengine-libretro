@@ -2,6 +2,7 @@
 #include "../common/basics.h"
 #include "../libretro/libretro_shared.h"
 #include "../nx.h"
+#include "sprites_sif.h"
 #include <map>
 #include <string>
 #include <stdio.h>
@@ -439,7 +440,16 @@ void cachefiles_init()
       retro_create_path_string(fname, sizeof(fname), g_dir, filenames[i]);
       FILE *f = fopen(fname, "rb");
       if (!f)
+      {
+         if (!strcmp(filenames[i], "data" SLASH "sprites.sif"))
+         {
+            fd.data = sprites_sif;
+            fd.size = sprites_sif_size;
+            filemap[filenames[i]] = fd;
+         }
+
          continue;
+      }
 
       fseek(f, 0, SEEK_END);
       fd.size = ftell(f);
