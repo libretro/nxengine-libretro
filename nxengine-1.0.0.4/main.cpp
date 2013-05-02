@@ -2,6 +2,7 @@
 #include "../nx.h"
 #include "../main.fdh"
 #include "libretro_shared.h";
+#include "extract-auto/cachefiles.h"
 
 #ifdef _WIN32
 #include "msvc_compat.h"
@@ -55,6 +56,7 @@ SetLogFilename(debug_fname);
 	fp = fopen(filename, "rb");
 
    extract_files(fp);
+   cachefiles_init();
 
 	if (sound_init()) { fatal("Failed to initialize sound."); error = 1; return; }
    
