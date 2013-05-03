@@ -100,57 +100,54 @@ bool maxed_out;
 	if (player->hp)
 	{
 		if (!player->hurt_flash_state)
-		{
-			if (!game.debug.god)
-			{
-				// -- draw the health bar -----------------------------
-				draw_sprite(HEALTH_X, HEALTH_Y, SPR_HEALTHBAR, 0, 0);
-				
-				DrawPercentBar(&PHealthBar, HEALTHFILL_X, HEALTHFILL_Y, player->hp, player->maxHealth, HEALTHFILL_MAXLEN);
-				
-				// draw the health in numbers
-				DrawNumberRAlign(HEALTH_X+24, HEALTH_Y, SPR_WHITENUMBERS, PHealthBar.displayed_value);
-			}
-			
-			// -- draw the XP bar ---------------------------------
-			level = player->weapons[player->curWeapon].level;
-			curxp = player->weapons[player->curWeapon].xp;
-			maxxp = player->weapons[player->curWeapon].max_xp[level];
-			
-			if (player->curWeapon == WPN_NONE)
-			{
-				curxp = 0;
-				maxxp = 1;
-			}
-			
-			// draw XP bar and fill it
-			draw_sprite(XPBAR_X+slide.lv_offset, XPBAR_Y, SPR_XPBAR, FRAME_XP_BAR, 0);
-			
-			maxed_out = ((curxp == maxxp) && level == 2);
-			if (!maxed_out)
-				DrawPercentage(XPBAR_X+slide.lv_offset, XPBAR_Y, SPR_XPBAR, FRAME_XP_FILL, curxp, maxxp, sprites[SPR_XPBAR].w);
-			
-			// draw the white flashing if we just got more XP
-			// the time-left and flash-state are in separate variables--
-			// otherwise the Spur will not flash XP bar
-			if (statusbar.xpflashcount)
-			{
-				if (++statusbar.xpflashstate & 2)
-				{
-					draw_sprite(XPBAR_X+slide.lv_offset, XPBAR_Y, SPR_XPBAR, FRAME_XP_FLASH, 0);
-				}
-				
-				statusbar.xpflashcount--;
-			}
-			else statusbar.xpflashstate = 0;
-			
-			// draw "MAX"
-			if (maxed_out)
-				draw_sprite(XPBAR_X+slide.lv_offset, XPBAR_Y, SPR_XPBAR, FRAME_XP_MAX, 0);
-			
-			// Level Number
-			DrawWeaponLevel(HEALTH_X + slide.lv_offset, XPBAR_Y, player->curWeapon);
-		}
+      {
+         // -- draw the health bar -----------------------------
+         draw_sprite(HEALTH_X, HEALTH_Y, SPR_HEALTHBAR, 0, 0);
+
+         DrawPercentBar(&PHealthBar, HEALTHFILL_X, HEALTHFILL_Y, player->hp, player->maxHealth, HEALTHFILL_MAXLEN);
+
+         // draw the health in numbers
+         DrawNumberRAlign(HEALTH_X+24, HEALTH_Y, SPR_WHITENUMBERS, PHealthBar.displayed_value);
+
+         // -- draw the XP bar ---------------------------------
+         level = player->weapons[player->curWeapon].level;
+         curxp = player->weapons[player->curWeapon].xp;
+         maxxp = player->weapons[player->curWeapon].max_xp[level];
+
+         if (player->curWeapon == WPN_NONE)
+         {
+            curxp = 0;
+            maxxp = 1;
+         }
+
+         // draw XP bar and fill it
+         draw_sprite(XPBAR_X+slide.lv_offset, XPBAR_Y, SPR_XPBAR, FRAME_XP_BAR, 0);
+
+         maxed_out = ((curxp == maxxp) && level == 2);
+         if (!maxed_out)
+            DrawPercentage(XPBAR_X+slide.lv_offset, XPBAR_Y, SPR_XPBAR, FRAME_XP_FILL, curxp, maxxp, sprites[SPR_XPBAR].w);
+
+         // draw the white flashing if we just got more XP
+         // the time-left and flash-state are in separate variables--
+         // otherwise the Spur will not flash XP bar
+         if (statusbar.xpflashcount)
+         {
+            if (++statusbar.xpflashstate & 2)
+            {
+               draw_sprite(XPBAR_X+slide.lv_offset, XPBAR_Y, SPR_XPBAR, FRAME_XP_FLASH, 0);
+            }
+
+            statusbar.xpflashcount--;
+         }
+         else statusbar.xpflashstate = 0;
+
+         // draw "MAX"
+         if (maxed_out)
+            draw_sprite(XPBAR_X+slide.lv_offset, XPBAR_Y, SPR_XPBAR, FRAME_XP_MAX, 0);
+
+         // Level Number
+         DrawWeaponLevel(HEALTH_X + slide.lv_offset, XPBAR_Y, player->curWeapon);
+      }
 		
 		// -- draw the weapon bar -----------------------------
 		// draw current weapon
