@@ -250,9 +250,6 @@ static inline void run_tick()
 
 	org_run();
 
-	//platform_sync_to_vblank();
-	screen->Flip();
-
 	memcpy(lastinputs, inputs, sizeof(lastinputs));
 }
 

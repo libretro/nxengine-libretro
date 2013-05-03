@@ -162,6 +162,9 @@ void retro_run(void)
 
    //fprintf(stderr, "[NX]: Start frame.\n");
    //int64_t start_time = get_usec();
+   
+	//platform_sync_to_vblank();
+	screen->Flip();
 
    if (retro_60hz)
    {
