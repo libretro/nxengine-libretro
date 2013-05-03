@@ -31,7 +31,7 @@ COMMON_OBJS := $(NX_DIR)/common/BList.cpp $(NX_DIR)/common/bufio.cpp $(NX_DIR)/c
 
 ENDGAME_OBJS := $(NX_DIR)/endgame/credits.cpp $(NX_DIR)/endgame/CredReader.cpp $(NX_DIR)/endgame/island.cpp $(NX_DIR)/endgame/misc.cpp
 
-EXTRACT_OBJS := $(EXTRACTDIR)/crc.cpp $(EXTRACTDIR)/extractorg.cpp $(EXTRACTDIR)/extractfiles.cpp $(EXTRACTDIR)/extractpxt.cpp $(EXTRACTDIR)/extractstages.cpp
+EXTRACT_OBJS := $(EXTRACTDIR)/extractorg.cpp $(EXTRACTDIR)/extractpxt.cpp $(EXTRACTDIR)/extractstages.cpp $(EXTRACTDIR)/cachefiles.cpp
 
 GRAPHICS_OBJS := $(NX_DIR)/graphics/graphics.cpp $(NX_DIR)/graphics/nxsurface.cpp $(NX_DIR)/graphics/font.cpp $(NX_DIR)/graphics/sprites.cpp $(NX_DIR)/graphics/tileset.cpp
 
