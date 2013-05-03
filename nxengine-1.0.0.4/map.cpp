@@ -638,8 +638,7 @@ void map_scroll_do(void)
 			{
 				scroll_normal();
 				
-				if (!inputs[DEBUG_MOVE_KEY] || !settings->enable_debug_keys)
-					doing_normal_scroll = true;
+            doing_normal_scroll = true;
 			}
 		}
 	}
