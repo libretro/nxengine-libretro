@@ -519,7 +519,6 @@ ScriptInstance *s = &curscript;
 
 void ExecScript(ScriptInstance *s)
 {
-char debugbuffer[256];
 int cmd;
 int val, parm[6];
 int i;
@@ -630,13 +629,11 @@ int cmdip;
 		
 		if (cmd != OP_TEXT)
 		{
-			snprintf(debugbuffer, sizeof(debugbuffer), "%04x <%s ", cmd, mnemonic);
 			for(i=0;i<cmd_table[cmd].nparams;i++)
 			{
 				val = ((int)s->program[s->ip++]) << 8;
 				val |= s->program[s->ip++];
 				parm[i] = val;
-				snprintf(debugbuffer, sizeof(debugbuffer), "%s %04d", debugbuffer, val);
 			}
 		}
 		
