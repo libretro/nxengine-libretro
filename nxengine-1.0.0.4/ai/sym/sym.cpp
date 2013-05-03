@@ -134,9 +134,6 @@ void ai_hvtrigger(Object *o)
 		}
 	}
 	
-	if (game.debug.DrawBoundingBoxes)
-		AddDebugMark(o->hvt.x1, o->hvt.y1, o->hvt.x2, o->hvt.y2, DM_BOX, 255, 0, 255);
-	
 	int px = player->CenterX();
 	if (px > o->hvt.x2) return;
 	if (px < o->hvt.x1) return;
@@ -144,9 +141,6 @@ void ai_hvtrigger(Object *o)
 	int py = player->CenterY();
 	if (py > o->hvt.y2) return;
 	if (py < o->hvt.y1) return;
-	
-	if (game.debug.DrawBoundingBoxes)
-		AddDebugMark(o->hvt.x1, o->hvt.y1, o->hvt.x2, o->hvt.y2, DM_BOX, 0, 255, 0);
 	
 	// ok then, we can trigger, except for:
 	if (GetCurrentScript() == -1 &&		// no override other scripts

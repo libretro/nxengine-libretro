@@ -38,7 +38,6 @@ int nOnscreenObjects;
 
 Game game;
 TextBox textbox;
-DebugConsole console;
 ObjProp objprop[OBJ_LAST];
 
 // init Game object: only called once during startup
@@ -53,11 +52,7 @@ bool Game::init()
 	for(i=0;i<OBJ_LAST;i++)
 	{
 		objprop[i].shaketime = 16;
-		#ifdef DEBUG	// big red "NO" sprite points out unimplemented objects
-			objprop[i].sprite = SPR_UNIMPLEMENTED_OBJECT;
-		#else
-			objprop[i].sprite = SPR_NULL;
-		#endif
+      objprop[i].sprite = SPR_NULL;
 	}
 	
 	AssignSprites();		// auto-generated function to assign sprites to objects
@@ -196,10 +191,6 @@ bool Game::pause(int pausemode, int param)
 
 void Game::tick(void)
 {
-#ifdef DEBUG
-	debug_clear();
-#endif
-	
 	if (game.paused)
 	{
 		tickfunctions[game.paused].OnTick();
@@ -212,11 +203,6 @@ void Game::tick(void)
 		// call the tick function for the current game mode
 		tickfunctions[game.mode].OnTick();
 	}
-	
-#ifdef DEBUG
-	DrawDebug();
-#endif
-	console.Draw();
 }
 
 
@@ -237,7 +223,6 @@ void Game::reset()
 	
 	game.pause(false);
 	game.setmode(GM_INTRO, 0, true);
-	console.SetVisible(false);
 }
 
 /*
@@ -697,12 +682,5 @@ void AssignExtraSprites(void)
 	objprop[OBJ_UD_MINICORE_IDLE].sprite = SPR_UD_MINICORE;
 	
 	objprop[OBJ_WHIMSICAL_STAR].sprite = SPR_WHIMSICAL_STAR;	// for bbox only, object is invisible
-	
-	// these are set by AI; this is just to silence unimplemented object warnings
-	#ifdef DEBUG
-	objprop[OBJ_CRITTER_FLYING].sprite = SPR_CRITTER_FLYING_CYAN;
-	for(int i=OBJ_SHOTS_START;i<=OBJ_SHOTS_END;i++)
-		if (objprop[i].sprite==SPR_UNIMPLEMENTED_OBJECT) objprop[i].sprite = SPR_NULL;
-	#endif
 }
 

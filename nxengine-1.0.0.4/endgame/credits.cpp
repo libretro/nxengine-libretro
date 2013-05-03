@@ -81,7 +81,6 @@ CredCommand cmd;
 
 	if (script.ReadCommand(&cmd))
 	{
-		console.Print("script.ReadCommand failed: credits terminated");
 		roll_running = false;
 		return;
 	}
@@ -137,7 +136,6 @@ CredCommand cmd;
 		case CC_END:		 roll_running = false; break;
 		
 		default:
-			console.Print("Unhandled command '%c'; credits terminated", cmd.type);
 			roll_running = false;
 		break;
 	}
@@ -162,7 +160,6 @@ bool tried_rewind = false;
 			}
 			else
 			{
-				console.Print("Missing label %04d; credits terminated", label);
 				roll_running = false;
 				return 1;
 			}

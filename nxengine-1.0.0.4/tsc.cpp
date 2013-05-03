@@ -801,7 +801,9 @@ int cmdip;
 				if (game.stageboss.object)
 					map_focus(game.stageboss.object, parm[1]);
 				else
+            {
 					NX_ERR("tsc: <FOB without stage boss\n");
+            }
 			}
 			break;
 			case OP_FOM:	// focus back to player (mychar)
@@ -846,7 +848,9 @@ int cmdip;
 				{	// <BSL0000 means the stage boss
 					target = game.stageboss.object;
 					if (!game.stageboss.object)
+               {
 						NX_ERR("<BSL0000 but no stage boss present\n");
+               }
 				}
 				else
 				{
@@ -1138,11 +1142,6 @@ int cmdip;
 			
 			default:
 			{
-				if (cmd < OP_COUNT)
-					console.Print("- unimplemented opcode %s; script %04d halted.", cmd_table[cmd].mnemonic, s->scriptno);
-				else
-					console.Print("- unimplemented opcode %02x; script %04d halted.", cmd, s->scriptno);
-				
 				StopScript(s);
 				return;
 			}

@@ -209,7 +209,6 @@ int level = curweapon->level;
 		break;
 		
 		default:
-			console.Print("FireWeapon: cannot fire unimplemented weapon %d", player->curWeapon);
 			sound(SND_BONK_HEAD);
 		break;
 	}
