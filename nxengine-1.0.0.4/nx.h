@@ -5,9 +5,6 @@
 #include <SDL.h>
 #include <stdio.h>
 #include <ctype.h>
-//#include <sys/param.h>
-//#include <limits.h>
-//
 #include "nx_logger.h"
 
 #include "config.h"
@@ -51,8 +48,6 @@ class Object;
 #include "floattext.h"
 #include "object.h"
 #include "ObjManager.h"
-#include "console.h"
-#include "debug.h"
 #include "game.h"
 #include "caret.h"
 #include "screeneffect.h"

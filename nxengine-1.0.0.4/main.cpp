@@ -317,7 +317,5 @@ char buffer[80];
 	va_start(ar, fmt);
 	vsnprintf(buffer, sizeof(buffer), fmt, ar);
 	va_end(ar);
-	
-	console.Print(buffer);
 #endif
 }
