@@ -3,8 +3,7 @@
 #include "../libretro/libretro_shared.h"
 #include "../nx.h"
 #include "sprites_sif.h"
-#include <map>
-#include <string>
+#include "uthash.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -470,7 +469,13 @@ bmp_files[] =
 	"wavetable.dat", 0x110664, 25599, 0xcaa7b1dd, NULL,
 };
 
-static std::map<std::string, CFILE> filemap;
+struct hash_struct {
+   char filename[32];
+   CFILE fd;
+   UT_hash_handle hh;
+};
+
+static struct hash_struct *filemap = NULL;
 
 extern signed short wavetable[100][256];
 
@@ -480,11 +485,15 @@ void cachefiles_init(FILE *exefp)
    for (i = 0; i < sizeof(filenames) / sizeof(filenames[0]); i++)
    {
       printf("%s\n", filenames[i]);
+      struct hash_struct *entry;
       // reentrancy test
-      if (filemap.find(filenames[i]) != filemap.end())
+      HASH_FIND_STR(filemap, filenames[i], entry);
+      if (entry)
          continue;
 
-      CFILE fd = {0};
+      entry = (struct hash_struct *) calloc(sizeof(struct hash_struct), 1);
+      if (!entry)
+         continue;
       char fname[1024];
       retro_create_path_string(fname, sizeof(fname), g_dir, filenames[i]);
       FILE *f = fopen(fname, "rb");
@@ -492,67 +501,74 @@ void cachefiles_init(FILE *exefp)
       {
          if (!strcmp(filenames[i], "data" SLASH "sprites.sif"))
          {
-            fd.data = sprites_sif;
-            fd.size = sprites_sif_size;
-            filemap[filenames[i]] = fd;
+            entry->fd.data = sprites_sif;
+            entry->fd.size = sprites_sif_size;
+            strcpy(entry->filename, filenames[i]);
+            HASH_ADD_STR(filemap, filename, entry);
          }
 
          continue;
       }
 
       fseek(f, 0, SEEK_END);
-      fd.size = ftell(f);
+      entry->fd.size = ftell(f);
       fseek(f, 0, SEEK_SET);
 
-      fd.data = (uint8_t *) malloc(fd.size);
-      if (!fd.data)
+      entry->fd.data = (uint8_t *) malloc(entry->fd.size);
+      if (!entry->fd.data)
       {
          fclose(f);
          continue;
       }
 
-      fread(fd.data, fd.size, 1, f);
+      fread(entry->fd.data, entry->fd.size, 1, f);
       fclose(f);
 
-      filemap[filenames[i]] = fd;
+      strcpy(entry->filename, filenames[i]);
+      HASH_ADD_STR(filemap, filename, entry);
    }
 
    
    for (i = 0; i < sizeof(bmp_files) / sizeof(bmp_files[0]); i++)
    {
+      struct hash_struct *entry;
       // reentrancy test
-      if (filemap.find(bmp_files[i].filename) != filemap.end())
+      HASH_FIND_STR(filemap, bmp_files[i].filename, entry);
+      if (entry)
          continue;
       printf("%s\n", bmp_files[i].filename);
-      CFILE fd = {0};
+      entry = (struct hash_struct *) calloc(sizeof(struct hash_struct), 1);
+      if (!entry)
+         continue;
       size_t hoff = bmp_files[i].header ? 25 : 0;
-      fd.size = bmp_files[i].length + hoff;
-      fd.data = (uint8_t *) malloc(fd.size);
-      if (!fd.data)
+      entry->fd.size = bmp_files[i].length + hoff;
+      entry->fd.data = (uint8_t *) malloc(entry->fd.size);
+      if (!entry->fd.data)
          continue;
 
       if (bmp_files[i].header)
-         memcpy(fd.data, bmp_files[i].header, 25);
+         memcpy(entry->fd.data, bmp_files[i].header, 25);
 
       fseek(exefp, bmp_files[i].offset, SEEK_SET);
-      fread(fd.data + hoff, bmp_files[i].length, 1, exefp);
+      fread(entry->fd.data + hoff, bmp_files[i].length, 1, exefp);
 
       if (strcmp(bmp_files[i].filename, "wavetable.dat") == 0)
       {
          fprintf(stderr, "found wavetable.dat\n");
          // wavetable.dat
-         signed char *ptr = (signed char*)&fd.data[0];
+         signed char *ptr = (signed char*)&entry->fd.data[0];
          int wav, sampl;
 
          for(wav=0;wav<100;wav++)
             for(sampl=0;sampl<256;sampl++)
                wavetable[wav][sampl] = (signed short)((int)(*ptr++) << 8); // 256 = (32768 / 128)-- convert to 16-bit
 
-         free(fd.data);
+         free(entry->fd.data);
          continue;
       }
 
-      filemap[bmp_files[i].filename] = fd;
+      strcpy(entry->filename, bmp_files[i].filename);
+      HASH_ADD_STR(filemap, filename, entry);
    }
 }
 
@@ -565,12 +581,15 @@ CFILE *copen(const char *fname, const char *mode)
    CFILE *f = (CFILE *)malloc(sizeof(CFILE));
    if (!f)
       return NULL;
-   *f = filemap[fname];
-   if (!f->data)
+
+   struct hash_struct *entry;
+   HASH_FIND_STR(filemap, fname, entry);
+   if (!entry)
    {
       free(f);
       return NULL;
    }
+   *f = entry->fd;
    f->offset = 0;
    return f;
 }
