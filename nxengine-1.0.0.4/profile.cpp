@@ -229,7 +229,7 @@ void c------------------------------() {}
 // returns the filename for a save file given it's number
 const char *GetProfileName(int num)
 {
-   char pfname_tmp[1024];
+   static char pfname_tmp[1024];
    char profile_name[1024];
 
 	if (num == 0)
