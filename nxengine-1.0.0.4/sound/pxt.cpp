@@ -47,7 +47,6 @@ static struct
 	int16_t *buffer;
 	int len;
 	int loops_left;
-	void (*DoneCallback)(int, int);
 	int channel;
 } sound_fx[256];
 int load_top;
@@ -623,11 +622,6 @@ int insize = snd->final_size;
 // on error, returns -1.
 int pxt_Play(int chan, int slot, char loop)
 {
-	return pxt_PlayWithCallback(chan, slot, loop, NULL);
-}
-
-int pxt_PlayWithCallback(int chan, int slot, char loop, void (*FinishedCB)(int, int))
-{
 	if (sound_fx[slot].buffer)
 	{
 		if (loop)
@@ -640,7 +634,6 @@ int pxt_PlayWithCallback(int chan, int slot, char loop, void (*FinishedCB)(int, 
 		else
 			chan = SSPlayChunk(chan, sound_fx[slot].buffer, sound_fx[slot].len, slot, pxtSoundDone);
 		
-		sound_fx[slot].DoneCallback = FinishedCB;
 		sound_fx[slot].channel = chan;
 		
 		if (chan < 0)
@@ -652,17 +645,14 @@ int pxt_PlayWithCallback(int chan, int slot, char loop, void (*FinishedCB)(int, 
 	else
 	{
 		NX_ERR("pxt_Play: sound slot 0x%02x not rendered\n", slot);
-		return -1;
 	}
+
+   return -1;
 }
 
 static void pxtSoundDone(int chan, int slot)
 {
 	sound_fx[slot].channel = -1;
-	if (sound_fx[slot].DoneCallback)
-	{
-		(*sound_fx[slot].DoneCallback)(chan, slot);
-	}
 }
 
 static void pxtLooper(int chan, int slot)

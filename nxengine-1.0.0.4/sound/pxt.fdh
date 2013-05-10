@@ -33,7 +33,6 @@ char pxt_Render(stPXSound *snd);
 void pxt_PrepareToPlay(stPXSound *snd, int slot);
 void pxt_ChangePitch(stPXSound *snd, double factor);
 int pxt_Play(int chan, int slot, char loop);
-int pxt_PlayWithCallback(int chan, int slot, char loop, void (*FinishedCB)(int, int));
 static void pxtSoundDone(int chan, int slot);
 static void pxtLooper(int chan, int slot);
 void pxt_Stop(int slot);
