@@ -15,10 +15,8 @@ void SSSetVolume(int c, int newvol);
 void SSAbortChannel(int c);
 int SSEnqueueChunk(int c, signed short *buffer, int len, int userdata, void(*FinishedCB)(int, int));
 char SSChannelPlaying(int c);
-void SSLockAudio(void);
 int SSGetCurUserData(int c);
 int SSGetSamplePos(int c);
-void SSUnlockAudio(void);
 
 
 /* located in sound/org.cpp */

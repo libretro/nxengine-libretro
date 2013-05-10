@@ -173,13 +173,10 @@ SSChunk *chunk;
 		return -1;
 	}
 	
-	SSLockAudio();
-	
 	if (c < 0) c = SSFindFreeChannel();
 	if (c==-1)
 	{
 		NX_ERR("SSEnqueueChunk: no available sound channels!\n");
-		SSUnlockAudio();
 		return -1;
 	}
 	
@@ -203,10 +200,8 @@ SSChunk *chunk;
 	if (chan->tail==chan->head)
 	{
 		NX_ERR("SS: overqueued channel %d; Bad Things about to happen\n", c);
-		SSUnlockAudio();
 		return -1;
 	}
-	SSUnlockAudio();
 	
 	return c;
 }
@@ -225,13 +220,7 @@ int SSPlayChunk(int c, signed short *buffer, int len, int userdata, void(*Finish
 // returns true if channel c is currently playing
 char SSChannelPlaying(int c)
 {
-int result;
-
-	SSLockAudio();
-	result = (channel[c].head != channel[c].tail);
-	SSUnlockAudio();
-	
-	return result;
+	return (channel[c].head != channel[c].tail);
 }
 
 // returns the userdata member of the currently playing chunk on channel c.
@@ -240,19 +229,14 @@ int SSGetCurUserData(int c)
 {
 int result;
 
-	SSLockAudio();
-	
 	if (channel[c].head != channel[c].tail)
-	{
 		result = (channel[c].chunks[channel[c].head].userdata);
-	}
 	else
 	{
 		NX_ERR("SSGetUserData: channel %d is not playing!\n", c);
 		result = -1;
 	}
 	
-	SSUnlockAudio();
 	return result;
 }
 
@@ -262,10 +246,8 @@ int result;
 // components of a stereo sample as a single sample.
 int SSGetSamplePos(int c)
 {
-int result;
+   int result;
 
-	SSLockAudio();
-	
 	if (channel[c].head != channel[c].tail)
 	{
 		result = (channel[c].chunks[channel[c].head].bytepos / 4);
@@ -276,7 +258,6 @@ int result;
 		result = -1;
 	}
 	
-	SSUnlockAudio();
 	return result;
 }
 
@@ -285,25 +266,16 @@ int result;
 // if not, does nothing.
 void SSAbortChannel(int c)
 {
-	SSLockAudio();
-	
 	channel[c].head = channel[c].tail;
-	
-	SSUnlockAudio();
 }
 
 
 // aborts all sounds with a userdata value matching "ud".
 void SSAbortChannelByUserData(int ud)
 {
-int c;
-	SSLockAudio();
-	for(c=0;c<SS_NUM_CHANNELS;c++)
-	{
+	for(int c=0;c<SS_NUM_CHANNELS;c++)
 		if (SSChannelPlaying(c) && SSGetCurUserData(c)==ud)
 			SSAbortChannel(c);
-	}
-	SSUnlockAudio();
 }
 
 // changes the volume of a channel.
@@ -311,28 +283,5 @@ int c;
 // will have the new volume setting, until the SSSetVolume function is removed.
 void SSSetVolume(int c, int newvol)
 {
-	SSLockAudio();
 	channel[c].volume = newvol;
-	SSUnlockAudio();
 }
-
-/*
-void c------------------------------() {}
-*/
-
-// the effects of SSLockAudio are cumulative--calling it more than once will lock
-// the audio "more", and you have to call it the same numbers of times before it will unlock.
-void SSLockAudio(void)
-{
-}
-
-void SSUnlockAudio(void)
-{
-}
-
-/*
-void c------------------------------() {}
-*/
-
-
-
