@@ -4,10 +4,8 @@
 /* located in sound/sslib.cpp */
 
 //-------------------[referenced from sound/pxt.cpp]-----------------//
-void SSLockAudio(void);
 int SSPlayChunk(int c, signed short *buffer, int len, int userdata, void(*FinishedCB)(int, int));
 int SSEnqueueChunk(int c, signed short *buffer, int len, int userdata, void(*FinishedCB)(int, int));
-void SSUnlockAudio(void);
 void SSAbortChannel(int c);
 
 

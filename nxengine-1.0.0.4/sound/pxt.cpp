@@ -630,9 +630,6 @@ int pxt_PlayWithCallback(int chan, int slot, char loop, void (*FinishedCB)(int, 
 {
 	if (sound_fx[slot].buffer)
 	{
-		// locking the audio here ensures that sound won't finish before we get down
-		// below and finish setting it's params.
-		SSLockAudio();
 		if (loop)
 		{
 			chan = SSPlayChunk(chan, sound_fx[slot].buffer, sound_fx[slot].len, slot, pxtLooper);
@@ -641,13 +638,10 @@ int pxt_PlayWithCallback(int chan, int slot, char loop, void (*FinishedCB)(int, 
 			sound_fx[slot].loops_left = (loop==-1) ? -1 : (loop - 1);
 		}
 		else
-		{
 			chan = SSPlayChunk(chan, sound_fx[slot].buffer, sound_fx[slot].len, slot, pxtSoundDone);
-		}
 		
 		sound_fx[slot].DoneCallback = FinishedCB;
 		sound_fx[slot].channel = chan;
-		SSUnlockAudio();
 		
 		if (chan < 0)
 		{
