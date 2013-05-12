@@ -2277,8 +2277,16 @@ struct blit_table {
 	Uint32 blit_features;
 	void *aux_data;
 	SDL_loblit blitfunc;
-	enum { NO_ALPHA=1, SET_ALPHA=2, COPY_ALPHA=4 } alpha;
+    unsigned alpha;
 };
+
+enum
+{
+   NO_ALPHA=1,
+   SET_ALPHA=2,
+   COPY_ALPHA=4
+} alpha;
+
 static const struct blit_table normal_blit_1[] = {
 	/* Default for 8-bit RGB source, an invalid combination */
 	{ 0,0,0, 0, 0,0,0, 0, NULL, NULL },
