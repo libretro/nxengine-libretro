@@ -974,6 +974,10 @@ Object * const &o = this;
 void c------------------------------() {}
 */
 
+#ifdef _XBOX
+#include "objfunc_ptrs.h"
+#endif
+
 void Object::OnTick()
 {
 #ifdef _XBOX
@@ -991,6 +995,63 @@ void Object::OnTick()
       case  OBJ_DOOR_ENEMY:
          ai_door_enemy(this);
          break;
+      case OBJ_BLADE3_SHOT:
+         ai_blade_l3_shot(this);
+         break;
+      case OBJ_BUBBLER12_SHOT:
+         ai_bubbler_l12(this);
+         break;
+      case OBJ_BUBBLER3_SHOT:
+         ai_bubbler_l3(this);
+         break;
+      case OBJ_BUBBLER_SHARP:
+         ai_bubbler_sharp(this);
+         break;
+      case OBJ_FIREBALL1:
+         ai_fireball(this);
+         break;
+      case OBJ_FIREBALL23:
+         ai_fireball_level_23(this);
+         break;
+      case OBJ_FIREBALL_TRAIL:
+         ai_fireball_trail(this);
+         break;
+      case OBJ_NEMESIS_SHOT:
+      case OBJ_NEMESIS_SHOT_CURLY:
+         ai_nemesis_shot(this);
+         break;
+      case OBJ_POLAR_SHOT:
+      case OBJ_MGUN_L1_SHOT:
+      case OBJ_MGUN_LEADER:
+         ai_polar_shot(this);
+         break;
+      case OBJ_MGUN_TRAIL:
+         ai_mgun_trail(this);
+         break;
+      case OBJ_MGUN_SPAWNER:
+         ai_mgun_spawner(this);
+         break;
+      case OBJ_SPUR_SHOT:
+         ai_spur_shot(this);
+         break;
+      case OBJ_SPUR_TRAIL:
+         ai_spur_trail(this);
+         break;
+      case OBJ_SNAKE1_SHOT:
+         ai_snake(this);
+         break;
+      case OBJ_SNAKE23_SHOT:
+         ai_snake_23(this);
+         break;
+      case OBJ_SNAKE_TRAIL:
+         ai_snake_trail(this);
+         break;
+      case OBJ_WHIMSICAL_STAR:
+         ai_whimsical_star(this);
+         break;
+      case OBJ_SMOKE_CLOUD:
+         ai_smokecloud(this);
+         break;
    }
 #else
 	if (objprop[this->type].ai_routines.ontick)
@@ -1000,8 +1061,27 @@ void Object::OnTick()
 
 void Object::OnAftermove()
 {
+#ifdef _XBOX
+   switch (type)
+   {
+      case OBJ_BLADE12_SHOT:
+         aftermove_blade_l12_shot(this);
+         break;
+      case OBJ_BLADE_SLASH:
+         aftermove_blade_slash(this);
+         break;
+      case OBJ_MISSILE_SHOT:
+      case OBJ_SUPERMISSILE_SHOT:
+         ai_missile_shot(this);
+         break;
+      case OBJ_MISSILE_BOOM_SPAWNER:
+         ai_missile_boom_spawner(this);
+         break;
+   }
+#else
 	if (objprop[this->type].ai_routines.aftermove)
 		(*objprop[this->type].ai_routines.aftermove)(this);
+#endif
 }
 
 void Object::OnSpawn()
