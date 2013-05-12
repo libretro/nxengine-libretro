@@ -976,8 +976,26 @@ void c------------------------------() {}
 
 void Object::OnTick()
 {
+#ifdef _XBOX
+   switch(type)
+   {
+      case OBJ_BAT_BLUE:
+         ai_bat_up_down(this);
+         break;
+      case OBJ_CRITTER_HOPPING_BLUE:
+         ai_critter(this);
+         break;
+      case OBJ_HERMIT_GUNSMITH:
+         ai_hermit_gunsmith(this);
+         break;
+      case  OBJ_DOOR_ENEMY:
+         ai_door_enemy(this);
+         break;
+   }
+#else
 	if (objprop[this->type].ai_routines.ontick)
 		(*objprop[this->type].ai_routines.ontick)(this);
+#endif
 }
 
 void Object::OnAftermove()
