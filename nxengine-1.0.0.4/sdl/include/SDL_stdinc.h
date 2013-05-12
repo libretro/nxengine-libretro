@@ -59,11 +59,7 @@
 # endif
 # include <string.h>
 #endif
-#if defined(HAVE_INTTYPES_H)
-# include <inttypes.h>
-#elif defined(HAVE_STDINT_H)
-# include <stdint.h>
-#endif
+#include <stdint.h>
 #ifdef HAVE_CTYPE_H
 # include <ctype.h>
 #endif
@@ -158,9 +154,7 @@ extern "C" {
 #define SDL_free	free
 
 #if defined(HAVE_ALLOCA) && !defined(alloca)
-# if defined(HAVE_ALLOCA_H)
-#  include <alloca.h>
-# elif defined(__GNUC__)
+# if defined(__GNUC__)
 #  define alloca __builtin_alloca
 # elif defined(_MSC_VER)
 #  include <malloc.h>

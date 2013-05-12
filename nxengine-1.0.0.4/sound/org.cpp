@@ -111,8 +111,6 @@ static bool load_drum_pxt(FILE *fd, int s, int d)
    signed short sample;
    stPXSound snd;
 
-   NX_LOG("load_drum: loading %s into drum index %d\n", fname, d);
-
    if (pxt_load(fd, &snd, s)) return 1;
    pxt_Render(&snd);
 

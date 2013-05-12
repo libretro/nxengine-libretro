@@ -54,23 +54,7 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 	} else {
 		screen = NULL;
 	}
-	if ( screen && ((screen->flags&SDL_HWSURFACE) == SDL_HWSURFACE) ) {
-		if ( (flags&(SDL_SRCCOLORKEY|SDL_SRCALPHA)) != 0 ) {
-			flags |= SDL_HWSURFACE;
-		}
-		if ( (flags & SDL_SRCCOLORKEY) == SDL_SRCCOLORKEY ) {
-			if ( ! current_video->info.blit_hw_CC ) {
-				flags &= ~SDL_HWSURFACE;
-			}
-		}
-		if ( (flags & SDL_SRCALPHA) == SDL_SRCALPHA ) {
-			if ( ! current_video->info.blit_hw_A ) {
-				flags &= ~SDL_HWSURFACE;
-			}
-		}
-	} else {
-		flags &= ~SDL_HWSURFACE;
-	}
+	flags &= ~SDL_HWSURFACE;
 
 	/* Allocate the surface */
 	surface = (SDL_Surface *)SDL_malloc(sizeof(*surface));
@@ -79,24 +63,7 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 		return(NULL);
 	}
 	surface->flags = SDL_SWSURFACE;
-	if ( (flags & SDL_HWSURFACE) == SDL_HWSURFACE ) {
-		if ((Amask) && (video->displayformatalphapixel))
-		{
-			depth = video->displayformatalphapixel->BitsPerPixel;
-			Rmask = video->displayformatalphapixel->Rmask;
-			Gmask = video->displayformatalphapixel->Gmask;
-			Bmask = video->displayformatalphapixel->Bmask;
-			Amask = video->displayformatalphapixel->Amask;
-		}
-		else
-		{
-			depth = screen->format->BitsPerPixel;
-			Rmask = screen->format->Rmask;
-			Gmask = screen->format->Gmask;
-			Bmask = screen->format->Bmask;
-			Amask = screen->format->Amask;
-		}
-	}
+
 	surface->format = SDL_AllocFormat(depth, Rmask, Gmask, Bmask, Amask);
 	if ( surface->format == NULL ) {
 		SDL_free(surface);
@@ -689,13 +656,6 @@ void SDL_UnlockSurface (SDL_Surface *surface)
 
 	/* Perform the unlock */
 	surface->pixels = (Uint8 *)surface->pixels - surface->offset;
-
-	/* Unlock hardware or accelerated surfaces */
-	if ( surface->flags & (SDL_HWSURFACE|SDL_ASYNCBLIT) ) {
-		SDL_VideoDevice *video = current_video;
-		SDL_VideoDevice *this  = current_video;
-		video->UnlockHWSurface(this, surface);
-	}
 }
 
 /* 
@@ -834,11 +794,6 @@ void SDL_FreeSurface (SDL_Surface *surface)
 	if ( surface->map != NULL ) {
 		SDL_FreeBlitMap(surface->map);
 		surface->map = NULL;
-	}
-	if ( surface->hwdata ) {
-		SDL_VideoDevice *video = current_video;
-		SDL_VideoDevice *this  = current_video;
-		video->FreeHWSurface(this, surface);
 	}
 	if ( surface->pixels &&
 	     ((surface->flags & SDL_PREALLOC) != SDL_PREALLOC) ) {

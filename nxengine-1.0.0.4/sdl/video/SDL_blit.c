@@ -254,36 +254,9 @@ int SDL_CalculateBlit(SDL_Surface *surface)
 			if ( hw_blit_ok && (surface->flags & SDL_SRCALPHA) ) {
 				hw_blit_ok = current_video->info.blit_hw_A;
 			}
-		} else {
-			/* We only support accelerated blitting to hardware */
-			if ( surface->map->dst->flags & SDL_HWSURFACE ) {
-				hw_blit_ok = current_video->info.blit_sw;
-			} else {
-				hw_blit_ok = 0;
-			}
-			if (hw_blit_ok && (surface->flags & SDL_SRCCOLORKEY)) {
-				hw_blit_ok = current_video->info.blit_sw_CC;
-			}
-			if ( hw_blit_ok && (surface->flags & SDL_SRCALPHA) ) {
-				hw_blit_ok = current_video->info.blit_sw_A;
-			}
 		}
-		if ( hw_blit_ok ) {
-			SDL_VideoDevice *video = current_video;
-			SDL_VideoDevice *this  = current_video;
-			video->CheckHWBlit(this, surface, surface->map->dst);
-		}
-	}
-	
-	/* if an alpha pixel format is specified, we can accelerate alpha blits */
-	if (((surface->flags & SDL_HWSURFACE) == SDL_HWSURFACE )&&(current_video->displayformatalphapixel)) 
-	{
-		if ( (surface->flags & SDL_SRCALPHA) ) 
-			if ( current_video->info.blit_hw_A ) {
-				SDL_VideoDevice *video = current_video;
-				SDL_VideoDevice *this  = current_video;
-				video->CheckHWBlit(this, surface, surface->map->dst);
-			}
+        else
+           hw_blit_ok = 0;
 	}
 
 	/* Get the blit function index, based on surface mode */

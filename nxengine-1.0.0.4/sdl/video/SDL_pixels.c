@@ -40,7 +40,7 @@ SDL_PixelFormat *SDL_AllocFormat(int bpp,
 	Uint32 mask;
 
 	/* Allocate an empty pixel format structure */
-	format = SDL_malloc(sizeof(*format));
+	format = (SDL_PixelFormat*)SDL_malloc(sizeof(*format));
 	if ( format == NULL ) {
 		SDL_OutOfMemory();
 		return(NULL);
