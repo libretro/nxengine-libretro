@@ -37,7 +37,6 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 			Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
 	SDL_VideoDevice *video = current_video;
-	SDL_VideoDevice *this  = current_video;
 	SDL_Surface *screen;
 	SDL_Surface *surface;
 
@@ -85,8 +84,7 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 	SDL_FormatChanged(surface);
 
 	/* Get the pixels */
-	if ( ((flags&SDL_HWSURFACE) == SDL_SWSURFACE) || 
-				(video->AllocHWSurface(this, surface) < 0) ) {
+	if ( ((flags&SDL_HWSURFACE) == SDL_SWSURFACE)) {
 		if ( surface->w && surface->h ) {
 			surface->pixels = SDL_malloc(surface->h*surface->pitch);
 			if ( surface->pixels == NULL ) {
@@ -155,17 +153,9 @@ int SDL_SetColorKey (SDL_Surface *surface, Uint32 flag, Uint32 key)
 
 	if ( flag ) {
 		SDL_VideoDevice *video = current_video;
-		SDL_VideoDevice *this  = current_video;
-
 
 		surface->flags |= SDL_SRCCOLORKEY;
 		surface->format->colorkey = key;
-		if ( (surface->flags & SDL_HWACCEL) == SDL_HWACCEL ) {
-			if ( (video->SetHWColorKey == NULL) ||
-			     (video->SetHWColorKey(this, surface, key) < 0) ) {
-				surface->flags &= ~SDL_HWACCEL;
-			}
-		}
 		if ( flag & SDL_RLEACCELOK ) {
 			surface->flags |= SDL_RLEACCELOK;
 		} else {
@@ -203,16 +193,10 @@ int SDL_SetAlpha (SDL_Surface *surface, Uint32 flag, Uint8 value)
 
 	if ( flag ) {
 		SDL_VideoDevice *video = current_video;
-		SDL_VideoDevice *this  = current_video;
 
 		surface->flags |= SDL_SRCALPHA;
 		surface->format->alpha = value;
-		if ( (surface->flags & SDL_HWACCEL) == SDL_HWACCEL ) {
-			if ( (video->SetHWAlpha == NULL) ||
-			     (video->SetHWAlpha(this, surface, value) < 0) ) {
-				surface->flags &= ~SDL_HWACCEL;
-			}
-		}
+
 		if ( flag & SDL_RLEACCELOK ) {
 		        surface->flags |= SDL_RLEACCELOK;
 		} else {
@@ -314,7 +298,7 @@ SDL_bool SDL_IntersectRect(const SDL_Rect *A, const SDL_Rect *B, SDL_Rect *inter
 	        Amax = Bmax;
 	intersection->h = Amax - Amin > 0 ? Amax - Amin : 0;
 
-	return (intersection->w && intersection->h);
+	return (SDL_bool)(intersection->w && intersection->h);
 }
 /*
  * Set the clipping rectangle for a blittable surface
@@ -337,7 +321,7 @@ SDL_bool SDL_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect)
 	/* Set the clipping rectangle */
 	if ( ! rect ) {
 		surface->clip_rect = full_rect;
-		return 1;
+		return (SDL_bool)1;
 	}
 	return SDL_IntersectRect(rect, &full_rect, &surface->clip_rect);
 }
@@ -507,7 +491,6 @@ static int SDL_FillRect4(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 {
 	SDL_VideoDevice *video = current_video;
-	SDL_VideoDevice *this  = current_video;
 	int x, y;
 	Uint8 *row;
 
@@ -535,19 +518,6 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 		}
 	} else {
 		dstrect = &dst->clip_rect;
-	}
-
-	/* Check for hardware acceleration */
-	if ( ((dst->flags & SDL_HWSURFACE) == SDL_HWSURFACE) &&
-					video->info.blit_fill ) {
-		SDL_Rect hw_rect;
-		if ( dst == SDL_VideoSurface ) {
-			hw_rect = *dstrect;
-			hw_rect.x += current_video->offset_x;
-			hw_rect.y += current_video->offset_y;
-			dstrect = &hw_rect;
-		}
-		return(video->FillHWRect(this, dst, dstrect, color));
 	}
 
 	/* Perform software fill */
@@ -627,13 +597,6 @@ int SDL_LockSurface (SDL_Surface *surface)
 {
 	if ( ! surface->locked ) {
 		/* Perform the lock */
-		if ( surface->flags & (SDL_HWSURFACE|SDL_ASYNCBLIT) ) {
-			SDL_VideoDevice *video = current_video;
-			SDL_VideoDevice *this  = current_video;
-			if ( video->LockHWSurface(this, surface) < 0 ) {
-				return(-1);
-			}
-		}
 		/* This needs to be done here in case pixels changes value */
 		surface->pixels = (Uint8 *)surface->pixels + surface->offset;
 	}
