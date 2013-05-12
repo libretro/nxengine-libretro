@@ -178,7 +178,7 @@ void Object::PushBehind(int objtype)
 	if (target)
 		PushBehind(target);
 	else
-		NX_ERR("PushBehind: could not find any objects of type %s\n", DescribeObjectType(objtype));
+		NX_ERR("PushBehind: could not find object %d\n", objtype);
 }
 
 /*

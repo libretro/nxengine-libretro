@@ -85,10 +85,6 @@ void UnlockInventoryInput(void);
 
 /* located in debug.cpp */
 
-//----------------------[referenced from tsc.cpp]--------------------//
-const char *DescribeObjectType(int type);
-
-
 /* located in niku.cpp */
 
 //----------------------[referenced from tsc.cpp]--------------------//

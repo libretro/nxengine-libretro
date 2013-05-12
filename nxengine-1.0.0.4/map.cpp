@@ -175,26 +175,15 @@ int nEntities;
 			if (flags & FLAG_APPEAR_ON_FLAGID)
 			{
 				if (game.flags[id1])
-				{
 					addobject = true;
-					NX_LOG(" -- Appearing object %02d (%s) because flag %d is set\n", id2, DescribeObjectType(type), id1);
-				}
 			}
 			else if (flags & FLAG_DISAPPEAR_ON_FLAGID)
 			{
 				if (!game.flags[id1])
-				{
 					addobject = true;
-				}
-				else
-				{
-					NX_LOG(" -- Disappearing object %02d (%s) because flag %d is set\n", id2, DescribeObjectType(type), id1);
-				}
 			}
 			else
-			{
 				addobject = true;
-			}
 			
 			if (addobject)
 			{
@@ -878,9 +867,7 @@ Object *FindObjectByID2(int id2)
 {
 	Object *result = ID2Lookup[id2];
 	
-	if (result)
-		NX_LOG("FindObjectByID2: ID2 %04d found: type %s; coords: (%d, %d)\n", id2, DescribeObjectType(ID2Lookup[id2]->type), ID2Lookup[id2]->x>>CSF,ID2Lookup[id2]->y>>CSF);
-	else
+	if (!result)
 		NX_ERR("FindObjectByID2: no such object %04d\n", id2);
 	
 	return result;
