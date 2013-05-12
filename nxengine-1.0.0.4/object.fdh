@@ -38,10 +38,6 @@ int GetCurrentScript(void);
 
 /* located in debug.cpp */
 
-//--------------------[referenced from object.cpp]-------------------//
-const char *DescribeObjectType(int type);
-
-
 /* located in ai/sym/smoke.cpp */
 
 //--------------------[referenced from object.cpp]-------------------//
