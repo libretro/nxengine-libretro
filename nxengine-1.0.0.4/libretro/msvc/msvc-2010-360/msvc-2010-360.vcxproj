@@ -1,0 +1,376 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="CodeAnalysis|Xbox 360">
+      <Configuration>CodeAnalysis</Configuration>
+      <Platform>Xbox 360</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Xbox 360">
+      <Configuration>Debug</Configuration>
+      <Platform>Xbox 360</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Profile|Xbox 360">
+      <Configuration>Profile</Configuration>
+      <Platform>Xbox 360</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Profile_FastCap|Xbox 360">
+      <Configuration>Profile_FastCap</Configuration>
+      <Platform>Xbox 360</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Xbox 360">
+      <Configuration>Release</Configuration>
+      <Platform>Xbox 360</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_LTCG|Xbox 360">
+      <Configuration>Release_LTCG</Configuration>
+      <Platform>Xbox 360</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\ai\ai.cpp" />
+    <ClCompile Include="..\..\..\ai\almond\almond.cpp" />
+    <ClCompile Include="..\..\..\ai\balrog_common.cpp" />
+    <ClCompile Include="..\..\..\ai\boss\balfrog.cpp" />
+    <ClCompile Include="..\..\..\ai\boss\ballos.cpp" />
+    <ClCompile Include="..\..\..\ai\boss\core.cpp" />
+    <ClCompile Include="..\..\..\ai\boss\heavypress.cpp" />
+    <ClCompile Include="..\..\..\ai\boss\ironhead.cpp" />
+    <ClCompile Include="..\..\..\ai\boss\omega.cpp" />
+    <ClCompile Include="..\..\..\ai\boss\sisters.cpp" />
+    <ClCompile Include="..\..\..\ai\boss\undead_core.cpp" />
+    <ClCompile Include="..\..\..\ai\boss\x.cpp" />
+    <ClCompile Include="..\..\..\ai\egg\egg.cpp" />
+    <ClCompile Include="..\..\..\ai\egg\egg2.cpp" />
+    <ClCompile Include="..\..\..\ai\egg\igor.cpp" />
+    <ClCompile Include="..\..\..\ai\final_battle\balcony.cpp" />
+    <ClCompile Include="..\..\..\ai\final_battle\doctor.cpp" />
+    <ClCompile Include="..\..\..\ai\final_battle\doctor_common.cpp" />
+    <ClCompile Include="..\..\..\ai\final_battle\doctor_frenzied.cpp" />
+    <ClCompile Include="..\..\..\ai\final_battle\final_misc.cpp" />
+    <ClCompile Include="..\..\..\ai\final_battle\misery.cpp" />
+    <ClCompile Include="..\..\..\ai\final_battle\sidekicks.cpp" />
+    <ClCompile Include="..\..\..\ai\first_cave\first_cave.cpp" />
+    <ClCompile Include="..\..\..\ai\hell\ballos_misc.cpp" />
+    <ClCompile Include="..\..\..\ai\hell\ballos_priest.cpp" />
+    <ClCompile Include="..\..\..\ai\hell\hell.cpp" />
+    <ClCompile Include="..\..\..\ai\IrregularBBox.cpp" />
+    <ClCompile Include="..\..\..\ai\last_cave\last_cave.cpp" />
+    <ClCompile Include="..\..\..\ai\maze\balrog_boss_missiles.cpp" />
+    <ClCompile Include="..\..\..\ai\maze\critter_purple.cpp" />
+    <ClCompile Include="..\..\..\ai\maze\gaudi.cpp" />
+    <ClCompile Include="..\..\..\ai\maze\labyrinth_m.cpp" />
+    <ClCompile Include="..\..\..\ai\maze\maze.cpp" />
+    <ClCompile Include="..\..\..\ai\maze\pooh_black.cpp" />
+    <ClCompile Include="..\..\..\ai\npc\balrog.cpp" />
+    <ClCompile Include="..\..\..\ai\npc\curly.cpp" />
+    <ClCompile Include="..\..\..\ai\npc\curly_ai.cpp" />
+    <ClCompile Include="..\..\..\ai\npc\misery.cpp" />
+    <ClCompile Include="..\..\..\ai\npc\npcguest.cpp" />
+    <ClCompile Include="..\..\..\ai\npc\npcplayer.cpp" />
+    <ClCompile Include="..\..\..\ai\npc\npcregu.cpp" />
+    <ClCompile Include="..\..\..\ai\oside\oside.cpp" />
+    <ClCompile Include="..\..\..\ai\plantation\plantation.cpp" />
+    <ClCompile Include="..\..\..\ai\sand\curly_boss.cpp" />
+    <ClCompile Include="..\..\..\ai\sand\puppy.cpp" />
+    <ClCompile Include="..\..\..\ai\sand\sand.cpp" />
+    <ClCompile Include="..\..\..\ai\sand\toroko_frenzied.cpp" />
+    <ClCompile Include="..\..\..\ai\sym\smoke.cpp" />
+    <ClCompile Include="..\..\..\ai\sym\sym.cpp" />
+    <ClCompile Include="..\..\..\ai\village\balrog_boss_running.cpp" />
+    <ClCompile Include="..\..\..\ai\village\ma_pignon.cpp" />
+    <ClCompile Include="..\..\..\ai\village\village.cpp" />
+    <ClCompile Include="..\..\..\ai\weapons\blade.cpp" />
+    <ClCompile Include="..\..\..\ai\weapons\bubbler.cpp" />
+    <ClCompile Include="..\..\..\ai\weapons\fireball.cpp" />
+    <ClCompile Include="..\..\..\ai\weapons\missile.cpp" />
+    <ClCompile Include="..\..\..\ai\weapons\nemesis.cpp" />
+    <ClCompile Include="..\..\..\ai\weapons\polar_mgun.cpp" />
+    <ClCompile Include="..\..\..\ai\weapons\snake.cpp" />
+    <ClCompile Include="..\..\..\ai\weapons\spur.cpp" />
+    <ClCompile Include="..\..\..\ai\weapons\weapons.cpp" />
+    <ClCompile Include="..\..\..\ai\weapons\whimstar.cpp" />
+    <ClCompile Include="..\..\..\ai\weed\balrog_boss_flying.cpp" />
+    <ClCompile Include="..\..\..\ai\weed\frenzied_mimiga.cpp" />
+    <ClCompile Include="..\..\..\ai\weed\weed.cpp" />
+    <ClCompile Include="..\..\..\caret.cpp" />
+    <ClCompile Include="..\..\..\common\BList.cpp" />
+    <ClCompile Include="..\..\..\common\bufio.cpp" />
+    <ClCompile Include="..\..\..\common\DBuffer.cpp" />
+    <ClCompile Include="..\..\..\common\DString.cpp" />
+    <ClCompile Include="..\..\..\common\FileBuffer.cpp" />
+    <ClCompile Include="..\..\..\common\InitList.cpp" />
+    <ClCompile Include="..\..\..\common\misc.cpp" />
+    <ClCompile Include="..\..\..\common\StringList.cpp" />
+    <ClCompile Include="..\..\..\endgame\credits.cpp" />
+    <ClCompile Include="..\..\..\endgame\CredReader.cpp" />
+    <ClCompile Include="..\..\..\endgame\island.cpp" />
+    <ClCompile Include="..\..\..\endgame\misc.cpp" />
+    <ClCompile Include="..\..\..\extract-auto\cachefiles.cpp" />
+    <ClCompile Include="..\..\..\extract-auto\extractorg.cpp" />
+    <ClCompile Include="..\..\..\extract-auto\extractpxt.cpp" />
+    <ClCompile Include="..\..\..\extract-auto\extractstages.cpp" />
+    <ClCompile Include="..\..\..\floattext.cpp" />
+    <ClCompile Include="..\..\..\game.cpp" />
+    <ClCompile Include="..\..\..\graphics\font.cpp" />
+    <ClCompile Include="..\..\..\graphics\graphics.cpp" />
+    <ClCompile Include="..\..\..\graphics\nxsurface.cpp" />
+    <ClCompile Include="..\..\..\graphics\sprites.cpp" />
+    <ClCompile Include="..\..\..\graphics\tileset.cpp" />
+    <ClCompile Include="..\..\..\input.cpp" />
+    <ClCompile Include="..\..\..\intro\intro.cpp" />
+    <ClCompile Include="..\..\..\intro\title.cpp" />
+    <ClCompile Include="..\..\..\inventory.cpp" />
+    <ClCompile Include="..\..\..\main.cpp" />
+    <ClCompile Include="..\..\..\map.cpp" />
+    <ClCompile Include="..\..\..\map_system.cpp" />
+    <ClCompile Include="..\..\..\niku.cpp" />
+    <ClCompile Include="..\..\..\object.cpp" />
+    <ClCompile Include="..\..\..\ObjManager.cpp" />
+    <ClCompile Include="..\..\..\pause\dialog.cpp" />
+    <ClCompile Include="..\..\..\pause\message.cpp" />
+    <ClCompile Include="..\..\..\pause\objects.cpp" />
+    <ClCompile Include="..\..\..\pause\options.cpp" />
+    <ClCompile Include="..\..\..\pause\pause.cpp" />
+    <ClCompile Include="..\..\..\player.cpp" />
+    <ClCompile Include="..\..\..\playerstats.cpp" />
+    <ClCompile Include="..\..\..\profile.cpp" />
+    <ClCompile Include="..\..\..\p_arms.cpp" />
+    <ClCompile Include="..\..\..\screeneffect.cpp" />
+    <ClCompile Include="..\..\..\sdl\file\SDL_rwops.c" />
+    <ClCompile Include="..\..\..\sdl\SDL_error.c" />
+    <ClCompile Include="..\..\..\sdl\stdlib\SDL_string.c" />
+    <ClCompile Include="..\..\..\sdl\video\SDL_blit.c" />
+    <ClCompile Include="..\..\..\sdl\video\SDL_blit_0.c" />
+    <ClCompile Include="..\..\..\sdl\video\SDL_blit_1.c" />
+    <ClCompile Include="..\..\..\sdl\video\SDL_blit_A.c" />
+    <ClCompile Include="..\..\..\sdl\video\SDL_blit_N.c" />
+    <ClCompile Include="..\..\..\sdl\video\SDL_bmp.c" />
+    <ClCompile Include="..\..\..\sdl\video\SDL_pixels.c" />
+    <ClCompile Include="..\..\..\sdl\video\SDL_surface.c" />
+    <ClCompile Include="..\..\..\sdl\video\SDL_video.c" />
+    <ClCompile Include="..\..\..\settings.cpp" />
+    <ClCompile Include="..\..\..\siflib\sectSprites.cpp" />
+    <ClCompile Include="..\..\..\siflib\sectStringArray.cpp" />
+    <ClCompile Include="..\..\..\siflib\sif.cpp" />
+    <ClCompile Include="..\..\..\siflib\sifloader.cpp" />
+    <ClCompile Include="..\..\..\slope.cpp" />
+    <ClCompile Include="..\..\..\sound\org.cpp" />
+    <ClCompile Include="..\..\..\sound\pxt.cpp" />
+    <ClCompile Include="..\..\..\sound\sound.cpp" />
+    <ClCompile Include="..\..\..\sound\sslib.cpp" />
+    <ClCompile Include="..\..\..\stageboss.cpp" />
+    <ClCompile Include="..\..\..\stagedata.cpp" />
+    <ClCompile Include="..\..\..\statusbar.cpp" />
+    <ClCompile Include="..\..\..\TextBox\ItemImage.cpp" />
+    <ClCompile Include="..\..\..\TextBox\SaveSelect.cpp" />
+    <ClCompile Include="..\..\..\TextBox\StageSelect.cpp" />
+    <ClCompile Include="..\..\..\TextBox\TextBox.cpp" />
+    <ClCompile Include="..\..\..\TextBox\YesNoPrompt.cpp" />
+    <ClCompile Include="..\..\..\trig.cpp" />
+    <ClCompile Include="..\..\..\tsc.cpp" />
+    <ClCompile Include="..\..\libretro.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{5A0B5FC2-C555-4C5B-9A86-450D6DBC341F}</ProjectGuid>
+    <Keyword>Xbox360Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='CodeAnalysis|Xbox 360'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Xbox 360'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile_FastCap|Xbox 360'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Xbox 360'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_LTCG|Xbox 360'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='CodeAnalysis|Xbox 360'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Profile|Xbox 360'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Profile_FastCap|Xbox 360'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Xbox 360'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release_LTCG|Xbox 360'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
+    <OutputFile>$(OutDir)nxengine_libretro_xdk360.lib</OutputFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='CodeAnalysis|Xbox 360'">
+    <OutputFile>$(OutDir)nxengine_libretro_xdk360.lib</OutputFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Xbox 360'">
+    <OutputFile>$(OutDir)nxengine_libretro_xdk360.lib</OutputFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile_FastCap|Xbox 360'">
+    <OutputFile>$(OutDir)nxengine_libretro_xdk360.lib</OutputFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Xbox 360'">
+    <OutputFile>$(OutDir)nxengine_libretro_xdk360.lib</OutputFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_LTCG|Xbox 360'">
+    <OutputFile>$(OutDir)nxengine_libretro_xdk360.lib</OutputFile>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <ExceptionHandling>false</ExceptionHandling>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PreprocessorDefinitions>_DEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST;SDL_BYTEORDER=SDL_BIG_ENDIAN</PreprocessorDefinitions>
+      <CallAttributedProfiling>Callcap</CallAttributedProfiling>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\sdl\include;$(SolutionDir)..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='CodeAnalysis|Xbox 360'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <ExceptionHandling>false</ExceptionHandling>
+      <MinimalRebuild>true</MinimalRebuild>
+      <PREfast>AnalyzeOnly</PREfast>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PreprocessorDefinitions>_DEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST;SDL_BYTEORDER=SDL_BIG_ENDIAN</PreprocessorDefinitions>
+      <CallAttributedProfiling>Callcap</CallAttributedProfiling>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\sdl\include;$(SolutionDir)..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Xbox 360'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <ExceptionHandling>false</ExceptionHandling>
+      <StringPooling>true</StringPooling>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>NDEBUG;_XBOX;PROFILE;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST;SDL_BYTEORDER=SDL_BIG_ENDIAN</PreprocessorDefinitions>
+      <CallAttributedProfiling>Callcap</CallAttributedProfiling>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\sdl\include;$(SolutionDir)..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <IgnoreSpecificDefaultLibraries>xapilib.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile_FastCap|Xbox 360'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <ExceptionHandling>false</ExceptionHandling>
+      <StringPooling>true</StringPooling>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CallAttributedProfiling>Fastcap</CallAttributedProfiling>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>NDEBUG;_XBOX;PROFILE;FASTCAP;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST;SDL_BYTEORDER=SDL_BIG_ENDIAN</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\sdl\include;$(SolutionDir)..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>false</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Xbox 360'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <StringPooling>true</StringPooling>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <ExceptionHandling>false</ExceptionHandling>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>NDEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST;SDL_BYTEORDER=SDL_BIG_ENDIAN</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\sdl\include;$(SolutionDir)..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_LTCG|Xbox 360'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <StringPooling>true</StringPooling>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
+      <ExceptionHandling>false</ExceptionHandling>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>NDEBUG;_XBOX;LTCG;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST;SDL_BYTEORDER=SDL_BIG_ENDIAN</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\sdl\include;$(SolutionDir)..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
