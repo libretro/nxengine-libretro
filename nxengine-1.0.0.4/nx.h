@@ -7,6 +7,10 @@
 #include <ctype.h>
 #include "nx_logger.h"
 
+#ifdef _WIN32
+#include "libretro/msvc_compat.h"
+#endif
+
 #include "config.h"
 #include "common/basics.h"
 #include "common/BList.h"

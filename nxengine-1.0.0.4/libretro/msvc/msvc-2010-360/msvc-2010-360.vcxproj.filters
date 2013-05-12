@@ -102,6 +102,12 @@
     <Filter Include="Source Files\SDL\video">
       <UniqueIdentifier>{379f6b90-efe4-4b70-9165-4719e40ddb1a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\autogen">
+      <UniqueIdentifier>{52039788-d2e8-4100-bad8-ade0405afb1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\SDL\cpuinfo">
+      <UniqueIdentifier>{1b08cc90-e9d6-4234-a512-05dfdf6cd1dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libretro.cpp">
@@ -529,6 +535,15 @@
     </ClCompile>
     <ClCompile Include="..\..\..\sdl\video\SDL_surface.c">
       <Filter>Source Files\SDL\video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\autogen\objnames.cpp">
+      <Filter>Source Files\autogen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\autogen\AssignSprites.cpp">
+      <Filter>Source Files\autogen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\sdl\cpuinfo\SDL_cpuinfo.c">
+      <Filter>Source Files\SDL\cpuinfo</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
