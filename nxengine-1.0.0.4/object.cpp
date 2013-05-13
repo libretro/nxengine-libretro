@@ -1332,15 +1332,6 @@ void Object::OnTick()
       case OBJ_CAI_GUN:
          ai_cai_gun(this);
          break;
-      case OBJ_BALROG:
-         ai_balrog(this);
-         break;
-      case OBJ_BALROG_DROP_IN:
-         ai_balrog_drop_in(this);
-         break;
-      case OBJ_BALROG_BUST_IN:
-         ai_balrog_bust_in(this);
-         break;
       case OBJ_KAZUMA_AT_COMPUTER:
       case OBJ_SUE_AT_COMPUTER:
          ai_npc_at_computer(this);

@@ -5,7 +5,7 @@
 extern void ai_waterlevel(Object *o);
 extern void ai_shutter(Object *o);
 extern void ai_shutter_stuck(Object *o);
-extern void ai_almond_robot(Oject *o);
+extern void ai_almond_robot(Object *o);
 
 /* TODO - boss */
 /* TODO - egg */
@@ -181,7 +181,7 @@ extern void ondeath_balrog_boss_running(Object *o);
 /* village/ma_pignon */
 extern void ai_ma_pignon(Object *o);
 extern void ai_ma_pignon_rock(Object *o);
-extern void ai_m_pignon_clone(Object *o);
+extern void ai_ma_pignon_clone(Object *o);
 
 /* village/village */
 extern void ai_toroko_shack(Object *o);
