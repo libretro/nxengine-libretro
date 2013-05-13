@@ -212,9 +212,7 @@ int SDL_SetAlpha (SDL_Surface *surface, Uint32 flag, Uint8 value)
 	 * if just the alpha value was changed. (If either is 255, we still
 	 * need to invalidate.)
 	 */
-	if((surface->flags & SDL_HWACCEL) == SDL_HWACCEL
-	   || oldflags != surface->flags
-	   || (((oldalpha + 1) ^ (value + 1)) & 0x100))
+	if(oldflags != surface->flags || (((oldalpha + 1) ^ (value + 1)) & 0x100))
 		SDL_InvalidateMap(surface->map);
 	return(0);
 }
@@ -345,10 +343,6 @@ void SDL_GetClipRect(SDL_Surface *surface, SDL_Rect *rect)
 int SDL_LowerBlit (SDL_Surface *src, SDL_Rect *srcrect,
 				SDL_Surface *dst, SDL_Rect *dstrect)
 {
-	SDL_blit do_blit;
-	SDL_Rect hw_srcrect;
-	SDL_Rect hw_dstrect;
-
 	/* Check to make sure the blit mapping is valid */
 	if ( (src->map->dst != dst) ||
              (src->map->dst->format_version != src->map->format_version) ) {
@@ -357,25 +351,7 @@ int SDL_LowerBlit (SDL_Surface *src, SDL_Rect *srcrect,
 		}
 	}
 
-	/* Figure out which blitter to use */
-	if ( (src->flags & SDL_HWACCEL) == SDL_HWACCEL ) {
-		if ( src == SDL_VideoSurface ) {
-			hw_srcrect = *srcrect;
-			hw_srcrect.x += current_video->offset_x;
-			hw_srcrect.y += current_video->offset_y;
-			srcrect = &hw_srcrect;
-		}
-		if ( dst == SDL_VideoSurface ) {
-			hw_dstrect = *dstrect;
-			hw_dstrect.x += current_video->offset_x;
-			hw_dstrect.y += current_video->offset_y;
-			dstrect = &hw_dstrect;
-		}
-		do_blit = src->map->hw_blit;
-	} else {
-		do_blit = src->map->sw_blit;
-	}
-	return(do_blit(src, srcrect, dst, dstrect));
+	return(src->map->sw_blit(src, srcrect, dst, dstrect));
 }
 
 
@@ -646,14 +622,6 @@ SDL_Surface * SDL_ConvertSurface (SDL_Surface *surface,
 			SDL_SetError("Empty destination palette");
 			return(NULL);
 		}
-	}
-
-	/* Only create hw surfaces with alpha channel if hw alpha blits
-	   are supported */
-	if(format->Amask != 0 && (flags & SDL_HWSURFACE)) {
-		const SDL_VideoInfo *vi = SDL_GetVideoInfo();
-		if(!vi || !vi->blit_hw_A)
-			flags &= ~SDL_HWSURFACE;
 	}
 
 	/* Create a new surface with the desired format */

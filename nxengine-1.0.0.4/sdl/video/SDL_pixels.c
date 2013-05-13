@@ -539,14 +539,8 @@ int SDL_MapSurface (SDL_Surface *src, SDL_Surface *dst)
 		switch (dstfmt->BytesPerPixel) {
 		    case 1:
 			/* Palette --> Palette */
-			/* If both SDL_HWSURFACE, assume have same palette */
-			if ( ((src->flags & SDL_HWSURFACE) == SDL_HWSURFACE) &&
-			     ((dst->flags & SDL_HWSURFACE) == SDL_HWSURFACE) ) {
-				map->identity = 1;
-			} else {
-				map->table = Map1to1(srcfmt->palette,
-					dstfmt->palette, &map->identity);
-			}
+             map->table = Map1to1(srcfmt->palette,
+                   dstfmt->palette, &map->identity);
 			if ( ! map->identity ) {
 				if ( map->table == NULL ) {
 					return(-1);

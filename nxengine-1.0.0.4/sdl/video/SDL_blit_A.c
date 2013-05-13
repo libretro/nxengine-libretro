@@ -2177,8 +2177,7 @@ SDL_loblit SDL_CalculateAlphaBlit(SDL_Surface *surface, int blit_index)
 		return BlitNto1SurfaceAlphaKey;
 	    else
 #if SDL_ALTIVEC_BLITTERS
-	if (sf->BytesPerPixel == 4 && df->BytesPerPixel == 4 &&
-	    !(surface->map->dst->flags & SDL_HWSURFACE) && SDL_HasAltiVec())
+	if (sf->BytesPerPixel == 4 && df->BytesPerPixel == 4 && SDL_HasAltiVec())
             return Blit32to32SurfaceAlphaKeyAltivec;
         else
 #endif
@@ -2211,16 +2210,14 @@ SDL_loblit SDL_CalculateAlphaBlit(SDL_Surface *surface, int blit_index)
 			if((sf->Rmask | sf->Gmask | sf->Bmask) == 0xffffff)
 			{
 #if SDL_ALTIVEC_BLITTERS
-				if(!(surface->map->dst->flags & SDL_HWSURFACE)
-					&& SDL_HasAltiVec())
+				if(SDL_HasAltiVec())
 					return BlitRGBtoRGBSurfaceAlphaAltivec;
 #endif
 				return BlitRGBtoRGBSurfaceAlpha;
 			}
 		}
 #if SDL_ALTIVEC_BLITTERS
-		if((sf->BytesPerPixel == 4) &&
-		   !(surface->map->dst->flags & SDL_HWSURFACE) && SDL_HasAltiVec())
+		if((sf->BytesPerPixel == 4) && SDL_HasAltiVec())
 			return Blit32to32SurfaceAlphaAltivec;
 		else
 #endif
@@ -2239,9 +2236,7 @@ SDL_loblit SDL_CalculateAlphaBlit(SDL_Surface *surface, int blit_index)
 
 	case 2:
 #if SDL_ALTIVEC_BLITTERS
-	if(sf->BytesPerPixel == 4 && !(surface->map->dst->flags & SDL_HWSURFACE) &&
-           df->Gmask == 0x7e0 &&
-	   df->Bmask == 0x1f && SDL_HasAltiVec())
+	if(sf->BytesPerPixel == 4 && df->Gmask == 0x7e0 && df->Bmask == 0x1f && SDL_HasAltiVec())
             return Blit32to565PixelAlphaAltivec;
         else
 #endif
@@ -2265,16 +2260,14 @@ SDL_loblit SDL_CalculateAlphaBlit(SDL_Surface *surface, int blit_index)
 		if(sf->Amask == 0xff000000)
 		{
 #if SDL_ALTIVEC_BLITTERS
-			if(!(surface->map->dst->flags & SDL_HWSURFACE)
-				&& SDL_HasAltiVec())
+			if(SDL_HasAltiVec())
 				return BlitRGBtoRGBPixelAlphaAltivec;
 #endif
 			return BlitRGBtoRGBPixelAlpha;
 		}
 	    }
 #if SDL_ALTIVEC_BLITTERS
-	    if (sf->Amask && sf->BytesPerPixel == 4 &&
-	        !(surface->map->dst->flags & SDL_HWSURFACE) && SDL_HasAltiVec())
+	    if (sf->Amask && sf->BytesPerPixel == 4 && SDL_HasAltiVec())
 		return Blit32to32PixelAlphaAltivec;
 	    else
 #endif
