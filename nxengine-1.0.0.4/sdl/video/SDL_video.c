@@ -264,17 +264,13 @@ static void SDL_ClearSurface(SDL_Surface *surface)
  */
 SDL_Surface * SDL_DisplayFormat (SDL_Surface *surface)
 {
-	Uint32 flags;
-
 	if ( ! SDL_PublicSurface ) {
 		SDL_SetError("No video mode has been set");
 		return(NULL);
 	}
+
 	/* Set the flags appropriate for copying to display surface */
-	if (((SDL_PublicSurface->flags&SDL_HWSURFACE) == SDL_HWSURFACE) && current_video->info.blit_hw)
-		flags = SDL_HWSURFACE;
-	else 
-		flags = SDL_SWSURFACE;
+   Uint32 flags = SDL_SWSURFACE;
 #ifdef AUTORLE_DISPLAYFORMAT
 	flags |= (surface->flags & (SDL_SRCCOLORKEY|SDL_SRCALPHA));
 	flags |= SDL_RLEACCELOK;

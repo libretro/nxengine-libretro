@@ -238,26 +238,6 @@ int SDL_CalculateBlit(SDL_Surface *surface)
 
 	/* Figure out if an accelerated hardware blit is possible */
 	surface->flags &= ~SDL_HWACCEL;
-	if ( surface->map->identity ) {
-		int hw_blit_ok;
-
-		if ( (surface->flags & SDL_HWSURFACE) == SDL_HWSURFACE ) {
-			/* We only support accelerated blitting to hardware */
-			if ( surface->map->dst->flags & SDL_HWSURFACE ) {
-				hw_blit_ok = current_video->info.blit_hw;
-			} else {
-				hw_blit_ok = 0;
-			}
-			if (hw_blit_ok && (surface->flags & SDL_SRCCOLORKEY)) {
-				hw_blit_ok = current_video->info.blit_hw_CC;
-			}
-			if ( hw_blit_ok && (surface->flags & SDL_SRCALPHA) ) {
-				hw_blit_ok = current_video->info.blit_hw_A;
-			}
-		}
-        else
-           hw_blit_ok = 0;
-	}
 
 	/* Get the blit function index, based on surface mode */
 	/* { 0 = nothing, 1 = colorkey, 2 = alpha, 3 = colorkey+alpha } */
