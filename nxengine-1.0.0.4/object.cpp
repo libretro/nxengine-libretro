@@ -987,6 +987,8 @@ void Object::OnTick()
          ai_bat_up_down(this);
          break;
       case OBJ_CRITTER_HOPPING_BLUE:
+      case OBJ_CRITTER_FLYING:
+      case OBJ_POWER_CRITTER:
          ai_critter(this);
          break;
       case OBJ_HERMIT_GUNSMITH:
@@ -1122,6 +1124,7 @@ void Object::OnTick()
          ai_teleporter(this);
          break;
       case OBJ_TELEPORTER_LIGHTS:
+      case OBJ_SANTAS_KEY:
          ai_animate2(this);
          break;
       case OBJ_COMPUTER:
@@ -1201,6 +1204,248 @@ void Object::OnTick()
       case OBJ_MISERYS_BUBBLE:
          ai_miserys_bubble(this);
          break;
+      case OBJ_CURLY_BOSS:
+         ai_curly_boss(this);
+         break;
+      case OBJ_CURLYBOSS_SHOT:
+         ai_curlyboss_shot(this);
+         break;
+      case OBJ_PUPPY_WAG:
+         ai_puppy_wag(this);
+         break;
+      case OBJ_PUPPY_BARK:
+         ai_puppy_bark(this);
+         break;
+      case OBJ_PUPPY_SLEEP:
+         ai_zzzz_spawner(this);
+         break;
+      case OBJ_PUPPY_RUN:
+         ai_puppy_run(this);
+         break;
+      case OBJ_TOROKO_FRENZIED:
+         ai_toroko_frenzied(this);
+         break;
+      case OBJ_TOROKO_BLOCK:
+         ai_toroko_block(this);
+         break;
+      case OBJ_TOROKO_FLOWER:
+         ai_toroko_flower(this);
+         break;
+      case OBJ_BEETLE_BROWN:
+         ai_beetle_horiz(this);
+         break;
+      case OBJ_POLISH:
+         ai_polish(this);
+         break;
+      case OBJ_POLISHBABY:
+         ai_polishbaby(this);
+         break;
+      case OBJ_SANDCROC:
+         ai_sandcroc(this);
+         break;
+      case OBJ_MIMIGAC1:
+      case OBJ_MIMIGAC2:
+      case OBJ_MIMIGAC_ENEMY:
+         ai_curlys_mimigas(this);
+         break;
+      case OBJ_SUNSTONE:
+         ai_sunstone(this);
+         break;
+      case OBJ_ARMADILLO:
+         ai_armadillo(this);
+         break;
+      case OBJ_CROW:
+         ai_crow(this);
+         break;
+      case OBJ_CROWWITHSKULL:
+         ai_crowwithskull(this);
+         break;
+      case OBJ_SKULLHEAD:
+         ai_skullhead(this);
+         break;
+      case OBJ_SKULLHEAD_CARRIED:
+         ai_skullhead_carried(this);
+         break;
+      case OBJ_SKULLSTEP:
+         ai_skullstep(this);
+         break;
+      case OBJ_SKULLSTEP_FOOT:
+         ai_skullstep_foot(this);
+         break;
+      case OBJ_SKELETON:
+         ai_skeleton(this);
+         break;
+      case OBJ_SKELETON_SHOT:
+         ai_skeleton_shot(this);
+         break;
+      case OBJ_BALROG_BOSS_RUNNING:
+         ai_balrog_boss_running(this);
+         break;
+      case OBJ_MA_PIGNON:
+         ai_ma_pignon(this);
+         break;
+      case OBJ_MA_PIGNON_ROCK:
+         ai_ma_pignon_rock(this);
+         break;
+      case OBJ_MA_PIGNON_CLONE:
+         ai_ma_pignon_clone(this);
+         break;
+      case OBJ_TOROKO_SHACK:
+         ai_toroko_shack(this);
+         break;
+      case OBJ_MUSHROOM_ENEMY:
+      case OBJ_GIANT_MUSHROOM_ENEMY:
+         ai_mushroom_enemy(this);
+         break;
+      case OBJ_GRAVEKEEPER:
+         ai_gravekeeper(this);
+         break;
+      case OBJ_CAGE:
+         ai_cage(this);
+         break;
+      case OBJ_MAHIN:
+         ai_npc_mahin(this);
+         break;
+      case OBJ_YAMASHITA_PAVILION:
+         ai_yamashita_pavilion(this);
+         break;
+      case OBJ_CHTHULU:
+         ai_chthulu(this);
+         break;
+      case OBJ_DR_GERO:
+      case OBJ_NURSE_HASUMI:
+      case OBJ_KAZUMA:
+         ai_generic_npc_nofaceplayer(this);
+         break;
+      case OBJ_CURLY:
+         ai_curly(this);
+         break;
+      case OBJ_CURLY_CARRIED_SHOOTING:
+         ai_curly_carried_shooting(this);
+         break;
+      case OBJ_CCS_GUN:
+         ai_ccs_gun(this);
+         break;
+      case OBJ_CURLY_AI:
+         ai_curly_ai(this);
+         break;
+      case OBJ_CAI_GUN:
+         ai_cai_gun(this);
+         break;
+      case OBJ_BALROG:
+         ai_balrog(this);
+         break;
+      case OBJ_BALROG_DROP_IN:
+         ai_balrog_drop_in(this);
+         break;
+      case OBJ_BALROG_BUST_IN:
+         ai_balrog_bust_in(this);
+         break;
+      case OBJ_KAZUMA_AT_COMPUTER:
+      case OBJ_SUE_AT_COMPUTER:
+         ai_npc_at_computer(this);
+         break;
+      case OBJ_JENKA:
+         ai_jenka(this);
+         break;
+      case OBJ_BLUE_ROBOT:
+         ai_blue_robot(this);
+         break;
+      case OBJ_DOCTOR:
+         ai_doctor(this);
+         break;
+      case OBJ_TOROKO:
+         ai_toroko(this);
+         break;
+      case OBJ_TOROKO_TELEPORT_IN:
+         ai_toroko_teleport_in(this);
+         break;
+      case OBJ_SUE:
+         ai_npc_sue(this);
+         break;
+      case OBJ_SUE_TELEPORT_IN:
+         ai_sue_teleport_in(this);
+         break;
+      case OBJ_KING:
+         ai_king(this);
+         break;
+      case OBJ_KANPACHI_FISHING:
+         ai_kanpachi_fishing(this);
+         break;
+      case OBJ_PROFESSOR_BOOSTER:
+         ai_professor_booster(this);
+         break;
+      case OBJ_BOOSTER_FALLING:
+         ai_booster_falling(this);
+         break;
+      case OBJ_SANTA:
+      case OBJ_CHACO:
+      case OBJ_JACK:
+         ai_generic_npc(this);
+         break;
+      case OBJ_WATERLEVEL:
+         ai_waterlevel(this);
+         break;
+      case OBJ_SHUTTER:
+      case OBJ_SHUTTER_BIG:
+      case OBJ_ALMOND_LIFT:
+         ai_shutter(this);
+         break;
+      case OBJ_SHUTTER_STUCK:
+         ai_shutter_stuck(this);
+         break;
+      case OBJ_ALMOND_ROBOT:
+         ai_almond_robot(this);
+         break;
+      case OBJ_BALROG_BOSS_FLYING:
+         ai_balrog_boss_flying(this);
+         break;
+      case OBJ_BALROG_SHOT_BOUNCE:
+         ai_balrog_shot_bounce(this);
+         break;
+      case OBJ_FRENZIED_MIMIGA:
+         ai_frenzied_mimiga(this);
+         break;
+      case OBJ_BAT_HANG:
+         ai_bat_hang(this);
+         break;
+      case OBJ_BAT_CIRCLE:
+         ai_bat_circle(this);
+         break;
+      case OBJ_JELLY:
+         ai_jelly(this);
+         break;
+      case OBJ_GIANT_JELLY:
+         ai_giant_jelly(this);
+         break;
+      case OBJ_MANNAN:
+         ai_mannan(this);
+         break;
+      case OBJ_MANNAN_SHOT:
+         ai_mannan_shot(this);
+         break;
+      case OBJ_FROG:
+      case OBJ_MINIFROG:
+         ai_frog(this);
+         break;
+      case OBJ_HEY_SPAWNER:
+         ai_hey_spawner(this);
+         break;
+      case OBJ_MOTORBIKE:
+         ai_motorbike(this);
+         break;
+      case OBJ_POWERCOMP:
+         ai_animate3(this);
+         break;
+      case OBJ_POWERSINE:
+         ai_animate1(this);
+         break;
+      case OBJ_MALCO:
+         ai_malco(this);
+         break;
+      case OBJ_MALCO_BROKEN:
+         ai_malco_broken(this);
+         break;
    }
 #else
 	if (objprop[this->type].ai_routines.ontick)
@@ -1229,6 +1474,30 @@ void Object::OnAftermove()
       case OBJ_SPIKE_SMALL:
          onspawn_spike_small(this);
          break;
+      case OBJ_PUPPY_CARRY:
+         aftermove_puppy_carry(this);
+         break;
+      case OBJ_TOROKO_BLOCK:
+         aftermove_toroko_block(this);
+         break;
+      case OBJ_SKULLHEAD_CARRIED:
+         aftermove_skullhead_carried(this);
+         break;
+      case OBJ_CURLY_CARRIED:
+         aftermove_curly_carried(this);
+         break;
+      case OBJ_CAI_GUN:
+         aftermove_cai_gun(this);
+         break;
+      case OBJ_CAI_WATERSHIELD:
+         aftermove_cai_watershield(this);
+         break;
+      case OBJ_SUE:
+         aftermove_npc_sue(this);
+         break;
+      case OBJ_KINGS_SWORD:
+         aftermove_StickToLinkedActionPoint(this);
+         break;
    }
 #else
 	if (objprop[this->type].ai_routines.aftermove)
@@ -1244,6 +1513,28 @@ void Object::OnSpawn()
       case OBJ_BALFROG:
          onspawn_balfrog(this);
          break;
+      case OBJ_FLOWERS_PENS1:
+         onspawn_snap_to_ground(this);
+         break;
+      case OBJ_YAMASHITA_FLOWERS:
+         onspawn_set_frame_from_id2(this);
+         break;
+      case OBJ_DR_GERO:
+      case OBJ_NURSE_HASUMI:
+         onspawn_generic_npc(this);
+         break;
+      case OBJ_BALROG:
+         onspawn_balrog(this);
+         break;
+      case OBJ_SUE:
+         onspawn_npc_sue(this);
+         break;
+      case OBJ_SANTA:
+      case OBJ_CHACO:
+      case OBJ_JACK:
+      case OBJ_KAZUMA:
+         onspawn_generic_npc(this);
+         break;
    }
 #else
 	if (objprop[this->type].ai_routines.onspawn)
@@ -1253,8 +1544,23 @@ void Object::OnSpawn()
 
 void Object::OnDeath()
 {
+#ifdef _XBOX
+   switch (type)
+   {
+      case OBJ_POLISH:
+         ondeath_polish(this);
+         break;
+      case OBJ_BALROG_BOSS_RUNNING:
+         ondeath_balrog_boss_running(this);
+         break;
+      case OBJ_BALROG_BOSS_FLYING:
+         ondeath_balrog_boss_flying(this);
+         break;
+   }
+#else
 	if (objprop[this->type].ai_routines.ondeath)
 		(*objprop[this->type].ai_routines.ondeath)(this);
+#endif
 }
 
 
