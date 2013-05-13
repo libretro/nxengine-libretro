@@ -423,7 +423,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\..\..\ai\final_battle\misery.cpp">
+						RelativePath="..\..\..\ai\final_battle\misery_finalbattle.cpp">
 					</File>
 					<File
 						RelativePath="..\..\..\ai\weapons\missile.cpp">

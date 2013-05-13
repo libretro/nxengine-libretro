@@ -47,7 +47,7 @@
     <ClCompile Include="..\..\..\ai\final_battle\doctor_common.cpp" />
     <ClCompile Include="..\..\..\ai\final_battle\doctor_frenzied.cpp" />
     <ClCompile Include="..\..\..\ai\final_battle\final_misc.cpp" />
-    <ClCompile Include="..\..\..\ai\final_battle\misery.cpp" />
+    <ClCompile Include="..\..\..\ai\final_battle\misery_finalbattle.cpp" />
     <ClCompile Include="..\..\..\ai\final_battle\sidekicks.cpp" />
     <ClCompile Include="..\..\..\ai\first_cave\first_cave.cpp" />
     <ClCompile Include="..\..\..\ai\hell\ballos_misc.cpp" />
