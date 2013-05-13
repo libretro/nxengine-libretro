@@ -8,7 +8,28 @@ extern void ai_shutter_stuck(Object *o);
 extern void ai_almond_robot(Object *o);
 
 /* TODO - boss */
-/* TODO - egg */
+
+/* egg */
+
+extern void ai_basil(Object *o);
+extern void ai_forcefield(Object *o);
+extern void ai_egg_elevator(Object *o);
+
+extern void ai_critter(Object *o);
+extern void ai_beetle_freefly(Object *o);
+extern void ai_giant_beetle(Object *o);
+extern void ai_dragon_zombie(Object *o);
+extern void ai_generic_angled_shot(Object *o);
+extern void ai_falling_spike_small(Object *o);
+extern void ai_falling_spike_large(Object *o);
+extern void ai_counter_bomb(Object *o);
+extern void ai_counter_bomb_number(Object *o);
+
+extern void ai_npc_igor(Object *o);
+extern void ai_boss_igor(Object *o);
+extern void ai_generic_angled_shot(Object *o);
+extern void ai_boss_igor_defeated(Object *o);
+
 /* TODO - final_battle */
 
 /* first_cave */
@@ -18,7 +39,17 @@ extern void ai_hermit_gunsmith(Object *o);
 extern void ai_door_enemy(Object *o);
 
 /* TODO - hell */
-/* TODO - last_cave */
+
+/* last_cave */
+extern void ai_critter_hopping_red(Object *o);
+extern void ai_lava_drip_spawner(Object *o);
+extern void ai_lava_drip(Object *o);
+extern void ai_red_bat_spawner(Object *o);
+extern void ai_red_bat(Object *o);
+extern void ai_red_demon(Object *o);
+extern void ai_droll_shot(Object *o);
+extern void ai_proximity_press_vert(Object *o);
+
 /* TODO - maze */
 
 /* npc/balrog */
@@ -91,7 +122,23 @@ extern void ai_hoppy(Object *o);
 extern void ai_pixel_cat(Object *o);
 extern void ai_little_family(Object *o);
 
-/* TODO - plantation */
+/* plantation */
+extern void ai_orangebell(Object *o);
+extern void ai_orangebell_baby(Object *o);
+extern void ai_stumpy(Object *o);
+extern void ai_midorin(Object *o);
+extern void ai_gunfish(Object *o);
+extern void ai_gunfish_shot(Object *o);
+extern void ai_droll(Object *o);
+extern void ai_droll_shot(Object *o);
+extern void ai_droll_guard(Object *o);
+extern void ai_rocket(Object *o);
+extern void ai_proximity_press_hoz(Object *o);
+extern void ai_puppy_wag(Object *o);
+extern void ai_numahachi(Object *o);
+extern void ai_npc_itoh(Object *o);
+extern void ai_kanpachi_standing(Object *o);
+extern void ai_npc_momorin(Object *o);
 
 /* sand/curly_boss */
 extern void ai_curly_boss(Object *o);
