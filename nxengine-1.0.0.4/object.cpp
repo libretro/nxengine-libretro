@@ -1183,6 +1183,24 @@ void Object::OnTick()
       case OBJ_QUAKE:
          ai_quake(this);
          break;
+      case OBJ_BALROG:
+         ai_balrog(this);
+         break;
+      case OBJ_BALROG_DROP_IN:
+         ai_balrog_drop_in(this);
+         break;
+      case OBJ_BALROG_BUST_IN:
+         ai_balrog_bust_in(this);
+         break;
+      case OBJ_MISERY_FLOAT:
+         ai_misery_float(this);
+         break;
+      case OBJ_MISERY_STAND:
+         ai_misery_stand(this);
+         break;
+      case OBJ_MISERYS_BUBBLE:
+         ai_miserys_bubble(this);
+         break;
    }
 #else
 	if (objprop[this->type].ai_routines.ontick)
@@ -1220,8 +1238,17 @@ void Object::OnAftermove()
 
 void Object::OnSpawn()
 {
+#ifdef _XBOX
+   switch (type)
+   {
+      case OBJ_BALFROG:
+         onspawn_balfrog(this);
+         break;
+   }
+#else
 	if (objprop[this->type].ai_routines.onspawn)
 		(*objprop[this->type].ai_routines.onspawn)(this);
+#endif
 }
 
 void Object::OnDeath()
