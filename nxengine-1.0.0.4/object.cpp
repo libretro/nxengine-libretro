@@ -1052,6 +1052,137 @@ void Object::OnTick()
       case OBJ_SMOKE_CLOUD:
          ai_smokecloud(this);
          break;
+      case OBJ_SKY_DRAGON:
+         ai_sky_dragon(this);
+         break;
+      case OBJ_SANDCROC_OSIDE:
+         ai_sandcroc(this);
+         break;
+      case OBJ_NIGHT_SPIRIT:
+         ai_night_spirit(this);
+         break;
+      case OBJ_NIGHT_SPIRIT_SHOT:
+         ai_night_spirit_shot(this);
+         break;
+      case OBJ_HOPPY:
+         ai_hoppy(this);
+         break;
+      case OBJ_PIXEL_CAT:
+         ai_pixel_cat(this);
+         break;
+      case OBJ_LITTLE_FAMILY:
+         ai_little_family(this);
+         break;
+      case OBJ_NPC_PLAYER:
+         ai_npc_player(this);
+         break;
+      case OBJ_PTELIN:
+         ai_ptelin(this);
+         break;
+      case OBJ_PTELOUT:
+         ai_ptelout(this);
+         break;
+      case OBJ_NULL:
+         ai_null(this);
+         break;
+      case OBJ_HVTRIGGER:
+         ai_hvtrigger(this);
+         break;
+      case OBJ_XP:
+         ai_xp(this);
+         break;
+      case OBJ_HEART:
+      case OBJ_HEART3:
+      case OBJ_MISSILE:
+      case OBJ_MISSILE3:
+         ai_powerup(this);
+         break;
+      case OBJ_HIDDEN_POWERUP:
+         ai_hidden_powerup(this);
+         break;
+      case OBJ_DOOR:
+         ai_door(this);
+         break;
+      case OBJ_LARGEDOOR:
+         ai_largedoor(this);
+         break;
+      case OBJ_SAVE_POINT:
+         ai_save_point(this);
+         break;
+      case OBJ_RECHARGE:
+         ai_largedoor(this);
+         break; 
+      case OBJ_CHEST_CLOSED:
+         ai_chest_closed(this);
+         break;
+      case OBJ_CHEST_OPEN:
+         ai_chest_open(this);
+         break;
+      case OBJ_TELEPORTER:
+         ai_teleporter(this);
+         break;
+      case OBJ_TELEPORTER_LIGHTS:
+         ai_animate2(this);
+         break;
+      case OBJ_COMPUTER:
+      case OBJ_LIFE_CAPSULE:
+      case OBJ_HIDDEN_SPARKLE:
+         ai_animate4(this);
+         break;
+      case OBJ_TERMINAL:
+         ai_terminal(this);
+         break;
+      case OBJ_XP_CAPSULE:
+         ai_xp_capsule(this);
+         break;
+      case OBJ_SPRINKLER:
+         ai_sprinkler(this);
+         break;
+      case OBJ_WATER_DROPLET:
+      case OBJ_LAVA_DROPLET:
+         ai_water_droplet(this);
+         break;
+      case OBJ_DROPLET_SPAWNER:
+         ai_droplet_spawner(this);
+         break;
+      case OBJ_FAN_UP:
+      case OBJ_FAN_DOWN:
+         ai_fan_vert(this);
+         break;
+      case OBJ_FAN_LEFT:
+      case OBJ_FAN_RIGHT:
+         ai_fan_hoz(this);
+         break;
+      case OBJ_FAN_DROPLET:
+         ai_fan_droplet(this);
+         break;
+      case OBJ_PRESS:
+         ai_press(this);
+         break;
+      case OBJ_LIGHTNING:
+         ai_lightning(this);
+         break;
+      case OBJ_STRAINING:
+         ai_straining(this);
+         break;
+      case OBJ_BUBBLE_SPAWNER:
+         ai_bubble_spawner(this);
+         break;
+      case OBJ_CHINFISH:
+         ai_chinfish(this);
+         break;
+      case OBJ_FIREPLACE:
+         ai_fireplace(this);
+         break;
+      case OBJ_SMOKE_DROPPER:
+         ai_smoke_dropper(this);
+         break;
+      case OBJ_SCROLL_CONTROLLER:
+         ai_scroll_controller(this);
+         break;
+      case OBJ_QUAKE:
+         ai_quake(this);
+         break;
    }
 #else
 	if (objprop[this->type].ai_routines.ontick)
@@ -1076,6 +1207,9 @@ void Object::OnAftermove()
          break;
       case OBJ_MISSILE_BOOM_SPAWNER:
          ai_missile_boom_spawner(this);
+         break;
+      case OBJ_SPIKE_SMALL:
+         onspawn_spike_small(this);
          break;
    }
 #else
