@@ -65,6 +65,16 @@ extern void onspawn_spike_small(Object *o);
 extern void ai_animate2(Object *o);
 extern void ai_animate4(Object *o);
 
+/* ai/npc/balrog */
+extern void onspawn_balfrog(Object *o);
+extern void ai_balrog(Object *o);
+extern void ai_balrog_drop_in(Object *o);
+extern void ai_balrog_bust_in(Object *o);
+
+/* ai/npc/misery */
+extern void ai_misery_float(Object *o);
+extern void ai_misery_stand(Object *o);
+extern void ai_miserys_bubble(Object *o);
 
 /* oside */
 extern void ai_sky_dragon(Object *o);
