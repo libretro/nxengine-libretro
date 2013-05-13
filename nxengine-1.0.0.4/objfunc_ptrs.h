@@ -40,7 +40,7 @@ extern void aftermove_cai_gun(Object *o);
 extern void aftermove_cai_watershield(Object *o);
 
 /* npc/balrog */
-extern void onspawn_balfrog(Object *o);
+extern void onspawn_balrog(Object *o);
 extern void ai_balrog(Object *o);
 extern void ai_balrog_drop_in(Object *o);
 extern void ai_balrog_bust_in(Object *o);

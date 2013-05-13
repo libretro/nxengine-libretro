@@ -1502,7 +1502,7 @@ void Object::OnSpawn()
    switch (type)
    {
       case OBJ_BALFROG:
-         onspawn_balfrog(this);
+         onspawn_balrog(this);
          break;
       case OBJ_FLOWERS_PENS1:
          onspawn_snap_to_ground(this);
