@@ -179,9 +179,6 @@
     <ClCompile Include="..\..\..\ai\final_battle\final_misc.cpp">
       <Filter>Source Files\ai\final_battle</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\ai\final_battle\misery.cpp">
-      <Filter>Source Files\ai\final_battle</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\ai\first_cave\first_cave.cpp">
       <Filter>Source Files\ai\first_cave</Filter>
     </ClCompile>
@@ -544,6 +541,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\sdl\cpuinfo\SDL_cpuinfo.c">
       <Filter>Source Files\SDL\cpuinfo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\ai\final_battle\misery_finalbattle.cpp">
+      <Filter>Source Files\ai\final_battle</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
