@@ -1,6 +1,10 @@
 #ifndef _OBJFUNCPTRS_H
 #define _OBJFUNCPTRS_H
 
+extern void ai_mimiga_farmer(Object *o);
+extern void ai_behemoth(Object *o);
+extern void onspawn_mimiga_cage(Object *o);
+
 /* almond */
 extern void ai_waterlevel(Object *o);
 extern void ai_shutter(Object *o);
