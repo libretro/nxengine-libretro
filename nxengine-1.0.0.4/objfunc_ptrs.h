@@ -10,6 +10,20 @@ extern void ai_omega_shot(Object *o);
 extern void aftermove_ballos_rotator(Object *o);
 extern void ondeath_omega_body(Object *o);
 
+/* endgame/misc */
+
+extern void ai_cloud_spawner(Object *o);
+extern void ai_cloud(Object *o);
+extern void ai_balrog_flying(Object *o);
+extern void aftermove_balrog_passenger(Object *o);
+extern void ai_balrog_medic(Object *o);
+extern void ai_gaudi_patient(Object *o);
+extern void ai_baby_puppy(Object *o);
+extern void ai_turning_human(Object *o);
+extern void ai_ahchoo(Object *o);
+extern void ai_misery_wind(Object *o);
+extern void ai_the_cast(Object *o);
+
 /* intro/intro */
 
 extern void ai_intro_kings(Object *o);
@@ -200,7 +214,28 @@ extern void ai_gaudi_armored_shot(Object *o);
 extern void ai_gaudi_flying(Object *o);
 extern void ai_gaudi_dying(Object *o);
 
-/* TODO - maze */
+/* maze/labyrinth_m */
+
+extern void ai_firewhirr(Object *o);
+extern void ai_firewhirr_shot(Object *o);
+extern void ai_gaudi_egg(Object *o);
+extern void ai_fuzz_core(Object *o);
+extern void ai_fuzz(Object *o);
+extern void aftermove_fuzz(Object *o);
+extern void ai_buyobuyo_base(Object *o);
+extern void ai_buyobuyo(Object *o);
+
+/* maze/maze */
+
+extern void ai_block_moveh(Object *o);
+extern void ai_block_movev(Object *o);
+extern void ai_boulder(Object *o);
+
+/* maze/pooh_black */
+
+extern void ai_pooh_black(Object *o);
+extern void ai_pooh_black_bubble(Object *o);
+extern void ai_pooh_black_dying(Object *o);
 
 /* npc/balrog */
 extern void onspawn_balrog(Object *o);

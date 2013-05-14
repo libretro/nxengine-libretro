@@ -1132,6 +1132,7 @@ void Object::OnTick()
          break;
       case OBJ_TELEPORTER_LIGHTS:
       case OBJ_SANTAS_KEY:
+      case OBJ_BUILDING_FAN:
          ai_animate2(this);
          break;
       case OBJ_COMPUTER:
@@ -1325,6 +1326,7 @@ void Object::OnTick()
       case OBJ_KAZUMA:
       case OBJ_MEGANE:
       case OBJ_CHIE:
+      case OBJ_GAUDI_SHOPKEEP:
          ai_generic_npc_nofaceplayer(this);
          break;
       case OBJ_CURLY:
@@ -1817,6 +1819,75 @@ void Object::OnTick()
       case OBJ_INTRO_DOCTOR:
          ai_intro_doctor(this);
          break;
+      case OBJ_CLOUD_SPAWNER:
+         ai_cloud_spawner(this);
+         break;
+      case OBJ_CLOUD:
+         ai_cloud(this);
+         break;
+      case OBJ_BALROG_FLYING:
+         ai_balrog_flying(this);
+         break;
+      case OBJ_BALROG_MEDIC:
+         ai_balrog_medic(this);
+         break;
+      case OBJ_GAUDI_PATIENT:
+         ai_gaudi_patient(this);
+         break;
+      case OBJ_BABY_PUPPY:
+         ai_baby_puppy(this);
+         break;
+      case OBJ_TURNING_HUMAN:
+         ai_turning_human(this);
+         break;
+      case OBJ_AHCHOO:
+         ai_ahchoo(this);
+         break;
+      case OBJ_MISERY_WIND:
+         ai_misery_wind(this);
+         break;
+      case OBJ_THE_CAST:
+         ai_the_cast(this);
+         break;
+      case OBJ_FIREWHIRR:
+         ai_firewhirr(this);
+         break;
+      case OBJ_FIREWHIRR_SHOT:
+         ai_firewhirr_shot(this);
+         break;
+      case OBJ_GAUDI_EGG:
+         ai_gaudi_egg(this);
+         break;
+      case OBJ_FUZZ_CORE:
+         ai_fuzz_core(this);
+         break;
+      case OBJ_FUZZ:
+         ai_fuzz(this);
+         break;
+      case OBJ_BUYOBUYO_BASE:
+         ai_buyobuyo_base(this);
+         break;
+      case OBJ_BUYOBUYO:
+         ai_buyobuyo(this);
+         break;
+      case OBJ_POOH_BLACK:
+         ai_pooh_black(this);
+         break;
+      case OBJ_POOH_BLACK_BUBBLE:
+         ai_pooh_black_bubble(this);
+         break;
+      case OBJ_POOH_BLACK_DYING:
+         ai_pooh_black_dying(this);
+         break;
+      case OBJ_BLOCK_MOVEH:
+         ai_block_moveh(this);
+         break;
+      case OBJ_BLOCK_MOVEV:
+         ai_block_movev(this);
+         break;
+      case OBJ_BOULDER:
+         ai_boulder(this);
+         break;
    }
 #else
 	if (objprop[this->type].ai_routines.ontick)
@@ -1870,20 +1941,23 @@ void Object::OnAftermove()
          aftermove_StickToLinkedActionPoint(this);
          break;
       case OBJ_BALLOS_ROTATOR:
-	 aftermove_ballos_rotator(this);
-	 break;
+         aftermove_ballos_rotator(this);
+         break;
       case OBJ_CORE_BACK:
-	 ai_core_back(this);
-	 break;
+         ai_core_back(this);
+         break;
       case OBJ_CORE_FRONT:
-	 ai_core_front(this);
-	 break;
+         ai_core_front(this);
+         break;
       case OBJ_RED_CRYSTAL:
-	 aftermove_red_crystal(this);
-	 break;
+         aftermove_red_crystal(this);
+         break;
       case OBJ_MISERY_RING:
-	 aftermove_misery_ring(this);
-	 break;
+         aftermove_misery_ring(this);
+         break;
+      case OBJ_BALROG_PASSENGER:
+         aftermove_balrog_passenger(this);
+         break;
    }
 #else
 	if (objprop[this->type].ai_routines.aftermove)
@@ -1921,6 +1995,7 @@ void Object::OnSpawn()
       case OBJ_KAZUMA:
       case OBJ_MEGANE:
       case OBJ_CHIE:
+      case OBJ_GAUDI_SHOPKEEP:
          onspawn_generic_npc(this);
          break;
       case OBJ_MIMIGA_CAGE:
