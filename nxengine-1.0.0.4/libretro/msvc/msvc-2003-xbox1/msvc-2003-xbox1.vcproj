@@ -201,12 +201,6 @@
 					RelativePath="..\..\..\caret.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\console.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\debug.cpp">
-				</File>
-				<File
 					RelativePath="..\..\..\floattext.cpp">
 				</File>
 				<File
@@ -217,6 +211,39 @@
 				</File>
 				<File
 					RelativePath="..\..\..\inventory.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\main.cpp">
+					<FileConfiguration
+						Name="Debug|Xbox">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Profile|Xbox">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Profile_FastCap|Xbox">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Xbox">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_LTCG|Xbox">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\map.cpp">
@@ -244,9 +271,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\profile.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\replay.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\screeneffect.cpp">
@@ -595,39 +619,6 @@
 					<File
 						RelativePath="..\..\libretro.cpp">
 					</File>
-					<File
-						RelativePath="..\..\..\main.cpp">
-						<FileConfiguration
-							Name="Debug|Xbox">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Profile|Xbox">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Profile_FastCap|Xbox">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Xbox">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_LTCG|Xbox">
-							<Tool
-								Name="VCCLCompilerTool"
-								ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-						</FileConfiguration>
-					</File>
 				</Filter>
 				<Filter
 					Name="siflib"
@@ -643,9 +634,6 @@
 					</File>
 					<File
 						RelativePath="..\..\..\siflib\sifloader.cpp">
-					</File>
-					<File
-						RelativePath="..\..\..\siflib\sifupgrade.cpp">
 					</File>
 				</Filter>
 				<Filter
@@ -693,10 +681,10 @@
 						RelativePath="..\..\..\endgame\CredReader.cpp">
 					</File>
 					<File
-						RelativePath="..\..\..\endgame\island.cpp">
+						RelativePath="..\..\..\endgame\endgame_misc.cpp">
 					</File>
 					<File
-						RelativePath="..\..\..\endgame\endgame_misc.cpp">
+						RelativePath="..\..\..\endgame\island.cpp">
 					</File>
 				</Filter>
 				<Filter
@@ -791,13 +779,10 @@
 				Name="extract"
 				Filter="">
 				<File
-					RelativePath="..\..\..\extract-auto\crc.cpp">
+					RelativePath="..\..\..\extract-auto\cachefiles.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\extract-auto\extractorg.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\extract-auto\extractfiles.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\extract-auto\extractpxt.cpp">
