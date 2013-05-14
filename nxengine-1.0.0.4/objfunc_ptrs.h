@@ -11,7 +11,49 @@ extern void ai_shutter(Object *o);
 extern void ai_shutter_stuck(Object *o);
 extern void ai_almond_robot(Object *o);
 
-/* TODO - boss */
+/* boss/balfrog */
+extern void ondeath_balfrog(Object *o);
+
+/* boss/ballos */
+extern void ondeath_ballos(Object *o);
+extern void ai_ballos_rotator(Object *o);
+
+/* boss/core */
+extern void ai_core_back(Object *o);
+extern void ai_core_front(Object *o);
+extern void ai_core_ghostie(Object *o);
+extern void ai_core_blast(Object *o);
+extern void ai_minicore(Object *o);
+extern void ai_minicore_blast(Object *o);
+
+/* boss/heavypress */
+extern void ai_hp_lightning(Object *o);
+
+/* boss/ironhead */
+extern void ondeath_ironhead(Object *o);
+extern void ai_ironh_fishy(Object *o);
+extern void ai_ironh_shot(Object *o);
+extern void ai_brick_spawner(Object *o);
+extern void ai_ironh_brick(Object *o);
+extern void ai_ikachan_spawner(Object *o);
+extern void ai_ikachan(Object *o);
+extern void ai_motion_wall(Object *o);
+
+/* boss/x */
+extern void ai_x_fishy_missile(Object *o);
+extern void ai_x_defeated(Object *o);
+extern void ondeath_x_target(Object *o);
+extern void ondeath_x_mainobject(Object *o);
+
+/* boss/undead_core */
+
+extern void onspawn_ud_minicore_idle(Object *o);
+extern void ai_udmini_platform(Object *o);
+extern void ai_ud_pellet(Object *o);
+extern void ai_ud_smoke(Object *o);
+extern void ai_ud_spinner(Object *o);
+extern void ai_ud_spinner_trail(Object *o);
+extern void ai_ud_blast(Object *o);
 
 /* egg */
 
@@ -34,7 +76,45 @@ extern void ai_boss_igor(Object *o);
 extern void ai_generic_angled_shot(Object *o);
 extern void ai_boss_igor_defeated(Object *o);
 
-/* TODO - final_battle */
+/* final_battle/doctor */
+extern void ai_boss_doctor(Object *o);
+extern void aftermove_red_crystal(Object *o);
+extern void ai_doctor_shot(Object *o);
+extern void ai_doctor_shot_trail(Object *o);
+extern void ai_doctor_blast(Object *o);
+extern void ai_doctor_crowned(Object *o);
+
+/* final_battle/doctor_frenzied */
+
+extern void ai_boss_doctor_frenzied(Object *o);
+extern void ai_doctor_bat(Object *o);
+
+/* final_battle/misery_finalbattle */
+extern void ai_boss_misery(Object *o);
+extern void ai_misery_phase(Object *o);
+extern void ai_misery_ring(Object *o);
+extern void aftermove_misery_ring(Object *o);
+extern void ai_misery_ball(Object *o);
+extern void ai_black_lightning(Object *o);
+
+/* final_battle/final_misc */
+extern void ai_mimiga_caged(Object *o);
+extern void ai_doctor_ghost(Object *o);
+extern void ai_red_energy(Object *o);
+
+/* final_battle/sidekicks */
+extern void ai_sue_frenzied(Object *o);
+extern void ai_misery_frenzied(Object *o);
+extern void ai_misery_critter(Object *o);
+extern void ai_misery_bat(Object *o);
+extern void ai_misery_missile(Object *o);
+
+/* final_battle/balcony */
+extern void ai_helicopter(Object *o);
+extern void ai_helicopter_blade(Object *o);
+extern void ai_igor_balcony(Object *o);
+extern void ai_falling_block(Object *o);
+extern void ai_falling_block_spawner(Object *o);
 
 /* first_cave */
 extern void ai_bat_up_down(Object *o);
@@ -42,7 +122,21 @@ extern void ai_critter(Object *o);
 extern void ai_hermit_gunsmith(Object *o);
 extern void ai_door_enemy(Object *o);
 
-/* TODO - hell */
+/* hell/ballos_misc */
+extern void ai_ballos_skull(Object *o);
+extern void ai_ballos_spikes(Object *o);
+extern void ai_green_devil(Object *o);
+extern void ai_green_devil_spawner(Object *o);
+extern void ai_bute_sword_red(Object *o);
+extern void ai_bute_archer_red(Object *o);
+extern void ai_wall_collapser(Object *o);
+
+/* hell/ballos_priest */
+
+extern void ai_ballos_priest(Object *o);
+extern void ai_ballos_target(Object *o);
+extern void ai_ballos_bone_spawner(Object *o);
+extern void ai_ballos_bone(Object *o);
 
 /* last_cave */
 extern void ai_critter_hopping_red(Object *o);
@@ -53,6 +147,47 @@ extern void ai_red_bat(Object *o);
 extern void ai_red_demon(Object *o);
 extern void ai_droll_shot(Object *o);
 extern void ai_proximity_press_vert(Object *o);
+
+/* hell/hell */
+extern void ai_bute_flying(Object *o);
+extern void ai_bute_dying(Object *o);
+	
+extern void ai_bute_spawner(Object *o);
+extern void ai_bute_falling(Object *o);
+	
+extern void ai_bute_sword(Object *o);
+extern void ai_bute_archer(Object *o);
+extern void ai_bute_arrow(Object *o);
+	
+extern void ai_mesa(Object *o);
+extern void ai_mesa_block(Object *o);
+extern void ai_bute_dying(Object *o);
+
+extern void ai_deleet(Object *o);
+extern void ai_rolling(Object *o);
+
+extern void ai_statue(Object *o);
+extern void ai_statue_base(Object *o);
+
+extern void ai_puppy_ghost(Object *o);
+
+/* maze/balrog_boss_missiles */
+extern void ai_balrog_boss_missiles(Object *o);
+extern void ondeath_balrog_boss_missiles(Object *o);
+extern void ai_balrog_missile(Object *o);
+
+extern void ai_critter_shooting_purple(Object *o);
+
+/* maze/critter_purple */
+extern void ai_critter_shooting_purple(Object *o);
+extern void ai_generic_angled_shot(Object *o);
+
+/* maze/gaudi */
+extern void ai_gaudi(Object *o);
+extern void ai_gaudi_armored(Object *o);
+extern void ai_gaudi_armored_shot(Object *o);
+extern void ai_gaudi_flying(Object *o);
+extern void ai_gaudi_dying(Object *o);
 
 /* TODO - maze */
 
