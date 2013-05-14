@@ -121,7 +121,7 @@ AI_OBJS := $(NX_DIR)/ai/ai.o $(NX_DIR)/ai/balrog_common.o $(NX_DIR)/ai/Irregular
 
 COMMON_OBJS := $(NX_DIR)/common/BList.o $(NX_DIR)/common/bufio.o $(NX_DIR)/common/DBuffer.o $(NX_DIR)/common/DString.o $(NX_DIR)/common/FileBuffer.o $(NX_DIR)/common/InitList.o $(NX_DIR)/common/misc.o $(NX_DIR)/common/StringList.o
 
-ENDGAME_OBJS := $(NX_DIR)/endgame/credits.o $(NX_DIR)/endgame/CredReader.o $(NX_DIR)/endgame/island.o $(NX_DIR)/endgame/misc.o
+ENDGAME_OBJS := $(NX_DIR)/endgame/credits.o $(NX_DIR)/endgame/CredReader.o $(NX_DIR)/endgame/island.o $(NX_DIR)/endgame/endgame_misc.o
 
 EXTRACT_OBJS := $(EXTRACTDIR)/extractpxt.o $(EXTRACTDIR)/extractorg.o $(EXTRACTDIR)/extractstages.o $(EXTRACTDIR)/cachefiles.o
 

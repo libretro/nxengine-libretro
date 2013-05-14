@@ -10,6 +10,12 @@ extern void ai_omega_shot(Object *o);
 extern void aftermove_ballos_rotator(Object *o);
 extern void ondeath_omega_body(Object *o);
 
+/* intro/intro */
+
+extern void ai_intro_kings(Object *o);
+extern void ai_intro_crown(Object *o);
+extern void ai_intro_doctor(Object *o);
+
 /* almond */
 extern void ai_waterlevel(Object *o);
 extern void ai_shutter(Object *o);

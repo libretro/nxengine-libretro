@@ -106,7 +106,7 @@
     <ClCompile Include="..\..\..\endgame\credits.cpp" />
     <ClCompile Include="..\..\..\endgame\CredReader.cpp" />
     <ClCompile Include="..\..\..\endgame\island.cpp" />
-    <ClCompile Include="..\..\..\endgame\misc.cpp" />
+    <ClCompile Include="..\..\..\endgame\endgame_misc.cpp" />
     <ClCompile Include="..\..\..\extract-auto\cachefiles.cpp" />
     <ClCompile Include="..\..\..\extract-auto\extractorg.cpp" />
     <ClCompile Include="..\..\..\extract-auto\extractpxt.cpp" />

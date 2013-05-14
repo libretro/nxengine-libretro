@@ -696,7 +696,7 @@
 						RelativePath="..\..\..\endgame\island.cpp">
 					</File>
 					<File
-						RelativePath="..\..\..\endgame\misc.cpp">
+						RelativePath="..\..\..\endgame\endgame_misc.cpp">
 					</File>
 				</Filter>
 				<Filter

@@ -29,7 +29,7 @@ AI_OBJS := $(NX_DIR)/ai/ai.cpp $(NX_DIR)/ai/balrog_common.cpp $(NX_DIR)/ai/Irreg
 
 COMMON_OBJS := $(NX_DIR)/common/BList.cpp $(NX_DIR)/common/bufio.cpp $(NX_DIR)/common/DBuffer.cpp $(NX_DIR)/common/DString.cpp $(NX_DIR)/common/FileBuffer.cpp $(NX_DIR)/common/InitList.cpp $(NX_DIR)/common/misc.cpp $(NX_DIR)/common/StringList.cpp
 
-ENDGAME_OBJS := $(NX_DIR)/endgame/credits.cpp $(NX_DIR)/endgame/CredReader.cpp $(NX_DIR)/endgame/island.cpp $(NX_DIR)/endgame/misc.cpp
+ENDGAME_OBJS := $(NX_DIR)/endgame/credits.cpp $(NX_DIR)/endgame/CredReader.cpp $(NX_DIR)/endgame/island.cpp $(NX_DIR)/endgame/endgame_misc.cpp
 
 EXTRACT_OBJS := $(EXTRACTDIR)/extractorg.cpp $(EXTRACTDIR)/extractpxt.cpp $(EXTRACTDIR)/extractstages.cpp $(EXTRACTDIR)/cachefiles.cpp
 
