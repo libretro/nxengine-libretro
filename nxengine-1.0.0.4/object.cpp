@@ -1533,7 +1533,7 @@ void Object::OnTick()
       case OBJ_IGOR_SHOT:
       case OBJ_DRAGON_ZOMBIE_SHOT:
       case OBJ_GIANT_BEETLE_SHOT:
-      case OBJ_BALROG_SHOT:
+      case OBJ_BALFROG_SHOT:
       case OBJ_MISERY_SHOT:
       case OBJ_CRITTER_SHOT:
       case OBJ_GAUDI_FLYING_SHOT:
@@ -1577,7 +1577,7 @@ void Object::OnTick()
       case OBJ_BALLOS_ROTATOR:
 	 ai_ballos_rotator(this);
 	 break;
-      case OBJ_BALLOS_PLATOFRM:
+      case OBJ_BALLOS_PLATFORM:
 	 ai_ballos_platform(this);
 	 break;
       case OBJ_CORE_GHOSTIE:
@@ -1715,7 +1715,7 @@ void Object::OnTick()
       case OBJ_WALL_COLLAPSER:
 	 ai_wall_collapser(this);
 	 break;
-      case OBJ_GREEN_DEVIL_SPAMMER:
+      case OBJ_GREEN_DEVIL_SPAWNER:
 	 ai_green_devil_spawner(this);
 	 break;
       case OBJ_GREEN_DEVIL:
