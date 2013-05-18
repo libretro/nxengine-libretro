@@ -104,20 +104,6 @@ void input_poll(void)
    }
 }
 
-// keys that we don't want to send to the console
-// even if the console is up.
-static int IsNonConsoleKey(int key)
-{
-static const int nosend[] = { SDLK_LEFT, SDLK_RIGHT, 0 };
-
-	for(int i=0;nosend[i];i++)
-		if (key == nosend[i])
-			return true;
-	
-	return false;
-}
-
-
 void input_close(void)
 {
 
