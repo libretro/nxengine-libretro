@@ -6,7 +6,7 @@ include $(CLEAR_VARS)
 NX_DIR     = ../nxengine-1.0.0.4
 EXTRACTDIR = $(NX_DIR)/extract-auto
 
-LOCAL_MODULE    := libretro
+LOCAL_MODULE    := retro
 
 ifeq ($(RELEASE_BUILD), 1)
 LOCAL_CXXFLAGS += -DRELEASE_BUILD
