@@ -484,7 +484,6 @@ void cachefiles_init(FILE *exefp)
    unsigned i;
    for (i = 0; i < sizeof(filenames) / sizeof(filenames[0]); i++)
    {
-      printf("%s\n", filenames[i]);
       struct hash_struct *entry;
       // reentrancy test
       HASH_FIND_STR(filemap, filenames[i], entry);
@@ -496,6 +495,7 @@ void cachefiles_init(FILE *exefp)
          continue;
       char fname[1024];
       retro_create_path_string(fname, sizeof(fname), g_dir, filenames[i]);
+      printf("%s\n", fname);
       FILE *f = fopen(fname, "rb");
       if (!f)
       {

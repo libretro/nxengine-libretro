@@ -74,8 +74,13 @@ bool extract_stages(FILE *exefp)
 	{
 		strcpy(stages[i].filename, exemapdata[i].filename);
 		strcpy(stages[i].stagename, exemapdata[i].caption);
-		
+
+#ifdef MSB_FIRST
+		stages[i].scroll_type = (exemapdata[i].scroll_type << 24) | (exemapdata[i].scroll_type << 8 & 0x00FF0000) | (exemapdata[i].scroll_type >> 8 & 0x0000FF00) | (exemapdata[i].scroll_type >> 24);
+#else
 		stages[i].scroll_type = exemapdata[i].scroll_type;
+#endif
+
 		stages[i].bossNo = exemapdata[i].bossNo;
 		
 		stages[i].tileset = find_index(exemapdata[i].tileset, tileset_names);
