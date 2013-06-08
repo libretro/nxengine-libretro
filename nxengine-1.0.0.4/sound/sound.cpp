@@ -79,15 +79,15 @@ static const char bossmusic[] = { 4, 7, 10, 11, 15, 16, 17, 18, 21, 22, 31, 33, 
 
 static const char *org_dir = "org";
 
-bool sound_init(void)
+bool sound_init(FILE *fp)
 {
 	if (SSInit()) return 1;
 	if (pxt_init()) return 1;
 
-	if (pxt_LoadSoundFX(NUM_SOUNDS))
+	if (pxt_LoadSoundFX(fp, NUM_SOUNDS))
       return 1;
 
-	if (org_init(ORG_VOLUME))
+	if (org_init(fp, ORG_VOLUME))
 	{
 		NX_ERR("Music failed to initialize\n");
 		return 1;

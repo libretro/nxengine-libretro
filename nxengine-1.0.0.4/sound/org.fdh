@@ -29,7 +29,7 @@ static int SamplesToMS(int samples);
 static bool load_drumtable(const char *pxt_path);
 static bool load_drum(char *fname, int d);
 static bool load_drum_pxt(FILE *fd, int s, int d);
-int org_init(int org_volume);
+int org_init(FILE *fp, int org_volume);
 void org_close(void);
 char org_load(char *fname);
 static bool init_buffers(void);

@@ -689,7 +689,7 @@ char pxt_IsPlaying(int slot)
 // render all pxt files under "path" up to slot "top".
 // get them all ready to play in their sound slots.
 // if cache_name is specified the pcm audio data is cached under the given filename.
-char pxt_LoadSoundFX(int top)
+char pxt_LoadSoundFX(FILE *fp, int top)
 {
    int slot;
    stPXSound snd;
@@ -700,27 +700,7 @@ char pxt_LoadSoundFX(int top)
    // get ready to do synthesis
    pxt_initsynth();
 
-#ifdef _WIN32
-   char slash = '\\';
-#else
-   char slash = '/';
-#endif
-
-   char filename[1024];
-   FILE *fp;
-
    NX_LOG("= Extracting Files =\n");
-
-   retro_create_path_string(filename, sizeof(filename), g_dir, "Doukutsu.exe");
-
-   fp = fopen(filename, "rb");
-   if (!fp)
-   {
-      NX_ERR("cannot find executable %s\n", filename);
-      NX_ERR("Please put it and it's \"data\" directory\n");
-      NX_ERR("into the same folder as this program.\n");
-      return 1;
-   }
 
    for(slot=1;slot<=top;slot++)
    {		
@@ -739,8 +719,6 @@ char pxt_LoadSoundFX(int top)
       pxt_PrepareToPlay(&snd, slot);
       FreePXTBuf(&snd);
    }
-
-   fclose(fp);
 
    return 0;
 }

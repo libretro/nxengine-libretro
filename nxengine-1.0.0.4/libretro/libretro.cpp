@@ -29,7 +29,7 @@ static unsigned g_frame_cnt;
 bool retro_60hz = true;
 unsigned pitch;
 
-extern void pre_main(void);
+extern bool pre_main(void);
 
 unsigned retro_get_tick(void)
 {
@@ -127,9 +127,10 @@ bool retro_load_game(const struct retro_game_info *game)
    extract_directory(g_dir, game->path, sizeof(g_dir));
    NX_LOG("g_dir: %s\n", g_dir);
 
-   pre_main();
-
-   return 1;
+   if (pre_main())
+      return 0;
+   else
+      return 1;
 }
 
 void retro_deinit(void)

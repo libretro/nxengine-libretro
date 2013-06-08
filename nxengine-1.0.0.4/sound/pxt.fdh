@@ -37,7 +37,7 @@ static void pxtSoundDone(int chan, int slot);
 static void pxtLooper(int chan, int slot);
 void pxt_Stop(int slot);
 char pxt_IsPlaying(int slot);
-char pxt_LoadSoundFX(int top);
+char pxt_LoadSoundFX(FILE *fp, int top);
 static char LoadFXCache(const char *fname, int top);
 void pxt_freeSoundFX(void);
 void pxt_FreeSound(int slot);

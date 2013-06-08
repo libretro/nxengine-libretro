@@ -138,7 +138,7 @@ void c------------------------------() {}
 
 extern bool extract_org(FILE *exefp);
 
-int org_init(int org_volume)
+int org_init(FILE *fp, int org_volume)
 {
    int i;
 	
@@ -153,22 +153,13 @@ int org_init(int org_volume)
 	for(i=0;i<2;i++)
       final_buffer[i].samples = NULL;
 
-	FILE *fp;
-   char filename[1024];
-
-	retro_create_path_string(filename, sizeof(filename), g_dir, "Doukutsu.exe");
-	fp = fopen(filename, "rb");
-
    extract_org(fp);
 
 	init_pitch();
 	if (load_drumtable(fp))
    {
-      fclose(fp);
       return 1;
    }
-
-   fclose(fp);
 	
 	song.playing = false;
 	org_inited = true;
