@@ -33,8 +33,9 @@ static bool freshstart;
 //extern bool extract_files(FILE *exefp);
 extern bool extract_stages(FILE *exefp);
 
-void pre_main(void)
+bool pre_main(void)
 {
+	error = false;
 #ifdef DEBUG_LOG
 char debug_fname[1024];
 retro_create_path_string(debug_fname, sizeof(debug_fname), g_dir, "debug.txt");
@@ -58,7 +59,7 @@ SetLogFilename(debug_fname);
    //extract_files(fp);
    cachefiles_init(fp);
 
-	if (sound_init()) { fatal("Failed to initialize sound."); error = 1; return; }
+	if (sound_init(fp)) { fatal("Failed to initialize sound."); error = 1; return error; }
    
 	extract_stages(fp);
 
@@ -67,27 +68,27 @@ SetLogFilename(debug_fname);
    settings->files_extracted = true;
    settings_save();
 	
-	if (Graphics::init(settings->resolution)) { NX_ERR("Failed to initialize graphics.\n"); error = 1; return; }
-	if (font_init()) { NX_ERR("Failed to load font.\n"); error = 1; return; }
+	if (Graphics::init(settings->resolution)) { NX_ERR("Failed to initialize graphics.\n"); error = 1; return error; }
+	if (font_init()) { NX_ERR("Failed to load font.\n"); error = 1; return error; }
 	
-	//return;
+	//return error;
 	
 	if (check_data_exists())
 	{
 		error = 1;
-		return;
+		return error;
 	}
 	
-	if (trig_init()) { fatal("Failed trig module init."); error = 1; return; }
+	if (trig_init()) { fatal("Failed trig module init."); error = 1; return error; }
 	
-	if (tsc_init()) { fatal("Failed to initialize script engine."); error = 1; return; }
-	if (textbox.Init()) { fatal("Failed to initialize textboxes."); error = 1; return; }
-	if (Carets::init()) { fatal("Failed to initialize carets."); error = 1; return; }
+	if (tsc_init()) { fatal("Failed to initialize script engine."); error = 1; return error; }
+	if (textbox.Init()) { fatal("Failed to initialize textboxes."); error = 1; return error; }
+	if (Carets::init()) { fatal("Failed to initialize carets."); error = 1; return error; }
 	
 	if (game.init())
 	{
 		error = 1;
-		return;
+		return error;
 	}
 	game.setmode(GM_NORMAL);
 	// set null stage just to have something to do while we go to intro
@@ -110,7 +111,7 @@ SetLogFilename(debug_fname);
 	
 	NX_LOG("Entering main loop...\n");
 	
-	//return;
+	return error;
 }
 
 void post_main(void)
