@@ -102,10 +102,11 @@ int32_t rect2x1, rect2y1, rect2x2, rect2y2;
 	rect1y2 = o1->y + (s1->bbox.y2 << CSF);
 	
 	// get the bounding rectangle of the second object
-	rect2x1 = o2->x + (s2->bbox.x1 << CSF);
-	rect2x2 = o2->x + (s2->bbox.x2 << CSF);
-	rect2y1 = o2->y + (s2->bbox.y1 << CSF);
-	rect2y2 = o2->y + (s2->bbox.y2 << CSF);
+	// the 1700 are derived from testing and comparing to doukutsus behavoiur
+	rect2x1 = o2->x + (s2->bbox.x1 << CSF) + 1700;
+	rect2x2 = o2->x + (s2->bbox.x2 << CSF) - 1700;
+	rect2y1 = o2->y + (s2->bbox.y1 << CSF) + 1700;
+	rect2y2 = o2->y + (s2->bbox.y2 << CSF) - 1700;
 	
 	// find out if the rectangles overlap
 	if ((rect1x1 < rect2x1) && (rect1x2 < rect2x1)) return false;
