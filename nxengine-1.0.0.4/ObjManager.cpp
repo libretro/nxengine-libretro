@@ -102,12 +102,24 @@ int32_t rect2x1, rect2y1, rect2x2, rect2y2;
 	rect1y2 = o1->y + (s1->bbox.y2 << CSF);
 	
 	// get the bounding rectangle of the second object
-	// the 1700 are derived from testing and comparing to doukutsus behavoiur
-	rect2x1 = o2->x + (s2->bbox.x1 << CSF) + 1700;
-	rect2x2 = o2->x + (s2->bbox.x2 << CSF) - 1700;
-	rect2y1 = o2->y + (s2->bbox.y1 << CSF) + 1700;
-	rect2y2 = o2->y + (s2->bbox.y2 << CSF) - 1700;
-	
+	// some enemies have a different hit radius so here is compensation (clean workaround in progress)
+	if (o1->type == 211){
+		rect2x1 = o2->x + (s2->bbox.x1 << CSF) + 1700;
+		rect2x2 = o2->x + (s2->bbox.x2 << CSF) - 1700;
+		rect2y1 = o2->y + (s2->bbox.y1 << CSF) + 1700;
+	    rect2y2 = o2->y + (s2->bbox.y2 << CSF) - 1700;
+	}else if (o1->type == 71){
+		rect2x1 = o2->x + (s2->bbox.x1 << CSF) + 1500;
+		rect2x2 = o2->x + (s2->bbox.x2 << CSF) - 1500;
+		rect2y1 = o2->y + (s2->bbox.y1 << CSF) + 1500;
+		rect2y2 = o2->y + (s2->bbox.y2 << CSF) - 1500;
+	}else{
+		rect2x1 = o2->x + (s2->bbox.x1 << CSF);
+		rect2x2 = o2->x + (s2->bbox.x2 << CSF);
+		rect2y1 = o2->y + (s2->bbox.y1 << CSF);
+		rect2y2 = o2->y + (s2->bbox.y2 << CSF);
+	}
+
 	// find out if the rectangles overlap
 	if ((rect1x1 < rect2x1) && (rect1x2 < rect2x1)) return false;
 	if ((rect1x1 > rect2x2) && (rect1x2 > rect2x2)) return false;
