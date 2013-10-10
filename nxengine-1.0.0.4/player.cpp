@@ -366,7 +366,7 @@ int tile;
 		player->fallspeed = 0x2ff;
 		
 		player->fallaccel = 0x28;
-		player->jumpfallaccel = 0x10;
+		player->jumpfallaccel = 0x14;
 		
 		player->walkaccel = 0x2a;
 		player->jumpwalkaccel = 0x10;
