@@ -586,13 +586,6 @@
 							RelativePath="..\..\..\sdl\cpuinfo\SDL_cpuinfo.c">
 						</File>
 					</Filter>
-					<Filter
-						Name="stdlib"
-						Filter="">
-						<File
-							RelativePath="..\..\..\sdl\stdlib\SDL_string.c">
-						</File>
-					</Filter>
 				</Filter>
 				<Filter
 					Name="TextBox"
