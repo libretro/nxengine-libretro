@@ -39,6 +39,7 @@ static SDL_error SDL_global_error;
 
 // Implementation of strlcpy()/strlcat() based on OpenBSD.
 
+#ifndef IOS
 static size_t strlcpy(char *dest, const char *source, size_t size)
 {
    size_t src_size = 0;
@@ -55,6 +56,7 @@ static size_t strlcpy(char *dest, const char *source, size_t size)
 
    return src_size;
 }
+#endif
 
 static const char *SDL_LookupString(const char *key)
 {
