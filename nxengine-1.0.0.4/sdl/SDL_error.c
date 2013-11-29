@@ -39,7 +39,7 @@ static SDL_error SDL_global_error;
 
 // Implementation of strlcpy()/strlcat() based on OpenBSD.
 
-#ifndef IOS
+#if !defined(IOS) && !defined(OSX)
 static size_t strlcpy(char *dest, const char *source, size_t size)
 {
    size_t src_size = 0;
