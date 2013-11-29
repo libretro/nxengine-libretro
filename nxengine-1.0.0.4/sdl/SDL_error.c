@@ -37,6 +37,25 @@ static SDL_error SDL_global_error;
 
 /* Private functions */
 
+// Implementation of strlcpy()/strlcat() based on OpenBSD.
+
+static size_t strlcpy(char *dest, const char *source, size_t size)
+{
+   size_t src_size = 0;
+   size_t n = size;
+
+   if (n)
+      while (--n && (*dest++ = *source++)) src_size++;
+
+   if (!n)
+   {
+      if (size) *dest = '\0';
+      while (*source++) src_size++;
+   }
+
+   return src_size;
+}
+
 static const char *SDL_LookupString(const char *key)
 {
 	/* FIXME: Add code to lookup key in language string hash-table */

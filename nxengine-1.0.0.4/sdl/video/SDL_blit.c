@@ -211,17 +211,22 @@ static void SDL_BlitCopyOverlap(SDL_BlitInfo *info)
 	dst = info->d_pixels;
 	srcskip = w+info->s_skip;
 	dstskip = w+info->d_skip;
-	if ( dst < src ) {
-		while ( h-- ) {
-			SDL_memmove(dst, src, w);
+	if ( dst < src )
+   {
+		while ( h-- )
+      {
+			memmove(dst, src, w);
 			src += srcskip;
 			dst += dstskip;
 		}
-	} else {
+	}
+   else
+   {
 		src += ((h-1) * srcskip);
 		dst += ((h-1) * dstskip);
-		while ( h-- ) {
-			SDL_revcpy(dst, src, w);
+		while ( h-- )
+      {
+			memmove(dst, src, w);
 			src -= srcskip;
 			dst -= dstskip;
 		}
