@@ -257,8 +257,6 @@ extern DECLSPEC void * SDLCALL SDL_revcpy(void *dst, const void *src, size_t len
 
 #define SDL_strlen      strlen
 
-#define SDL_strlcpy     strlcpy
-
 #ifdef HAVE_STRLCAT
 #define SDL_strlcat    strlcat
 #else
