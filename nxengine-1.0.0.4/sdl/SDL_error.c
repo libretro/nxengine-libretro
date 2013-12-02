@@ -37,27 +37,6 @@ static SDL_error SDL_global_error;
 
 /* Private functions */
 
-// Implementation of strlcpy()/strlcat() based on OpenBSD.
-
-#if !defined(IOS) && !defined(OSX)
-static size_t strlcpy(char *dest, const char *source, size_t size)
-{
-   size_t src_size = 0;
-   size_t n = size;
-
-   if (n)
-      while (--n && (*dest++ = *source++)) src_size++;
-
-   if (!n)
-   {
-      if (size) *dest = '\0';
-      while (*source++) src_size++;
-   }
-
-   return src_size;
-}
-#endif
-
 static const char *SDL_LookupString(const char *key)
 {
 	/* FIXME: Add code to lookup key in language string hash-table */
@@ -74,7 +53,7 @@ void SDL_SetError (const char *fmt, ...)
 	/* Copy in the key, mark error as valid */
 	error = SDL_GetErrBuf();
 	error->error = 1;
-	strlcpy((char *)error->key, fmt, sizeof(error->key));
+	strcpy((char *)error->key, fmt);
 
 	va_start(ap, fmt);
 	error->argc = 0;
@@ -111,7 +90,7 @@ void SDL_SetError (const char *fmt, ...)
 				  const char *str = va_arg(ap, const char *);
 				  if (str == NULL)
 				      str = "(null)";
-				  strlcpy((char *)error->args[i].buf, str, ERR_MAX_STRLEN);
+				  strcpy((char *)error->args[i].buf, str);
 				  error->argc++;
 				}
 				break;
