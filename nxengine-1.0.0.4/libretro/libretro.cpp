@@ -17,6 +17,7 @@ unsigned retro_frame_buffer_width;
 unsigned retro_frame_buffer_height;
 unsigned retro_frame_buffer_pitch;
 
+static retro_log_printf_t log_cb;
 static retro_video_refresh_t video_cb;
 static retro_input_poll_t poll_cb;
 retro_input_state_t input_cb;
@@ -94,12 +95,17 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 
 void retro_init(void)
 {
+   struct retro_log_callback log;
    enum retro_pixel_format rgb565;
+
+   environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log);
+   if (log.log)
+      log_cb = log.log;
 
 #ifdef FRONTEND_SUPPORTS_RGB565
    rgb565 = RETRO_PIXEL_FORMAT_RGB565;
-   if(environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &rgb565))
-      fprintf(stderr, "Frontend supports RGB565 - will use that instead of XRGB1555.\n");
+   if(environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &rgb565) && log_cb)
+      log_cb(RETRO_LOG_INFO, "Frontend supports RGB565 - will use that instead of XRGB1555.\n");
 #endif
 }
 
@@ -161,23 +167,32 @@ void retro_run(void)
    poll_cb();
    static unsigned frame_cnt = 0;
 
-   //fprintf(stderr, "[NX]: Start frame.\n");
-   //int64_t start_time = get_usec();
+#if 0
+   if (log_cb)
+      log_cb(RETRO_LOG_INFO, "[NX]: Start frame.\n");
+   int64_t start_time = get_usec();
    
-	//platform_sync_to_vblank();
+	platform_sync_to_vblank();
+#endif
 	screen->Flip();
 
    if (retro_60hz)
    {
       //int64_t start_time_frame = get_usec();
       while (!run_main());
-      //int64_t total_time_frame = get_usec() - start_time_frame;
-      //fprintf(stderr, "[NX]: total_time_frame took %lld usec.\n", (long long)total_time_frame);
+#if 0
+      int64_t total_time_frame = get_usec() - start_time_frame;
+      if (log_cb)
+         log_cb(RETRO_LOG_INFO, "[NX]: total_time_frame took %lld usec.\n", (long long)total_time_frame);
+#endif
 
       //int64_t start_time_frame_cb = get_usec();
       video_cb(retro_frame_buffer, retro_frame_buffer_width, retro_frame_buffer_height, retro_frame_buffer_pitch);
-      //int64_t total_time_frame_cb = get_usec() - start_time_frame_cb;
-      //fprintf(stderr, "[NX]: total_time_frame_cb took %lld usec.\n", (long long)total_time_frame_cb);
+#if 0
+      int64_t total_time_frame_cb = get_usec() - start_time_frame_cb;
+      if (log_cb)
+         log_cb(RETRO_LOG_INFO, "[NX]: total_time_frame_cb took %lld usec.\n", (long long)total_time_frame_cb);
+#endif
 
       frame_cnt++;
    }
@@ -204,8 +219,11 @@ void retro_run(void)
 
    g_frame_cnt++;
 
-   //int64_t total_time = get_usec() - start_time;
-   //fprintf(stderr, "[NX]: Frame took %lld usec.\n", (long long)total_time);
+#if 0
+   int64_t total_time = get_usec() - start_time;
+   if (log_cb)
+      log_cb(RETRO_LOG_INFO, "[NX]: Frame took %lld usec.\n", (long long)total_time);
+#endif
 }
 
 void retro_unload_cartridge(void) {}
