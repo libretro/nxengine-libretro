@@ -98,9 +98,10 @@ void retro_init(void)
    struct retro_log_callback log;
    enum retro_pixel_format rgb565;
 
-   environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log);
-   if (log.log)
+   if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log))
       log_cb = log.log;
+   else
+      log_cb = NULL;
 
 #ifdef FRONTEND_SUPPORTS_RGB565
    rgb565 = RETRO_PIXEL_FORMAT_RGB565;
