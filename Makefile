@@ -39,7 +39,7 @@ ifeq ($(platform), unix)
    CFLAGS += -D_GNU_SOURCE=1
 else ifeq ($(platform), osx)
    TARGET := $(TARGET_NAME)_libretro.dylib
-   fpic := -fPIC
+   fpic := -fPIC -mmacosx-version-min=10.6
    SHARED := -dynamiclib
    CFLAGS += -DOSX
 else ifeq ($(platform), ios)
