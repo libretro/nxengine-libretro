@@ -29,11 +29,6 @@
 /* General platform specific identifiers */
 #include "SDL_platform.h"
 
-/* Make sure that this isn't included by Visual C++ */
-#if defined(_MSC_VER) && !defined(_XBOX)
-#error You should copy include/SDL_config.h.default to include/SDL_config.h
-#endif
-
 /* C language features */
 /* #undef const */
 /* #undef inline */

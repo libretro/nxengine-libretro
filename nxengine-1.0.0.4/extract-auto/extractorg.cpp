@@ -13,8 +13,8 @@
 	#include <io.h>
 #endif
 
-#ifdef _XBOX
-#include <xtl.h>
+#ifdef _WIN32
+#include <direct.h>
 #endif
 
 #define HEADER_LEN		25
