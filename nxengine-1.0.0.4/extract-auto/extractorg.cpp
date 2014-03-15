@@ -142,9 +142,7 @@ static void createdir(const char *fname)
 	{
 		*ptr = 0;
 		
-      #if defined(_XBOX)
-      CreateDirectory(dir, NULL);
-		#elif defined(_WIN32)
+		#if defined(_WIN32)
 			_mkdir(dir);
 		#else
 			mkdir(dir, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
