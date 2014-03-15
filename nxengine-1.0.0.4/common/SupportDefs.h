@@ -76,7 +76,10 @@ extern const char *B_EMPTY_STRING;
 #define INT64_MAX	0x7fffffffffffffff
 #define UINT8_MAX	0xff
 #define UINT16_MAX	0xffff
+
+#ifndef UINT32_MAX
 #define UINT32_MAX	0xffffffffffffffff
+#endif
 
 /* min and max comparisons */
 #ifndef __cplusplus
