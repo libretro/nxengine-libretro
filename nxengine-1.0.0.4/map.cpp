@@ -384,7 +384,7 @@ static void DrawFastLeftLayered(void)
 {
 static const int layer_ys[] = { 80, 122, 145, 176, 240 };
 static const int move_spd[] = { 0,    1,   2,   4,   8 };
-int nlayers = 6;
+const int nlayers = sizeof(layer_ys) / sizeof(layer_ys[0]);
 int y1, y2;
 int i, x;
 
