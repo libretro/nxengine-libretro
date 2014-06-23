@@ -435,7 +435,8 @@ int SDL_SaveBMP_RW (SDL_Surface *saveme, SDL_RWops *dst, int freedst)
 		}
 	}
 
-	if ( surface && (SDL_LockSurface(surface) == 0) ) {
+	if ( surface )
+   {
 		const int bw = surface->w*surface->format->BytesPerPixel;
 
 		/* Set the BMP file header values */
@@ -535,8 +536,6 @@ int SDL_SaveBMP_RW (SDL_Surface *saveme, SDL_RWops *dst, int freedst)
 			SDL_Error(SDL_EFSEEK);
 		}
 
-		/* Close it up.. */
-		SDL_UnlockSurface(surface);
 		if ( surface != saveme ) {
 			SDL_FreeSurface(surface);
 		}
