@@ -150,7 +150,7 @@ bool NXFont::InitChars(SDL_Surface *font, uint32_t color)
 	{
 		str[0] = i;
 
-      letter = SDL_CreateRGBSurface(0, 6, 10, SCREEN_BPP, RED_MASK, GREEN_MASK, BLUE_MASK, 0);
+      letter = (SDL_Surface*)AllocNewSurface(0, 6, 10);
 
 		SDL_Rect src = {0};
 
@@ -206,8 +206,8 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 
 		uint16_t blue = 0x1f;
 
-		top = SDL_CreateRGBSurface(0, 6, 10, SCREEN_BPP, RED_MASK, GREEN_MASK, BLUE_MASK, 0);
-		bottom = SDL_CreateRGBSurface(0, 6, 10, SCREEN_BPP, RED_MASK, GREEN_MASK, BLUE_MASK, 0);
+		top = (SDL_Surface*)AllocNewSurface(0, 6, 10);
+		bottom = (SDL_Surface*)AllocNewSurface(0, 6, 10);
 
 		SDL_FillRect(top, NULL, blue);
 		SDL_FillRect(bottom, NULL, blue);
@@ -239,8 +239,7 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 		set_color(top, color_fg, blue);
 		set_color(bottom, color_bg, blue);
 
-		letters[i] = SDL_CreateRGBSurface(0, top->w, top->h+offset,
-				SCREEN_BPP, RED_MASK, GREEN_MASK, BLUE_MASK, 0);
+		letters[i] = (SDL_Surface*)AllocNewSurface(0, top->w, top->h+offset);
 
 		SDL_SetColorKey(letters[i], SDL_SRCCOLORKEY, blue);
 		SDL_FillRect(letters[i], NULL, blue);
@@ -348,8 +347,7 @@ static bool create_shade_sfc(void)
 	int ht = whitefont.letters['M']->h;
 	
 	SDL_PixelFormat *format = sdl_screen->format;
-	shadesfc = SDL_CreateRGBSurface(SDL_SRCALPHA | SDL_SWSURFACE, SCREEN_WIDTH, ht,
-	SCREEN_BPP, RED_MASK, GREEN_MASK, BLUE_MASK, 0);
+	shadesfc = (SDL_Surface*)AllocNewSurface(SDL_SRCALPHA | SDL_SWSURFACE, SCREEN_WIDTH, ht);
 	
 	if (!shadesfc)
 		return 1;
