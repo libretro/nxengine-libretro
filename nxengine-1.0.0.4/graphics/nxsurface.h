@@ -130,6 +130,10 @@ NXSurface::DrawPixel(int x, int y, NXColor color)
 void *AllocNewSurface(uint32_t colorkey, int wd, int ht);
 void DrawBlit(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect);
 void FillRectangle(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color);
+int SetColorKey(SDL_Surface* surface,
+                    int          flag,
+                    Uint32       key);
+void FreeSurface(SDL_Surface *surface);
 
 
 #endif

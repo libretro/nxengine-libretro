@@ -43,6 +43,29 @@ void *AllocNewSurface(uint32_t colorkey, int wd, int ht)
 	return surf;
 }
 
+void FreeSurface(SDL_Surface *surface)
+{
+   SDL_FreeSurface(surface);
+}
+
+void SetClipRectangle(SDL_Surface *src, SDL_Rect *rect)
+{
+   SDL_SetClipRect(src, rect);
+}
+
+void DrawBlit(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect)
+{
+	SDL_UpperBlit(src, srcrect, dst, dstrect);
+}
+
+int SetColorKey(SDL_Surface* surface,
+                    int          flag,
+                    Uint32       key)
+{
+   return SDL_SetColorKey(surface, flag, key);
+}
+
+
 NXSurface::NXSurface(int wd, int ht, NXFormat *format)
 {
 	Free();
@@ -115,14 +138,9 @@ NXSurface *NXSurface::FromFile(const char *pbm_name, bool use_colorkey)
 /*
 void c------------------------------() {}
 */
-void DrawBlit(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect)
-{
-	SDL_UpperBlit(src, srcrect, dst, dstrect);
-}
 
 // draw some or all of another surface onto this surface.
-void NXSurface::DrawSurface(NXSurface *src, \
-						 	int dstx, int dsty, int srcx, int srcy, int wd, int ht)
+void NXSurface::DrawSurface(NXSurface *src, int dstx, int dsty, int srcx, int srcy, int wd, int ht)
 {
 SDL_Rect srcrect, dstrect;
 
@@ -164,7 +182,7 @@ SDL_Rect srcrect, dstrect;
 		dstrect.x = x_dst;
 		dstrect.y = y_dst;
 		
-		SDL_UpperBlit(src->fSurface, &srcrect, fSurface, &dstrect);
+      DrawBlit(src->fSurface, &srcrect, fSurface, &dstrect);
 		x_dst += src->fSurface->w;
 	}while(x_dst < destwd);
 }
@@ -251,20 +269,21 @@ void NXSurface::Flip()
 void c------------------------------() {}
 */
 
+
 void NXSurface::set_clip_rect(int x, int y, int w, int h)
 {
 	NXRect rect(x, y, w, h);
-	SDL_SetClipRect(fSurface, &rect);
+	SetClipRectangle(fSurface, &rect);
 }
 
 void NXSurface::set_clip_rect(NXRect *rect)
 {
-	SDL_SetClipRect(fSurface, rect);
+	SetClipRectangle(fSurface, rect);
 }
 
 void NXSurface::clear_clip_rect()
 {
-	SDL_SetClipRect(fSurface, NULL);
+	SetClipRectangle(fSurface, NULL);
 }
 
 /*
@@ -276,7 +295,7 @@ void NXSurface::Free()
 	if (fSurface)
 	{
 		if (fFreeSurface)
-			SDL_FreeSurface(fSurface);
+			FreeSurface(fSurface);
 		
 		fSurface = NULL;
 	}

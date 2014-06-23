@@ -51,7 +51,7 @@ bool font_init(void)
 	sdl_screen = screen->fSurface;
 
 	SDL_Surface *font = SDL_LoadBMP_RW(rw, 1);
-	SDL_SetColorKey(font, SDL_SRCCOLORKEY, 0);
+	SetColorKey(font, SDL_SRCCOLORKEY, 0);
 
 	error |= whitefont.InitChars(font, 0xffffff);
 	error |= greenfont.InitChars(font, 0x00ff80);
@@ -59,7 +59,7 @@ bool font_init(void)
 	error |= shadowfont.InitCharsShadowed(font, 0xffffff, 0x000000);
 	error |= create_shade_sfc();
 
-	SDL_FreeSurface(font);
+	FreeSurface(font);
 
 	if (error) return 1;
 
@@ -116,7 +116,7 @@ void NXFont::free()
 	for(int i=0;i<NUM_LETTERS_RENDERED;i++)
 	{
 		if (letters[i])
-			SDL_FreeSurface(letters[i]);
+			FreeSurface(letters[i]);
 		letters[i] = NULL;
 	}
 }
@@ -164,7 +164,7 @@ bool NXFont::InitChars(SDL_Surface *font, uint32_t color)
 		dst.w = letter->w;
 		dst.h = letter->h;
 
-		SDL_SetColorKey(letter, SDL_SRCCOLORKEY, 0x1f);
+		SetColorKey(letter, SDL_SRCCOLORKEY, 0x1f);
 		FillRectangle(letter, NULL, 0x1f);
 
 		DrawBlit(font, &src, letter, &dst);
@@ -212,8 +212,8 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 
 		FillRectangle(top, NULL, blue);
 		FillRectangle(bottom, NULL, blue);
-		SDL_SetColorKey(top, SDL_SRCCOLORKEY, blue);
-		SDL_SetColorKey(bottom, SDL_SRCCOLORKEY, blue);
+		SetColorKey(top, SDL_SRCCOLORKEY, blue);
+		SetColorKey(bottom, SDL_SRCCOLORKEY, blue);
 
 		SDL_Rect src = {0};
 		src.w = 5;
@@ -240,7 +240,7 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 
 		letters[i] = (SDL_Surface*)AllocNewSurface(0, top->w, top->h+offset);
 
-		SDL_SetColorKey(letters[i], SDL_SRCCOLORKEY, blue);
+		SetColorKey(letters[i], SDL_SRCCOLORKEY, blue);
 		FillRectangle(letters[i], NULL, blue);
 
 		dstrect.x = 0;
@@ -341,7 +341,7 @@ void c------------------------------() {}
 static bool create_shade_sfc(void)
 {
 	if (shadesfc)
-		SDL_FreeSurface(shadesfc);
+		FreeSurface(shadesfc);
 	
 	int ht = whitefont.letters['M']->h;
 	
