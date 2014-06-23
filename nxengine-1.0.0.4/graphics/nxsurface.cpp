@@ -28,11 +28,29 @@ NXSurface::NXSurface()
 	fFreeSurface = true;
 }
 
+// allocate for an empty surface of the given size
+void *AllocNewSurface(uint32_t colorkey, int wd, int ht)
+{
+   SDL_Surface *surf = NULL;
+#ifdef FRONTEND_SUPPORTS_RGB565
+	surf = SDL_CreateRGBSurface(colorkey, wd, ht, 16, 0x1f << 11, 0x3f << 5, 0x1f << 0, 0);
+#else
+	surf = SDL_CreateRGBSurface(colorkey, wd, ht, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
+#endif
+	
+	if (!surf)
+	{
+		NX_ERR("AllocNewSurface: failed to allocate RGB surface\n");
+		return NULL;
+	}
+	
+	return surf;
+}
 
 NXSurface::NXSurface(int wd, int ht, NXFormat *format)
 {
-	fSurface = NULL;
-	AllocNew(wd, ht, format);
+	Free();
+	fSurface = (SDL_Surface*)AllocNewSurface(SDL_SRCCOLORKEY, wd, ht);
 	fFreeSurface = true;
 }
 
@@ -52,25 +70,6 @@ NXSurface::~NXSurface()
 void c------------------------------() {}
 */
 
-// allocate for an empty surface of the given size
-bool NXSurface::AllocNew(int wd, int ht, NXFormat *format)
-{
-	Free();
-	
-#ifdef FRONTEND_SUPPORTS_RGB565
-	fSurface = SDL_CreateRGBSurface(SDL_SRCCOLORKEY, wd, ht, 16, 0x1f << 11, 0x3f << 5, 0x1f << 0, 0);
-#else
-	fSurface = SDL_CreateRGBSurface(SDL_SRCCOLORKEY, wd, ht, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
-#endif
-	
-	if (!fSurface)
-	{
-		NX_ERR("NXSurface::AllocNew: failed to allocate RGB surface\n");
-		return 1;
-	}
-	
-	return fSurface;
-}
 
 
 // load the surface from a .pbm or bitmap file
