@@ -56,11 +56,7 @@ SDL_Surface *sdl_screen;
 	if (drawtarget == screen) drawtarget = NULL;
 	if (screen) delete screen;
 	
-#ifdef FRONTEND_SUPPORTS_RGB565
-	sdl_screen = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, 16, 0x1f << 11 , 0x7e0, 0x1f << 0, 0);
-#else
-	sdl_screen = SDL_CreateRGBSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT, 15, 0x1f << 10 , 0x1f << 5, 0x1f << 0, 0);
-#endif
+   sdl_screen = (SDL_Surface*)AllocNewSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	pitch = 320 << 1;
 
 	if (!sdl_screen)
