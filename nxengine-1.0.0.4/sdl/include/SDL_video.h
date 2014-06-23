@@ -543,7 +543,6 @@ extern DECLSPEC SDL_bool SDLCALL SDL_SetClipRect(SDL_Surface *surface, const SDL
  * You should call SDL_BlitSurface() unless you know exactly how SDL
  * blitting works internally and how to use the other blit functions.
  */
-#define SDL_BlitSurface SDL_UpperBlit
 
 /** This is the public blit function, SDL_BlitSurface(), and it performs
  *  rectangle validation and clipping before passing it to SDL_LowerBlit()
