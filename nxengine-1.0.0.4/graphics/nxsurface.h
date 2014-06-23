@@ -59,7 +59,6 @@ public:
 	NXSurface(SDL_Surface *from_sfc, bool freesurface=true);
 	~NXSurface();
 	
-	bool AllocNew(int wd, int ht, NXFormat *format = screen->Format());
 	bool LoadImage(const char *pbm_name, bool use_colorkey=false);
 	static NXSurface *FromFile(const char *pbm_name, bool use_colorkey=false);
 	
@@ -128,6 +127,7 @@ void inline
 NXSurface::DrawPixel(int x, int y, NXColor color)
 { DrawPixel(x, y, color.r, color.g, color.b); }
 
+void *AllocNewSurface(uint32_t colorkey, int wd, int ht);
 
 #endif
 
