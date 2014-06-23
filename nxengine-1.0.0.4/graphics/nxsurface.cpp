@@ -32,11 +32,7 @@ NXSurface::NXSurface()
 void *AllocNewSurface(uint32_t colorkey, int wd, int ht)
 {
    SDL_Surface *surf = NULL;
-#ifdef FRONTEND_SUPPORTS_RGB565
-	surf = SDL_CreateRGBSurface(colorkey, wd, ht, 16, 0x1f << 11, 0x3f << 5, 0x1f << 0, 0);
-#else
-	surf = SDL_CreateRGBSurface(colorkey, wd, ht, 15, 0x1f << 10, 0x1f << 5, 0x1f << 0, 0);
-#endif
+	surf = SDL_CreateRGBSurface(colorkey, wd, ht, SCREEN_BPP, 0x1f << RED_SHIFT, 0x3f << GREEN_SHIFT, 0x1f << BLUE_SHIFT, 0);
 	
 	if (!surf)
 	{
