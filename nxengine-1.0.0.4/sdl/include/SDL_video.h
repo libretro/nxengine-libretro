@@ -479,21 +479,6 @@ extern DECLSPEC SDL_bool SDLCALL SDL_SetClipRect(SDL_Surface *surface, const SDL
 extern DECLSPEC void SDLCALL SDL_GetClipRect(SDL_Surface *surface, SDL_Rect *rect);
 
 /**
- * Creates a new surface of the specified format, and then copies and maps 
- * the given surface to it so the blit of the converted surface will be as 
- * fast as possible.  If this function fails, it returns NULL.
- *
- * The 'flags' parameter is passed to SDL_CreateRGBSurface() and has those 
- * semantics.  You can also pass SDL_RLEACCEL in the flags parameter and
- * SDL will try to RLE accelerate colorkey and alpha blits in the resulting
- * surface.
- *
- * This function is used internally by SDL_DisplayFormat().
- */
-extern DECLSPEC SDL_Surface * SDLCALL SDL_ConvertSurface
-			(SDL_Surface *src, SDL_PixelFormat *fmt, Uint32 flags);
-
-/**
  * This performs a fast blit from the source surface to the destination
  * surface.  It assumes that the source and destination rectangles are
  * the same size.  If either 'srcrect' or 'dstrect' are NULL, the entire
