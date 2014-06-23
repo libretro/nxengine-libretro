@@ -165,7 +165,7 @@ bool NXFont::InitChars(SDL_Surface *font, uint32_t color)
 		dst.h = letter->h;
 
 		SDL_SetColorKey(letter, SDL_SRCCOLORKEY, 0x1f);
-		SDL_FillRect(letter, NULL, 0x1f);
+		FillRectangle(letter, NULL, 0x1f);
 
 		DrawBlit(font, &src, letter, &dst);
 
@@ -210,12 +210,10 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 		top = (SDL_Surface*)AllocNewSurface(0, 6, 10);
 		bottom = (SDL_Surface*)AllocNewSurface(0, 6, 10);
 
-		SDL_FillRect(top, NULL, blue);
-		SDL_FillRect(bottom, NULL, blue);
+		FillRectangle(top, NULL, blue);
+		FillRectangle(bottom, NULL, blue);
 		SDL_SetColorKey(top, SDL_SRCCOLORKEY, blue);
 		SDL_SetColorKey(bottom, SDL_SRCCOLORKEY, blue);
-
-		SDL_PixelFormat *format = top->format;
 
 		SDL_Rect src = {0};
 		src.w = 5;
@@ -243,7 +241,7 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 		letters[i] = (SDL_Surface*)AllocNewSurface(0, top->w, top->h+offset);
 
 		SDL_SetColorKey(letters[i], SDL_SRCCOLORKEY, blue);
-		SDL_FillRect(letters[i], NULL, blue);
+		FillRectangle(letters[i], NULL, blue);
 
 		dstrect.x = 0;
 		dstrect.y = offset;
@@ -347,13 +345,12 @@ static bool create_shade_sfc(void)
 	
 	int ht = whitefont.letters['M']->h;
 	
-	SDL_PixelFormat *format = sdl_screen->format;
 	shadesfc = (SDL_Surface*)AllocNewSurface(SDL_SRCALPHA | SDL_SWSURFACE, SCREEN_WIDTH, ht);
 	
 	if (!shadesfc)
 		return 1;
 	
-	SDL_FillRect(shadesfc, NULL, 0);
+	FillRectangle(shadesfc, NULL, 0);
 	SDL_SetAlpha(shadesfc, SDL_SRCALPHA, 128);
 	
 	return 0;

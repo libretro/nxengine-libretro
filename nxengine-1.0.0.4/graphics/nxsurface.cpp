@@ -186,6 +186,10 @@ void NXSurface::DrawRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, u
    FillRect(x2, y1, x2, y2, r, g, b);
 }
 
+void FillRectangle(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color)
+{
+   SDL_FillRect(dst, dstrect, color);
+}
 
 void NXSurface::FillRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 {
@@ -197,12 +201,12 @@ void NXSurface::FillRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, u
 	rect.w = ((x2 - x1) + 1);
 	rect.h = ((y2 - y1) + 1);
 	
-	SDL_FillRect(fSurface, &rect, color);
+   FillRectangle(fSurface, &rect, color);
 }
 
 void NXSurface::Clear(uint8_t r, uint8_t g, uint8_t b)
 {
-	SDL_FillRect(fSurface, NULL, SDL_MapRGB(fSurface->format, r, g, b));
+	FillRectangle(fSurface, NULL, SDL_MapRGB(fSurface->format, r, g, b));
 }
 
 
