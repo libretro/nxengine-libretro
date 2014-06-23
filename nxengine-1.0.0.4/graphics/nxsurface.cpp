@@ -135,7 +135,7 @@ SDL_Rect srcrect, dstrect;
 	dstrect.x = dstx;
 	dstrect.y = dsty;
 	
-	SDL_BlitSurface(src->fSurface, &srcrect, fSurface, &dstrect);
+	SDL_UpperBlit(src->fSurface, &srcrect, fSurface, &dstrect);
 }
 
 void NXSurface::DrawSurface(NXSurface *src, int dstx, int dsty)
@@ -167,7 +167,7 @@ SDL_Rect srcrect, dstrect;
 		dstrect.x = x;
 		dstrect.y = y;
 		
-		SDL_BlitSurface(src->fSurface, &srcrect, fSurface, &dstrect);
+		SDL_UpperBlit(src->fSurface, &srcrect, fSurface, &dstrect);
 		x += src->fSurface->w;
 	}
 	while(x < destwd);
