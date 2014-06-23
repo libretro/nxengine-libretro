@@ -447,20 +447,6 @@ int SDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect,
 	return 0;
 }
 
-static int SDL_FillRect1(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
-{
-	/* FIXME: We have to worry about packing order.. *sigh* */
-	SDL_SetError("1-bpp rect fill not yet implemented");
-	return -1;
-}
-
-static int SDL_FillRect4(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
-{
-	/* FIXME: We have to worry about packing order.. *sigh* */
-	SDL_SetError("4-bpp rect fill not yet implemented");
-	return -1;
-}
-
 /* 
  * This function performs a fast fill of the given rectangle with 'color'
  */
@@ -469,22 +455,6 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 	SDL_VideoDevice *video = current_video;
 	int x, y;
 	Uint8 *row;
-
-	/* This function doesn't work on surfaces < 8 bpp */
-	if ( dst->format->BitsPerPixel < 8 ) {
-		switch(dst->format->BitsPerPixel) {
-		    case 1:
-			return SDL_FillRect1(dst, dstrect, color);
-			break;
-		    case 4:
-			return SDL_FillRect4(dst, dstrect, color);
-			break;
-		    default:
-			SDL_SetError("Fill rect on unsupported surface format");
-			return(-1);
-			break;
-		}
-	}
 
 	/* If 'dstrect' == NULL, then fill the whole surface */
 	if ( dstrect ) {
@@ -595,110 +565,6 @@ void SDL_UnlockSurface (SDL_Surface *surface)
 
 	/* Perform the unlock */
 	surface->pixels = (Uint8 *)surface->pixels - surface->offset;
-}
-
-/* 
- * Convert a surface into the specified pixel format.
- */
-SDL_Surface * SDL_ConvertSurface (SDL_Surface *surface,
-					SDL_PixelFormat *format, Uint32 flags)
-{
-	SDL_Surface *convert;
-	Uint32 colorkey = 0;
-	Uint8 alpha = 0;
-	Uint32 surface_flags;
-	SDL_Rect bounds;
-
-	/* Check for empty destination palette! (results in empty image) */
-	if ( format->palette != NULL ) {
-		int i;
-		for ( i=0; i<format->palette->ncolors; ++i ) {
-			if ( (format->palette->colors[i].r != 0) ||
-			     (format->palette->colors[i].g != 0) ||
-			     (format->palette->colors[i].b != 0) )
-				break;
-		}
-		if ( i == format->palette->ncolors ) {
-			SDL_SetError("Empty destination palette");
-			return(NULL);
-		}
-	}
-
-	/* Create a new surface with the desired format */
-	convert = SDL_CreateRGBSurface(flags,
-				surface->w, surface->h, format->BitsPerPixel,
-		format->Rmask, format->Gmask, format->Bmask, format->Amask);
-	if ( convert == NULL ) {
-		return(NULL);
-	}
-
-	/* Copy the palette if any */
-	if ( format->palette && convert->format->palette ) {
-		SDL_memcpy(convert->format->palette->colors,
-				format->palette->colors,
-				format->palette->ncolors*sizeof(SDL_Color));
-		convert->format->palette->ncolors = format->palette->ncolors;
-	}
-
-	/* Save the original surface color key and alpha */
-	surface_flags = surface->flags;
-	if ( (surface_flags & SDL_SRCCOLORKEY) == SDL_SRCCOLORKEY ) {
-		/* Convert colourkeyed surfaces to RGBA if requested */
-		if((flags & SDL_SRCCOLORKEY) != SDL_SRCCOLORKEY
-		   && format->Amask) {
-			surface_flags &= ~SDL_SRCCOLORKEY;
-		} else {
-			colorkey = surface->format->colorkey;
-			SDL_SetColorKey(surface, 0, 0);
-		}
-	}
-	if ( (surface_flags & SDL_SRCALPHA) == SDL_SRCALPHA ) {
-		/* Copy over the alpha channel to RGBA if requested */
-		if ( format->Amask ) {
-			surface->flags &= ~SDL_SRCALPHA;
-		} else {
-			alpha = surface->format->alpha;
-			SDL_SetAlpha(surface, 0, 0);
-		}
-	}
-
-	/* Copy over the image data */
-	bounds.x = 0;
-	bounds.y = 0;
-	bounds.w = surface->w;
-	bounds.h = surface->h;
-	SDL_LowerBlit(surface, &bounds, convert, &bounds);
-
-	/* Clean up the original surface, and update converted surface */
-	if ( convert != NULL ) {
-		SDL_SetClipRect(convert, &surface->clip_rect);
-	}
-	if ( (surface_flags & SDL_SRCCOLORKEY) == SDL_SRCCOLORKEY ) {
-		Uint32 cflags = surface_flags&(SDL_SRCCOLORKEY|SDL_RLEACCELOK);
-		if ( convert != NULL ) {
-			Uint8 keyR, keyG, keyB;
-
-			SDL_GetRGB(colorkey,surface->format,&keyR,&keyG,&keyB);
-			SDL_SetColorKey(convert, cflags|(flags&SDL_RLEACCELOK),
-				SDL_MapRGB(convert->format, keyR, keyG, keyB));
-		}
-		SDL_SetColorKey(surface, cflags, colorkey);
-	}
-	if ( (surface_flags & SDL_SRCALPHA) == SDL_SRCALPHA ) {
-		Uint32 aflags = surface_flags&(SDL_SRCALPHA|SDL_RLEACCELOK);
-		if ( convert != NULL ) {
-		        SDL_SetAlpha(convert, aflags|(flags&SDL_RLEACCELOK),
-				alpha);
-		}
-		if ( format->Amask ) {
-			surface->flags |= SDL_SRCALPHA;
-		} else {
-			SDL_SetAlpha(surface, aflags, alpha);
-		}
-	}
-
-	/* We're ready to go! */
-	return(convert);
 }
 
 /*
