@@ -167,7 +167,7 @@ bool NXFont::InitChars(SDL_Surface *font, uint32_t color)
 		SDL_SetColorKey(letter, SDL_SRCCOLORKEY, 0x1f);
 		SDL_FillRect(letter, NULL, 0x1f);
 
-		SDL_UpperBlit(font, &src, letter, &dst);
+		DrawBlit(font, &src, letter, &dst);
 
 		uint16 color = fgcolor.r << RED_SHIFT
 		| fgcolor.g << GREEN_SHIFT
@@ -227,8 +227,8 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 		dst.w = top->w;
 		dst.h = top->h;
 
-		SDL_UpperBlit(font, &src, top, &dst);
-		SDL_UpperBlit(font, &src, bottom, &dst);
+		DrawBlit(font, &src, top, &dst);
+		DrawBlit(font, &src, bottom, &dst);
 
 		uint16_t color_fg = fgcolor.r << RED_SHIFT
 		| fgcolor.g << GREEN_SHIFT
@@ -247,11 +247,11 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 
 		dstrect.x = 0;
 		dstrect.y = offset;
-		SDL_UpperBlit(bottom, NULL, letters[i], &dstrect);
+		DrawBlit(bottom, NULL, letters[i], &dstrect);
 
 		dstrect.x = 0;
 		dstrect.y = 0;
-		SDL_UpperBlit(top, NULL, letters[i], &dstrect);
+		DrawBlit(top, NULL, letters[i], &dstrect);
 	}
 
 	return 0;
@@ -284,7 +284,7 @@ static int text_draw(int x, int y, const char *text, int spacing, NXFont *font)
 			// dstrect with final clipping rectangle.
 			dstrect.x = x;
 			dstrect.y = y;
-			SDL_UpperBlit(letter, NULL, sdl_screen, &dstrect);
+			DrawBlit(letter, NULL, sdl_screen, &dstrect);
 		}
 
 		if (spacing != 0)
@@ -385,7 +385,7 @@ int font_draw_shaded(int x, int y, const char *text, int spacing, NXFont *font)
 	// shade
 	dstrect.x = x;
 	dstrect.y = y;
-	SDL_UpperBlit(shadesfc, &srcrect, sdl_screen, &dstrect);
+	DrawBlit(shadesfc, &srcrect, sdl_screen, &dstrect);
 
 	// draw the text on top as normal
 	wd = text_draw(x, y, text, spacing, font);

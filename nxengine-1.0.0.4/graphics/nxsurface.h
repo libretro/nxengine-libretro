@@ -128,6 +128,8 @@ NXSurface::DrawPixel(int x, int y, NXColor color)
 { DrawPixel(x, y, color.r, color.g, color.b); }
 
 void *AllocNewSurface(uint32_t colorkey, int wd, int ht);
+void DrawBlit(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect);
+
 
 #endif
 

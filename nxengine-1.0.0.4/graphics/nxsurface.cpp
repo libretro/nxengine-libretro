@@ -115,6 +115,10 @@ NXSurface *NXSurface::FromFile(const char *pbm_name, bool use_colorkey)
 /*
 void c------------------------------() {}
 */
+void DrawBlit(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect)
+{
+	SDL_UpperBlit(src, srcrect, dst, dstrect);
+}
 
 // draw some or all of another surface onto this surface.
 void NXSurface::DrawSurface(NXSurface *src, \
@@ -130,7 +134,7 @@ SDL_Rect srcrect, dstrect;
 	dstrect.x = dstx;
 	dstrect.y = dsty;
 	
-	SDL_UpperBlit(src->fSurface, &srcrect, fSurface, &dstrect);
+   DrawBlit(src->fSurface, &srcrect, fSurface, &dstrect);
 }
 
 void NXSurface::DrawSurface(NXSurface *src, int dstx, int dsty)
