@@ -25,6 +25,7 @@ static int text_draw(int x, int y, const char *text, int spacing=0, NXFont *font
 #define BLUE_MASK (0x1f << 0)
 #endif
 
+
 static SDL_Surface *sdl_screen = NULL;
 static SDL_Surface *shadesfc = NULL;
 
