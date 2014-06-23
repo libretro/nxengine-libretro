@@ -178,33 +178,19 @@ void c------------------------------() {}
 
 void NXSurface::DrawRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 {
-SDL_Rect rect;
-	uint32_t color = r << RED_SHIFT | g << GREEN_SHIFT | b << BLUE_SHIFT;
-
 	// top and bottom
-	rect.x = x1;
-	rect.y = y1;
-	rect.w = ((x2 - x1) + 1);
-	rect.h = 1;
-	SDL_FillRect(fSurface, &rect, color);
-	
-	rect.y = y2;
-	SDL_FillRect(fSurface, &rect, color);
+   FillRect(x1, y1, x2, y1, r, g, b);
+   FillRect(x1, y2, x2, y2, r, g, b);
 	
 	// left and right
-	rect.y = y1;
-	rect.w = 1;
-	rect.h = ((y2 - y1) + 1);
-	SDL_FillRect(fSurface, &rect, color);
-	
-	rect.x = x2;
-	SDL_FillRect(fSurface, &rect, color);
+   FillRect(x1, y1, x1, y2, r, g, b);
+   FillRect(x2, y1, x2, y2, r, g, b);
 }
 
 
 void NXSurface::FillRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 {
-SDL_Rect rect;
+   SDL_Rect rect;
 	uint32_t color = r << RED_SHIFT | g << GREEN_SHIFT | b << BLUE_SHIFT;
 
 	rect.x = x1;
