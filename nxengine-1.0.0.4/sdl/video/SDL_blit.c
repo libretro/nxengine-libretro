@@ -258,10 +258,7 @@ int SDL_CalculateBlit(SDL_Surface *surface)
 		return(-1);
 	}
 
-	/* Choose software blitting function */
-	if ( surface->map->sw_blit == NULL ) {
-		surface->map->sw_blit = SDL_SoftBlit;
-	}
+   surface->map->sw_blit = SDL_SoftBlit;
 	return(0);
 }
 

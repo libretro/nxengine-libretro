@@ -166,10 +166,6 @@
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
     </ClCompile>
-    <ClCompile Include="..\..\..\sdl\video\SDL_video.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
-    </ClCompile>
     <ClCompile Include="..\..\..\settings.cpp" />
     <ClCompile Include="..\..\..\siflib\sectSprites.cpp" />
     <ClCompile Include="..\..\..\siflib\sectStringArray.cpp" />

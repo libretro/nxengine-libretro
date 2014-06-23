@@ -520,6 +520,7 @@ void SDL_InvalidateMap(SDL_BlitMap *map)
 		map->table = NULL;
 	}
 }
+
 int SDL_MapSurface (SDL_Surface *src, SDL_Surface *dst)
 {
 	SDL_PixelFormat *srcfmt;
@@ -586,6 +587,7 @@ int SDL_MapSurface (SDL_Surface *src, SDL_Surface *dst)
 	/* Choose your blitters wisely */
 	return(SDL_CalculateBlit(src));
 }
+
 void SDL_FreeBlitMap(SDL_BlitMap *map)
 {
 	if ( map ) {

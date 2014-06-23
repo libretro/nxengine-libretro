@@ -72,11 +72,4 @@ struct SDL_VideoDevice {
 };
 #undef _THIS
 
-/* This is the current video device */
-extern SDL_VideoDevice *current_video;
-
-#define SDL_VideoSurface	(current_video->screen)
-#define SDL_ShadowSurface	(current_video->shadow)
-#define SDL_PublicSurface	(current_video->visible)
-
 #endif /* _SDL_sysvideo_h */
