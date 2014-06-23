@@ -93,6 +93,13 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
    info->timing.sample_rate = 22050.0;
 }
 
+static void check_system_specs(void)
+{
+   // TODO - when it starts reliably running at fullspeed on PSP, set to 4
+   unsigned level = 5;
+   environ_cb(RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL, &level);
+}
+
 void retro_init(void)
 {
    struct retro_log_callback log;
@@ -108,6 +115,7 @@ void retro_init(void)
    if(environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &rgb565) && log_cb)
       log_cb(RETRO_LOG_INFO, "Frontend supports RGB565 - will use that instead of XRGB1555.\n");
 #endif
+   check_system_specs();
 }
 
 static void extract_directory(char *buf, const char *path, size_t size)
