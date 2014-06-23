@@ -506,9 +506,6 @@
     <ClCompile Include="..\..\..\sdl\stdlib\SDL_string.c">
       <Filter>Source Files\SDL\stdlib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\sdl\video\SDL_video.c">
-      <Filter>Source Files\SDL\video</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\sdl\video\SDL_blit.c">
       <Filter>Source Files\SDL\video</Filter>
     </ClCompile>

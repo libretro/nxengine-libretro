@@ -36,8 +36,6 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 			int width, int height, int depth,
 			Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
-	SDL_VideoDevice *video = current_video;
-	SDL_Surface *screen;
 	SDL_Surface *surface;
 
 	/* Make sure the size requested doesn't overflow our datatypes */
@@ -47,12 +45,6 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 		return(NULL);
 	}
 
-	/* Check to see if we desire the surface in video memory */
-	if ( video ) {
-		screen = SDL_PublicSurface;
-	} else {
-		screen = NULL;
-	}
 	flags &= ~SDL_HWSURFACE;
 
 	/* Allocate the surface */
@@ -152,8 +144,6 @@ int SDL_SetColorKey (SDL_Surface *surface, Uint32 flag, Uint32 key)
 	}
 
 	if ( flag ) {
-		SDL_VideoDevice *video = current_video;
-
 		surface->flags |= SDL_SRCCOLORKEY;
 		surface->format->colorkey = key;
 		if ( flag & SDL_RLEACCELOK ) {
@@ -192,8 +182,6 @@ int SDL_SetAlpha (SDL_Surface *surface, Uint32 flag, Uint8 value)
 	}
 
 	if ( flag ) {
-		SDL_VideoDevice *video = current_video;
-
 		surface->flags |= SDL_SRCALPHA;
 		surface->format->alpha = value;
 
@@ -314,12 +302,7 @@ SDL_bool SDL_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect)
 	}
 	return SDL_IntersectRect(rect, &full_rect, &surface->clip_rect);
 }
-void SDL_GetClipRect(SDL_Surface *surface, SDL_Rect *rect)
-{
-	if ( surface && rect ) {
-		*rect = surface->clip_rect;
-	}
-}
+
 /* 
  * Set up a blit between two surfaces -- split into three parts:
  * The upper part, SDL_UpperBlit(), performs clipping and rectangle 
@@ -426,7 +409,6 @@ int SDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect,
  */
 int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 {
-	SDL_VideoDevice *video = current_video;
 	int x, y;
 	Uint8 *row;
 
@@ -526,11 +508,8 @@ void SDL_UnlockSurface (SDL_Surface *surface)
 void SDL_FreeSurface (SDL_Surface *surface)
 {
 	/* Free anything that's not NULL, and not the screen surface */
-	if ((surface == NULL) ||
-	    (current_video &&
-	    ((surface == SDL_ShadowSurface)||(surface == SDL_VideoSurface)))) {
+	if ((surface == NULL))
 		return;
-	}
 	if ( --surface->refcount > 0 ) {
 		return;
 	}

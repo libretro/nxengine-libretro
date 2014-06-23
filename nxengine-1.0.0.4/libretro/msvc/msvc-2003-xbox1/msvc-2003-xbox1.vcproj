@@ -568,9 +568,6 @@
 						<File
 							RelativePath="..\..\..\sdl\video\SDL_surface.c">
 						</File>
-						<File
-							RelativePath="..\..\..\sdl\video\SDL_video.c">
-						</File>
 					</Filter>
 					<Filter
 						Name="file"

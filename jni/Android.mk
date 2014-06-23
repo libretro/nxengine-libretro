@@ -55,7 +55,7 @@ SOUND_OBJS := $(NX_DIR)/sound/org.cpp $(NX_DIR)/sound/pxt.cpp $(NX_DIR)/sound/so
 
 TEXTBOX_OBJS := $(NX_DIR)/TextBox/ItemImage.cpp $(NX_DIR)/TextBox/SaveSelect.cpp $(NX_DIR)/TextBox/StageSelect.cpp $(NX_DIR)/TextBox/TextBox.cpp $(NX_DIR)/TextBox/YesNoPrompt.cpp
 
-SDL_OBJS := $(NX_DIR)/sdl/SDL_error.c $(NX_DIR)/sdl/file/SDL_rwops.c $(NX_DIR)/sdl/video/SDL_blit.c $(NX_DIR)/sdl/video/SDL_blit_0.c $(NX_DIR)/sdl/video/SDL_blit_1.c $(NX_DIR)/sdl/video/SDL_blit_A.c $(NX_DIR)/sdl/video/SDL_blit_N.c $(NX_DIR)/sdl/video/SDL_bmp.c $(NX_DIR)/sdl/video/SDL_pixels.c $(NX_DIR)/sdl/video/SDL_surface.c $(NX_DIR)/sdl/video/SDL_video.c $(NX_DIR)/sdl/cpuinfo/SDL_cpuinfo.c
+SDL_OBJS := $(NX_DIR)/sdl/SDL_error.c $(NX_DIR)/sdl/file/SDL_rwops.c $(NX_DIR)/sdl/video/SDL_blit.c $(NX_DIR)/sdl/video/SDL_blit_0.c $(NX_DIR)/sdl/video/SDL_blit_1.c $(NX_DIR)/sdl/video/SDL_blit_A.c $(NX_DIR)/sdl/video/SDL_blit_N.c $(NX_DIR)/sdl/video/SDL_bmp.c $(NX_DIR)/sdl/video/SDL_pixels.c $(NX_DIR)/sdl/video/SDL_surface.c $(NX_DIR)/sdl/cpuinfo/SDL_cpuinfo.c
 
 AUTOGEN_OBJS := $(NX_DIR)/autogen/AssignSprites.cpp $(NX_DIR)/autogen/objnames.cpp
 

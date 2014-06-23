@@ -472,13 +472,6 @@ extern DECLSPEC int SDLCALL SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint
 extern DECLSPEC SDL_bool SDLCALL SDL_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect);
 
 /**
- * Gets the clipping rectangle for the destination surface in a blit.
- * 'rect' must be a pointer to a valid rectangle which will be filled
- * with the correct values.
- */
-extern DECLSPEC void SDLCALL SDL_GetClipRect(SDL_Surface *surface, SDL_Rect *rect);
-
-/**
  * This performs a fast blit from the source surface to the destination
  * surface.  It assumes that the source and destination rectangles are
  * the same size.  If either 'srcrect' or 'dstrect' are NULL, the entire
