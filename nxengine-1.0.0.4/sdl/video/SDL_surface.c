@@ -242,12 +242,6 @@ int SDL_SetAlphaChannel(SDL_Surface *surface, Uint8 value)
 	}
 #endif /* Byte ordering */
 
-	/* Quickly set the alpha channel of an RGBA or ARGB surface */
-	if ( SDL_MUSTLOCK(surface) ) {
-		if ( SDL_LockSurface(surface) < 0 ) {
-			return -1;
-		}
-	}
 	row = surface->h;
 	while (row--) {
 		col = surface->w;
@@ -256,9 +250,6 @@ int SDL_SetAlphaChannel(SDL_Surface *surface, Uint8 value)
 			*buf = value;
 			buf += 4;
 		}
-	}
-	if ( SDL_MUSTLOCK(surface) ) {
-		SDL_UnlockSurface(surface);
 	}
 	return 0;
 }
@@ -449,10 +440,6 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 		dstrect = &dst->clip_rect;
 	}
 
-	/* Perform software fill */
-	if ( SDL_LockSurface(dst) != 0 ) {
-		return(-1);
-	}
 	row = (Uint8 *)dst->pixels+dstrect->y*dst->pitch+
 			dstrect->x*dst->format->BytesPerPixel;
 	if ( dst->format->palette || (color == 0) ) {
@@ -513,7 +500,6 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 			break;
 		}
 	}
-	SDL_UnlockSurface(dst);
 
 	/* We're done! */
 	return(0);
@@ -524,16 +510,6 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
  */
 int SDL_LockSurface (SDL_Surface *surface)
 {
-	if ( ! surface->locked ) {
-		/* Perform the lock */
-		/* This needs to be done here in case pixels changes value */
-		surface->pixels = (Uint8 *)surface->pixels + surface->offset;
-	}
-
-	/* Increment the surface lock count, for recursive locks */
-	++surface->locked;
-
-	/* Ready to go.. */
 	return(0);
 }
 /*
@@ -541,12 +517,6 @@ int SDL_LockSurface (SDL_Surface *surface)
  */
 void SDL_UnlockSurface (SDL_Surface *surface)
 {
-	/* Only perform an unlock if we are locked */
-	if ( ! surface->locked || (--surface->locked > 0) ) {
-		return;
-	}
-
-	/* Perform the unlock */
 	surface->pixels = (Uint8 *)surface->pixels - surface->offset;
 }
 
@@ -563,9 +533,6 @@ void SDL_FreeSurface (SDL_Surface *surface)
 	}
 	if ( --surface->refcount > 0 ) {
 		return;
-	}
-	while ( surface->locked > 0 ) {
-		SDL_UnlockSurface(surface);
 	}
 	if ( surface->format ) {
 		SDL_FreeFormat(surface->format);

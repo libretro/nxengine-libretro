@@ -42,34 +42,9 @@
 static int SDL_SoftBlit(SDL_Surface *src, SDL_Rect *srcrect,
 			SDL_Surface *dst, SDL_Rect *dstrect)
 {
-	int okay;
-	int src_locked;
-	int dst_locked;
-
-	/* Everything is okay at the beginning...  */
-	okay = 1;
-
-	/* Lock the destination if it's in hardware */
-	dst_locked = 0;
-	if ( SDL_MUSTLOCK(dst) ) {
-		if ( SDL_LockSurface(dst) < 0 ) {
-			okay = 0;
-		} else {
-			dst_locked = 1;
-		}
-	}
-	/* Lock the source if it's in hardware */
-	src_locked = 0;
-	if ( SDL_MUSTLOCK(src) ) {
-		if ( SDL_LockSurface(src) < 0 ) {
-			okay = 0;
-		} else {
-			src_locked = 1;
-		}
-	}
-
 	/* Set up source and destination buffer pointers, and BLIT! */
-	if ( okay  && srcrect->w && srcrect->h ) {
+	if (srcrect->w && srcrect->h )
+   {
 		SDL_BlitInfo info;
 		SDL_loblit RunBlit;
 
@@ -96,15 +71,7 @@ static int SDL_SoftBlit(SDL_Surface *src, SDL_Rect *srcrect,
 		RunBlit(&info);
 	}
 
-	/* We need to unlock the surfaces if they're locked */
-	if ( dst_locked ) {
-		SDL_UnlockSurface(dst);
-	}
-	if ( src_locked ) {
-		SDL_UnlockSurface(src);
-	}
-	/* Blit is done! */
-	return(okay ? 0 : -1);
+   return 0;
 }
 
 #ifdef MMX_ASMBLIT
