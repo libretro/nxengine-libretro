@@ -361,18 +361,9 @@ int SDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect,
         SDL_Rect fulldst;
 	int srcx, srcy, w, h;
 
-	/* Make sure the surfaces aren't locked */
-	if ( ! src || ! dst ) {
-		SDL_SetError("SDL_UpperBlit: passed a NULL surface");
-		return(-1);
-	}
-	if ( src->locked || dst->locked ) {
-		SDL_SetError("Surfaces must not be locked during blit");
-		return(-1);
-	}
-
 	/* If the destination rectangle is NULL, use the entire dest surface */
-	if ( dstrect == NULL ) {
+	if ( dstrect == NULL )
+   {
 	        fulldst.x = fulldst.y = 0;
 		dstrect = &fulldst;
 	}
@@ -383,30 +374,22 @@ int SDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect,
 	
 		srcx = srcrect->x;
 		w = srcrect->w;
-		if(srcx < 0) {
-		        w += srcx;
-			dstrect->x -= srcx;
-			srcx = 0;
-		}
 		maxw = src->w - srcx;
 		if(maxw < w)
 			w = maxw;
 
 		srcy = srcrect->y;
 		h = srcrect->h;
-		if(srcy < 0) {
-		        h += srcy;
-			dstrect->y -= srcy;
-			srcy = 0;
-		}
 		maxh = src->h - srcy;
 		if(maxh < h)
 			h = maxh;
 	    
-	} else {
-	        srcx = srcy = 0;
-		w = src->w;
-		h = src->h;
+	}
+   else
+   {
+      srcx = srcy = 0;
+      w = src->w;
+      h = src->h;
 	}
 
 	/* clip the destination rectangle against the clip rectangle */

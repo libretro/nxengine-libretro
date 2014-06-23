@@ -155,22 +155,19 @@ SDL_Rect srcrect, dstrect;
 
 	srcrect.x = 0;
 	srcrect.w = src->fSurface->w;
-	srcrect.y = (y_src);
-	srcrect.h = (height);
+	srcrect.y = y_src;
+	srcrect.h = height;
 	
-	int x = (x_dst);
-	int y = (y_dst);
 	int destwd = fSurface->w;
 	
 	do
 	{
-		dstrect.x = x;
-		dstrect.y = y;
+		dstrect.x = x_dst;
+		dstrect.y = y_dst;
 		
 		SDL_UpperBlit(src->fSurface, &srcrect, fSurface, &dstrect);
-		x += src->fSurface->w;
-	}
-	while(x < destwd);
+		x_dst += src->fSurface->w;
+	}while(x_dst < destwd);
 }
 
 
