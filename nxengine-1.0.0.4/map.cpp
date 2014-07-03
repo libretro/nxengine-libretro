@@ -388,7 +388,9 @@ const int nlayers = sizeof(layer_ys) / sizeof(layer_ys[0]);
 int y1, y2;
 int i, x;
 
-	if (--map.parscroll_x <= -(SCREEN_WIDTH*2))
+	const int W = backdrop[map.backdrop]->Width();
+
+	if (--map.parscroll_x <= -(W*2))
 		map.parscroll_x = 0;
 	
 	y1 = x = 0;
@@ -399,7 +401,7 @@ int i, x;
 		if (i)	// not the static moon layer?
 		{
 			x = (map.parscroll_x * move_spd[i]) >> 1;
-			x %= SCREEN_WIDTH;
+			x %= W;
 		}
 		
 		BlitPatternAcross(backdrop[map.backdrop], x, y1, y1, (y2-y1)+1);
