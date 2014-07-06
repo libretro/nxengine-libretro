@@ -2,6 +2,7 @@ DEBUG=0
 DEBUGLOG=0
 RELEASE_BUILD=1
 SINGLE_PRECISION_FLOATS=0
+MIN_AUDIO_PROCESSING_PER_FRAME=0
 
 ifeq ($(platform),)
 platform = unix
@@ -111,6 +112,7 @@ else ifeq ($(platform), psp1)
    CFLAGS += -DGNU_SOURCE=1 -G0 -I$(shell psp-config --pspsdk-path)/include
    STATIC_LINKING = 1
    SINGLE_PRECISION_FLOATS = 1
+   MIN_AUDIO_PROCESSING_PER_FRAME = 1
 else ifeq ($(platform), xenon)
    TARGET := $(TARGET_NAME)_libretro_xenon360.a
    CC = xenon-gcc$(EXE_EXT)
@@ -172,6 +174,10 @@ endif
 
 ifeq ($(SINGLE_PRECISION_FLOATS), 1)
 CFLAGS += -DSINGLE_PRECISION_FLOATS
+endif
+
+ifeq ($(MIN_AUDIO_PROCESSING_PER_FRAME), 1)
+CFLAGS += -DMIN_AUDIO_PROCESSING_PER_FRAME
 endif
 
 AI_OBJS := $(NX_DIR)/ai/ai.o $(NX_DIR)/ai/balrog_common.o $(NX_DIR)/ai/IrregularBBox.o $(NX_DIR)/ai/almond/almond.o $(NX_DIR)/ai/boss/balfrog.o $(NX_DIR)/ai/boss/ballos.o $(NX_DIR)/ai/boss/core.o $(NX_DIR)/ai/boss/heavypress.o $(NX_DIR)/ai/boss/ironhead.o $(NX_DIR)/ai/boss/omega.o $(NX_DIR)/ai/boss/sisters.o $(NX_DIR)/ai/boss/undead_core.o $(NX_DIR)/ai/boss/x.o $(NX_DIR)/ai/egg/egg.o $(NX_DIR)/ai/egg/egg2.o $(NX_DIR)/ai/egg/igor.o $(NX_DIR)/ai/final_battle/balcony.o $(NX_DIR)/ai/final_battle/doctor.o $(NX_DIR)/ai/final_battle/doctor_common.o $(NX_DIR)/ai/final_battle/doctor_frenzied.o $(NX_DIR)/ai/final_battle/final_misc.o $(NX_DIR)/ai/final_battle/misery_finalbattle.o $(NX_DIR)/ai/final_battle/sidekicks.o $(NX_DIR)/ai/first_cave/first_cave.o $(NX_DIR)/ai/hell/ballos_misc.o $(NX_DIR)/ai/hell/ballos_priest.o $(NX_DIR)/ai/hell/hell.o $(NX_DIR)/ai/last_cave/last_cave.o $(NX_DIR)/ai/maze/balrog_boss_missiles.o  $(NX_DIR)/ai/maze/critter_purple.o $(NX_DIR)/ai/maze/gaudi.o $(NX_DIR)/ai/maze/labyrinth_m.o $(NX_DIR)/ai/maze/pooh_black.o $(NX_DIR)/ai/maze/maze.o $(NX_DIR)/ai/npc/balrog.o $(NX_DIR)/ai/npc/curly.o $(NX_DIR)/ai/npc/curly_ai.o $(NX_DIR)/ai/npc/misery.o $(NX_DIR)/ai/npc/npcguest.o $(NX_DIR)/ai/npc/npcplayer.o $(NX_DIR)/ai/npc/npcregu.o $(NX_DIR)/ai/oside/oside.o $(NX_DIR)/ai/plantation/plantation.o $(NX_DIR)/ai/sand/curly_boss.o $(NX_DIR)/ai/sand/puppy.o $(NX_DIR)/ai/sand/sand.o $(NX_DIR)/ai/sand/toroko_frenzied.o $(NX_DIR)/ai/sym/smoke.o $(NX_DIR)/ai/sym/sym.o $(NX_DIR)/ai/village/balrog_boss_running.o $(NX_DIR)/ai/village/ma_pignon.o $(NX_DIR)/ai/village/village.o $(NX_DIR)/ai/weapons/blade.o $(NX_DIR)/ai/weapons/bubbler.o $(NX_DIR)/ai/weapons/fireball.o $(NX_DIR)/ai/weapons/missile.o $(NX_DIR)/ai/weapons/nemesis.o $(NX_DIR)/ai/weapons/polar_mgun.o $(NX_DIR)/ai/weapons/snake.o $(NX_DIR)/ai/weapons/spur.o $(NX_DIR)/ai/weapons/weapons.o $(NX_DIR)/ai/weapons/whimstar.o $(NX_DIR)/ai/weed/balrog_boss_flying.o $(NX_DIR)/ai/weed/frenzied_mimiga.o $(NX_DIR)/ai/weed/weed.o

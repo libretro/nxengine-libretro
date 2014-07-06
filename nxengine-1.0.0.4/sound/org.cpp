@@ -325,8 +325,11 @@ int i;
 	song.note_closing_samples = MSToSamples(song.ms_of_last_beat_of_note);
 	// take the suggestion on cache ahead time (which is in ms) and figure out how many beats that is
 	buffer_beats = (cache_ahead_time / song.ms_per_beat) + 1;
+
+#ifndef MIN_AUDIO_PROCESSING_PER_FRAME
    if (buffer_beats < 3) buffer_beats = 3;
-	
+#endif
+
 	// now figure out how many samples that is.
 	buffer_samples = (buffer_beats * song.samples_per_beat);
 	// now figure out how many bytes THAT is.
