@@ -25,9 +25,9 @@ typedef struct
 	signed char *model;		// ptr to model data
 	uchar model_no;			// index of model data (0-5, which wave[] model points to)
 	
-	double phaseacc;
-	double phaseinc;
-	double repeat;			// pixtone calls it "freq"
+   float_type phaseacc;
+   float_type phaseinc;
+   float_type repeat;			// pixtone calls it "freq"
 	uchar volume;			// pixtone calls it "top"
 	uchar offset;
 	

@@ -23,7 +23,7 @@ int SSGetSamplePos(int c);
 
 //-------------------[referenced from sound/org.cpp]-----------------//
 static void init_pitch(void);
-static double GetNoteSampleRate(int note, int instrument_pitch);
+static float_type GetNoteSampleRate(int note, int instrument_pitch);
 static int MSToSamples(int ms);
 static int SamplesToMS(int samples);
 static bool load_drumtable(const char *pxt_path);

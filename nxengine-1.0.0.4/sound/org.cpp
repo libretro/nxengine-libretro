@@ -72,7 +72,7 @@ static void init_pitch(void)
 
 // given an instrument pitch and a note, returns the sampling rate that the
 // wavetable sample should be played at in order to seem as if it is a recording of that note.
-static double GetNoteSampleRate(int note, int instrument_pitch)
+static float_type GetNoteSampleRate(int note, int instrument_pitch)
 {
 	return ((instrument_pitch - 1000.0)/100.0 + pitch[note])*44100/1550;
 }
@@ -80,13 +80,13 @@ static double GetNoteSampleRate(int note, int instrument_pitch)
 // converts a time in milliseconds to that same time length in samples
 static int MSToSamples(int ms)
 {
-	return (int)(((double)SAMPLE_RATE / (double)1000) * (double)ms);
+   return (int)(((float_type)SAMPLE_RATE / (float_type)1000) * (float_type)ms);
 }
 
 // converts a sample length to milliseconds
 static int SamplesToMS(int samples)
 {
-	return (int)(((double)samples * 1000) / SAMPLE_RATE);
+   return (int)(((float_type)samples * 1000) / SAMPLE_RATE);
 }
 
 
@@ -248,7 +248,7 @@ int i, j;
 	}
 	
 	// compute how long the last beat of a note should be (it should not use up the whole beat)
-	song.ms_of_last_beat_of_note = song.ms_per_beat - (int)((double)song.ms_per_beat * 0.1);
+   song.ms_of_last_beat_of_note = song.ms_per_beat - (int)((float_type)song.ms_per_beat * 0.1);
 	
 	// not actually used in this module, but the larger program might want to know this
 	song.beats_per_bar = (song.beats_per_step * song.steps_per_bar);
@@ -325,7 +325,7 @@ int i;
 	song.note_closing_samples = MSToSamples(song.ms_of_last_beat_of_note);
 	// take the suggestion on cache ahead time (which is in ms) and figure out how many beats that is
 	buffer_beats = (cache_ahead_time / song.ms_per_beat) + 1;
-	if (buffer_beats < 3) buffer_beats = 3;
+   if (buffer_beats < 3) buffer_beats = 3;
 	
 	// now figure out how many samples that is.
 	buffer_samples = (buffer_beats * song.samples_per_beat);
@@ -514,20 +514,20 @@ void c------------------------------() {}
 the whole sound (volume_ratio)
 just the left channel (volume_left_ratio)
 just the right channel (volume_right_ratio) */
-static void ComputeVolumeRatios(int volume, int panning, double *volume_ratio, \
-								double *volume_left_ratio, double *volume_right_ratio)
+static void ComputeVolumeRatios(int volume, int panning, float_type *volume_ratio, \
+                        float_type *volume_left_ratio, float_type *volume_right_ratio)
 {
-	*volume_ratio = ((double)volume / ORG_MAX_VOLUME);
+   *volume_ratio = ((float_type)volume / ORG_MAX_VOLUME);
 	
 	// get volume ratios for left and right channels (panning)
 	if (panning < ORG_PAN_CENTERED)
 	{	// panning left (make right channel quieter)
-		*volume_right_ratio = ((double)panning / ORG_PAN_CENTERED);
+      *volume_right_ratio = ((float_type)panning / ORG_PAN_CENTERED);
 		*volume_left_ratio = 1.00f;
 	}
 	else if (panning > ORG_PAN_CENTERED)
 	{	// panning right (make left channel quieter)
-		*volume_left_ratio = ((double)(ORG_PAN_FULL_RIGHT - panning) / ORG_PAN_CENTERED);
+      *volume_left_ratio = ((float_type)(ORG_PAN_FULL_RIGHT - panning) / ORG_PAN_CENTERED);
 		*volume_right_ratio = 1.00f;
 	}
 	else
@@ -542,11 +542,11 @@ static void ComputeVolumeRatios(int volume, int panning, double *volume_ratio, \
 // if ratio is 0.00, it will return exactly sample1.
 // if ratio is 1.00, it will return exactly sample2.
 // and if ratio is something like 0.5, it will mix the samples together.
-static double Interpolate(int sample1, int sample2, double ratio)
+static float_type Interpolate(int sample1, int sample2, float_type ratio)
 {
-double s1, s2;
-	s1 = ((double)sample1 * (1.00f - ratio));
-	s2 = ((double)sample2 * ratio);
+float_type s1, s2;
+   s1 = ((float_type)sample1 * (1.00f - ratio));
+   s2 = ((float_type)sample2 * ratio);
 	return (s1 + s2);
 }
 
@@ -597,12 +597,12 @@ int clear_bytes;
 // total_ms: the maximum length the note will play for (controls buffer allocation length)
 static void note_open(stNoteChannel *chan, int wave, int pitch, int note)
 {
-double new_sample_rate;
+float_type new_sample_rate;
 #define	samplK	 	 11025		// constant is original sampling rate of the samples in the wavetable
 
 	// compute how quickly, or slowly, to play back the wavetable sample
 	new_sample_rate = GetNoteSampleRate(note, pitch);
-	chan->sample_inc = (new_sample_rate / (double)samplK);
+   chan->sample_inc = (new_sample_rate / (float_type)samplK);
 	
 	chan->wave = wave;
 	chan->phaseacc = 0;
@@ -618,11 +618,11 @@ double new_sample_rate;
 static void note_gen(stNoteChannel *chan, int num_samples)
 {
 int i;
-double audioval;
-double master_volume_ratio, volume_left_ratio, volume_right_ratio;
+float_type audioval;
+float_type master_volume_ratio, volume_left_ratio, volume_right_ratio;
 int wave;
 unsigned char pos1, pos2;
-double iratio;
+float_type iratio;
 
 	wave = chan->wave;
 	
@@ -692,16 +692,16 @@ static int note_close(stNoteChannel *chan)
 static int drum_open(int m_channel, int wave, int note)
 {
 stNoteChannel *chan = &note_channel[m_channel];
-double new_sample_rate;
+float_type new_sample_rate;
 int gen_samples;
 
 	//lprintf("drum_hit: playing drum %d[%s] on channel %d, note %02x volume %d panning %d\n", wave, drum_names[wave], m_channel, note, chan->volume, chan->panning);
 	
 	new_sample_rate = GetNoteSampleRate(note, song.instrument[m_channel].pitch);
-	chan->sample_inc = (new_sample_rate / (double)drumK);
+   chan->sample_inc = (new_sample_rate / (float_type)drumK);
 	
 	// get the new number of samples for the sound
-	gen_samples = (int)((double)drumtable[wave].nsamples / chan->sample_inc);
+   gen_samples = (int)((float_type)drumtable[wave].nsamples / chan->sample_inc);
 	
 	// precompute volume and panning values since they're the same over the length of the drum
 	ComputeVolumeRatios(chan->volume, chan->panning, &chan->master_volume_ratio, &chan->volume_left_ratio, &chan->volume_right_ratio);
@@ -717,11 +717,11 @@ int gen_samples;
 static void drum_gen(int m_channel, int num_samples)
 {
 stNoteChannel *chan = &note_channel[m_channel];
-double volume_ratio, volume_left_ratio, volume_right_ratio;
+float_type volume_ratio, volume_left_ratio, volume_right_ratio;
 int wave;
 int pos1, pos2;
-double iratio;
-double audioval;
+float_type iratio;
+float_type audioval;
 int i;
 
 	volume_ratio = chan->master_volume_ratio;
