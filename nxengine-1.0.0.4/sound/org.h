@@ -46,11 +46,11 @@ struct stNoteChannel
 	int outpos;				// incs by 2 for each samples_so_far, one for left ch one for right ch
 	int samples_so_far;		// number of samples generated so far into outbuffer
 	
-	double phaseacc;		// current read position inside wavetable sample
-	double sample_inc;		// speed at which to iterate over the wavetable waveform
+   float_type phaseacc;		// current read position inside wavetable sample
+   float_type sample_inc;		// speed at which to iterate over the wavetable waveform
 	
 	// for drums
-	double master_volume_ratio, volume_left_ratio, volume_right_ratio;
+   float_type master_volume_ratio, volume_left_ratio, volume_right_ratio;
 	
 	int wave;				// index into wavetable (which instrument we're using)
 	int volume;				// last volume value sent to note_gen
