@@ -69,18 +69,22 @@ static unsigned short rand_next(void)
 
 static void GenerateSineModel(unsigned char *table)
 {
-double twopi = 6.283184000f;
-double ratio = 256.00f;
-double rat64 = 64.00f;
-double reg;
+float_type twopi = 6.283184000f;
+float_type ratio = 256.00f;
+float_type rat64 = 64.00f;
+float_type reg;
 int i;
 
 	for(i=0;i<256;i++)
 	{
-		reg = (double)i;
+      reg = (float_type)i;
 		reg *= twopi;
 		reg /= ratio;
-		reg = sin(reg);
+#ifdef SINGLE_PRECISION_FLOATS
+      reg = sinf(reg);
+#else
+      reg = sin(reg);
+#endif
 		reg *= rat64;
 		
 		table[i] = (unsigned char)reg;
@@ -241,11 +245,11 @@ void pxt_SetDefaultEnvelope(stPXEnvelope *env)
 // the envelope must be ready before CreateAudio can be used.
 void GenerateEnvelope(stPXEnvelope *env, char *buffer)
 {
-double curenv, envinc;
+float_type curenv, envinc;
 int i;
 
 	curenv = env->initial;
-	envinc = (double)(env->val[0] - env->initial) / env->time[0];
+   envinc = (float_type)(env->val[0] - env->initial) / env->time[0];
 	for(i=0;i<env->time[0];i++)
 	{
 		buffer[i] = (int)curenv;
@@ -253,7 +257,7 @@ int i;
 	}
 	
 	curenv = env->val[0];
-	envinc = (double)(env->val[1] - env->val[0]) / (env->time[1] - env->time[0]);
+   envinc = (float_type)(env->val[1] - env->val[0]) / (env->time[1] - env->time[0]);
 	for(;i<env->time[1];i++)
 	{
 		buffer[i] = (int)curenv;
@@ -261,7 +265,7 @@ int i;
 	}
 	
 	curenv = env->val[1];
-	envinc = (double)(env->val[2] - env->val[1]) / (env->time[2] - env->time[1]);
+   envinc = (float_type)(env->val[2] - env->val[1]) / (env->time[2] - env->time[1]);
 	for(;i<env->time[2];i++)
 	{
 		buffer[i] = (int)curenv;
@@ -269,7 +273,7 @@ int i;
 	}
 	
 	// fade to 0 volume if time_c is < end of sound, just like the pretty drawing in PixTone.
-	envinc = (double)(-1 - env->val[2]) / (256 - env->time[2]);
+   envinc = (float_type)(-1 - env->val[2]) / (256 - env->time[2]);
 	curenv = env->val[2];
 	for(;i<256;i++)
 	{
@@ -296,8 +300,8 @@ int output;
 	
 	//lprintf("RenderPXWave: buffer len %d, repeat = %.2f\n", size_blocks, pxwave->repeat);
 	
-	pxwave->phaseinc = ((MODEL_SIZE * pxwave->repeat) / (double)size_blocks);
-	pxwave->phaseacc = (double)pxwave->offset;
+   pxwave->phaseinc = ((MODEL_SIZE * pxwave->repeat) / (float_type)size_blocks);
+   pxwave->phaseacc = (float_type)pxwave->offset;
 	pxwave->white_ptr = pxwave->offset;
 	
 	for(i=0;i<size_blocks;i++)
@@ -332,9 +336,9 @@ int size_blocks = chan->size_blocks;
 // var defs
 int i, j;
 int output, bm, bm2, volmod;
-double phaseval;
+float_type phaseval;
 int e;
-double env_acc, env_inc;
+float_type env_acc, env_inc;
 
 	// we generate twice the buf size and average it down afterwards for increased precision.
 	// this is what pixtone does, and although I'm not sure if that's why; it really does
@@ -345,21 +349,21 @@ double env_acc, env_inc;
 	//lprintf("CreateAudio: buffer len %d, repeat = %.2f / %.2f\n", size_blocks, main->repeat, pitch->repeat);
 	
 	// calculate all the phaseinc's
-	main->phaseinc = ((MODEL_SIZE * main->repeat) / (double)size_blocks);
-	pitch->phaseinc = ((MODEL_SIZE * pitch->repeat) / (double)size_blocks);
-	pitch2->phaseinc = ((MODEL_SIZE * pitch2->repeat) / (double)size_blocks);
-	volume->phaseinc = ((MODEL_SIZE * volume->repeat) / (double)size_blocks);
-	env_inc = (MODEL_SIZE / (double)size_blocks);
+   main->phaseinc = ((MODEL_SIZE * main->repeat) / (float_type)size_blocks);
+   pitch->phaseinc = ((MODEL_SIZE * pitch->repeat) / (float_type)size_blocks);
+   pitch2->phaseinc = ((MODEL_SIZE * pitch2->repeat) / (float_type)size_blocks);
+   volume->phaseinc = ((MODEL_SIZE * volume->repeat) / (float_type)size_blocks);
+   env_inc = (MODEL_SIZE / (float_type)size_blocks);
 	
 	//lprintf("main phaseinc = %.6f\n", main->phaseinc);
 	//lprintf("pitch phaseinc = %.6f\n", pitch->phaseinc);
 	//lprintf("volume phaseinc = %.6f\n", volume->phaseinc);
 	
 	// set the starting positions
-	main->phaseacc = (double)main->offset;
-	pitch->phaseacc = (double)pitch->offset;
-	pitch2->phaseacc = (double)pitch2->offset;
-	volume->phaseacc = (double)volume->offset;
+   main->phaseacc = (float_type)main->offset;
+   pitch->phaseacc = (float_type)pitch->offset;
+   pitch2->phaseacc = (float_type)pitch2->offset;
+   volume->phaseacc = (float_type)volume->offset;
 	
 	main->white_ptr = main->offset;
 	pitch->white_ptr = pitch->offset;
@@ -427,7 +431,7 @@ double env_acc, env_inc;
 		{	// when positive, every 32 clicks doubles the phaseinc.
 			// this is actually "phaseval = (mod / 32) * main->phaseinc;" however
 			// we lose precision by doing the division first, so this is equivalent:
-			phaseval = ((double)bm * main->phaseinc) / 32;
+         phaseval = ((float_type)bm * main->phaseinc) / 32;
 			
 			// phaseinc is sped up by phaseval
 			main->phaseacc += (main->phaseinc + phaseval);
@@ -436,7 +440,7 @@ double env_acc, env_inc;
 		{	// when negative, every 64 clicks half's the phaseinc.
 			// this can be thought of as "phaseval = (mod / 64) * (main->phaseinc * 0.5f);" however
 			// that doesn't actually work because of precision loss, so this instead:
-			phaseval = ((double)(-bm) * main->phaseinc) / 128;
+         phaseval = ((float_type)(-bm) * main->phaseinc) / 128;
 			
 			// phaseinc is slowed down by phaseval
 			main->phaseacc += (main->phaseinc - phaseval);
@@ -599,17 +603,17 @@ int malc_size;
 // I say quick-and-dirty because it also changes the length.
 // We need this for the "SSS" (Stream Sound) which is supposed to
 // have adjustable pitch.
-void pxt_ChangePitch(stPXSound *snd, double factor)
+void pxt_ChangePitch(stPXSound *snd, float_type factor)
 {
 signed char *inbuffer = snd->final_buffer;
 int insize = snd->final_size;
 
-	int outsize = (int)((double)insize * factor);
+   int outsize = (int)((float_type)insize * factor);
 	signed char *outbuffer = (signed char *)malloc(outsize);
 	if (factor == 0) factor = 0.001;
 	
 	for(int i=0;i<outsize;i++)
-		outbuffer[i] = inbuffer[(int)((double)i / factor)];
+      outbuffer[i] = inbuffer[(int)((float_type)i / factor)];
 	
 	free(snd->final_buffer);
 	snd->final_buffer = outbuffer;

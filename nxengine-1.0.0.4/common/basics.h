@@ -31,4 +31,10 @@ typedef unsigned char		uchar;
 #define MAX(A, B)	( ( (A) > (B) ) ? (A) : (B) )
 #endif
 
+#ifdef SINGLE_PRECISION_FLOATS
+typedef float float_type;
+#else
+typedef double float_type;
+#endif
+
 #endif
