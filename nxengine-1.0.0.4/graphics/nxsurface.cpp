@@ -68,7 +68,6 @@ int SetColorKey(SDL_Surface* surface,
 
 NXSurface::NXSurface(int wd, int ht, NXFormat *format)
 {
-	Free();
 	fSurface = (SDL_Surface*)AllocNewSurface(SDL_SRCCOLORKEY, wd, ht);
 	fFreeSurface = true;
 }
