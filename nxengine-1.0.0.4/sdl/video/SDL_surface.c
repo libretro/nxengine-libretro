@@ -49,20 +49,22 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 
 	/* Allocate the surface */
 	surface = (SDL_Surface *)SDL_malloc(sizeof(*surface));
-	if ( surface == NULL ) {
+	if (!surface)
+   {
 		SDL_OutOfMemory();
 		return(NULL);
 	}
 	surface->flags = SDL_SWSURFACE;
 
 	surface->format = SDL_AllocFormat(depth, Rmask, Gmask, Bmask, Amask);
-	if ( surface->format == NULL ) {
+	if (!surface->format)
+   {
 		SDL_free(surface);
 		return(NULL);
 	}
-	if ( Amask ) {
+
+	if (Amask)
 		surface->flags |= SDL_SRCALPHA;
-	}
 	surface->w = width;
 	surface->h = height;
 	surface->pitch = SDL_CalculatePitch(surface);
@@ -76,25 +78,29 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 	SDL_FormatChanged(surface);
 
 	/* Get the pixels */
-	if ( ((flags&SDL_HWSURFACE) == SDL_SWSURFACE)) {
-		if ( surface->w && surface->h ) {
-			surface->pixels = SDL_malloc(surface->h*surface->pitch);
-			if ( surface->pixels == NULL ) {
-				SDL_FreeSurface(surface);
-				SDL_OutOfMemory();
-				return(NULL);
-			}
-			/* This is important for bitmaps */
-			SDL_memset(surface->pixels, 0, surface->h*surface->pitch);
-		}
-	}
+	if ( ((flags&SDL_HWSURFACE) == SDL_SWSURFACE))
+   {
+      if ( surface->w && surface->h )
+      {
+         surface->pixels = SDL_malloc(surface->h*surface->pitch);
+         if (!surface->pixels)
+         {
+            SDL_FreeSurface(surface);
+            SDL_OutOfMemory();
+            return(NULL);
+         }
+         /* This is important for bitmaps */
+         SDL_memset(surface->pixels, 0, surface->h*surface->pitch);
+      }
+   }
 
 	/* Allocate an empty mapping */
 	surface->map = SDL_AllocBlitMap();
-	if ( surface->map == NULL ) {
-		SDL_FreeSurface(surface);
-		return(NULL);
-	}
+	if (!surface->map)
+   {
+      SDL_FreeSurface(surface);
+      return(NULL);
+   }
 
 	/* The surface is ready to go */
 	surface->refcount = 1;
@@ -111,14 +117,15 @@ SDL_Surface * SDL_CreateRGBSurfaceFrom (void *pixels,
 
 	surface = SDL_CreateRGBSurface(SDL_SWSURFACE, 0, 0, depth,
 	                               Rmask, Gmask, Bmask, Amask);
-	if ( surface != NULL ) {
-		surface->flags |= SDL_PREALLOC;
-		surface->pixels = pixels;
-		surface->w = width;
-		surface->h = height;
-		surface->pitch = pitch;
-		SDL_SetClipRect(surface, NULL);
-	}
+	if (surface)
+   {
+      surface->flags |= SDL_PREALLOC;
+      surface->pixels = pixels;
+      surface->w = width;
+      surface->h = height;
+      surface->pitch = pitch;
+      SDL_SetClipRect(surface, NULL);
+   }
 	return(surface);
 }
 /*
@@ -336,11 +343,11 @@ int SDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect,
 	int srcx, srcy, w, h;
 
 	/* If the destination rectangle is NULL, use the entire dest surface */
-	if ( dstrect == NULL )
+	if (!dstrect)
    {
-	        fulldst.x = fulldst.y = 0;
-		dstrect = &fulldst;
-	}
+      fulldst.x = fulldst.y = 0;
+      dstrect = &fulldst;
+   }
 
 	/* clip the source rectangle to the source surface */
 	if(srcrect) {
@@ -412,15 +419,18 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 	int x, y;
 	Uint8 *row;
 
-	/* If 'dstrect' == NULL, then fill the whole surface */
-	if ( dstrect ) {
-		/* Perform clipping */
-		if ( !SDL_IntersectRect(dstrect, &dst->clip_rect, dstrect) ) {
-			return(0);
-		}
-	} else {
+	if ( dstrect )
+   {
+      /* Perform clipping */
+      if ( !SDL_IntersectRect(dstrect, &dst->clip_rect, dstrect) )
+         return(0);
+   }
+   else
+   {
+      /* If 'dstrect' == NULL, then fill the whole surface */
 		dstrect = &dst->clip_rect;
-	}
+   }
+
 
 	row = (Uint8 *)dst->pixels+dstrect->y*dst->pitch+
 			dstrect->x*dst->format->BytesPerPixel;
@@ -508,16 +518,19 @@ void SDL_UnlockSurface (SDL_Surface *surface)
 void SDL_FreeSurface (SDL_Surface *surface)
 {
 	/* Free anything that's not NULL, and not the screen surface */
-	if ((surface == NULL))
+	if (!surface)
 		return;
-	if ( --surface->refcount > 0 ) {
+
+	if ( --surface->refcount > 0 )
 		return;
-	}
-	if ( surface->format ) {
+
+	if (surface->format)
+   {
 		SDL_FreeFormat(surface->format);
 		surface->format = NULL;
 	}
-	if ( surface->map != NULL ) {
+	if (surface->map)
+   {
 		SDL_FreeBlitMap(surface->map);
 		surface->map = NULL;
 	}
