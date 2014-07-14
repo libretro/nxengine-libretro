@@ -115,7 +115,6 @@ char fname[MAXPATHLEN];
 #else
    slash = '/';
 #endif
-	for(int i=0;i<NUM_SCRIPT_PAGES;i++)
 	
 	// load the "common" TSC scripts available to all maps
 	snprintf(fname, sizeof(fname), "%s%cHead.tsc", data_dir, slash);
