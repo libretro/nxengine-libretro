@@ -8,7 +8,7 @@
 // scaling factor for the graphics
 #define SCALE		1
 
-struct NXSurface;
+class NXSurface;
 extern NXSurface *screen;
 
 struct NXColor
