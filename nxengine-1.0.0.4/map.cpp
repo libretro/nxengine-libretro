@@ -61,6 +61,10 @@ slash = '/';
 	map_set_backdrop(stages[stage_no].bg_no);
 	map.scrolltype = stages[stage_no].scroll_type;
 	map.motionpos = 0;
+
+   //hack to show nice backdrop in menu, like nicalis
+   stages[0].bg_no=9;
+   stages[0].scroll_type=BK_FASTLEFT_LAYERS;
 	
 	return 0;
 }
