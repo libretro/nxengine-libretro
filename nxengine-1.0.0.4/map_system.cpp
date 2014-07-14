@@ -16,8 +16,6 @@
 
 static struct
 {
-	NXSurface *sfc;			// surface for the map image
-	
 	int x, y;				// the position of the upper-left corner of the image
 	int w, h;				// size of image
 	
@@ -45,10 +43,6 @@ bool ms_init(int return_to_mode)
 	ms.w = map.xsize;
 	ms.h = map.ysize;
 	
-	// create the surface
-	ms.sfc = new NXSurface(ms.w, ms.h);
-	ms.sfc->FillRect(0, 0, ms.w, ms.h, DK_BLUE);
-	
 	ms.x = (SCREEN_WIDTH / 2) - (ms.w / 2);
 	ms.y = (SCREEN_HEIGHT / 2) - (ms.h / 2);
 	
@@ -66,7 +60,6 @@ bool ms_init(int return_to_mode)
 void ms_close(void)
 {
 	memset(inputs, 0, sizeof(inputs));
-	delete ms.sfc;
 }
 
 
@@ -91,18 +84,25 @@ void ms_tick(void)
 	
 	if (ms.state == MS_DISPLAYED)
 	{
-		// scan down effect
-		if (ms.current_row < map.ysize)
-		{
-			draw_row(ms.current_row++);
-			
-			if (ms.current_row < map.ysize)
-				draw_row(ms.current_row++);
-		}
 		
 		// draw map
 		DrawRect(ms.x - 1, ms.y - 1, ms.x + ms.w, ms.y + ms.h, DK_BLUE);
-		DrawSurface(ms.sfc, ms.x, ms.y);
+
+      FillRect(ms.x - 1, ms.y - 1, ms.x + ms.w, ms.y + ms.h, DK_BLUE);
+      for (int y=0;y<ms.current_row;y++)
+      {
+         for(int x=0;x<map.xsize;x++)
+         {
+            int tc = tilecode[map.tiles[x][y]];
+
+            draw_sprite(ms.x+x, ms.y+y, SPR_MAP_PIXELS, get_color(tc));
+         }
+      }
+
+      if (ms.current_row < map.ysize)
+         ms.current_row++;
+      if (ms.current_row < map.ysize)
+         ms.current_row++;
 		
 		// you-are-here dot
 		if (++ms.timer & 8)
@@ -164,25 +164,6 @@ static void draw_banner(void)
 /*
 void c------------------------------() {}
 */
-
-
-// draw the specified row of map onto the spritesheet
-// the colors for the map system are not actually plotted as pixels,
-// but exist as 1x1 sprites on the TextBox spritesheet.
-static void draw_row(int y)
-{
-int x;
-
-	Graphics::SetDrawTarget(ms.sfc);
-	
-	for(x=0;x<map.xsize;x++)
-	{
-		int tc = tilecode[map.tiles[x][y]];
-		draw_sprite(x, y, SPR_MAP_PIXELS, get_color(tc));
-	}
-	
-	Graphics::SetDrawTarget(screen);
-}
 
 
 static int get_color(int tilecode)
