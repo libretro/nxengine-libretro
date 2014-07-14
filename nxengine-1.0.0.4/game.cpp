@@ -310,6 +310,7 @@ void DrawScene(void)
 {
 int scr_x, scr_y;
 	
+   ClearScreen(BLACK);
 	// sporidically-used animated tile feature,
 	// e.g. water currents in Waterway
 	if (map.nmotiontiles)
