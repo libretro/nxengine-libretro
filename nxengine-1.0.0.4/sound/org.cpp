@@ -89,22 +89,6 @@ static int SamplesToMS(int samples)
    return (int)(((float_type)samples * 1000) / SAMPLE_RATE);
 }
 
-
-static bool load_drumtable(FILE *fp)		// pxt_path = the path where drum pxt files can be found
-{
-   NX_LOG("load_drumtable: cache gone; rebuilding drums...\n");
-
-   pxt_initsynth();
-
-   for (int d = 0; d < NUM_DRUMS; d++)
-   {
-      if (drum_pxt[d])
-         if (load_drum_pxt(fp, drum_pxt[d], d)) return 1;
-   }
-
-   return 0;
-}
-
 static bool load_drum_pxt(FILE *fd, int s, int d)
 {
    int i;
@@ -131,6 +115,22 @@ static bool load_drum_pxt(FILE *fd, int s, int d)
    FreePXTBuf(&snd);
    return 0;
 }
+
+static bool load_drumtable(FILE *fp)		// pxt_path = the path where drum pxt files can be found
+{
+   NX_LOG("load_drumtable: cache gone; rebuilding drums...\n");
+
+   pxt_initsynth();
+
+   for (int d = 0; d < NUM_DRUMS; d++)
+   {
+      if (drum_pxt[d])
+         if (load_drum_pxt(fp, drum_pxt[d], d)) return 1;
+   }
+
+   return 0;
+}
+
 
 /*
 void c------------------------------() {}
