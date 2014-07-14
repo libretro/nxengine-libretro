@@ -466,7 +466,7 @@ bmp_files[] =
 	"endpic" SLASH "credit17.bmp", 0x15db5f, 19293, 0x8c5a003d, credit_header,
 	"endpic" SLASH "credit18.bmp", 0x1626c7, 19293, 0x66bcbf22, credit_header,
 	"data" SLASH ".." SLASH "endpic" SLASH "pixel.bmp", 0x16722f, 1373,  0x6181d0a1, pixel_header,
-	"wavetable.dat", 0x110664, 25599, 0xcaa7b1dd, NULL,
+	"wavetable.dat", 0x110664, 25600, 0xcaa7b1dd, NULL,
 };
 
 struct hash_struct {
