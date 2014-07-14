@@ -1,6 +1,8 @@
 
 #include "nx.h"
 #include "player.fdh"
+#include "inventory.h"
+#include "playerstats.fdh"
 
 Player *player = NULL;
 static void InitWeapon(int wpn, int l1, int l2, int l3, int maxammo=0);
@@ -305,7 +307,7 @@ static unsigned inventory_delay = 0;
       }
 		
 		// Map System
-		if (justpushed(MAPSYSTEMKEY))
+		if (justpushed(MAPSYSTEMKEY) && (FindInventory(ITEM_MAP_SYSTEM)!=-1))
 		{
 			if (!game.frozen && !player->dead && GetCurrentScript() == -1)
 			{
