@@ -304,7 +304,7 @@ int output;
    pxwave->phaseacc = (float_type)pxwave->offset;
 	pxwave->white_ptr = pxwave->offset;
 	
-	for(i=0;i<size_blocks;i++)
+	for(i=0; (i+1) < size_blocks;i++)
 	{
 		GETWAVEBYTE(pxwave, output);
 		
