@@ -25,8 +25,6 @@ bool Graphics::init(int resolution)
 {
 	screen_bpp = 16;	// the default
 
-	const SDL_VideoInfo *info;
-
 	if (SetResolution(resolution, false))
 		return 1;
 	
@@ -93,9 +91,6 @@ bool Graphics::SetResolution(int r, bool restoreOnFailure)
 	NX_LOG("Graphics::SetResolution(%d)\n", r);
 	if (r == current_res)
 		return 0;
-	
-	int old_res = current_res;
-	int factor;
 	
 	if (Graphics::InitVideo())
 		return 1;
