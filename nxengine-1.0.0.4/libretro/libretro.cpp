@@ -149,7 +149,6 @@ bool retro_load_game(const struct retro_game_info *game)
 
 void retro_deinit(void)
 {
-   post_main();
 }
 
 void retro_reset(void)
@@ -234,8 +233,6 @@ void retro_run(void)
 #endif
 }
 
-void retro_unload_cartridge(void) {}
-
 size_t retro_serialize_size(void)
 {
    return 0;
@@ -258,10 +255,14 @@ bool retro_load_game_special(
   unsigned game_type,
   const struct retro_game_info *info, size_t num_info
 )
-{ return false; }
+{
+   return false;
+}
 
 void retro_unload_game (void)
-{ }
+{
+   post_main();
+}
 
 unsigned retro_get_region(void)
 {
