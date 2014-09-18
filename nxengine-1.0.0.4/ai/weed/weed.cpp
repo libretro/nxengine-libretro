@@ -155,7 +155,7 @@ void ai_critter(Object *o)
 				o->ymark = (o->y - o->critter.jumpheight);
 				
 				o->state = 4;
-				o->frame = 3;
+				o->frame = 2;
 				o->timer = 0;
 			}
 			else
