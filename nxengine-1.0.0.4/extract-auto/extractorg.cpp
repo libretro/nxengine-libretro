@@ -46,7 +46,7 @@ files[] =
    NULL, 0, 0, 0,
 	"org/egg.org",         0x0feb20, 19626, 0xb651047e,
 	"org/safety.org",      0x09b7d0, 9194,  0x779e83c2,
-	"org/gameover.org",    0x0b412c, 1137,  0x525d58f3,
+	"org/gameover.org",    0x0b412c, 1138,  0x1f87b446,
 	"org/gravity.org",     0x0b9190, 20578, 0x64a9318d,
 	"org/grasstown.org",   0x1037cc, 23706, 0xa27883b6,
 	"org/meltdown2.org",   0x0df67c, 21074, 0x83d08aed,
