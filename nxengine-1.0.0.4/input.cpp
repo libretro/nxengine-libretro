@@ -46,7 +46,7 @@ int input_get_mapping(int keyindex)
 {
 int i;
 
-	for(i=0;i<=SDLK_LAST;i++)
+	for(i=0;i<SDLK_LAST;i++)
 	{
 		if (mappings[i] == keyindex)
 			return i;
