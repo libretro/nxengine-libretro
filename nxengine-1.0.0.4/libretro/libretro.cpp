@@ -11,6 +11,7 @@
 
 void post_main();
 bool run_main();
+bool input_init(void);
 
 void *retro_frame_buffer;
 unsigned retro_frame_buffer_width;
@@ -39,6 +40,26 @@ unsigned retro_get_tick(void)
 void retro_set_environment(retro_environment_t cb)
 {
    environ_cb = cb;
+
+   struct retro_variable variables[] = {
+      { "nxengine_jump_button",
+         "Jump Button; B|X|Y|L|R|L2|R2|L3|R3|select|start|A" },
+      { "nxengine_fire_button",
+         "Fire Button; Y|L|R|L2|R2|L3|R3|select|start|A|B|X" },
+      { "nxengine_previous_weapon_button",
+         "Previous Weapon Button; L|R|L2|R2|L3|R3|select|start|A|B|X|Y" },
+      { "nxengine_next_weapon_button",
+         "Next Weapon Button; R|L2|R2|L3|R3|select|start|A|B|X|Y|L" },
+      { "nxengine_map_button",
+         "Map Button; X|Y|L|R|L2|R2|L3|R3|select|start|A|B" },
+      { "nxengine_inventory_button",
+         "Inventory Button; start|A|B|X|Y|L|R|L2|R2|L3|R3|select" },
+      { "nxengine_options_menu_button",
+         "Options Menu Button; select|start|A|B|X|Y|L|R|L2|R2|L3|R3" },
+      { NULL, NULL },
+   };
+
+   cb(RETRO_ENVIRONMENT_SET_VARIABLES, variables);
 }
 
 unsigned retro_api_version(void)
@@ -169,8 +190,33 @@ static int64_t get_usec(void)
 }
 #endif
 
+static void environment_variables_updated(void)
+{
+   // Reinitialize input mappings
+   input_init();
+}
+
+// environ_cb is declared static, so we need a helper function to allow other
+// modules to get environment variable values.
+const char* get_environment_variable(const char *key)
+{
+      struct retro_variable env_var;
+      env_var.key = key;
+      env_var.value = NULL;
+      environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &env_var);
+
+      return env_var.value;
+}
+
 void retro_run(void)
 {
+   bool env_vars_updated = false;
+   environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &env_vars_updated);
+
+   if(env_vars_updated) {
+      environment_variables_updated();
+   }
+
    poll_cb();
    static unsigned frame_cnt = 0;
 
