@@ -355,12 +355,22 @@ int SDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect,
 	
 		srcx = srcrect->x;
 		w = srcrect->w;
+		if(srcx < 0) {
+		        w += srcx;
+			dstrect->x -= srcx;
+			srcx = 0;
+		}
 		maxw = src->w - srcx;
 		if(maxw < w)
 			w = maxw;
 
 		srcy = srcrect->y;
 		h = srcrect->h;
+		if(srcy < 0) {
+		        h += srcy;
+			dstrect->y -= srcy;
+			srcy = 0;
+		}
 		maxh = src->h - srcy;
 		if(maxh < h)
 			h = maxh;
