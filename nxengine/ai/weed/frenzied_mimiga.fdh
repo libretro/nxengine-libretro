@@ -1,0 +1,6 @@
+void ai_frenzied_mimiga(Object *o);
+
+void SmokeClouds(Object *o, int nclouds, int rangex, int rangey, Object *push_behind);
+
+void sound(int snd);
+

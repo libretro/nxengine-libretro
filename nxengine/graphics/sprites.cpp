@@ -16,7 +16,7 @@ using namespace Graphics;
 #include "sprites.h"
 #include "sprites.fdh"
 
-#include "libretro_shared.h"
+#include "../libretro/libretro_shared.h"
 
 static NXSurface *spritesheet[MAX_SPRITESHEETS];
 static int num_spritesheets;

@@ -36,16 +36,17 @@ else ifneq ($(findstring MINGW,$(shell uname -a)),)
    system_platform = win
 endif
 
-NX_DIR     = $(TARGET_NAME)-1.0.0.4
-EXTRACTDIR = $(NX_DIR)/extract-auto
+TARGET_NAME := nxengine
+
+CORE_DIR     := nxengine
+EXTRACTDIR   := $(CORE_DIR)/extract-auto
 
 CC         = gcc
-TARGET_NAME := nxengine
 
 ifeq ($(platform), unix)
    TARGET := $(TARGET_NAME)_libretro.so
    fpic := -fPIC
-   SHARED := -shared -Wl,--version-script=$(NX_DIR)/libretro/link.T -Wl,-no-undefined
+   SHARED := -shared -Wl,--version-script=$(CORE_DIR)/libretro/link.T -Wl,-no-undefined
    CFLAGS += -D_GNU_SOURCE=1
 else ifeq ($(platform), osx)
    TARGET := $(TARGET_NAME)_libretro.dylib
@@ -82,7 +83,7 @@ endif
 else ifeq ($(platform), qnx)
    TARGET := $(TARGET_NAME)_libretro_qnx.so
    fpic := -fPIC
-   SHARED := -shared -Wl,--version-script=$(NX_DIR)/libretro/link.T -Wl,-no-undefined
+   SHARED := -shared -Wl,--version-script=$(CORE_DIR)/libretro/link.T -Wl,-no-undefined
    CFLAGS += -D_GNU_SOURCE=1
 
    CC = qcc -Vgcc_ntoarmv7le
@@ -143,7 +144,7 @@ else ifeq ($(platform), wii)
 else ifneq (,$(findstring armv,$(platform)))
    TARGET := $(TARGET_NAME)_libretro.so
    fpic := -fPIC
-   SHARED := -shared -Wl,--version-script=$(NX_DIR)/libretro/link.T -Wl,-no-undefined
+   SHARED := -shared -Wl,--version-script=$(CORE_DIR)/libretro/link.T -Wl,-no-undefined
    CFLAGS += -D_GNU_SOURCE=1
 ifneq (,$(findstring cortexa8,$(platform)))
    CFLAGS += -marm -mcpu=cortex-a8
@@ -164,7 +165,7 @@ endif
 else
    TARGET := $(TARGET_NAME)_libretro.dll
    CC = gcc
-   SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=$(NX_DIR)/libretro/link.T
+   SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=$(CORE_DIR)/libretro/link.T
    CFLAGS += -D__WIN32__ -D__WIN32_LIBRETRO__ -Wno-missing-field-initializers
 endif
 
@@ -186,46 +187,15 @@ ifeq ($(MIN_AUDIO_PROCESSING_PER_FRAME), 1)
 CFLAGS += -DMIN_AUDIO_PROCESSING_PER_FRAME
 endif
 
-AI_OBJS := $(NX_DIR)/ai/ai.o $(NX_DIR)/ai/balrog_common.o $(NX_DIR)/ai/IrregularBBox.o $(NX_DIR)/ai/almond/almond.o $(NX_DIR)/ai/boss/balfrog.o $(NX_DIR)/ai/boss/ballos.o $(NX_DIR)/ai/boss/core.o $(NX_DIR)/ai/boss/heavypress.o $(NX_DIR)/ai/boss/ironhead.o $(NX_DIR)/ai/boss/omega.o $(NX_DIR)/ai/boss/sisters.o $(NX_DIR)/ai/boss/undead_core.o $(NX_DIR)/ai/boss/x.o $(NX_DIR)/ai/egg/egg.o $(NX_DIR)/ai/egg/egg2.o $(NX_DIR)/ai/egg/igor.o $(NX_DIR)/ai/final_battle/balcony.o $(NX_DIR)/ai/final_battle/doctor.o $(NX_DIR)/ai/final_battle/doctor_common.o $(NX_DIR)/ai/final_battle/doctor_frenzied.o $(NX_DIR)/ai/final_battle/final_misc.o $(NX_DIR)/ai/final_battle/misery_finalbattle.o $(NX_DIR)/ai/final_battle/sidekicks.o $(NX_DIR)/ai/first_cave/first_cave.o $(NX_DIR)/ai/hell/ballos_misc.o $(NX_DIR)/ai/hell/ballos_priest.o $(NX_DIR)/ai/hell/hell.o $(NX_DIR)/ai/last_cave/last_cave.o $(NX_DIR)/ai/maze/balrog_boss_missiles.o  $(NX_DIR)/ai/maze/critter_purple.o $(NX_DIR)/ai/maze/gaudi.o $(NX_DIR)/ai/maze/labyrinth_m.o $(NX_DIR)/ai/maze/pooh_black.o $(NX_DIR)/ai/maze/maze.o $(NX_DIR)/ai/npc/balrog.o $(NX_DIR)/ai/npc/curly.o $(NX_DIR)/ai/npc/curly_ai.o $(NX_DIR)/ai/npc/misery.o $(NX_DIR)/ai/npc/npcguest.o $(NX_DIR)/ai/npc/npcplayer.o $(NX_DIR)/ai/npc/npcregu.o $(NX_DIR)/ai/oside/oside.o $(NX_DIR)/ai/plantation/plantation.o $(NX_DIR)/ai/sand/curly_boss.o $(NX_DIR)/ai/sand/puppy.o $(NX_DIR)/ai/sand/sand.o $(NX_DIR)/ai/sand/toroko_frenzied.o $(NX_DIR)/ai/sym/smoke.o $(NX_DIR)/ai/sym/sym.o $(NX_DIR)/ai/village/balrog_boss_running.o $(NX_DIR)/ai/village/ma_pignon.o $(NX_DIR)/ai/village/village.o $(NX_DIR)/ai/weapons/blade.o $(NX_DIR)/ai/weapons/bubbler.o $(NX_DIR)/ai/weapons/fireball.o $(NX_DIR)/ai/weapons/missile.o $(NX_DIR)/ai/weapons/nemesis.o $(NX_DIR)/ai/weapons/polar_mgun.o $(NX_DIR)/ai/weapons/snake.o $(NX_DIR)/ai/weapons/spur.o $(NX_DIR)/ai/weapons/weapons.o $(NX_DIR)/ai/weapons/whimstar.o $(NX_DIR)/ai/weed/balrog_boss_flying.o $(NX_DIR)/ai/weed/frenzied_mimiga.o $(NX_DIR)/ai/weed/weed.o
-
-COMMON_OBJS := $(NX_DIR)/common/BList.o $(NX_DIR)/common/bufio.o $(NX_DIR)/common/DBuffer.o $(NX_DIR)/common/DString.o $(NX_DIR)/common/FileBuffer.o $(NX_DIR)/common/InitList.o $(NX_DIR)/common/misc.o $(NX_DIR)/common/StringList.o
-
-ENDGAME_OBJS := $(NX_DIR)/endgame/credits.o $(NX_DIR)/endgame/CredReader.o $(NX_DIR)/endgame/island.o $(NX_DIR)/endgame/endgame_misc.o
-
-EXTRACT_OBJS := $(EXTRACTDIR)/extractpxt.o $(EXTRACTDIR)/extractorg.o $(EXTRACTDIR)/extractstages.o $(EXTRACTDIR)/cachefiles.o
-
-GRAPHICS_OBJS := $(NX_DIR)/graphics/graphics.o $(NX_DIR)/graphics/nxsurface.o $(NX_DIR)/graphics/font.o $(NX_DIR)/graphics/sprites.o $(NX_DIR)/graphics/tileset.o
-
 ifeq ($(DEBUGLOG), 1)
 CFLAGS += -DDEBUG_LOG=1
 endif
 
-INTRO_OBJS := $(NX_DIR)/intro/intro.o $(NX_DIR)/intro/title.o
+include Makefile.common
 
-PAUSE_OBJS := $(NX_DIR)/pause/dialog.o $(NX_DIR)/pause/message.o $(NX_DIR)/pause/objects.o $(NX_DIR)/pause/options.o $(NX_DIR)/pause/pause.o
+OBJECTS := $(SOURCES_CXX:.cpp=.o) $(SOURCES_C:.c=.o)
 
-LIBRETRO_OBJS := $(NX_DIR)/libretro/libretro.o
-
-PORT_OBJS := $(NX_DIR)/libretro/
-
-MAIN_OBJS := $(NX_DIR)/main.o
-
-SIFLIB_OBJS := $(NX_DIR)/siflib/sectSprites.o $(NX_DIR)/siflib/sectStringArray.o $(NX_DIR)/siflib/sif.o $(NX_DIR)/siflib/sifloader.o
-
-SOUND_OBJS := $(NX_DIR)/sound/org.o $(NX_DIR)/sound/pxt.o $(NX_DIR)/sound/sound.o $(NX_DIR)/sound/sslib.o
-
-TEXTBOX_OBJS := $(NX_DIR)/TextBox/ItemImage.o $(NX_DIR)/TextBox/SaveSelect.o $(NX_DIR)/TextBox/StageSelect.o $(NX_DIR)/TextBox/TextBox.o $(NX_DIR)/TextBox/YesNoPrompt.o
-
-SDL_OBJS := $(NX_DIR)/sdl/SDL_error.o $(NX_DIR)/sdl/file/SDL_rwops.o $(NX_DIR)/sdl/video/SDL_blit.o $(NX_DIR)/sdl/video/SDL_blit_0.o $(NX_DIR)/sdl/video/SDL_blit_1.o $(NX_DIR)/sdl/video/SDL_blit_A.o $(NX_DIR)/sdl/video/SDL_blit_N.o $(NX_DIR)/sdl/video/SDL_bmp.o $(NX_DIR)/sdl/video/SDL_pixels.o $(NX_DIR)/sdl/video/SDL_surface.o $(NX_DIR)/sdl/cpuinfo/SDL_cpuinfo.o
-
-AUTOGEN_OBJS := $(NX_DIR)/autogen/AssignSprites.o $(NX_DIR)/autogen/objnames.o
-
-OBJECTS    := 	$(NX_DIR)/caret.o $(NX_DIR)/floattext.o $(NX_DIR)/game.o $(NX_DIR)/input.o $(NX_DIR)/inventory.o $(MAIN_OBJS) $(NX_DIR)/map.o $(NX_DIR)/map_system.o $(NX_DIR)/niku.o $(NX_DIR)/object.o $(NX_DIR)/ObjManager.o $(NX_DIR)/p_arms.o $(NX_DIR)/player.o $(NX_DIR)/playerstats.o $(NX_DIR)/profile.o $(NX_DIR)/screeneffect.o $(NX_DIR)/settings.o $(NX_DIR)/slope.o $(NX_DIR)/stageboss.o $(NX_DIR)/stagedata.o $(NX_DIR)/statusbar.o $(NX_DIR)/trig.o $(NX_DIR)/tsc.o  $(AI_OBJS) $(SAFEMODE_OBJS) $(COMMON_OBJS) $(ENDGAME_OBJS) $(EXTRACT_OBJS) $(GRAPHICS_OBJS) $(INTRO_OBJS) $(PAUSE_OBJS) $(SIFLIB_OBJS) $(SOUND_OBJS) $(TEXTBOX_OBJS) $(SDL_OBJS) $(AUTOGEN_OBJS) $(DEBUG_OBJS)
-
-OBJECTS += $(LIBRETRO_OBJS)
-
-INCLUDES   = -I. -I$(NX_DIR) -I$(NX_DIR)/graphics -I$(NX_DIR)/libretro -I$(NX_DIR)/sdl/include
-DEFINES    = -DHAVE_INTTYPES_H -D__LIBRETRO__ -DINLINE=inline -DFRONTEND_SUPPORTS_RGB565
+DEFINES := -DHAVE_INTTYPES_H -D__LIBRETRO__ -DINLINE=inline -DFRONTEND_SUPPORTS_RGB565
 
 ifeq ($(platform), sncps3)
 WARNINGS_DEFINES =
@@ -245,14 +215,14 @@ $(TARGET): $(OBJECTS)
 ifeq ($(STATIC_LINKING), 1)
 	$(AR) rcs $@ $(OBJECTS)
 else
-	$(CXX) $(fpic) $(SHARED) $(INCLUDES) $(CFLAGS) -o $@ $(OBJECTS) -lm
+	$(CXX) $(fpic) $(SHARED) $(INCFLAGS) $(CFLAGS) -o $@ $(OBJECTS) -lm
 endif
 
 %.o: %.c
-	$(CC) $(INCLUDES) $(CFLAGS) -c -o $@ $<
+	$(CC) $(INCFLAGS) $(CFLAGS) -c -o $@ $<
 
 %.o: %.cpp
-	$(CXX) $(INCLUDES) $(CFLAGS) -c -o $@ $<
+	$(CXX) $(INCFLAGS) $(CFLAGS) -c -o $@ $<
 
 clean:
 	rm -f $(OBJECTS) $(TARGET)
