@@ -129,6 +129,21 @@ else ifeq ($(platform), psp1)
    STATIC_LINKING = 1
    SINGLE_PRECISION_FLOATS = 1
    MIN_AUDIO_PROCESSING_PER_FRAME = 1
+else ifeq ($(platform), ctr)
+   TARGET := $(TARGET_NAME)_libretro_ctr.a
+   CC = $(DEVKITARM)/bin/arm-none-eabi-gcc$(EXE_EXT)
+   CXX = $(DEVKITARM)/bin/arm-none-eabi-g++$(EXE_EXT)
+   AR = $(DEVKITARM)/bin/arm-none-eabi-ar$(EXE_EXT)
+   CFLAGS += -DARM11 -D_3DS -DGNU_SOURCE=1
+   #workaround the sdl sizeof(enum)=sizeof(int) assert
+   CFLAGS += -D__NDS__
+   CFLAGS += -march=armv6k -mtune=mpcore -mfloat-abi=hard
+   CFLAGS += -mword-relocations
+   CFLAGS += -fomit-frame-pointer -fstrict-aliasing -ffast-math
+   CFLAGS += -fno-rtti -fno-exceptions -std=gnu++11
+   STATIC_LINKING = 1
+   SINGLE_PRECISION_FLOATS = 1
+   MIN_AUDIO_PROCESSING_PER_FRAME = 1
 else ifeq ($(platform), xenon)
    TARGET := $(TARGET_NAME)_libretro_xenon360.a
    CC = xenon-gcc$(EXE_EXT)
