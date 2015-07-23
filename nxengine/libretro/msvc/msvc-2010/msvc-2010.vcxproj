@@ -227,7 +227,7 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>_DEBUG;_WIN32;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;LSB_FIRST</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WIN32;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline</PreprocessorDefinitions>
       <CallAttributedProfiling>Callcap</CallAttributedProfiling>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\sdl\include;$(SolutionDir)..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -251,7 +251,7 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>NDEBUG;_WIN32;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;LSB_FIRST</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_WIN32;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\sdl\include;$(SolutionDir)..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
