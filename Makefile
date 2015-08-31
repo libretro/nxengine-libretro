@@ -127,6 +127,16 @@ else ifeq ($(platform), psp1)
    STATIC_LINKING = 1
    SINGLE_PRECISION_FLOATS = 1
    MIN_AUDIO_PROCESSING_PER_FRAME = 1
+
+else ifeq ($(platform), vita)
+   TARGET := $(TARGET_NAME)_libretro_vita.a
+	CC = arm-vita-eabi-gcc$(EXE_EXT)
+	CXX = arm-vita-eabi-g++$(EXE_EXT)
+	AR = arm-vita-eabi-ar$(EXE_EXT)
+   CFLAGS += -DGNU_SOURCE=1
+   STATIC_LINKING = 1
+   SINGLE_PRECISION_FLOATS = 1
+   MIN_AUDIO_PROCESSING_PER_FRAME = 1
 else ifeq ($(platform), ctr)
    TARGET := $(TARGET_NAME)_libretro_ctr.a
    CC = $(DEVKITARM)/bin/arm-none-eabi-gcc$(EXE_EXT)

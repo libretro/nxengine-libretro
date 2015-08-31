@@ -105,43 +105,6 @@ typedef struct {
 } Uint64, Sint64;
 #endif
 
-/*@}*/
-
-/** @name Make sure the types really have the right sizes */
-/*@{*/
-#define SDL_COMPILE_TIME_ASSERT(name, x)               \
-       typedef int SDL_dummy_ ## name[(x) * 2 - 1]
-
-SDL_COMPILE_TIME_ASSERT(uint8, sizeof(Uint8) == 1);
-SDL_COMPILE_TIME_ASSERT(sint8, sizeof(Sint8) == 1);
-SDL_COMPILE_TIME_ASSERT(uint16, sizeof(Uint16) == 2);
-SDL_COMPILE_TIME_ASSERT(sint16, sizeof(Sint16) == 2);
-SDL_COMPILE_TIME_ASSERT(uint32, sizeof(Uint32) == 4);
-SDL_COMPILE_TIME_ASSERT(sint32, sizeof(Sint32) == 4);
-SDL_COMPILE_TIME_ASSERT(uint64, sizeof(Uint64) == 8);
-SDL_COMPILE_TIME_ASSERT(sint64, sizeof(Sint64) == 8);
-/*@}*/
-
-/** @name Enum Size Check
- *  Check to make sure enums are the size of ints, for structure packing.
- *  For both Watcom C/C++ and Borland C/C++ the compiler option that makes
- *  enums having the size of an int must be enabled.
- *  This is "-b" for Borland C/C++ and "-ei" for Watcom C/C++ (v11).
- */
-/* Enable enums always int in CodeWarrior (for MPW use "-enum int") */
-#ifdef __MWERKS__
-#pragma enumsalwaysint on
-#endif
-
-typedef enum {
-	DUMMY_ENUM_VALUE
-} SDL_DUMMY_ENUM;
-
-#ifndef __NDS__
-SDL_COMPILE_TIME_ASSERT(enum, sizeof(SDL_DUMMY_ENUM) == sizeof(int));
-#endif
-/*@}*/
-
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus
