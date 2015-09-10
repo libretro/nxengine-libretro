@@ -26,7 +26,7 @@ SOURCES_CXX += $(CORE_DIR)/sound/org.cpp $(CORE_DIR)/sound/pxt.cpp $(CORE_DIR)/s
 
 SOURCES_CXX += $(CORE_DIR)/TextBox/ItemImage.cpp $(CORE_DIR)/TextBox/SaveSelect.cpp $(CORE_DIR)/TextBox/StageSelect.cpp $(CORE_DIR)/TextBox/TextBox.cpp $(CORE_DIR)/TextBox/YesNoPrompt.cpp
 
-SOURCES_C += $(CORE_DIR)/sdl/SDL_error.c $(CORE_DIR)/sdl/file/SDL_rwops.c $(CORE_DIR)/sdl/video/SDL_blit.c $(CORE_DIR)/sdl/video/SDL_blit_0.c $(CORE_DIR)/sdl/video/SDL_blit_1.c $(CORE_DIR)/sdl/video/SDL_blit_A.c $(CORE_DIR)/sdl/video/SDL_blit_N.c $(CORE_DIR)/sdl/video/SDL_bmp.c $(CORE_DIR)/sdl/video/SDL_pixels.c $(CORE_DIR)/sdl/video/SDL_surface.c $(CORE_DIR)/sdl/cpuinfo/SDL_cpuinfo.c
+SOURCES_C += $(CORE_DIR)/sdl/SDL_error.c $(CORE_DIR)/sdl/file/SDL_rwops.c $(CORE_DIR)/sdl/video/SDL_blit.c $(CORE_DIR)/sdl/video/SDL_blit_0.c $(CORE_DIR)/sdl/video/SDL_blit_1.c $(CORE_DIR)/sdl/video/SDL_blit_A.c $(CORE_DIR)/sdl/video/SDL_blit_N.c $(CORE_DIR)/sdl/video/SDL_bmp.c $(CORE_DIR)/sdl/video/SDL_pixels.c $(CORE_DIR)/sdl/video/SDL_surface.c
 
 SOURCES_CXX += $(CORE_DIR)/autogen/AssignSprites.cpp $(CORE_DIR)/autogen/objnames.cpp
 

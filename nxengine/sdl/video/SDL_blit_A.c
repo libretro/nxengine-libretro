@@ -24,9 +24,6 @@
 #include "SDL_video.h"
 #include "SDL_blit.h"
 
-/* Function to check the CPU flags */
-#include "SDL_cpuinfo.h"
-
 /* Functions to perform alpha blended blitting */
 
 /* N->1 blending with per-surface alpha */

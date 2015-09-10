@@ -29,7 +29,6 @@
 
 #include "SDL_main.h"
 #include "SDL_stdinc.h"
-#include "SDL_cpuinfo.h"
 #include "SDL_endian.h"
 #include "SDL_error.h"
 #include "SDL_rwops.h"

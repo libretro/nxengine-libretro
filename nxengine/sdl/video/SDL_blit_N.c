@@ -23,7 +23,6 @@
 
 #include "SDL_video.h"
 #include "SDL_endian.h"
-#include "SDL_cpuinfo.h"
 #include "SDL_blit.h"
 
 /* Functions to blit from N-bit surfaces to other surfaces */
