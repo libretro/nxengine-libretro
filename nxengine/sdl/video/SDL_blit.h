@@ -371,89 +371,6 @@ do {						\
 } while(0)
 
 
-/* This is a very useful loop for optimizing blitters */
-#if defined(_MSC_VER) && (_MSC_VER == 1300)
-/* There's a bug in the Visual C++ 7 optimizer when compiling this code */
-#else
-#define USE_DUFFS_LOOP
-#endif
-#ifdef USE_DUFFS_LOOP
-
-/* 8-times unrolled loop */
-#define DUFFS_LOOP8(pixel_copy_increment, width)			\
-{ int n = (width+7)/8;							\
-	switch (width & 7) {						\
-	case 0: do {	pixel_copy_increment;				\
-	case 7:		pixel_copy_increment;				\
-	case 6:		pixel_copy_increment;				\
-	case 5:		pixel_copy_increment;				\
-	case 4:		pixel_copy_increment;				\
-	case 3:		pixel_copy_increment;				\
-	case 2:		pixel_copy_increment;				\
-	case 1:		pixel_copy_increment;				\
-		} while ( --n > 0 );					\
-	}								\
-}
-
-/* 4-times unrolled loop */
-#define DUFFS_LOOP4(pixel_copy_increment, width)			\
-{ int n = (width+3)/4;							\
-	switch (width & 3) {						\
-	case 0: do {	pixel_copy_increment;				\
-	case 3:		pixel_copy_increment;				\
-	case 2:		pixel_copy_increment;				\
-	case 1:		pixel_copy_increment;				\
-		} while ( --n > 0 );					\
-	}								\
-}
-
-/* 2 - times unrolled loop */
-#define DUFFS_LOOP_DOUBLE2(pixel_copy_increment,			\
-				double_pixel_copy_increment, width)	\
-{ int n, w = width;							\
-	if( w & 1 ) {							\
-	    pixel_copy_increment;					\
-	    w--;							\
-	}								\
-	if ( w > 0 )	{						\
-	    n = ( w + 2) / 4;						\
-	    switch( w & 2 ) {						\
-	    case 0: do {	double_pixel_copy_increment;		\
-	    case 2:		double_pixel_copy_increment;		\
-		    } while ( --n > 0 );					\
-	    }								\
-	}								\
-}
-
-/* 2 - times unrolled loop 4 pixels */
-#define DUFFS_LOOP_QUATRO2(pixel_copy_increment,			\
-				double_pixel_copy_increment,		\
-				quatro_pixel_copy_increment, width)	\
-{ int n, w = width;								\
-        if(w & 1) {							\
-	  pixel_copy_increment;						\
-	  w--;								\
-	}								\
-	if(w & 2) {							\
-	  double_pixel_copy_increment;					\
-	  w -= 2;							\
-	}								\
-	if ( w > 0 ) {							\
-	    n = ( w + 7 ) / 8;						\
-	    switch( w & 4 ) {						\
-	    case 0: do {	quatro_pixel_copy_increment;		\
-	    case 4:		quatro_pixel_copy_increment;		\
-		    } while ( --n > 0 );					\
-	    }								\
-	}								\
-}
-
-/* Use the 8-times version of the loop by default */
-#define DUFFS_LOOP(pixel_copy_increment, width)				\
-	DUFFS_LOOP8(pixel_copy_increment, width)
-
-#else
-
 /* Don't use Duff's device to unroll loops */
 #define DUFFS_LOOP_DOUBLE2(pixel_copy_increment,			\
 			 double_pixel_copy_increment, width)		\
@@ -498,8 +415,6 @@ do {						\
 	DUFFS_LOOP(pixel_copy_increment, width)
 #define DUFFS_LOOP4(pixel_copy_increment, width)			\
 	DUFFS_LOOP(pixel_copy_increment, width)
-
-#endif /* USE_DUFFS_LOOP */
 
 /* Prevent Visual C++ 6.0 from printing out stupid warnings */
 #if defined(_MSC_VER) && (_MSC_VER >= 600)

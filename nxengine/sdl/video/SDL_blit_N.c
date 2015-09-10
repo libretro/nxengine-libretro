@@ -48,9 +48,7 @@
 }
 static void Blit_RGB888_index8(SDL_BlitInfo *info)
 {
-#ifndef USE_DUFFS_LOOP
 	int c;
-#endif
 	int width, height;
 	Uint32 *src;
 	const Uint8 *map;
@@ -68,11 +66,6 @@ static void Blit_RGB888_index8(SDL_BlitInfo *info)
 
 	if ( map == NULL ) {
 		while ( height-- ) {
-#ifdef USE_DUFFS_LOOP
-			DUFFS_LOOP(
-				RGB888_RGB332(*dst++, *src);
-			, width);
-#else
 			for ( c=width/4; c; --c ) {
 				/* Pack RGB into 8bit pixel */
 				++src;
@@ -94,7 +87,6 @@ static void Blit_RGB888_index8(SDL_BlitInfo *info)
 					RGB888_RGB332(*dst++, *src);
 					++src;
 			}
-#endif /* USE_DUFFS_LOOP */
 			src += srcskip;
 			dst += dstskip;
 		}
@@ -102,13 +94,6 @@ static void Blit_RGB888_index8(SDL_BlitInfo *info)
 		int Pixel;
 
 		while ( height-- ) {
-#ifdef USE_DUFFS_LOOP
-			DUFFS_LOOP(
-				RGB888_RGB332(Pixel, *src);
-				*dst++ = map[Pixel];
-				++src;
-			, width);
-#else
 			for ( c=width/4; c; --c ) {
 				/* Pack RGB into 8bit pixel */
 				RGB888_RGB332(Pixel, *src);
@@ -138,7 +123,6 @@ static void Blit_RGB888_index8(SDL_BlitInfo *info)
 					*dst++ = map[Pixel];
 					++src;
 			}
-#endif /* USE_DUFFS_LOOP */
 			src += srcskip;
 			dst += dstskip;
 		}
@@ -160,9 +144,7 @@ static void Blit_RGB888_index8(SDL_BlitInfo *info)
 }
 static void Blit_RGB888_RGB555(SDL_BlitInfo *info)
 {
-#ifndef USE_DUFFS_LOOP
 	int c;
-#endif
 	int width, height;
 	Uint32 *src;
 	Uint16 *dst;
@@ -176,17 +158,6 @@ static void Blit_RGB888_RGB555(SDL_BlitInfo *info)
 	dst = (Uint16 *)info->d_pixels;
 	dstskip = info->d_skip/2;
 
-#ifdef USE_DUFFS_LOOP
-	while ( height-- ) {
-		DUFFS_LOOP(
-			RGB888_RGB555(dst, src);
-			++src;
-			++dst;
-		, width);
-		src += srcskip;
-		dst += dstskip;
-	}
-#else
 	/* Memory align at 4-byte boundary, if necessary */
 	if ( (long)dst & 0x03 ) {
 		/* Don't do anything if width is 0 */
@@ -262,7 +233,6 @@ static void Blit_RGB888_RGB555(SDL_BlitInfo *info)
 			dst += dstskip;
 		}
 	}
-#endif /* USE_DUFFS_LOOP */
 }
 /* Special optimized blit for RGB 8-8-8 --> RGB 5-6-5 */
 #define RGB888_RGB565(dst, src) { \
@@ -280,9 +250,7 @@ static void Blit_RGB888_RGB555(SDL_BlitInfo *info)
 }
 static void Blit_RGB888_RGB565(SDL_BlitInfo *info)
 {
-#ifndef USE_DUFFS_LOOP
 	int c;
-#endif
 	int width, height;
 	Uint32 *src;
 	Uint16 *dst;
@@ -296,17 +264,6 @@ static void Blit_RGB888_RGB565(SDL_BlitInfo *info)
 	dst = (Uint16 *)info->d_pixels;
 	dstskip = info->d_skip/2;
 
-#ifdef USE_DUFFS_LOOP
-	while ( height-- ) {
-		DUFFS_LOOP(
-			RGB888_RGB565(dst, src);
-			++src;
-			++dst;
-		, width);
-		src += srcskip;
-		dst += dstskip;
-	}
-#else
 	/* Memory align at 4-byte boundary, if necessary */
 	if ( (long)dst & 0x03 ) {
 		/* Don't do anything if width is 0 */
@@ -382,16 +339,13 @@ static void Blit_RGB888_RGB565(SDL_BlitInfo *info)
 			dst += dstskip;
 		}
 	}
-#endif /* USE_DUFFS_LOOP */
 }
 
 /* Special optimized blit for RGB 5-6-5 --> 32-bit RGB surfaces */
 #define RGB565_32(dst, src, map) (map[src[LO]*2] + map[src[HI]*2+1])
 static void Blit_RGB565_32(SDL_BlitInfo *info, const Uint32 *map)
 {
-#ifndef USE_DUFFS_LOOP
 	int c;
-#endif
 	int width, height;
 	Uint8 *src;
 	Uint32 *dst;
@@ -405,18 +359,6 @@ static void Blit_RGB565_32(SDL_BlitInfo *info, const Uint32 *map)
 	dst = (Uint32 *)info->d_pixels;
 	dstskip = info->d_skip/4;
 
-#ifdef USE_DUFFS_LOOP
-	while ( height-- ) {
-		DUFFS_LOOP(
-		{
-			*dst++ = RGB565_32(dst, src, map);
-			src += 2;
-		},
-		width);
-		src += srcskip;
-		dst += dstskip;
-	}
-#else
 	while ( height-- ) {
 		/* Copy in 4 pixel chunks */
 		for ( c=width/4; c; --c ) {
@@ -445,7 +387,6 @@ static void Blit_RGB565_32(SDL_BlitInfo *info, const Uint32 *map)
 		src += srcskip;
 		dst += dstskip;
 	}
-#endif /* USE_DUFFS_LOOP */
 }
 
 /* Special optimized blit for RGB 5-6-5 --> ARGB 8-8-8-8 */
@@ -1002,9 +943,7 @@ static void Blit_RGB565_BGRA8888(SDL_BlitInfo *info)
 #endif
 static void Blit_RGB888_index8_map(SDL_BlitInfo *info)
 {
-#ifndef USE_DUFFS_LOOP
 	int c;
-#endif
 	int Pixel;
 	int width, height;
 	Uint32 *src;
@@ -1021,17 +960,6 @@ static void Blit_RGB888_index8_map(SDL_BlitInfo *info)
 	dstskip = info->d_skip;
 	map = info->table;
 
-#ifdef USE_DUFFS_LOOP
-	while ( height-- ) {
-		DUFFS_LOOP(
-			RGB888_RGB332(Pixel, *src);
-			*dst++ = map[Pixel];
-			++src;
-		, width);
-		src += srcskip;
-		dst += dstskip;
-	}
-#else
 	while ( height-- ) {
 		for ( c=width/4; c; --c ) {
 			/* Pack RGB into 8bit pixel */
@@ -1065,13 +993,10 @@ static void Blit_RGB888_index8_map(SDL_BlitInfo *info)
 		src += srcskip;
 		dst += dstskip;
 	}
-#endif /* USE_DUFFS_LOOP */
 }
 static void BlitNto1(SDL_BlitInfo *info)
 {
-#ifndef USE_DUFFS_LOOP
 	int c;
-#endif
 	int width, height;
 	Uint8 *src;
 	const Uint8 *map;
@@ -1095,20 +1020,6 @@ static void BlitNto1(SDL_BlitInfo *info)
 
 	if ( map == NULL ) {
 		while ( height-- ) {
-#ifdef USE_DUFFS_LOOP
-			DUFFS_LOOP(
-				DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel,
-								sR, sG, sB);
-				if ( 1 ) {
-				  	/* Pack RGB into 8bit pixel */
-				  	*dst = ((sR>>5)<<(3+2))|
-					        ((sG>>5)<<(2)) |
-					        ((sB>>6)<<(0)) ;
-				}
-				dst++;
-				src += srcbpp;
-			, width);
-#else
 			for ( c=width; c; --c ) {
 				DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel,
 								sR, sG, sB);
@@ -1121,26 +1032,11 @@ static void BlitNto1(SDL_BlitInfo *info)
 				dst++;
 				src += srcbpp;
 			}
-#endif
 			src += srcskip;
 			dst += dstskip;
 		}
 	} else {
 		while ( height-- ) {
-#ifdef USE_DUFFS_LOOP
-			DUFFS_LOOP(
-				DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel,
-								sR, sG, sB);
-				if ( 1 ) {
-				  	/* Pack RGB into 8bit pixel */
-				  	*dst = map[((sR>>5)<<(3+2))|
-						   ((sG>>5)<<(2))  |
-						   ((sB>>6)<<(0))  ];
-				}
-				dst++;
-				src += srcbpp;
-			, width);
-#else
 			for ( c=width; c; --c ) {
 				DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel,
 								sR, sG, sB);
@@ -1153,7 +1049,6 @@ static void BlitNto1(SDL_BlitInfo *info)
 				dst++;
 				src += srcbpp;
 			}
-#endif /* USE_DUFFS_LOOP */
 			src += srcskip;
 			dst += dstskip;
 		}
