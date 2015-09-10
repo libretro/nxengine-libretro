@@ -30,9 +30,7 @@
 
 static void Blit1to1(SDL_BlitInfo *info)
 {
-#ifndef USE_DUFFS_LOOP
 	int c;
-#endif
 	int width, height;
 	Uint8 *src, *map, *dst;
 	int srcskip, dstskip;
@@ -47,21 +45,11 @@ static void Blit1to1(SDL_BlitInfo *info)
 	map = info->table;
 
 	while ( height-- ) {
-#ifdef USE_DUFFS_LOOP
-		DUFFS_LOOP(
-			{
-			  *dst = map[*src];
-			}
-			dst++;
-			src++;
-		, width);
-#else
 		for ( c=width; c; --c ) {
 		        *dst = map[*src];
 			dst++;
 			src++;
 		}
-#endif
 		src += srcskip;
 		dst += dstskip;
 	}
@@ -76,9 +64,7 @@ static void Blit1to1(SDL_BlitInfo *info)
 #endif
 static void Blit1to2(SDL_BlitInfo *info)
 {
-#ifndef USE_DUFFS_LOOP
 	int c;
-#endif
 	int width, height;
 	Uint8 *src, *dst;
 	Uint16 *map;
@@ -93,18 +79,6 @@ static void Blit1to2(SDL_BlitInfo *info)
 	dstskip = info->d_skip;
 	map = (Uint16 *)info->table;
 
-#ifdef USE_DUFFS_LOOP
-	while ( height-- ) {
-		DUFFS_LOOP(
-		{
-			*(Uint16 *)dst = map[*src++];
-			dst += 2;
-		},
-		width);
-		src += srcskip;
-		dst += dstskip;
-	}
-#else
 	/* Memory align at 4-byte boundary, if necessary */
 	if ( (long)dst & 0x03 ) {
 		/* Don't do anything if width is 0 */
@@ -181,13 +155,10 @@ static void Blit1to2(SDL_BlitInfo *info)
 			dst += dstskip;
 		}
 	}
-#endif /* USE_DUFFS_LOOP */
 }
 static void Blit1to3(SDL_BlitInfo *info)
 {
-#ifndef USE_DUFFS_LOOP
 	int c;
-#endif
 	int o;
 	int width, height;
 	Uint8 *src, *map, *dst;
@@ -203,18 +174,6 @@ static void Blit1to3(SDL_BlitInfo *info)
 	map = info->table;
 
 	while ( height-- ) {
-#ifdef USE_DUFFS_LOOP
-		DUFFS_LOOP(
-			{
-				o = *src * 4;
-				dst[0] = map[o++];
-				dst[1] = map[o++];
-				dst[2] = map[o++];
-			}
-			src++;
-			dst += 3;
-		, width);
-#else
 		for ( c=width; c; --c ) {
 			o = *src * 4;
 			dst[0] = map[o++];
@@ -223,16 +182,13 @@ static void Blit1to3(SDL_BlitInfo *info)
 			src++;
 			dst += 3;
 		}
-#endif /* USE_DUFFS_LOOP */
 		src += srcskip;
 		dst += dstskip;
 	}
 }
 static void Blit1to4(SDL_BlitInfo *info)
 {
-#ifndef USE_DUFFS_LOOP
 	int c;
-#endif
 	int width, height;
 	Uint8 *src;
 	Uint32 *map, *dst;
@@ -248,11 +204,6 @@ static void Blit1to4(SDL_BlitInfo *info)
 	map = (Uint32 *)info->table;
 
 	while ( height-- ) {
-#ifdef USE_DUFFS_LOOP
-		DUFFS_LOOP(
-			*dst++ = map[*src++];
-		, width);
-#else
 		for ( c=width/4; c; --c ) {
 			*dst++ = map[*src++];
 			*dst++ = map[*src++];
@@ -267,7 +218,6 @@ static void Blit1to4(SDL_BlitInfo *info)
 			case 1:
 				*dst++ = map[*src++];
 		}
-#endif /* USE_DUFFS_LOOP */
 		src += srcskip;
 		dst += dstskip;
 	}
