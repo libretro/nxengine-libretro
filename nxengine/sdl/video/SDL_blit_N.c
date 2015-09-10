@@ -32,12 +32,12 @@
 #define GetBlitFeatures() ((Uint32)(0))
 
 /* This is now endian dependent */
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-#define HI	1
-#define LO	0
-#else /* SDL_BYTEORDER == SDL_BIG_ENDIAN */
+#ifdef MSB_FIRST
 #define HI	0
 #define LO	1
+#else
+#define HI	1
+#define LO	0
 #endif
 
 /* Special optimized blit for RGB 8-8-8 --> RGB 3-3-2 */

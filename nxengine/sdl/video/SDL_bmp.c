@@ -183,7 +183,7 @@ SDL_Surface * SDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 						Bmask = 0x001F;
 						break;
 					case 24:
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+#ifdef MSB_FIRST
 					        Rmask = 0x000000FF;
 					        Gmask = 0x0000FF00;
 					        Bmask = 0x00FF0000;
@@ -306,7 +306,7 @@ SDL_Surface * SDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 				was_error = SDL_TRUE;
 				goto done;
 			}
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+#ifdef MSB_FIRST
 			/* Byte-swap the pixels if needed. Note that the 24bpp
 			   case has already been taken care of above. */
 			switch(biBitCount) {
@@ -396,14 +396,14 @@ int SDL_SaveBMP_RW (SDL_Surface *saveme, SDL_RWops *dst, int freedst)
 			}
 		}
 		else if ( (saveme->format->BitsPerPixel == 24) &&
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-				(saveme->format->Rmask == 0x00FF0000) &&
-				(saveme->format->Gmask == 0x0000FF00) &&
-				(saveme->format->Bmask == 0x000000FF)
-#else
+#ifdef MSB_FIRST
 				(saveme->format->Rmask == 0x000000FF) &&
 				(saveme->format->Gmask == 0x0000FF00) &&
 				(saveme->format->Bmask == 0x00FF0000)
+#else
+				(saveme->format->Rmask == 0x00FF0000) &&
+				(saveme->format->Gmask == 0x0000FF00) &&
+				(saveme->format->Bmask == 0x000000FF)
 #endif
 			  ) {
 			surface = saveme;
@@ -413,10 +413,10 @@ int SDL_SaveBMP_RW (SDL_Surface *saveme, SDL_RWops *dst, int freedst)
 			/* Convert to 24 bits per pixel */
 			surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
 					saveme->w, saveme->h, 24,
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-					0x00FF0000, 0x0000FF00, 0x000000FF,
-#else
+#ifdef MSB_FIRST
 					0x000000FF, 0x0000FF00, 0x00FF0000,
+#else
+					0x00FF0000, 0x0000FF00, 0x000000FF,
 #endif
 					0);
 			if ( surface != NULL ) {

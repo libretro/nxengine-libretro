@@ -221,19 +221,17 @@ int SDL_SetAlphaChannel(SDL_Surface *surface, Uint8 value)
 		return -1;
 	}
 
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN
-	if ( surface->format->Amask == 0xFF000000 ) {
-			offset = 3;
-	} else {
+#ifdef MSB_FIRST
+	if ( surface->format->Amask == 0xFF000000 )
 			offset = 0;
-	}
+   else
+			offset = 3;
 #else
-	if ( surface->format->Amask == 0xFF000000 ) {
-			offset = 0;
-	} else {
+	if ( surface->format->Amask == 0xFF000000 )
 			offset = 3;
-	}
-#endif /* Byte ordering */
+   else
+			offset = 0;
+#endif
 
 	row = surface->h;
 	while (row--) {
@@ -479,9 +477,9 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 			break;
 
 		    case 3:
-			#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-				color <<= 8;
-			#endif
+#ifdef MSB_FIRST
+         color <<= 8;
+#endif
 			for ( y=dstrect->h; y; --y ) {
 				Uint8 *pixels = row;
 				for ( x=dstrect->w; x; --x ) {

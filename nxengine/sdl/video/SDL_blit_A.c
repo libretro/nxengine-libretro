@@ -378,7 +378,7 @@ static void Blit16to16SurfaceAlpha128(SDL_BlitInfo *info, Uint16 mask)
 				Uint32 sw, dw, s;
 				sw = *(Uint32 *)srcp;
 				dw = *(Uint32 *)dstp;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+#ifdef MSB_FIRST
 				s = (prev_sw << 16) + (sw >> 16);
 #else
 				s = (prev_sw >> 16) + (sw << 16);
@@ -393,7 +393,7 @@ static void Blit16to16SurfaceAlpha128(SDL_BlitInfo *info, Uint16 mask)
 			/* final pixel if any */
 			if(w) {
 				Uint16 d = *dstp, s;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+#ifdef MSB_FIRST
 				s = (Uint16)prev_sw;
 #else
 				s = (Uint16)(prev_sw >> 16);

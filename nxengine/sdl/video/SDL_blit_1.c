@@ -54,14 +54,15 @@ static void Blit1to1(SDL_BlitInfo *info)
 		dst += dstskip;
 	}
 }
-/* This is now endian dependent */
-#if ( SDL_BYTEORDER == SDL_LIL_ENDIAN )
-#define HI	1
-#define LO	0
-#else /* ( SDL_BYTEORDER == SDL_BIG_ENDIAN ) */
+
+#ifdef MSB_FIRST
 #define HI	0
 #define LO	1
+#else
+#define HI	1
+#define LO	0
 #endif
+
 static void Blit1to2(SDL_BlitInfo *info)
 {
 	int c;
