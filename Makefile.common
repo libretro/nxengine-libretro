@@ -1,7 +1,6 @@
 INCFLAGS := -I$(CORE_DIR) -I$(CORE_DIR)/graphics -I$(CORE_DIR)/libretro -I$(CORE_DIR)/libretro/libretro-common/include -I$(CORE_DIR)/sdl/include 
 
-SOURCES_C   := $(CORE_DIR)/libretro/libretro-common/file/retro_file.c \
-					$(CORE_DIR)/sdl/SDL_error.c \
+SOURCES_C   := $(CORE_DIR)/sdl/SDL_error.c \
 					$(CORE_DIR)/sdl/file/SDL_rwops.c \
 					$(CORE_DIR)/sdl/video/SDL_blit.c \
 					$(CORE_DIR)/sdl/video/SDL_blit_0.c \
@@ -11,6 +10,10 @@ SOURCES_C   := $(CORE_DIR)/libretro/libretro-common/file/retro_file.c \
 					$(CORE_DIR)/sdl/video/SDL_bmp.c \
 					$(CORE_DIR)/sdl/video/SDL_pixels.c \
 					$(CORE_DIR)/sdl/video/SDL_surface.c
+
+ifneq ($(STATIC_LINKING), 1)
+SOURCES_C   += $(CORE_DIR)/libretro/libretro-common/file/retro_file.c
+endif
 
 SOURCES_CXX := $(CORE_DIR)/ai/ai.cpp \
 					$(CORE_DIR)/ai/balrog_common.cpp \
