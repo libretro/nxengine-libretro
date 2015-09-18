@@ -3,11 +3,12 @@
 #define _BASICS_H
 
 #include <stdint.h>
+#include <limits.h>
 
 #define MAXPATHLEN	256
 
 #ifndef PATH_MAX
-#define PATH_MAX	259
+#define PATH_MAX	4096
 #endif
 
 typedef unsigned char		uchar;

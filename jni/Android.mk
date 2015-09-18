@@ -39,6 +39,6 @@ OBJECTS    := 	$(SOURCES_C) $(SOURCES_CXX)
 LOCAL_SRC_FILES := $(OBJECTS)
 
 LOCAL_CXXFLAGS += -DINLINE=inline -DHAVE_STDINT_H -DHAVE_INTTYPES_H -D__LIBRETRO__ -DFRONTEND_SUPPORTS_RGB565
-LOCAL_C_INCLUDES  = $(CORE_DIR) $(CORE_DIR)/graphics $(CORE_DIR)/libretro $(CORE_DIR)/sdl/include
+LOCAL_C_INCLUDES  = $(CORE_DIR) $(CORE_DIR)/graphics $(CORE_DIR)/libretro $(CORE_DIR)/sdl/include $(CORE_DIR)/libretro/libretro-common/include
 
 include $(BUILD_SHARED_LIBRARY)

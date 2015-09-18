@@ -1,7 +1,7 @@
 
 #include "../nx.h"
 #include "../main.fdh"
-#include "libretro_shared.h";
+#include "libretro_shared.h"
 #include "extract-auto/cachefiles.h"
 
 #ifdef _WIN32
