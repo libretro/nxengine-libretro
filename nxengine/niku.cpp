@@ -1,6 +1,6 @@
-
 #include <stdio.h>
 #include <stdint.h>
+#include <retro_file.h>
 #include "nx.h"
 #include "niku.fdh"
 #include "libretro_shared.h"
@@ -18,27 +18,28 @@
 bool niku_load(uint32_t *value_out)
 {
    char fname_tmp[1024];
-   FILE *fp;
    uint8_t buffer[20];
    uint32_t *result = (uint32_t *)buffer;
    int i, j;
+   RFILE *fp = NULL;
 
    const char *fname = getfname();
 
    retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
 
-   fp = fopen(fname_tmp, "rb");
+   fp = retro_fopen(fname_tmp, RFILE_MODE_READ, -1);
    if (!fp)
    {
 #ifdef DEBUG
       NX_ERR("niku_load: couldn't open file '%s'", fname_tmp);
 #endif
-      if (value_out) *value_out = 0;
+      if (value_out)
+         *value_out = 0;
       return 1;
    }
 
-   fread(buffer, 20, 1, fp);
-   fclose(fp);
+   retro_fread(fp, buffer, 20);
+   retro_fclose(fp);
 
    for(i=0;i<4;i++)
    {
@@ -51,8 +52,8 @@ bool niku_load(uint32_t *value_out)
       buffer[j+3] -= (key / 2);
    }
 
-   if ((result[0] != result[1]) || \
-         (result[0] != result[2]) || \
+   if ((result[0] != result[1]) || 
+         (result[0] != result[2]) || 
          (result[0] != result[3]))
    {
 #ifdef DEBUG
@@ -78,7 +79,7 @@ bool niku_save(uint32_t value)
    char fname_tmp[1024];
    uint8_t buf_byte[20];
    const char *fname;
-   FILE *fp;
+   RFILE *fp = NULL;
    uint32_t *buf_dword = (uint32_t *)buf_byte;
 
    /* place values */
@@ -109,15 +110,15 @@ bool niku_save(uint32_t value)
 
    retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
 
-   fp = fopen(fname_tmp, "wb");
+   fp = retro_fopen(fname_tmp, RFILE_MODE_WRITE, -1);
    if (!fp)
    {
       NX_ERR("niku_save: failed to open '%s'", fname_tmp);
       return 1;
    }
 
-   fwrite(buf_byte, 20, 1, fp);
-   fclose(fp);
+   retro_fwrite(fp, buf_byte, 20);
+   retro_fclose(fp);
 
 #ifdef DEBUG
    NX_LOG("niku_save: wrote value 0x%08x", value);
