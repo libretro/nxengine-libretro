@@ -1,5 +1,8 @@
 
 #include <SDL.h>
+
+#include <retro_file.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -63,59 +66,61 @@ void c------------------------------() {}
 
 static bool tryload(Settings *setfile)
 {
-        char setfilename_tmp[1024];
-	FILE *fp;
+   char setfilename_tmp[1024];
+   RFILE *fp = NULL;
 
-	NX_LOG("Loading settings...\n");
+   retro_create_path_string(setfilename_tmp, sizeof(setfilename_tmp), g_dir, setfilename);
 
-	retro_create_path_string(setfilename_tmp, sizeof(setfilename_tmp), g_dir, setfilename);
-	
-	fp = fopen(setfilename_tmp, "rb");
-	if (!fp)
-	{
-		NX_ERR("Couldn't open file %s.\n", setfilename_tmp);
-		return 1;
-	}
-	
-	setfile->version = 0;
-	fread(setfile, sizeof(Settings), 1, fp);
-	if (setfile->version != SETTINGS_VERSION)
-	{
-		NX_ERR("Wrong settings version %04x.\n", setfile->version);
-		return 1;
-	}
-	
-	fclose(fp);
-	return 0;
+   fp = retro_fopen(setfilename_tmp, RFILE_MODE_READ, -1);
+   if (!fp)
+   {
+      NX_ERR("Couldn't open file %s.\n", setfilename_tmp);
+      return 1;
+   }
+
+   NX_LOG("Loading settings...\n");
+
+   setfile->version = 0;
+   retro_fread(fp, setfile, sizeof(Settings));
+
+   if (setfile->version != SETTINGS_VERSION)
+   {
+      NX_ERR("Wrong settings version %04x.\n", setfile->version);
+      return 1;
+   }
+
+   retro_fclose(fp);
+   return 0;
 }
 
 
 bool settings_save(Settings *setfile)
 {
-char setfilename_tmp[1024];
-FILE *fp;
+   char setfilename_tmp[1024];
+   RFILE *fp = NULL;
 
-	if (!setfile)
-		setfile = &normal_settings;
+   if (!setfile)
+      setfile = &normal_settings;
 
-	retro_create_path_string(setfilename_tmp, sizeof(setfilename_tmp), g_dir, setfilename);
-	
-	NX_LOG("Writing settings...\n");
-	fp = fopen(setfilename_tmp, "wb");
-	if (!fp)
-	{
-		NX_ERR("Couldn't open file %s.\n", setfilename_tmp);
-		return 1;
-	}
-	
-	for(int i=0;i<INPUT_COUNT;i++)
-		setfile->input_mappings[i] = input_get_mapping(i);
-	
-	setfile->version = SETTINGS_VERSION;
-	fwrite(setfile, sizeof(Settings), 1, fp);
-	
-	fclose(fp);
-	return 0;
+   retro_create_path_string(setfilename_tmp, sizeof(setfilename_tmp), g_dir, setfilename);
+
+   fp = retro_fopen(setfilename_tmp, RFILE_MODE_WRITE, -1);
+   if (!fp)
+   {
+      NX_ERR("Couldn't open file %s.\n", setfilename_tmp);
+      return 1;
+   }
+
+   NX_LOG("Writing settings...\n");
+
+   for(int i=0;i<INPUT_COUNT;i++)
+      setfile->input_mappings[i] = input_get_mapping(i);
+
+   setfile->version = SETTINGS_VERSION;
+   retro_fwrite(fp, setfile, sizeof(Settings));
+
+   retro_fclose(fp);
+   return 0;
 }
 
 
