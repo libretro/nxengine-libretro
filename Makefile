@@ -43,6 +43,14 @@ EXTRACTDIR   := $(CORE_DIR)/extract-auto
 
 CC         = gcc
 
+ifeq ($(ARCHFLAGS),)
+ifeq ($(archs),ppc)
+   ARCHFLAGS = -arch ppc -arch ppc64
+else
+   ARCHFLAGS = -arch i386 -arch x86_64
+endif
+endif
+
 ifeq ($(platform), unix)
    TARGET := $(TARGET_NAME)_libretro.so
    fpic := -fPIC
@@ -239,6 +247,14 @@ CODE_DEFINES =
 else
 WARNINGS_DEFINES = -Wall -W -Wno-unused-parameter
 CODE_DEFINES = -fomit-frame-pointer
+endif
+
+ifeq ($(platform), osx)
+ifndef ($(NOUNIVERSAL))
+   CFLAGS += $(ARCHFLAGS)
+	CXXFLAGS += $(ARCHFLAGS)
+   LFLAGS += $(ARCHFLAGS)
+endif
 endif
 
 COMMON_DEFINES += $(CODE_DEFINES) $(WARNINGS_DEFINES) -DNDEBUG=1 $(fpic)
