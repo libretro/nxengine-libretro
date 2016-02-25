@@ -164,6 +164,17 @@ else ifeq ($(platform), ctr)
    STATIC_LINKING = 1
    SINGLE_PRECISION_FLOATS = 1
    MIN_AUDIO_PROCESSING_PER_FRAME = 1
+else ifeq ($(platform), rpi2)
+   TARGET := $(TARGET_NAME)_libretro.so
+   fpic := -fPIC
+   SHARED := -shared -Wl,--version-script=$(CORE_DIR)/libretro/link.T -Wl,-no-undefined
+   CFLAGS += -DARM -DGNU_SOURCE=1
+   CFLAGS += -marm -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard -funsafe-math-optimizations
+   CFLAGS += -fomit-frame-pointer -fstrict-aliasing -ffast-math
+   CFLAGS += -fno-rtti -fno-exceptions -std=gnu++11
+   SINGLE_PRECISION_FLOATS = 1
+   MIN_AUDIO_PROCESSING_PER_FRAME = 1
+   HAVE_NEON = 1
 else ifeq ($(platform), xenon)
    TARGET := $(TARGET_NAME)_libretro_xenon360.a
    CC = xenon-gcc$(EXE_EXT)
