@@ -32,7 +32,7 @@ NXSurface::NXSurface()
 void *AllocNewSurface(uint32_t colorkey, int wd, int ht)
 {
    SDL_Surface *surf = NULL;
-	surf = SDL_CreateRGBSurface(colorkey, wd, ht, SCREEN_BPP, 0x1f << RED_SHIFT, 0x3f << GREEN_SHIFT, 0x1f << BLUE_SHIFT, 0);
+	surf = LRSDL_CreateRGBSurface(colorkey, wd, ht, SCREEN_BPP, 0x1f << RED_SHIFT, 0x3f << GREEN_SHIFT, 0x1f << BLUE_SHIFT, 0);
 	
 	if (!surf)
 	{
@@ -45,24 +45,24 @@ void *AllocNewSurface(uint32_t colorkey, int wd, int ht)
 
 void FreeSurface(SDL_Surface *surface)
 {
-   SDL_FreeSurface(surface);
+   LRSDL_FreeSurface(surface);
 }
 
 void SetClipRectangle(SDL_Surface *src, SDL_Rect *rect)
 {
-   SDL_SetClipRect(src, rect);
+   LRSDL_SetClipRect(src, rect);
 }
 
 void DrawBlit(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect)
 {
-	SDL_UpperBlit(src, srcrect, dst, dstrect);
+	LRSDL_UpperBlit(src, srcrect, dst, dstrect);
 }
 
 int SetColorKey(SDL_Surface* surface,
                     int          flag,
                     Uint32       key)
 {
-   return SDL_SetColorKey(surface, flag, key);
+   return LRSDL_SetColorKey(surface, flag, key);
 }
 
 
@@ -100,9 +100,9 @@ bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey)
    {
       SDL_RWops *m = SDL_RWFromMem(cfile_pointer(cf), cfile_size(cf));
       cclose(cf);
-      fSurface = SDL_LoadBMP_RW(m, 1);
+      fSurface = LRSDL_LoadBMP_RW(m, 1);
    } else {
-      fSurface = SDL_LoadBMP(pbm_name);
+      fSurface = LRSDL_LoadBMP(pbm_name);
    }
 
 	if (!fSurface)
@@ -111,11 +111,11 @@ bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey)
 		return 1;
 	}
 	
-	uint8_t color = SDL_MapRGB(fSurface->format, 0, 0, 0);
+	uint8_t color = LRSDL_MapRGB(fSurface->format, 0, 0, 0);
 
 	// set colorkey to black if requested
 	if (use_colorkey)
-		SDL_SetColorKey(fSurface, SDL_SRCCOLORKEY, color);
+		LRSDL_SetColorKey(fSurface, SDL_SRCCOLORKEY, color);
 
 	return (fSurface == NULL);
 }
@@ -205,7 +205,7 @@ void NXSurface::DrawRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, u
 
 void FillRectangle(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color)
 {
-   SDL_FillRect(dst, dstrect, color);
+   LRSDL_FillRect(dst, dstrect, color);
 }
 
 void NXSurface::FillRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
@@ -223,7 +223,7 @@ void NXSurface::FillRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, u
 
 void NXSurface::Clear(uint8_t r, uint8_t g, uint8_t b)
 {
-	FillRectangle(fSurface, NULL, SDL_MapRGB(fSurface->format, r, g, b));
+	FillRectangle(fSurface, NULL, LRSDL_MapRGB(fSurface->format, r, g, b));
 }
 
 

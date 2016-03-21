@@ -732,7 +732,7 @@ static void BlitNtoNPixelAlpha(SDL_BlitInfo *info)
 }
 
 
-SDL_loblit SDL_CalculateAlphaBlit(SDL_Surface *surface, int blit_index)
+SDL_loblit LRSDL_CalculateAlphaBlit(SDL_Surface *surface, int blit_index)
 {
     SDL_PixelFormat *sf = surface->format;
     SDL_PixelFormat *df = surface->map->dst->format;

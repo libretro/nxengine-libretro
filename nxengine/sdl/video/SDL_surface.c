@@ -30,7 +30,7 @@
 /*
  * Create an empty RGB surface of the appropriate depth
  */
-SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
+SDL_Surface * LRSDL_CreateRGBSurface (Uint32 flags,
 			int width, int height, int depth,
 			Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
@@ -54,7 +54,7 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 	}
 	surface->flags = SDL_SWSURFACE;
 
-	surface->format = SDL_AllocFormat(depth, Rmask, Gmask, Bmask, Amask);
+	surface->format = LRSDL_AllocFormat(depth, Rmask, Gmask, Bmask, Amask);
 	if (!surface->format)
    {
 		SDL_free(surface);
@@ -65,15 +65,15 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 		surface->flags |= SDL_SRCALPHA;
 	surface->w = width;
 	surface->h = height;
-	surface->pitch = SDL_CalculatePitch(surface);
+	surface->pitch = LRSDL_CalculatePitch(surface);
 	surface->pixels = NULL;
 	surface->offset = 0;
 	surface->hwdata = NULL;
 	surface->locked = 0;
 	surface->map = NULL;
 	surface->unused1 = 0;
-	SDL_SetClipRect(surface, NULL);
-	SDL_FormatChanged(surface);
+	LRSDL_SetClipRect(surface, NULL);
+	LRSDL_FormatChanged(surface);
 
 	/* Get the pixels */
 	if ( ((flags&SDL_HWSURFACE) == SDL_SWSURFACE))
@@ -83,7 +83,7 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
          surface->pixels = SDL_malloc(surface->h*surface->pitch);
          if (!surface->pixels)
          {
-            SDL_FreeSurface(surface);
+            LRSDL_FreeSurface(surface);
             SDL_OutOfMemory();
             return(NULL);
          }
@@ -93,10 +93,10 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
    }
 
 	/* Allocate an empty mapping */
-	surface->map = SDL_AllocBlitMap();
+	surface->map = LRSDL_AllocBlitMap();
 	if (!surface->map)
    {
-      SDL_FreeSurface(surface);
+      LRSDL_FreeSurface(surface);
       return(NULL);
    }
 
@@ -107,13 +107,13 @@ SDL_Surface * SDL_CreateRGBSurface (Uint32 flags,
 /*
  * Create an RGB surface from an existing memory buffer
  */
-SDL_Surface * SDL_CreateRGBSurfaceFrom (void *pixels,
+SDL_Surface * LRSDL_CreateRGBSurfaceFrom (void *pixels,
 			int width, int height, int depth, int pitch,
 			Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
 	SDL_Surface *surface;
 
-	surface = SDL_CreateRGBSurface(SDL_SWSURFACE, 0, 0, depth,
+	surface = LRSDL_CreateRGBSurface(SDL_SWSURFACE, 0, 0, depth,
 	                               Rmask, Gmask, Bmask, Amask);
 	if (surface)
    {
@@ -122,14 +122,14 @@ SDL_Surface * SDL_CreateRGBSurfaceFrom (void *pixels,
       surface->w = width;
       surface->h = height;
       surface->pitch = pitch;
-      SDL_SetClipRect(surface, NULL);
+      LRSDL_SetClipRect(surface, NULL);
    }
 	return(surface);
 }
 /*
  * Set the color key in a blittable surface
  */
-int SDL_SetColorKey (SDL_Surface *surface, Uint32 flag, Uint32 key)
+int LRSDL_SetColorKey (SDL_Surface *surface, Uint32 flag, Uint32 key)
 {
 	/* Sanity check the flag as it gets passed in */
 	if ( flag & SDL_SRCCOLORKEY ) {
@@ -160,11 +160,11 @@ int SDL_SetColorKey (SDL_Surface *surface, Uint32 flag, Uint32 key)
 		surface->flags &= ~(SDL_SRCCOLORKEY|SDL_RLEACCELOK);
 		surface->format->colorkey = 0;
 	}
-	SDL_InvalidateMap(surface->map);
+	LRSDL_InvalidateMap(surface->map);
 	return(0);
 }
 /* This function sets the alpha channel of a surface */
-int SDL_SetAlpha (SDL_Surface *surface, Uint32 flag, Uint8 value)
+int LRSDL_SetAlpha (SDL_Surface *surface, Uint32 flag, Uint8 value)
 {
 	Uint32 oldflags = surface->flags;
 	Uint32 oldalpha = surface->format->alpha;
@@ -206,10 +206,10 @@ int SDL_SetAlpha (SDL_Surface *surface, Uint32 flag, Uint8 value)
 	 * need to invalidate.)
 	 */
 	if(oldflags != surface->flags || (((oldalpha + 1) ^ (value + 1)) & 0x100))
-		SDL_InvalidateMap(surface->map);
+		LRSDL_InvalidateMap(surface->map);
 	return(0);
 }
-int SDL_SetAlphaChannel(SDL_Surface *surface, Uint8 value)
+int LRSDL_SetAlphaChannel(SDL_Surface *surface, Uint8 value)
 {
 	int row, col;
 	int offset;
@@ -250,7 +250,7 @@ int SDL_SetAlphaChannel(SDL_Surface *surface, Uint8 value)
  * return true if the rectangles intersect, false otherwise
  */
 static __inline__
-SDL_bool SDL_IntersectRect(const SDL_Rect *A, const SDL_Rect *B, SDL_Rect *intersection)
+SDL_bool LRSDL_IntersectRect(const SDL_Rect *A, const SDL_Rect *B, SDL_Rect *intersection)
 {
 	int Amin, Amax, Bmin, Bmax;
 
@@ -283,7 +283,7 @@ SDL_bool SDL_IntersectRect(const SDL_Rect *A, const SDL_Rect *B, SDL_Rect *inter
 /*
  * Set the clipping rectangle for a blittable surface
  */
-SDL_bool SDL_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect)
+SDL_bool LRSDL_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect)
 {
 	SDL_Rect full_rect;
 
@@ -303,7 +303,7 @@ SDL_bool SDL_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect)
 		surface->clip_rect = full_rect;
 		return (SDL_bool)1;
 	}
-	return SDL_IntersectRect(rect, &full_rect, &surface->clip_rect);
+	return LRSDL_IntersectRect(rect, &full_rect, &surface->clip_rect);
 }
 
 /* 
@@ -317,13 +317,13 @@ SDL_bool SDL_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect)
  * you know exactly what you are doing, you can optimize your code
  * by calling the one(s) you need.
  */
-int SDL_LowerBlit (SDL_Surface *src, SDL_Rect *srcrect,
+int LRSDL_LowerBlit (SDL_Surface *src, SDL_Rect *srcrect,
 				SDL_Surface *dst, SDL_Rect *dstrect)
 {
 	/* Check to make sure the blit mapping is valid */
 	if ( (src->map->dst != dst) ||
              (src->map->dst->format_version != src->map->format_version) ) {
-		if ( SDL_MapSurface(src, dst) < 0 ) {
+		if ( LRSDL_MapSurface(src, dst) < 0 ) {
 			return(-1);
 		}
 	}
@@ -332,7 +332,7 @@ int SDL_LowerBlit (SDL_Surface *src, SDL_Rect *srcrect,
 }
 
 
-int SDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect,
+int LRSDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect,
 		   SDL_Surface *dst, SDL_Rect *dstrect)
 {
         SDL_Rect fulldst;
@@ -411,7 +411,7 @@ int SDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect,
 		sr.y = srcy;
 		sr.w = dstrect->w = w;
 		sr.h = dstrect->h = h;
-		return SDL_LowerBlit(src, &sr, dst, dstrect);
+		return LRSDL_LowerBlit(src, &sr, dst, dstrect);
 	}
 	dstrect->w = dstrect->h = 0;
 	return 0;
@@ -420,7 +420,7 @@ int SDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect,
 /* 
  * This function performs a fast fill of the given rectangle with 'color'
  */
-int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
+int LRSDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 {
 	int x, y;
 	Uint8 *row;
@@ -428,7 +428,7 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 	if ( dstrect )
    {
       /* Perform clipping */
-      if ( !SDL_IntersectRect(dstrect, &dst->clip_rect, dstrect) )
+      if ( !LRSDL_IntersectRect(dstrect, &dst->clip_rect, dstrect) )
          return(0);
    }
    else
@@ -506,14 +506,14 @@ int SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 /*
  * Lock a surface to directly access the pixels
  */
-int SDL_LockSurface (SDL_Surface *surface)
+int LRSDL_LockSurface (SDL_Surface *surface)
 {
 	return(0);
 }
 /*
  * Unlock a previously locked surface
  */
-void SDL_UnlockSurface (SDL_Surface *surface)
+void LRSDL_UnlockSurface (SDL_Surface *surface)
 {
 	surface->pixels = (Uint8 *)surface->pixels - surface->offset;
 }
@@ -521,7 +521,7 @@ void SDL_UnlockSurface (SDL_Surface *surface)
 /*
  * Free a surface created by the above function.
  */
-void SDL_FreeSurface (SDL_Surface *surface)
+void LRSDL_FreeSurface (SDL_Surface *surface)
 {
 	/* Free anything that's not NULL, and not the screen surface */
 	if (!surface)
@@ -532,12 +532,12 @@ void SDL_FreeSurface (SDL_Surface *surface)
 
 	if (surface->format)
    {
-		SDL_FreeFormat(surface->format);
+		LRSDL_FreeFormat(surface->format);
 		surface->format = NULL;
 	}
 	if (surface->map)
    {
-		SDL_FreeBlitMap(surface->map);
+		LRSDL_FreeBlitMap(surface->map);
 		surface->map = NULL;
 	}
 	if ( surface->pixels &&

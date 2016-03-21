@@ -50,7 +50,7 @@ bool font_init(void)
 	// and drawing at the real resolution so we can get better-looking fonts.
 	sdl_screen = screen->fSurface;
 
-	SDL_Surface *font = SDL_LoadBMP_RW(rw, 1);
+	SDL_Surface *font = LRSDL_LoadBMP_RW(rw, 1);
 	SetColorKey(font, SDL_SRCCOLORKEY, 0);
 
 	error |= whitefont.InitChars(font, 0xffffff);
@@ -351,7 +351,7 @@ static bool create_shade_sfc(void)
 		return 1;
 	
 	FillRectangle(shadesfc, NULL, 0);
-	SDL_SetAlpha(shadesfc, SDL_SRCALPHA, 128);
+	LRSDL_SetAlpha(shadesfc, SDL_SRCALPHA, 128);
 	
 	return 0;
 }

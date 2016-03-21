@@ -1391,7 +1391,7 @@ static const struct blit_table *normal_blit[] = {
 /* Mask matches table, or table entry is zero */
 #define MASKOK(x, y) (((x) == (y)) || ((y) == 0x00000000))
 
-SDL_loblit SDL_CalculateBlitN(SDL_Surface *surface, int blit_index)
+SDL_loblit LRSDL_CalculateBlitN(SDL_Surface *surface, int blit_index)
 {
 	struct private_swaccel *sdata;
 	SDL_PixelFormat *srcfmt;
@@ -1407,7 +1407,7 @@ SDL_loblit SDL_CalculateBlitN(SDL_Surface *surface, int blit_index)
 
 	if ( blit_index & 2 ) {
 	        /* alpha or alpha+colorkey */
-	        return SDL_CalculateAlphaBlit(surface, blit_index);
+	        return LRSDL_CalculateAlphaBlit(surface, blit_index);
 	}
 
 	/* We don't support destinations less than 8-bits */

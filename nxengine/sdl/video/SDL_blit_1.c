@@ -442,7 +442,7 @@ static SDL_loblit one_blitkey[] = {
         NULL, Blit1to1Key, Blit1to2Key, Blit1to3Key, Blit1to4Key
 };
 
-SDL_loblit SDL_CalculateBlit1(SDL_Surface *surface, int blit_index)
+SDL_loblit LRSDL_CalculateBlit1(SDL_Surface *surface, int blit_index)
 {
 	int which;
 	SDL_PixelFormat *dstfmt;

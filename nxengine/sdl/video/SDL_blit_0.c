@@ -440,7 +440,7 @@ static SDL_loblit colorkey_blit[] = {
     NULL, BlitBto1Key, BlitBto2Key, BlitBto3Key, BlitBto4Key
 };
 
-SDL_loblit SDL_CalculateBlit0(SDL_Surface *surface, int blit_index)
+SDL_loblit LRSDL_CalculateBlit0(SDL_Surface *surface, int blit_index)
 {
 	int which;
 

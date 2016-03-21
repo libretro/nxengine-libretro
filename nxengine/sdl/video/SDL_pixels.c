@@ -33,7 +33,7 @@
 /*
  * Allocate a pixel format structure and fill it according to the given info.
  */
-SDL_PixelFormat *SDL_AllocFormat(int bpp,
+SDL_PixelFormat *LRSDL_AllocFormat(int bpp,
 			Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
 	SDL_PixelFormat *format;
@@ -121,7 +121,7 @@ SDL_PixelFormat *SDL_AllocFormat(int bpp,
 		int ncolors = 1<<bpp;
 		format->palette = (SDL_Palette *)SDL_malloc(sizeof(SDL_Palette));
 		if ( format->palette == NULL ) {
-			SDL_FreeFormat(format);
+			LRSDL_FreeFormat(format);
 			SDL_OutOfMemory();
 			return(NULL);
 		}
@@ -129,7 +129,7 @@ SDL_PixelFormat *SDL_AllocFormat(int bpp,
 		(format->palette)->colors = (SDL_Color *)SDL_malloc(
 				(format->palette)->ncolors*sizeof(SDL_Color));
 		if ( (format->palette)->colors == NULL ) {
-			SDL_FreeFormat(format);
+			LRSDL_FreeFormat(format);
 			SDL_OutOfMemory();
 			return(NULL);
 		}
@@ -202,21 +202,21 @@ SDL_PixelFormat *SDL_AllocFormat(int bpp,
 	}
 	return(format);
 }
-SDL_PixelFormat *SDL_ReallocFormat(SDL_Surface *surface, int bpp,
+SDL_PixelFormat *LRSDL_ReallocFormat(SDL_Surface *surface, int bpp,
 			Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
 	if ( surface->format ) {
-		SDL_FreeFormat(surface->format);
-		SDL_FormatChanged(surface);
+		LRSDL_FreeFormat(surface->format);
+		LRSDL_FormatChanged(surface);
 	}
-	surface->format = SDL_AllocFormat(bpp, Rmask, Gmask, Bmask, Amask);
+	surface->format = LRSDL_AllocFormat(bpp, Rmask, Gmask, Bmask, Amask);
 	return surface->format;
 }
 
 /*
  * Change any previous mappings from/to the new surface format
  */
-void SDL_FormatChanged(SDL_Surface *surface)
+void LRSDL_FormatChanged(SDL_Surface *surface)
 {
 	static int format_version = 0;
 	++format_version;
@@ -224,12 +224,12 @@ void SDL_FormatChanged(SDL_Surface *surface)
 		format_version = 1;
 	}
 	surface->format_version = format_version;
-	SDL_InvalidateMap(surface->map);
+	LRSDL_InvalidateMap(surface->map);
 }
 /*
  * Free a previously allocated format structure
  */
-void SDL_FreeFormat(SDL_PixelFormat *format)
+void LRSDL_FreeFormat(SDL_PixelFormat *format)
 {
 	if ( format ) {
 		if ( format->palette ) {
@@ -244,7 +244,7 @@ void SDL_FreeFormat(SDL_PixelFormat *format)
 /*
  * Calculate an 8-bit (3 red, 3 green, 2 blue) dithered palette of colors
  */
-void SDL_DitherColors(SDL_Color *colors, int bpp)
+void LRSDL_DitherColors(SDL_Color *colors, int bpp)
 {
 	int i;
 	if(bpp != 8)
@@ -269,7 +269,7 @@ void SDL_DitherColors(SDL_Color *colors, int bpp)
 /* 
  * Calculate the pad-aligned scanline width of a surface
  */
-Uint16 SDL_CalculatePitch(SDL_Surface *surface)
+Uint16 LRSDL_CalculatePitch(SDL_Surface *surface)
 {
 	Uint16 pitch;
 
@@ -291,7 +291,7 @@ Uint16 SDL_CalculatePitch(SDL_Surface *surface)
 /*
  * Match an RGB value to a particular palette index
  */
-Uint8 SDL_FindColor(SDL_Palette *pal, Uint8 r, Uint8 g, Uint8 b)
+Uint8 LRSDL_FindColor(SDL_Palette *pal, Uint8 r, Uint8 g, Uint8 b)
 {
 	/* Do colorspace distance matching */
 	unsigned int smallest;
@@ -318,7 +318,7 @@ Uint8 SDL_FindColor(SDL_Palette *pal, Uint8 r, Uint8 g, Uint8 b)
 }
 
 /* Find the opaque pixel value corresponding to an RGB triple */
-Uint32 SDL_MapRGB
+Uint32 LRSDL_MapRGB
 (const SDL_PixelFormat * const format,
  const Uint8 r, const Uint8 g, const Uint8 b)
 {
@@ -328,12 +328,12 @@ Uint32 SDL_MapRGB
 		       | (b >> format->Bloss) << format->Bshift
 		       | format->Amask;
 	} else {
-		return SDL_FindColor(format->palette, r, g, b);
+		return LRSDL_FindColor(format->palette, r, g, b);
 	}
 }
 
 /* Find the pixel value corresponding to an RGBA quadruple */
-Uint32 SDL_MapRGBA
+Uint32 LRSDL_MapRGBA
 (const SDL_PixelFormat * const format,
  const Uint8 r, const Uint8 g, const Uint8 b, const Uint8 a)
 {
@@ -343,11 +343,11 @@ Uint32 SDL_MapRGBA
 		    | (b >> format->Bloss) << format->Bshift
 		    | ((a >> format->Aloss) << format->Ashift & format->Amask);
 	} else {
-		return SDL_FindColor(format->palette, r, g, b);
+		return LRSDL_FindColor(format->palette, r, g, b);
 	}
 }
 
-void SDL_GetRGBA(Uint32 pixel, const SDL_PixelFormat * const fmt,
+void LRSDL_GetRGBA(Uint32 pixel, const SDL_PixelFormat * const fmt,
 		 Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a)
 {
 	if ( fmt->palette == NULL ) {
@@ -381,7 +381,7 @@ void SDL_GetRGBA(Uint32 pixel, const SDL_PixelFormat * const fmt,
 	}
 }
 
-void SDL_GetRGB(Uint32 pixel, const SDL_PixelFormat * const fmt,
+void LRSDL_GetRGB(Uint32 pixel, const SDL_PixelFormat * const fmt,
                 Uint8 *r,Uint8 *g,Uint8 *b)
 {
 	if ( fmt->palette == NULL ) {
@@ -401,7 +401,7 @@ void SDL_GetRGB(Uint32 pixel, const SDL_PixelFormat * const fmt,
 }
 
 /* Apply gamma to a set of colors - this is easy. :) */
-void SDL_ApplyGamma(Uint16 *gamma, SDL_Color *colors, SDL_Color *output,
+void LRSDL_ApplyGamma(Uint16 *gamma, SDL_Color *colors, SDL_Color *output,
 							int ncolors)
 {
 	int i;
@@ -436,7 +436,7 @@ static Uint8 *Map1to1(SDL_Palette *src, SDL_Palette *dst, int *identical)
 		return(NULL);
 	}
 	for ( i=0; i<src->ncolors; ++i ) {
-		map[i] = SDL_FindColor(dst,
+		map[i] = LRSDL_FindColor(dst,
 			src->colors[i].r, src->colors[i].g, src->colors[i].b);
 	}
 	return(map);
@@ -479,12 +479,12 @@ static Uint8 *MapNto1(SDL_PixelFormat *src, SDL_PixelFormat *dst, int *identical
 	SDL_memset(colors, 0, sizeof(colors));
 
 	dithered.ncolors = 256;
-	SDL_DitherColors(colors, 8);
+	LRSDL_DitherColors(colors, 8);
 	dithered.colors = colors;
 	return(Map1to1(&dithered, pal, identical));
 }
 
-SDL_BlitMap *SDL_AllocBlitMap(void)
+SDL_BlitMap *LRSDL_AllocBlitMap(void)
 {
 	SDL_BlitMap *map;
 
@@ -499,7 +499,7 @@ SDL_BlitMap *SDL_AllocBlitMap(void)
 	/* Allocate the software blit data */
 	map->sw_data = (struct private_swaccel *)SDL_malloc(sizeof(*map->sw_data));
 	if ( map->sw_data == NULL ) {
-		SDL_FreeBlitMap(map);
+		LRSDL_FreeBlitMap(map);
 		SDL_OutOfMemory();
 		return(NULL);
 	}
@@ -508,7 +508,7 @@ SDL_BlitMap *SDL_AllocBlitMap(void)
 	/* It's ready to go */
 	return(map);
 }
-void SDL_InvalidateMap(SDL_BlitMap *map)
+void LRSDL_InvalidateMap(SDL_BlitMap *map)
 {
 	if ( ! map ) {
 		return;
@@ -521,7 +521,7 @@ void SDL_InvalidateMap(SDL_BlitMap *map)
 	}
 }
 
-int SDL_MapSurface (SDL_Surface *src, SDL_Surface *dst)
+int LRSDL_MapSurface (SDL_Surface *src, SDL_Surface *dst)
 {
 	SDL_PixelFormat *srcfmt;
 	SDL_PixelFormat *dstfmt;
@@ -529,7 +529,7 @@ int SDL_MapSurface (SDL_Surface *src, SDL_Surface *dst)
 
 	/* Clear out any previous mapping */
 	map = src->map;
-	SDL_InvalidateMap(map);
+	LRSDL_InvalidateMap(map);
 
 	/* Figure out what kind of mapping we're doing */
 	map->identity = 0;
@@ -585,13 +585,13 @@ int SDL_MapSurface (SDL_Surface *src, SDL_Surface *dst)
 	map->format_version = dst->format_version;
 
 	/* Choose your blitters wisely */
-	return(SDL_CalculateBlit(src));
+	return(LRSDL_CalculateBlit(src));
 }
 
-void SDL_FreeBlitMap(SDL_BlitMap *map)
+void LRSDL_FreeBlitMap(SDL_BlitMap *map)
 {
 	if ( map ) {
-		SDL_InvalidateMap(map);
+		LRSDL_InvalidateMap(map);
 		if ( map->sw_data != NULL ) {
 			SDL_free(map->sw_data);
 		}

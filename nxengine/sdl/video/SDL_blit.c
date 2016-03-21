@@ -27,7 +27,7 @@
 #include "SDL_pixels_c.h"
 
 /* The general purpose software blit routine */
-static int SDL_SoftBlit(SDL_Surface *src, SDL_Rect *srcrect,
+static int LRSDL_SoftBlit(SDL_Surface *src, SDL_Rect *srcrect,
 			SDL_Surface *dst, SDL_Rect *dstrect)
 {
 	/* Set up source and destination buffer pointers, and BLIT! */
@@ -62,7 +62,7 @@ static int SDL_SoftBlit(SDL_Surface *src, SDL_Rect *srcrect,
    return 0;
 }
 
-static void SDL_BlitCopy(SDL_BlitInfo *info)
+static void LRSDL_BlitCopy(SDL_BlitInfo *info)
 {
 	Uint8 *src, *dst;
 	int w, h;
@@ -82,7 +82,7 @@ static void SDL_BlitCopy(SDL_BlitInfo *info)
 	}
 }
 
-static void SDL_BlitCopyOverlap(SDL_BlitInfo *info)
+static void LRSDL_BlitCopyOverlap(SDL_BlitInfo *info)
 {
 	Uint8 *src, *dst;
 	int w, h;
@@ -117,7 +117,7 @@ static void SDL_BlitCopyOverlap(SDL_BlitInfo *info)
 }
 
 /* Figure out which of many blit routines to set up on a surface */
-int SDL_CalculateBlit(SDL_Surface *surface)
+int LRSDL_CalculateBlit(SDL_Surface *surface)
 {
 	int blit_index;
 
@@ -139,27 +139,27 @@ int SDL_CalculateBlit(SDL_Surface *surface)
 
 	/* Check for special "identity" case -- copy blit */
 	if ( surface->map->identity && blit_index == 0 ) {
-	        surface->map->sw_data->blit = SDL_BlitCopy;
+	        surface->map->sw_data->blit = LRSDL_BlitCopy;
 
 		/* Handle overlapping blits on the same surface */
 		if ( surface == surface->map->dst ) {
-		        surface->map->sw_data->blit = SDL_BlitCopyOverlap;
+		        surface->map->sw_data->blit = LRSDL_BlitCopyOverlap;
 		}
 	} else {
 		if ( surface->format->BitsPerPixel < 8 ) {
 			surface->map->sw_data->blit =
-			    SDL_CalculateBlit0(surface, blit_index);
+			    LRSDL_CalculateBlit0(surface, blit_index);
 		} else {
 			switch ( surface->format->BytesPerPixel ) {
 			    case 1:
 				surface->map->sw_data->blit =
-				    SDL_CalculateBlit1(surface, blit_index);
+				    LRSDL_CalculateBlit1(surface, blit_index);
 				break;
 			    case 2:
 			    case 3:
 			    case 4:
 				surface->map->sw_data->blit =
-				    SDL_CalculateBlitN(surface, blit_index);
+				    LRSDL_CalculateBlitN(surface, blit_index);
 				break;
 			    default:
 				surface->map->sw_data->blit = NULL;
@@ -169,12 +169,12 @@ int SDL_CalculateBlit(SDL_Surface *surface)
 	}
 	/* Make sure we have a blit function */
 	if ( surface->map->sw_data->blit == NULL ) {
-		SDL_InvalidateMap(surface->map);
+		LRSDL_InvalidateMap(surface->map);
 		SDL_SetError("Blit combination not supported");
 		return(-1);
 	}
 
-   surface->map->sw_blit = SDL_SoftBlit;
+   surface->map->sw_blit = LRSDL_SoftBlit;
 	return(0);
 }
 

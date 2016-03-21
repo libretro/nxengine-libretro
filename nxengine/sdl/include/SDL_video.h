@@ -241,13 +241,13 @@ typedef struct SDL_Overlay {
 /**
  * Makes sure the given list of rectangles is updated on the given screen.
  */
-extern DECLSPEC void SDLCALL SDL_UpdateRects
+extern DECLSPEC void SDLCALL LRSDL_UpdateRects
 		(SDL_Surface *screen, int numrects, SDL_Rect *rects);
 /**
  * If 'x', 'y', 'w' and 'h' are all 0, SDL_UpdateRect will update the entire
  * screen.
  */
-extern DECLSPEC void SDLCALL SDL_UpdateRect
+extern DECLSPEC void SDLCALL LRSDL_UpdateRect
 		(SDL_Surface *screen, Sint32 x, Sint32 y, Uint32 w, Uint32 h);
 /*@}*/
 
@@ -261,7 +261,7 @@ extern DECLSPEC void SDLCALL SDL_UpdateRect
  * setting the video mode for this function to perform hardware flipping.
  * This function returns 0 if successful, or -1 if there was an error.
  */
-extern DECLSPEC int SDLCALL SDL_Flip(SDL_Surface *screen);
+extern DECLSPEC int SDLCALL LRSDL_Flip(SDL_Surface *screen);
 
 /**
  * Set the gamma correction for each of the color channels.
@@ -271,7 +271,7 @@ extern DECLSPEC int SDLCALL SDL_Flip(SDL_Surface *screen);
  * be emulated using gamma ramps, if available.  If successful, this
  * function returns 0, otherwise it returns -1.
  */
-extern DECLSPEC int SDLCALL SDL_SetGamma(float red, float green, float blue);
+extern DECLSPEC int SDLCALL LRSDL_SetGamma(float red, float green, float blue);
 
 /**
  * Sets a portion of the colormap for the given 8-bit surface.  If 'surface'
@@ -288,7 +288,7 @@ extern DECLSPEC int SDLCALL SDL_SetGamma(float red, float green, float blue);
  * you desire, even if the window colormap has to be warped or run under
  * emulation.
  */
-extern DECLSPEC int SDLCALL SDL_SetColors(SDL_Surface *surface, 
+extern DECLSPEC int SDLCALL LRSDL_SetColors(SDL_Surface *surface, 
 			SDL_Color *colors, int firstcolor, int ncolors);
 
 /**
@@ -307,40 +307,40 @@ extern DECLSPEC int SDLCALL SDL_SetColors(SDL_Surface *surface,
  * SDL_SetColors() is equivalent to calling this function with
  *     flags = (SDL_LOGPAL|SDL_PHYSPAL).
  */
-extern DECLSPEC int SDLCALL SDL_SetPalette(SDL_Surface *surface, int flags,
+extern DECLSPEC int SDLCALL LRSDL_SetPalette(SDL_Surface *surface, int flags,
 				   SDL_Color *colors, int firstcolor,
 				   int ncolors);
 
 /**
  * Maps an RGB triple to an opaque pixel value for a given pixel format
  */
-extern DECLSPEC Uint32 SDLCALL SDL_MapRGB
+extern DECLSPEC Uint32 SDLCALL LRSDL_MapRGB
 (const SDL_PixelFormat * const format,
  const Uint8 r, const Uint8 g, const Uint8 b);
 
 /**
  * Maps an RGBA quadruple to a pixel value for a given pixel format
  */
-extern DECLSPEC Uint32 SDLCALL SDL_MapRGBA
+extern DECLSPEC Uint32 SDLCALL LRSDL_MapRGBA
 (const SDL_PixelFormat * const format,
  const Uint8 r, const Uint8 g, const Uint8 b, const Uint8 a);
 
 /**
  * Maps a pixel value into the RGB components for a given pixel format
  */
-extern DECLSPEC void SDLCALL SDL_GetRGB(Uint32 pixel,
+extern DECLSPEC void SDLCALL LRSDL_GetRGB(Uint32 pixel,
 				const SDL_PixelFormat * const fmt,
 				Uint8 *r, Uint8 *g, Uint8 *b);
 
 /**
  * Maps a pixel value into the RGBA components for a given pixel format
  */
-extern DECLSPEC void SDLCALL SDL_GetRGBA(Uint32 pixel,
+extern DECLSPEC void SDLCALL LRSDL_GetRGBA(Uint32 pixel,
 				const SDL_PixelFormat * const fmt,
 				Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a);
 
 /** @sa SDL_CreateRGBSurface */
-#define SDL_AllocSurface    SDL_CreateRGBSurface
+#define LRSDL_AllocSurface    LRSDL_CreateRGBSurface
 /**
  * Allocate and free an RGB surface (must be called after SDL_SetVideoMode)
  * If the depth is 4 or 8 bits, an empty palette is allocated for the surface.
@@ -375,14 +375,14 @@ extern DECLSPEC void SDLCALL SDL_GetRGBA(Uint32 pixel,
  * reason the surface could not be placed in video memory, it will not have
  * the SDL_HWSURFACE flag set, and will be created in system memory instead.
  */
-extern DECLSPEC SDL_Surface * SDLCALL SDL_CreateRGBSurface
+extern DECLSPEC SDL_Surface * SDLCALL LRSDL_CreateRGBSurface
 			(Uint32 flags, int width, int height, int depth, 
 			Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask);
 /** @sa SDL_CreateRGBSurface */
-extern DECLSPEC SDL_Surface * SDLCALL SDL_CreateRGBSurfaceFrom(void *pixels,
+extern DECLSPEC SDL_Surface * SDLCALL LRSDL_CreateRGBSurfaceFrom(void *pixels,
 			int width, int height, int depth, int pitch,
 			Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask);
-extern DECLSPEC void SDLCALL SDL_FreeSurface(SDL_Surface *surface);
+extern DECLSPEC void SDLCALL LRSDL_FreeSurface(SDL_Surface *surface);
 
 /**
  * SDL_LockSurface() sets up a surface for directly accessing the pixels.
@@ -402,8 +402,8 @@ extern DECLSPEC void SDLCALL SDL_FreeSurface(SDL_Surface *surface);
  *
  * SDL_LockSurface() returns 0, or -1 if the surface couldn't be locked.
  */
-extern DECLSPEC int SDLCALL SDL_LockSurface(SDL_Surface *surface);
-extern DECLSPEC void SDLCALL SDL_UnlockSurface(SDL_Surface *surface);
+extern DECLSPEC int SDLCALL LRSDL_LockSurface(SDL_Surface *surface);
+extern DECLSPEC void SDLCALL LRSDL_UnlockSurface(SDL_Surface *surface);
 
 /**
  * Load a surface from a seekable SDL data source (memory or file.)
@@ -411,22 +411,22 @@ extern DECLSPEC void SDLCALL SDL_UnlockSurface(SDL_Surface *surface);
  * Returns the new surface, or NULL if there was an error.
  * The new surface should be freed with SDL_FreeSurface().
  */
-extern DECLSPEC SDL_Surface * SDLCALL SDL_LoadBMP_RW(SDL_RWops *src, int freesrc);
+extern DECLSPEC SDL_Surface * SDLCALL LRSDL_LoadBMP_RW(SDL_RWops *src, int freesrc);
 
 /** Convenience macro -- load a surface from a file */
-#define SDL_LoadBMP(file)	SDL_LoadBMP_RW(SDL_RWFromFile(file, "rb"), 1)
+#define LRSDL_LoadBMP(file)	LRSDL_LoadBMP_RW(SDL_RWFromFile(file, "rb"), 1)
 
 /**
  * Save a surface to a seekable SDL data source (memory or file.)
  * If 'freedst' is non-zero, the source will be closed after being written.
  * Returns 0 if successful or -1 if there was an error.
  */
-extern DECLSPEC int SDLCALL SDL_SaveBMP_RW
+extern DECLSPEC int SDLCALL LRSDL_SaveBMP_RW
 		(SDL_Surface *surface, SDL_RWops *dst, int freedst);
 
 /** Convenience macro -- save a surface to a file */
-#define SDL_SaveBMP(surface, file) \
-		SDL_SaveBMP_RW(surface, SDL_RWFromFile(file, "wb"), 1)
+#define LRSDL_SaveBMP(surface, file) \
+		LRSDL_SaveBMP_RW(surface, SDL_RWFromFile(file, "wb"), 1)
 
 /**
  * Sets the color key (transparent pixel) in a blittable surface.
@@ -437,7 +437,7 @@ extern DECLSPEC int SDLCALL SDL_SaveBMP_RW
  * If 'flag' is 0, this function clears any current color key.
  * This function returns 0, or -1 if there was an error.
  */
-extern DECLSPEC int SDLCALL SDL_SetColorKey
+extern DECLSPEC int SDLCALL LRSDL_SetColorKey
 			(SDL_Surface *surface, Uint32 flag, Uint32 key);
 
 /**
@@ -455,7 +455,7 @@ extern DECLSPEC int SDLCALL SDL_SetColorKey
  *
  * The 'alpha' parameter is ignored for surfaces that have an alpha channel.
  */
-extern DECLSPEC int SDLCALL SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha);
+extern DECLSPEC int SDLCALL LRSDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint8 alpha);
 
 /**
  * Sets the clipping rectangle for the destination surface in a blit.
@@ -469,7 +469,7 @@ extern DECLSPEC int SDLCALL SDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Uint
  * Note that blits are automatically clipped to the edges of the source
  * and destination surfaces.
  */
-extern DECLSPEC SDL_bool SDLCALL SDL_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect);
+extern DECLSPEC SDL_bool SDLCALL LRSDL_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect);
 
 /**
  * This performs a fast blit from the source surface to the destination
@@ -547,13 +547,13 @@ extern DECLSPEC SDL_bool SDLCALL SDL_SetClipRect(SDL_Surface *surface, const SDL
 /** This is the public blit function, SDL_BlitSurface(), and it performs
  *  rectangle validation and clipping before passing it to SDL_LowerBlit()
  */
-extern DECLSPEC int SDLCALL SDL_UpperBlit
+extern DECLSPEC int SDLCALL LRSDL_UpperBlit
 			(SDL_Surface *src, SDL_Rect *srcrect,
 			 SDL_Surface *dst, SDL_Rect *dstrect);
 /** This is a semi-private blit function and it performs low-level surface
  *  blitting only.
  */
-extern DECLSPEC int SDLCALL SDL_LowerBlit
+extern DECLSPEC int SDLCALL LRSDL_LowerBlit
 			(SDL_Surface *src, SDL_Rect *srcrect,
 			 SDL_Surface *dst, SDL_Rect *dstrect);
 
@@ -566,7 +566,7 @@ extern DECLSPEC int SDLCALL SDL_LowerBlit
  * can be generated by the SDL_MapRGB() function.
  * This function returns 0 on success, or -1 on error.
  */
-extern DECLSPEC int SDLCALL SDL_FillRect
+extern DECLSPEC int SDLCALL LRSDL_FillRect
 		(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color);
 
 /**
@@ -580,7 +580,7 @@ extern DECLSPEC int SDLCALL SDL_FillRect
  *
  * If the conversion fails or runs out of memory, it returns NULL
  */
-extern DECLSPEC SDL_Surface * SDLCALL SDL_DisplayFormat(SDL_Surface *surface);
+extern DECLSPEC SDL_Surface * SDLCALL LRSDL_DisplayFormat(SDL_Surface *surface);
 
 /**
  * This function takes a surface and copies it to a new surface of the
@@ -594,7 +594,7 @@ extern DECLSPEC SDL_Surface * SDLCALL SDL_DisplayFormat(SDL_Surface *surface);
  *
  * If the conversion fails or runs out of memory, it returns NULL
  */
-extern DECLSPEC SDL_Surface * SDLCALL SDL_DisplayFormatAlpha(SDL_Surface *surface);
+extern DECLSPEC SDL_Surface * SDLCALL LRSDL_DisplayFormatAlpha(SDL_Surface *surface);
 
 /* Ends C function definitions when using C++ */
 #ifdef __cplusplus

@@ -45,7 +45,7 @@
 #endif
 
 
-SDL_Surface * SDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
+SDL_Surface * LRSDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 {
 	SDL_bool was_error;
 	long fp_offset = 0;
@@ -221,7 +221,7 @@ SDL_Surface * SDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 	}
 
 	/* Create a compatible surface, note that the colors are RGB ordered */
-	surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+	surface = LRSDL_CreateRGBSurface(SDL_SWSURFACE,
 			biWidth, biHeight, biBitCount, Rmask, Gmask, Bmask, 0);
 	if ( surface == NULL ) {
 		was_error = SDL_TRUE;
@@ -347,7 +347,7 @@ done:
 			SDL_RWseek(src, fp_offset, RW_SEEK_SET);
 		}
 		if ( surface ) {
-			SDL_FreeSurface(surface);
+			LRSDL_FreeSurface(surface);
 		}
 		surface = NULL;
 	}
@@ -357,7 +357,7 @@ done:
 	return(surface);
 }
 
-int SDL_SaveBMP_RW (SDL_Surface *saveme, SDL_RWops *dst, int freedst)
+int LRSDL_SaveBMP_RW (SDL_Surface *saveme, SDL_RWops *dst, int freedst)
 {
 	long fp_offset;
 	int i, pad;
@@ -411,7 +411,7 @@ int SDL_SaveBMP_RW (SDL_Surface *saveme, SDL_RWops *dst, int freedst)
 			SDL_Rect bounds;
 
 			/* Convert to 24 bits per pixel */
-			surface = SDL_CreateRGBSurface(SDL_SWSURFACE,
+			surface = LRSDL_CreateRGBSurface(SDL_SWSURFACE,
 					saveme->w, saveme->h, 24,
 #ifdef MSB_FIRST
 					0x000000FF, 0x0000FF00, 0x00FF0000,
@@ -424,9 +424,9 @@ int SDL_SaveBMP_RW (SDL_Surface *saveme, SDL_RWops *dst, int freedst)
 				bounds.y = 0;
 				bounds.w = saveme->w;
 				bounds.h = saveme->h;
-				if ( SDL_LowerBlit(saveme, &bounds, surface,
+				if ( LRSDL_LowerBlit(saveme, &bounds, surface,
 							&bounds) < 0 ) {
-					SDL_FreeSurface(surface);
+					LRSDL_FreeSurface(surface);
 					SDL_SetError(
 					"Couldn't convert image to 24 bpp");
 					surface = NULL;
@@ -537,7 +537,7 @@ int SDL_SaveBMP_RW (SDL_Surface *saveme, SDL_RWops *dst, int freedst)
 		}
 
 		if ( surface != saveme ) {
-			SDL_FreeSurface(surface);
+			LRSDL_FreeSurface(surface);
 		}
 	}
 
