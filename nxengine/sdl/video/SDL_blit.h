@@ -21,8 +21,8 @@
 */
 #include "LRSDL_config.h"
 
-#ifndef _SDL_blit_h
-#define _SDL_blit_h
+#ifndef _LRSDL_blit_h
+#define _LRSDL_blit_h
 
 #include "LRSDL_endian.h"
 

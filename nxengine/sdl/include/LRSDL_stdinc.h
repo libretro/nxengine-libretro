@@ -24,8 +24,8 @@
  *  This is a general header that includes C language support
  */
 
-#ifndef _SDL_stdinc_h
-#define _SDL_stdinc_h
+#ifndef _LRSDL_stdinc_h
+#define _LRSDL_stdinc_h
 
 #include "LRSDL_config.h"
 

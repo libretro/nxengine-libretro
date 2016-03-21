@@ -24,8 +24,8 @@
  *  Main include header for the SDL library
  */
 
-#ifndef _SDL_H
-#define _SDL_H
+#ifndef _LRSDL_H
+#define _LRSDL_H
 
 #include "LRSDL_main.h"
 #include "LRSDL_stdinc.h"

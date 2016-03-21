@@ -24,8 +24,8 @@
  *  Try to get a standard set of platform defines
  */
 
-#ifndef _SDL_platform_h
-#define _SDL_platform_h
+#ifndef _LRSDL_platform_h
+#define _LRSDL_platform_h
 
 #if defined(linux) || defined(__linux) || defined(__linux__)
 #undef __LINUX__

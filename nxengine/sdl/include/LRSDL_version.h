@@ -24,8 +24,8 @@
  *  This header defines the current SDL version
  */
 
-#ifndef _SDL_version_h
-#define _SDL_version_h
+#ifndef _LRSDL_version_h
+#define _LRSDL_version_h
 
 #include "LRSDL_stdinc.h"
 

@@ -20,8 +20,8 @@
     slouken@libsdl.org
 */
 
-#ifndef _SDL_main_h
-#define _SDL_main_h
+#ifndef _LRSDL_main_h
+#define _LRSDL_main_h
 
 #include "LRSDL_stdinc.h"
 

@@ -25,8 +25,8 @@
  *  Simple error message routines for SDL
  */
 
-#ifndef _SDL_error_h
-#define _SDL_error_h
+#ifndef _LRSDL_error_h
+#define _LRSDL_error_h
 
 #include "LRSDL_stdinc.h"
 

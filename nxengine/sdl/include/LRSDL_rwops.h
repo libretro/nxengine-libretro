@@ -25,8 +25,8 @@
  *  data sources.  It can easily be extended to files, memory, etc.
  */
 
-#ifndef _SDL_rwops_h
-#define _SDL_rwops_h
+#ifndef _LRSDL_rwops_h
+#define _LRSDL_rwops_h
 
 #include "LRSDL_stdinc.h"
 #include "LRSDL_error.h"

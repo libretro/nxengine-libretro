@@ -21,8 +21,8 @@
 */
 #include "LRSDL_config.h"
 
-#ifndef _SDL_sysvideo_h
-#define _SDL_sysvideo_h
+#ifndef _LRSDL_sysvideo_h
+#define _LRSDL_sysvideo_h
 
 /* This file prototypes the video driver implementation.
    This is designed to be easily converted to C++ in the future.

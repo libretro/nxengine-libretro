@@ -25,8 +25,8 @@
  *  Functions for reading and writing endian-specific values
  */
 
-#ifndef _SDL_endian_h
-#define _SDL_endian_h
+#ifndef _LRSDL_endian_h
+#define _LRSDL_endian_h
 
 #include "LRSDL_stdinc.h"
 

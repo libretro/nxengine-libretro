@@ -24,8 +24,8 @@
  *  Header file for access to the SDL raw framebuffer window
  */
 
-#ifndef _SDL_video_h
-#define _SDL_video_h
+#ifndef _LRSDL_video_h
+#define _LRSDL_video_h
 
 #include "LRSDL_stdinc.h"
 #include "LRSDL_error.h"
