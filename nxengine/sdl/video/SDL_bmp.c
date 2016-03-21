@@ -45,9 +45,9 @@
 #endif
 
 
-SDL_Surface * LRSDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
+SDL_Surface * LRSDL_LoadBMP_RW (LRSDL_RWops *src, int freesrc)
 {
-	SDL_bool was_error;
+	LRSDL_bool was_error;
 	long fp_offset = 0;
 	int bmpPitch;
 	int i, pad;
@@ -58,7 +58,7 @@ SDL_Surface * LRSDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 	SDL_Palette *palette;
 	Uint8 *bits;
 	Uint8 *top, *end;
-	SDL_bool topDown;
+	LRSDL_bool topDown;
 	int ExpandBMP;
 
 	/* The Win32 BMP file header (14 bytes) */
@@ -83,9 +83,9 @@ SDL_Surface * LRSDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 
 	/* Make sure we are passed a valid data source */
 	surface = NULL;
-	was_error = SDL_FALSE;
+	was_error = LRSDL_FALSE;
 	if ( src == NULL ) {
-		was_error = SDL_TRUE;
+		was_error = LRSDL_TRUE;
 		goto done;
 	}
 
@@ -94,12 +94,12 @@ SDL_Surface * LRSDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 	LRSDL_ClearError();
 	if ( LRSDL_RWread(src, magic, 1, 2) != 2 ) {
 		LRSDL_Error(SDL_EFREAD);
-		was_error = SDL_TRUE;
+		was_error = LRSDL_TRUE;
 		goto done;
 	}
 	if ( SDL_strncmp(magic, "BM", 2) != 0 ) {
 		LRSDL_SetError("File is not a Windows BMP file");
-		was_error = SDL_TRUE;
+		was_error = LRSDL_TRUE;
 		goto done;
 	}
 	bfSize		= LRSDL_ReadLE32(src);
@@ -144,15 +144,15 @@ SDL_Surface * LRSDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 	(void) biClrImportant;
 
 	if (biHeight < 0) {
-		topDown = SDL_TRUE;
+		topDown = LRSDL_TRUE;
 		biHeight = -biHeight;
 	} else {
-		topDown = SDL_FALSE;
+		topDown = LRSDL_FALSE;
 	}
 
 	/* Check for read error */
 	if ( SDL_strcmp(LRSDL_GetError(), "") != 0 ) {
-		was_error = SDL_TRUE;
+		was_error = LRSDL_TRUE;
 		goto done;
 	}
 
@@ -216,7 +216,7 @@ SDL_Surface * LRSDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 			break;
 		default:
 			LRSDL_SetError("Compressed BMP files not supported");
-			was_error = SDL_TRUE;
+			was_error = LRSDL_TRUE;
 			goto done;
 	}
 
@@ -224,7 +224,7 @@ SDL_Surface * LRSDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 	surface = LRSDL_CreateRGBSurface(SDL_SWSURFACE,
 			biWidth, biHeight, biBitCount, Rmask, Gmask, Bmask, 0);
 	if ( surface == NULL ) {
-		was_error = SDL_TRUE;
+		was_error = LRSDL_TRUE;
 		goto done;
 	}
 
@@ -255,7 +255,7 @@ SDL_Surface * LRSDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 	/* Read the surface pixels.  Note that the bmp image is upside down */
 	if ( LRSDL_RWseek(src, fp_offset+bfOffBits, RW_SEEK_SET) < 0 ) {
 		LRSDL_Error(SDL_EFSEEK);
-		was_error = SDL_TRUE;
+		was_error = LRSDL_TRUE;
 		goto done;
 	}
 	top = (Uint8 *)surface->pixels;
@@ -290,7 +290,7 @@ SDL_Surface * LRSDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 					if ( !LRSDL_RWread(src, &pixel, 1, 1) ) {
 						LRSDL_SetError(
 					"Error reading from BMP");
-						was_error = SDL_TRUE;
+						was_error = LRSDL_TRUE;
 						goto done;
 					}
 				}
@@ -303,7 +303,7 @@ SDL_Surface * LRSDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 			if ( LRSDL_RWread(src, bits, 1, surface->pitch)
 							 != surface->pitch ) {
 				LRSDL_Error(SDL_EFREAD);
-				was_error = SDL_TRUE;
+				was_error = LRSDL_TRUE;
 				goto done;
 			}
 #ifdef MSB_FIRST
@@ -357,7 +357,7 @@ done:
 	return(surface);
 }
 
-int LRSDL_SaveBMP_RW (SDL_Surface *saveme, SDL_RWops *dst, int freedst)
+int LRSDL_SaveBMP_RW (SDL_Surface *saveme, LRSDL_RWops *dst, int freedst)
 {
 	long fp_offset;
 	int i, pad;

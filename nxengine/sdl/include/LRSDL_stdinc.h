@@ -81,9 +81,9 @@
 /** @name Basic data types */
 /*@{*/
 typedef enum {
-	SDL_FALSE = 0,
-	SDL_TRUE  = 1
-} SDL_bool;
+	LRSDL_FALSE = 0,
+	LRSDL_TRUE  = 1
+} LRSDL_bool;
 
 typedef int8_t		Sint8;
 typedef uint8_t		Uint8;

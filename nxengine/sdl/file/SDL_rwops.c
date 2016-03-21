@@ -30,7 +30,7 @@
 
 /* Functions to read/write stdio file pointers */
 
-static int SDLCALL stdio_seek(SDL_RWops *context, int offset, int whence)
+static int SDLCALL stdio_seek(LRSDL_RWops *context, int offset, int whence)
 {
 	if ( fseek(context->hidden.stdio.fp, offset, whence) == 0 ) {
 		return(ftell(context->hidden.stdio.fp));
@@ -39,7 +39,7 @@ static int SDLCALL stdio_seek(SDL_RWops *context, int offset, int whence)
 		return(-1);
 	}
 }
-static int SDLCALL stdio_read(SDL_RWops *context, void *ptr, int size, int maxnum)
+static int SDLCALL stdio_read(LRSDL_RWops *context, void *ptr, int size, int maxnum)
 {
 	size_t nread;
 
@@ -49,7 +49,7 @@ static int SDLCALL stdio_read(SDL_RWops *context, void *ptr, int size, int maxnu
 	}
 	return(nread);
 }
-static int SDLCALL stdio_write(SDL_RWops *context, const void *ptr, int size, int num)
+static int SDLCALL stdio_write(LRSDL_RWops *context, const void *ptr, int size, int num)
 {
 	size_t nwrote;
 
@@ -59,7 +59,7 @@ static int SDLCALL stdio_write(SDL_RWops *context, const void *ptr, int size, in
 	}
 	return(nwrote);
 }
-static int SDLCALL stdio_close(SDL_RWops *context)
+static int SDLCALL stdio_close(LRSDL_RWops *context)
 {
 	if ( context ) {
 		if ( context->hidden.stdio.autoclose ) {
@@ -73,7 +73,7 @@ static int SDLCALL stdio_close(SDL_RWops *context)
 
 /* Functions to read/write memory pointers */
 
-static int SDLCALL mem_seek(SDL_RWops *context, int offset, int whence)
+static int SDLCALL mem_seek(LRSDL_RWops *context, int offset, int whence)
 {
 	Uint8 *newpos;
 
@@ -100,7 +100,7 @@ static int SDLCALL mem_seek(SDL_RWops *context, int offset, int whence)
 	context->hidden.mem.here = newpos;
 	return(context->hidden.mem.here-context->hidden.mem.base);
 }
-static int SDLCALL mem_read(SDL_RWops *context, void *ptr, int size, int maxnum)
+static int SDLCALL mem_read(LRSDL_RWops *context, void *ptr, int size, int maxnum)
 {
 	size_t total_bytes;
 	size_t mem_available;
@@ -120,7 +120,7 @@ static int SDLCALL mem_read(SDL_RWops *context, void *ptr, int size, int maxnum)
 
 	return (total_bytes / size);
 }
-static int SDLCALL mem_write(SDL_RWops *context, const void *ptr, int size, int num)
+static int SDLCALL mem_write(LRSDL_RWops *context, const void *ptr, int size, int num)
 {
 	if ( (context->hidden.mem.here + (num*size)) > context->hidden.mem.stop ) {
 		num = (context->hidden.mem.stop-context->hidden.mem.here)/size;
@@ -129,12 +129,12 @@ static int SDLCALL mem_write(SDL_RWops *context, const void *ptr, int size, int 
 	context->hidden.mem.here += num*size;
 	return(num);
 }
-static int SDLCALL mem_writeconst(SDL_RWops *context, const void *ptr, int size, int num)
+static int SDLCALL mem_writeconst(LRSDL_RWops *context, const void *ptr, int size, int num)
 {
 	LRSDL_SetError("Can't write to read-only memory");
 	return(-1);
 }
-static int SDLCALL mem_close(SDL_RWops *context)
+static int SDLCALL mem_close(LRSDL_RWops *context)
 {
 	if ( context ) {
 		LRSDL_FreeRW(context);
@@ -145,9 +145,9 @@ static int SDLCALL mem_close(SDL_RWops *context)
 
 /* Functions to create SDL_RWops structures from various data sources */
 
-SDL_RWops *LRSDL_RWFromFile(const char *file, const char *mode)
+LRSDL_RWops *LRSDL_RWFromFile(const char *file, const char *mode)
 {
-	SDL_RWops *rwops = NULL;
+	LRSDL_RWops *rwops = NULL;
 	FILE *fp = NULL;
 	(void) fp;
 	if ( !file || !*file || !mode || !*mode ) {
@@ -164,9 +164,9 @@ SDL_RWops *LRSDL_RWFromFile(const char *file, const char *mode)
 	return(rwops);
 }
 
-SDL_RWops *LRSDL_RWFromFP(FILE *fp, int autoclose)
+LRSDL_RWops *LRSDL_RWFromFP(FILE *fp, int autoclose)
 {
-	SDL_RWops *rwops = NULL;
+	LRSDL_RWops *rwops = NULL;
 
 	rwops = LRSDL_AllocRW();
 	if ( rwops != NULL ) {
@@ -180,9 +180,9 @@ SDL_RWops *LRSDL_RWFromFP(FILE *fp, int autoclose)
 	return(rwops);
 }
 
-SDL_RWops *LRSDL_RWFromMem(void *mem, int size)
+LRSDL_RWops *LRSDL_RWFromMem(void *mem, int size)
 {
-	SDL_RWops *rwops;
+	LRSDL_RWops *rwops;
 
 	rwops = LRSDL_AllocRW();
 	if ( rwops != NULL ) {
@@ -197,9 +197,9 @@ SDL_RWops *LRSDL_RWFromMem(void *mem, int size)
 	return(rwops);
 }
 
-SDL_RWops *LRSDL_RWFromConstMem(const void *mem, int size)
+LRSDL_RWops *LRSDL_RWFromConstMem(const void *mem, int size)
 {
-	SDL_RWops *rwops;
+	LRSDL_RWops *rwops;
 
 	rwops = LRSDL_AllocRW();
 	if ( rwops != NULL ) {
@@ -214,60 +214,60 @@ SDL_RWops *LRSDL_RWFromConstMem(const void *mem, int size)
 	return(rwops);
 }
 
-SDL_RWops *LRSDL_AllocRW(void)
+LRSDL_RWops *LRSDL_AllocRW(void)
 {
-	SDL_RWops *area;
+	LRSDL_RWops *area;
 
-	area = (SDL_RWops *)SDL_malloc(sizeof *area);
+	area = (LRSDL_RWops *)SDL_malloc(sizeof *area);
 	if ( area == NULL ) {
 		LRSDL_OutOfMemory();
 	}
 	return(area);
 }
 
-void LRSDL_FreeRW(SDL_RWops *area)
+void LRSDL_FreeRW(LRSDL_RWops *area)
 {
 	SDL_free(area);
 }
 
 /* Functions for dynamically reading and writing endian-specific values */
 
-Uint16 LRSDL_ReadLE16 (SDL_RWops *src)
+Uint16 LRSDL_ReadLE16 (LRSDL_RWops *src)
 {
 	Uint16 value;
 
 	LRSDL_RWread(src, &value, (sizeof value), 1);
 	return(SDL_SwapLE16(value));
 }
-Uint16 LRSDL_ReadBE16 (SDL_RWops *src)
+Uint16 LRSDL_ReadBE16 (LRSDL_RWops *src)
 {
 	Uint16 value;
 
 	LRSDL_RWread(src, &value, (sizeof value), 1);
 	return(SDL_SwapBE16(value));
 }
-Uint32 LRSDL_ReadLE32 (SDL_RWops *src)
+Uint32 LRSDL_ReadLE32 (LRSDL_RWops *src)
 {
 	Uint32 value;
 
 	LRSDL_RWread(src, &value, (sizeof value), 1);
 	return(SDL_SwapLE32(value));
 }
-Uint32 LRSDL_ReadBE32 (SDL_RWops *src)
+Uint32 LRSDL_ReadBE32 (LRSDL_RWops *src)
 {
 	Uint32 value;
 
 	LRSDL_RWread(src, &value, (sizeof value), 1);
 	return(SDL_SwapBE32(value));
 }
-Uint64 LRSDL_ReadLE64 (SDL_RWops *src)
+Uint64 LRSDL_ReadLE64 (LRSDL_RWops *src)
 {
 	Uint64 value;
 
 	LRSDL_RWread(src, &value, (sizeof value), 1);
 	return(SDL_SwapLE64(value));
 }
-Uint64 LRSDL_ReadBE64 (SDL_RWops *src)
+Uint64 LRSDL_ReadBE64 (LRSDL_RWops *src)
 {
 	Uint64 value;
 
@@ -275,32 +275,32 @@ Uint64 LRSDL_ReadBE64 (SDL_RWops *src)
 	return(SDL_SwapBE64(value));
 }
 
-int LRSDL_WriteLE16 (SDL_RWops *dst, Uint16 value)
+int LRSDL_WriteLE16 (LRSDL_RWops *dst, Uint16 value)
 {
 	value = SDL_SwapLE16(value);
 	return(LRSDL_RWwrite(dst, &value, (sizeof value), 1));
 }
-int LRSDL_WriteBE16 (SDL_RWops *dst, Uint16 value)
+int LRSDL_WriteBE16 (LRSDL_RWops *dst, Uint16 value)
 {
 	value = SDL_SwapBE16(value);
 	return(LRSDL_RWwrite(dst, &value, (sizeof value), 1));
 }
-int LRSDL_WriteLE32 (SDL_RWops *dst, Uint32 value)
+int LRSDL_WriteLE32 (LRSDL_RWops *dst, Uint32 value)
 {
 	value = SDL_SwapLE32(value);
 	return(LRSDL_RWwrite(dst, &value, (sizeof value), 1));
 }
-int LRSDL_WriteBE32 (SDL_RWops *dst, Uint32 value)
+int LRSDL_WriteBE32 (LRSDL_RWops *dst, Uint32 value)
 {
 	value = SDL_SwapBE32(value);
 	return(LRSDL_RWwrite(dst, &value, (sizeof value), 1));
 }
-int LRSDL_WriteLE64 (SDL_RWops *dst, Uint64 value)
+int LRSDL_WriteLE64 (LRSDL_RWops *dst, Uint64 value)
 {
 	value = SDL_SwapLE64(value);
 	return(LRSDL_RWwrite(dst, &value, (sizeof value), 1));
 }
-int LRSDL_WriteBE64 (SDL_RWops *dst, Uint64 value)
+int LRSDL_WriteBE64 (LRSDL_RWops *dst, Uint64 value)
 {
 	value = SDL_SwapBE64(value);
 	return(LRSDL_RWwrite(dst, &value, (sizeof value), 1));

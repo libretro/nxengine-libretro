@@ -250,7 +250,7 @@ int LRSDL_SetAlphaChannel(SDL_Surface *surface, Uint8 value)
  * return true if the rectangles intersect, false otherwise
  */
 static __inline__
-SDL_bool LRSDL_IntersectRect(const SDL_Rect *A, const SDL_Rect *B, SDL_Rect *intersection)
+LRSDL_bool LRSDL_IntersectRect(const SDL_Rect *A, const SDL_Rect *B, SDL_Rect *intersection)
 {
 	int Amin, Amax, Bmin, Bmax;
 
@@ -278,18 +278,18 @@ SDL_bool LRSDL_IntersectRect(const SDL_Rect *A, const SDL_Rect *B, SDL_Rect *int
 	        Amax = Bmax;
 	intersection->h = Amax - Amin > 0 ? Amax - Amin : 0;
 
-	return (SDL_bool)(intersection->w && intersection->h);
+	return (LRSDL_bool)(intersection->w && intersection->h);
 }
 /*
  * Set the clipping rectangle for a blittable surface
  */
-SDL_bool LRSDL_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect)
+LRSDL_bool LRSDL_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect)
 {
 	SDL_Rect full_rect;
 
 	/* Don't do anything if there's no surface to act on */
 	if ( ! surface ) {
-		return SDL_FALSE;
+		return LRSDL_FALSE;
 	}
 
 	/* Set up the full surface rectangle */
@@ -301,7 +301,7 @@ SDL_bool LRSDL_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect)
 	/* Set the clipping rectangle */
 	if ( ! rect ) {
 		surface->clip_rect = full_rect;
-		return (SDL_bool)1;
+		return (LRSDL_bool)1;
 	}
 	return LRSDL_IntersectRect(rect, &full_rect, &surface->clip_rect);
 }

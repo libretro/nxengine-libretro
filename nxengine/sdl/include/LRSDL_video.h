@@ -411,7 +411,7 @@ extern DECLSPEC void SDLCALL LRSDL_UnlockSurface(SDL_Surface *surface);
  * Returns the new surface, or NULL if there was an error.
  * The new surface should be freed with SDL_FreeSurface().
  */
-extern DECLSPEC SDL_Surface * SDLCALL LRSDL_LoadBMP_RW(SDL_RWops *src, int freesrc);
+extern DECLSPEC SDL_Surface * SDLCALL LRSDL_LoadBMP_RW(LRSDL_RWops *src, int freesrc);
 
 /** Convenience macro -- load a surface from a file */
 #define LRSDL_LoadBMP(file)	LRSDL_LoadBMP_RW(LRSDL_RWFromFile(file, "rb"), 1)
@@ -422,7 +422,7 @@ extern DECLSPEC SDL_Surface * SDLCALL LRSDL_LoadBMP_RW(SDL_RWops *src, int frees
  * Returns 0 if successful or -1 if there was an error.
  */
 extern DECLSPEC int SDLCALL LRSDL_SaveBMP_RW
-		(SDL_Surface *surface, SDL_RWops *dst, int freedst);
+		(SDL_Surface *surface, LRSDL_RWops *dst, int freedst);
 
 /** Convenience macro -- save a surface to a file */
 #define LRSDL_SaveBMP(surface, file) \
@@ -469,7 +469,7 @@ extern DECLSPEC int SDLCALL LRSDL_SetAlpha(SDL_Surface *surface, Uint32 flag, Ui
  * Note that blits are automatically clipped to the edges of the source
  * and destination surfaces.
  */
-extern DECLSPEC SDL_bool SDLCALL LRSDL_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect);
+extern DECLSPEC LRSDL_bool SDLCALL LRSDL_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect);
 
 /**
  * This performs a fast blit from the source surface to the destination

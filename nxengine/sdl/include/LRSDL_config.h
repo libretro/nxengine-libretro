@@ -21,8 +21,8 @@
     slouken@libsdl.org
 */
 
-#ifndef _LRSDL_config_h
-#define _LRSDL_config_h
+#ifndef _SDL_config_h
+#define _SDL_config_h
 
 /* This is a set of defines to configure the SDL features */
 
