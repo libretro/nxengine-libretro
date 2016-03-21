@@ -66,7 +66,7 @@ static int SDLCALL stdio_close(SDL_RWops *context)
 			/* WARNING:  Check the return value here! */
 			fclose(context->hidden.stdio.fp);
 		}
-		SDL_FreeRW(context);
+		LRSDL_FreeRW(context);
 	}
 	return(0);
 }
@@ -137,7 +137,7 @@ static int SDLCALL mem_writeconst(SDL_RWops *context, const void *ptr, int size,
 static int SDLCALL mem_close(SDL_RWops *context)
 {
 	if ( context ) {
-		SDL_FreeRW(context);
+		LRSDL_FreeRW(context);
 	}
 	return(0);
 }
@@ -145,7 +145,7 @@ static int SDLCALL mem_close(SDL_RWops *context)
 
 /* Functions to create SDL_RWops structures from various data sources */
 
-SDL_RWops *SDL_RWFromFile(const char *file, const char *mode)
+SDL_RWops *LRSDL_RWFromFile(const char *file, const char *mode)
 {
 	SDL_RWops *rwops = NULL;
 	FILE *fp = NULL;
@@ -159,16 +159,16 @@ SDL_RWops *SDL_RWFromFile(const char *file, const char *mode)
 	if ( fp == NULL ) {
 		SDL_SetError("Couldn't open %s", file);
 	} else {
-		rwops = SDL_RWFromFP(fp, 1);
+		rwops = LRSDL_RWFromFP(fp, 1);
 	}
 	return(rwops);
 }
 
-SDL_RWops *SDL_RWFromFP(FILE *fp, int autoclose)
+SDL_RWops *LRSDL_RWFromFP(FILE *fp, int autoclose)
 {
 	SDL_RWops *rwops = NULL;
 
-	rwops = SDL_AllocRW();
+	rwops = LRSDL_AllocRW();
 	if ( rwops != NULL ) {
 		rwops->seek = stdio_seek;
 		rwops->read = stdio_read;
@@ -180,11 +180,11 @@ SDL_RWops *SDL_RWFromFP(FILE *fp, int autoclose)
 	return(rwops);
 }
 
-SDL_RWops *SDL_RWFromMem(void *mem, int size)
+SDL_RWops *LRSDL_RWFromMem(void *mem, int size)
 {
 	SDL_RWops *rwops;
 
-	rwops = SDL_AllocRW();
+	rwops = LRSDL_AllocRW();
 	if ( rwops != NULL ) {
 		rwops->seek = mem_seek;
 		rwops->read = mem_read;
@@ -197,11 +197,11 @@ SDL_RWops *SDL_RWFromMem(void *mem, int size)
 	return(rwops);
 }
 
-SDL_RWops *SDL_RWFromConstMem(const void *mem, int size)
+SDL_RWops *LRSDL_RWFromConstMem(const void *mem, int size)
 {
 	SDL_RWops *rwops;
 
-	rwops = SDL_AllocRW();
+	rwops = LRSDL_AllocRW();
 	if ( rwops != NULL ) {
 		rwops->seek = mem_seek;
 		rwops->read = mem_read;
@@ -214,7 +214,7 @@ SDL_RWops *SDL_RWFromConstMem(const void *mem, int size)
 	return(rwops);
 }
 
-SDL_RWops *SDL_AllocRW(void)
+SDL_RWops *LRSDL_AllocRW(void)
 {
 	SDL_RWops *area;
 
@@ -225,83 +225,83 @@ SDL_RWops *SDL_AllocRW(void)
 	return(area);
 }
 
-void SDL_FreeRW(SDL_RWops *area)
+void LRSDL_FreeRW(SDL_RWops *area)
 {
 	SDL_free(area);
 }
 
 /* Functions for dynamically reading and writing endian-specific values */
 
-Uint16 SDL_ReadLE16 (SDL_RWops *src)
+Uint16 LRSDL_ReadLE16 (SDL_RWops *src)
 {
 	Uint16 value;
 
-	SDL_RWread(src, &value, (sizeof value), 1);
+	LRSDL_RWread(src, &value, (sizeof value), 1);
 	return(SDL_SwapLE16(value));
 }
-Uint16 SDL_ReadBE16 (SDL_RWops *src)
+Uint16 LRSDL_ReadBE16 (SDL_RWops *src)
 {
 	Uint16 value;
 
-	SDL_RWread(src, &value, (sizeof value), 1);
+	LRSDL_RWread(src, &value, (sizeof value), 1);
 	return(SDL_SwapBE16(value));
 }
-Uint32 SDL_ReadLE32 (SDL_RWops *src)
+Uint32 LRSDL_ReadLE32 (SDL_RWops *src)
 {
 	Uint32 value;
 
-	SDL_RWread(src, &value, (sizeof value), 1);
+	LRSDL_RWread(src, &value, (sizeof value), 1);
 	return(SDL_SwapLE32(value));
 }
-Uint32 SDL_ReadBE32 (SDL_RWops *src)
+Uint32 LRSDL_ReadBE32 (SDL_RWops *src)
 {
 	Uint32 value;
 
-	SDL_RWread(src, &value, (sizeof value), 1);
+	LRSDL_RWread(src, &value, (sizeof value), 1);
 	return(SDL_SwapBE32(value));
 }
-Uint64 SDL_ReadLE64 (SDL_RWops *src)
+Uint64 LRSDL_ReadLE64 (SDL_RWops *src)
 {
 	Uint64 value;
 
-	SDL_RWread(src, &value, (sizeof value), 1);
+	LRSDL_RWread(src, &value, (sizeof value), 1);
 	return(SDL_SwapLE64(value));
 }
-Uint64 SDL_ReadBE64 (SDL_RWops *src)
+Uint64 LRSDL_ReadBE64 (SDL_RWops *src)
 {
 	Uint64 value;
 
-	SDL_RWread(src, &value, (sizeof value), 1);
+	LRSDL_RWread(src, &value, (sizeof value), 1);
 	return(SDL_SwapBE64(value));
 }
 
-int SDL_WriteLE16 (SDL_RWops *dst, Uint16 value)
+int LRSDL_WriteLE16 (SDL_RWops *dst, Uint16 value)
 {
 	value = SDL_SwapLE16(value);
-	return(SDL_RWwrite(dst, &value, (sizeof value), 1));
+	return(LRSDL_RWwrite(dst, &value, (sizeof value), 1));
 }
-int SDL_WriteBE16 (SDL_RWops *dst, Uint16 value)
+int LRSDL_WriteBE16 (SDL_RWops *dst, Uint16 value)
 {
 	value = SDL_SwapBE16(value);
-	return(SDL_RWwrite(dst, &value, (sizeof value), 1));
+	return(LRSDL_RWwrite(dst, &value, (sizeof value), 1));
 }
-int SDL_WriteLE32 (SDL_RWops *dst, Uint32 value)
+int LRSDL_WriteLE32 (SDL_RWops *dst, Uint32 value)
 {
 	value = SDL_SwapLE32(value);
-	return(SDL_RWwrite(dst, &value, (sizeof value), 1));
+	return(LRSDL_RWwrite(dst, &value, (sizeof value), 1));
 }
-int SDL_WriteBE32 (SDL_RWops *dst, Uint32 value)
+int LRSDL_WriteBE32 (SDL_RWops *dst, Uint32 value)
 {
 	value = SDL_SwapBE32(value);
-	return(SDL_RWwrite(dst, &value, (sizeof value), 1));
+	return(LRSDL_RWwrite(dst, &value, (sizeof value), 1));
 }
-int SDL_WriteLE64 (SDL_RWops *dst, Uint64 value)
+int LRSDL_WriteLE64 (SDL_RWops *dst, Uint64 value)
 {
 	value = SDL_SwapLE64(value);
-	return(SDL_RWwrite(dst, &value, (sizeof value), 1));
+	return(LRSDL_RWwrite(dst, &value, (sizeof value), 1));
 }
-int SDL_WriteBE64 (SDL_RWops *dst, Uint64 value)
+int LRSDL_WriteBE64 (SDL_RWops *dst, Uint64 value)
 {
 	value = SDL_SwapBE64(value);
-	return(SDL_RWwrite(dst, &value, (sizeof value), 1));
+	return(LRSDL_RWwrite(dst, &value, (sizeof value), 1));
 }

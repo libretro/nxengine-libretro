@@ -44,7 +44,7 @@ NXFont shadowfont;		// white letters w/ drop shadow
 bool font_init(void)
 {
 	bool error = false;
-   SDL_RWops *rw = SDL_RWFromMem(font_bmp, sizeof(font_bmp));
+   SDL_RWops *rw = LRSDL_RWFromMem(font_bmp, sizeof(font_bmp));
 
 	// we'll be bypassing the NXSurface automatic scaling features
 	// and drawing at the real resolution so we can get better-looking fonts.

@@ -98,7 +98,7 @@ bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey)
    CFILE *cf = copen(pbm_name, "rb");
    if (cf)
    {
-      SDL_RWops *m = SDL_RWFromMem(cfile_pointer(cf), cfile_size(cf));
+      SDL_RWops *m = LRSDL_RWFromMem(cfile_pointer(cf), cfile_size(cf));
       cclose(cf);
       fSurface = LRSDL_LoadBMP_RW(m, 1);
    } else {

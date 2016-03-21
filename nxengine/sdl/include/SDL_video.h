@@ -414,7 +414,7 @@ extern DECLSPEC void SDLCALL LRSDL_UnlockSurface(SDL_Surface *surface);
 extern DECLSPEC SDL_Surface * SDLCALL LRSDL_LoadBMP_RW(SDL_RWops *src, int freesrc);
 
 /** Convenience macro -- load a surface from a file */
-#define LRSDL_LoadBMP(file)	LRSDL_LoadBMP_RW(SDL_RWFromFile(file, "rb"), 1)
+#define LRSDL_LoadBMP(file)	LRSDL_LoadBMP_RW(LRSDL_RWFromFile(file, "rb"), 1)
 
 /**
  * Save a surface to a seekable SDL data source (memory or file.)
@@ -426,7 +426,7 @@ extern DECLSPEC int SDLCALL LRSDL_SaveBMP_RW
 
 /** Convenience macro -- save a surface to a file */
 #define LRSDL_SaveBMP(surface, file) \
-		LRSDL_SaveBMP_RW(surface, SDL_RWFromFile(file, "wb"), 1)
+		LRSDL_SaveBMP_RW(surface, LRSDL_RWFromFile(file, "wb"), 1)
 
 /**
  * Sets the color key (transparent pixel) in a blittable surface.

@@ -96,17 +96,17 @@ typedef struct SDL_RWops {
 /** @name Functions to create SDL_RWops structures from various data sources */
 /*@{*/
 
-extern DECLSPEC SDL_RWops * SDLCALL SDL_RWFromFile(const char *file, const char *mode);
+extern DECLSPEC SDL_RWops * SDLCALL LRSDL_RWFromFile(const char *file, const char *mode);
 
 #ifdef HAVE_STDIO_H
-extern DECLSPEC SDL_RWops * SDLCALL SDL_RWFromFP(FILE *fp, int autoclose);
+extern DECLSPEC SDL_RWops * SDLCALL LRSDL_RWFromFP(FILE *fp, int autoclose);
 #endif
 
-extern DECLSPEC SDL_RWops * SDLCALL SDL_RWFromMem(void *mem, int size);
-extern DECLSPEC SDL_RWops * SDLCALL SDL_RWFromConstMem(const void *mem, int size);
+extern DECLSPEC SDL_RWops * SDLCALL LRSDL_RWFromMem(void *mem, int size);
+extern DECLSPEC SDL_RWops * SDLCALL LRSDL_RWFromConstMem(const void *mem, int size);
 
-extern DECLSPEC SDL_RWops * SDLCALL SDL_AllocRW(void);
-extern DECLSPEC void SDLCALL SDL_FreeRW(SDL_RWops *area);
+extern DECLSPEC SDL_RWops * SDLCALL LRSDL_AllocRW(void);
+extern DECLSPEC void SDLCALL LRSDL_FreeRW(SDL_RWops *area);
 
 /*@}*/
 
@@ -119,31 +119,31 @@ extern DECLSPEC void SDLCALL SDL_FreeRW(SDL_RWops *area);
 
 /** @name Macros to easily read and write from an SDL_RWops structure */
 /*@{*/
-#define SDL_RWseek(ctx, offset, whence)	(ctx)->seek(ctx, offset, whence)
-#define SDL_RWtell(ctx)			(ctx)->seek(ctx, 0, RW_SEEK_CUR)
-#define SDL_RWread(ctx, ptr, size, n)	(ctx)->read(ctx, ptr, size, n)
-#define SDL_RWwrite(ctx, ptr, size, n)	(ctx)->write(ctx, ptr, size, n)
-#define SDL_RWclose(ctx)		(ctx)->close(ctx)
+#define LRSDL_RWseek(ctx, offset, whence)	(ctx)->seek(ctx, offset, whence)
+#define LRSDL_RWtell(ctx)			(ctx)->seek(ctx, 0, RW_SEEK_CUR)
+#define LRSDL_RWread(ctx, ptr, size, n)	(ctx)->read(ctx, ptr, size, n)
+#define LRSDL_RWwrite(ctx, ptr, size, n)	(ctx)->write(ctx, ptr, size, n)
+#define LRSDL_RWclose(ctx)		(ctx)->close(ctx)
 /*@}*/
 
 /** @name Read an item of the specified endianness and return in native format */
 /*@{*/
-extern DECLSPEC Uint16 SDLCALL SDL_ReadLE16(SDL_RWops *src);
-extern DECLSPEC Uint16 SDLCALL SDL_ReadBE16(SDL_RWops *src);
-extern DECLSPEC Uint32 SDLCALL SDL_ReadLE32(SDL_RWops *src);
-extern DECLSPEC Uint32 SDLCALL SDL_ReadBE32(SDL_RWops *src);
-extern DECLSPEC Uint64 SDLCALL SDL_ReadLE64(SDL_RWops *src);
-extern DECLSPEC Uint64 SDLCALL SDL_ReadBE64(SDL_RWops *src);
+extern DECLSPEC Uint16 SDLCALL LRSDL_ReadLE16(SDL_RWops *src);
+extern DECLSPEC Uint16 SDLCALL LRSDL_ReadBE16(SDL_RWops *src);
+extern DECLSPEC Uint32 SDLCALL LRSDL_ReadLE32(SDL_RWops *src);
+extern DECLSPEC Uint32 SDLCALL LRSDL_ReadBE32(SDL_RWops *src);
+extern DECLSPEC Uint64 SDLCALL LRSDL_ReadLE64(SDL_RWops *src);
+extern DECLSPEC Uint64 SDLCALL LRSDL_ReadBE64(SDL_RWops *src);
 /*@}*/
 
 /** @name Write an item of native format to the specified endianness */
 /*@{*/
-extern DECLSPEC int SDLCALL SDL_WriteLE16(SDL_RWops *dst, Uint16 value);
-extern DECLSPEC int SDLCALL SDL_WriteBE16(SDL_RWops *dst, Uint16 value);
-extern DECLSPEC int SDLCALL SDL_WriteLE32(SDL_RWops *dst, Uint32 value);
-extern DECLSPEC int SDLCALL SDL_WriteBE32(SDL_RWops *dst, Uint32 value);
-extern DECLSPEC int SDLCALL SDL_WriteLE64(SDL_RWops *dst, Uint64 value);
-extern DECLSPEC int SDLCALL SDL_WriteBE64(SDL_RWops *dst, Uint64 value);
+extern DECLSPEC int SDLCALL LRSDL_WriteLE16(SDL_RWops *dst, Uint16 value);
+extern DECLSPEC int SDLCALL LRSDL_WriteBE16(SDL_RWops *dst, Uint16 value);
+extern DECLSPEC int SDLCALL LRSDL_WriteLE32(SDL_RWops *dst, Uint32 value);
+extern DECLSPEC int SDLCALL LRSDL_WriteBE32(SDL_RWops *dst, Uint32 value);
+extern DECLSPEC int SDLCALL LRSDL_WriteLE64(SDL_RWops *dst, Uint64 value);
+extern DECLSPEC int SDLCALL LRSDL_WriteBE64(SDL_RWops *dst, Uint64 value);
 /*@}*/
 
 /* Ends C function definitions when using C++ */
