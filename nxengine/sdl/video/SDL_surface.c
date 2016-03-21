@@ -39,7 +39,7 @@ SDL_Surface * LRSDL_CreateRGBSurface (Uint32 flags,
 	/* Make sure the size requested doesn't overflow our datatypes */
 	/* Next time I write a library like SDL, I'll use int for size. :) */
 	if ( width >= 16384 || height >= 65536 ) {
-		SDL_SetError("Width or height is too large");
+		LRSDL_SetError("Width or height is too large");
 		return(NULL);
 	}
 
@@ -49,7 +49,7 @@ SDL_Surface * LRSDL_CreateRGBSurface (Uint32 flags,
 	surface = (SDL_Surface *)SDL_malloc(sizeof(*surface));
 	if (!surface)
    {
-		SDL_OutOfMemory();
+		LRSDL_OutOfMemory();
 		return(NULL);
 	}
 	surface->flags = SDL_SWSURFACE;
@@ -84,7 +84,7 @@ SDL_Surface * LRSDL_CreateRGBSurface (Uint32 flags,
          if (!surface->pixels)
          {
             LRSDL_FreeSurface(surface);
-            SDL_OutOfMemory();
+            LRSDL_OutOfMemory();
             return(NULL);
          }
          /* This is important for bitmaps */
@@ -217,7 +217,7 @@ int LRSDL_SetAlphaChannel(SDL_Surface *surface, Uint8 value)
 
 	if ( (surface->format->Amask != 0xFF000000) &&
 	     (surface->format->Amask != 0x000000FF) ) {
-		SDL_SetError("Unsupported surface alpha mask format");
+		LRSDL_SetError("Unsupported surface alpha mask format");
 		return -1;
 	}
 

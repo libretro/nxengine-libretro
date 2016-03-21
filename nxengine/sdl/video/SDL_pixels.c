@@ -42,7 +42,7 @@ SDL_PixelFormat *LRSDL_AllocFormat(int bpp,
 	/* Allocate an empty pixel format structure */
 	format = (SDL_PixelFormat*)SDL_malloc(sizeof(*format));
 	if ( format == NULL ) {
-		SDL_OutOfMemory();
+		LRSDL_OutOfMemory();
 		return(NULL);
 	}
 	SDL_memset(format, 0, sizeof(*format));
@@ -122,7 +122,7 @@ SDL_PixelFormat *LRSDL_AllocFormat(int bpp,
 		format->palette = (SDL_Palette *)SDL_malloc(sizeof(SDL_Palette));
 		if ( format->palette == NULL ) {
 			LRSDL_FreeFormat(format);
-			SDL_OutOfMemory();
+			LRSDL_OutOfMemory();
 			return(NULL);
 		}
 		(format->palette)->ncolors = ncolors;
@@ -130,7 +130,7 @@ SDL_PixelFormat *LRSDL_AllocFormat(int bpp,
 				(format->palette)->ncolors*sizeof(SDL_Color));
 		if ( (format->palette)->colors == NULL ) {
 			LRSDL_FreeFormat(format);
-			SDL_OutOfMemory();
+			LRSDL_OutOfMemory();
 			return(NULL);
 		}
 		if ( Rmask || Bmask || Gmask ) {
@@ -432,7 +432,7 @@ static Uint8 *Map1to1(SDL_Palette *src, SDL_Palette *dst, int *identical)
 	}
 	map = (Uint8 *)SDL_malloc(src->ncolors);
 	if ( map == NULL ) {
-		SDL_OutOfMemory();
+		LRSDL_OutOfMemory();
 		return(NULL);
 	}
 	for ( i=0; i<src->ncolors; ++i ) {
@@ -453,7 +453,7 @@ static Uint8 *Map1toN(SDL_PixelFormat *src, SDL_PixelFormat *dst)
 	bpp = ((dst->BytesPerPixel == 3) ? 4 : dst->BytesPerPixel);
 	map = (Uint8 *)SDL_malloc(pal->ncolors*bpp);
 	if ( map == NULL ) {
-		SDL_OutOfMemory();
+		LRSDL_OutOfMemory();
 		return(NULL);
 	}
 
@@ -491,7 +491,7 @@ SDL_BlitMap *LRSDL_AllocBlitMap(void)
 	/* Allocate the empty map */
 	map = (SDL_BlitMap *)SDL_malloc(sizeof(*map));
 	if ( map == NULL ) {
-		SDL_OutOfMemory();
+		LRSDL_OutOfMemory();
 		return(NULL);
 	}
 	SDL_memset(map, 0, sizeof(*map));
@@ -500,7 +500,7 @@ SDL_BlitMap *LRSDL_AllocBlitMap(void)
 	map->sw_data = (struct private_swaccel *)SDL_malloc(sizeof(*map->sw_data));
 	if ( map->sw_data == NULL ) {
 		LRSDL_FreeBlitMap(map);
-		SDL_OutOfMemory();
+		LRSDL_OutOfMemory();
 		return(NULL);
 	}
 	SDL_memset(map->sw_data, 0, sizeof(*map->sw_data));

@@ -37,7 +37,7 @@ static SDL_error SDL_global_error;
 
 /* Private functions */
 
-static const char *SDL_LookupString(const char *key)
+static const char *LRSDL_LookupString(const char *key)
 {
 	/* FIXME: Add code to lookup key in language string hash-table */
 	return key;
@@ -45,7 +45,7 @@ static const char *SDL_LookupString(const char *key)
 
 /* Public functions */
 
-void SDL_SetError (const char *fmt, ...)
+void LRSDL_SetError (const char *fmt, ...)
 {
 	va_list ap;
 	SDL_error *error;
@@ -113,7 +113,7 @@ void SDL_SetError (const char *fmt, ...)
 /* This function has a bit more overhead than most error functions
    so that it supports internationalization and thread-safe errors.
 */
-char *SDL_GetErrorMsg(char *errstr, unsigned int maxlen)
+char *LRSDL_GetErrorMsg(char *errstr, unsigned int maxlen)
 {
 	SDL_error *error;
 
@@ -128,7 +128,7 @@ char *SDL_GetErrorMsg(char *errstr, unsigned int maxlen)
 		int len;
 		int argi;
 
-		fmt = SDL_LookupString(error->key);
+		fmt = LRSDL_LookupString(error->key);
 		argi = 0;
 		while ( *fmt && (maxlen > 0) ) {
 			if ( *fmt == '%' ) {
@@ -166,7 +166,7 @@ char *SDL_GetErrorMsg(char *errstr, unsigned int maxlen)
 					maxlen -= len;
 					break;
 				    case 's':
-					len = SDL_snprintf(msg, maxlen, tmp, SDL_LookupString(error->args[argi++].buf));
+					len = SDL_snprintf(msg, maxlen, tmp, LRSDL_LookupString(error->args[argi++].buf));
 					msg += len;
 					maxlen -= len;
 					break;
@@ -182,14 +182,14 @@ char *SDL_GetErrorMsg(char *errstr, unsigned int maxlen)
 }
 
 /* Available for backwards compatibility */
-char *SDL_GetError (void)
+char *LRSDL_GetError (void)
 {
 	static char errmsg[SDL_ERRBUFIZE];
 
-	return((char *)SDL_GetErrorMsg(errmsg, SDL_ERRBUFIZE));
+	return((char *)LRSDL_GetErrorMsg(errmsg, SDL_ERRBUFIZE));
 }
 
-void SDL_ClearError(void)
+void LRSDL_ClearError(void)
 {
 	SDL_error *error;
 
@@ -198,23 +198,23 @@ void SDL_ClearError(void)
 }
 
 /* Very common errors go here */
-void SDL_Error(SDL_errorcode code)
+void LRSDL_Error(SDL_errorcode code)
 {
 	switch (code) {
 		case SDL_ENOMEM:
-			SDL_SetError("Out of memory");
+			LRSDL_SetError("Out of memory");
 			break;
 		case SDL_EFREAD:
-			SDL_SetError("Error reading from datastream");
+			LRSDL_SetError("Error reading from datastream");
 			break;
 		case SDL_EFWRITE:
-			SDL_SetError("Error writing to datastream");
+			LRSDL_SetError("Error writing to datastream");
 			break;
 		case SDL_EFSEEK:
-			SDL_SetError("Error seeking in datastream");
+			LRSDL_SetError("Error seeking in datastream");
 			break;
 		default:
-			SDL_SetError("Unknown SDL error");
+			LRSDL_SetError("Unknown SDL error");
 			break;
 	}
 }

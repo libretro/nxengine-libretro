@@ -40,9 +40,9 @@ extern "C" {
  *  @name Public functions
  */
 /*@{*/
-extern DECLSPEC void SDLCALL SDL_SetError(const char *fmt, ...);
-extern DECLSPEC char * SDLCALL SDL_GetError(void);
-extern DECLSPEC void SDLCALL SDL_ClearError(void);
+extern DECLSPEC void SDLCALL LRSDL_SetError(const char *fmt, ...);
+extern DECLSPEC char * SDLCALL LRSDL_GetError(void);
+extern DECLSPEC void SDLCALL LRSDL_ClearError(void);
 /*@}*/
 
 /**
@@ -50,8 +50,8 @@ extern DECLSPEC void SDLCALL SDL_ClearError(void);
  *  @internal Private error message function - used internally
  */
 /*@{*/
-#define SDL_OutOfMemory()	SDL_Error(SDL_ENOMEM)
-#define SDL_Unsupported()	SDL_Error(SDL_UNSUPPORTED)
+#define LRSDL_OutOfMemory()	LRSDL_Error(SDL_ENOMEM)
+#define LRSDL_Unsupported()	LRSDL_Error(SDL_UNSUPPORTED)
 typedef enum {
 	SDL_ENOMEM,
 	SDL_EFREAD,
@@ -60,7 +60,7 @@ typedef enum {
 	SDL_UNSUPPORTED,
 	SDL_LASTERROR
 } SDL_errorcode;
-extern DECLSPEC void SDLCALL SDL_Error(SDL_errorcode code);
+extern DECLSPEC void SDLCALL LRSDL_Error(SDL_errorcode code);
 /*@}*/
 
 /* Ends C function definitions when using C++ */

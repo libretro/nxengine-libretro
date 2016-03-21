@@ -35,7 +35,7 @@ static int SDLCALL stdio_seek(SDL_RWops *context, int offset, int whence)
 	if ( fseek(context->hidden.stdio.fp, offset, whence) == 0 ) {
 		return(ftell(context->hidden.stdio.fp));
 	} else {
-		SDL_Error(SDL_EFSEEK);
+		LRSDL_Error(SDL_EFSEEK);
 		return(-1);
 	}
 }
@@ -45,7 +45,7 @@ static int SDLCALL stdio_read(SDL_RWops *context, void *ptr, int size, int maxnu
 
 	nread = fread(ptr, size, maxnum, context->hidden.stdio.fp); 
 	if ( nread == 0 && ferror(context->hidden.stdio.fp) ) {
-		SDL_Error(SDL_EFREAD);
+		LRSDL_Error(SDL_EFREAD);
 	}
 	return(nread);
 }
@@ -55,7 +55,7 @@ static int SDLCALL stdio_write(SDL_RWops *context, const void *ptr, int size, in
 
 	nwrote = fwrite(ptr, size, num, context->hidden.stdio.fp);
 	if ( nwrote == 0 && ferror(context->hidden.stdio.fp) ) {
-		SDL_Error(SDL_EFWRITE);
+		LRSDL_Error(SDL_EFWRITE);
 	}
 	return(nwrote);
 }
@@ -88,7 +88,7 @@ static int SDLCALL mem_seek(SDL_RWops *context, int offset, int whence)
 			newpos = context->hidden.mem.stop+offset;
 			break;
 		default:
-			SDL_SetError("Unknown value for 'whence'");
+			LRSDL_SetError("Unknown value for 'whence'");
 			return(-1);
 	}
 	if ( newpos < context->hidden.mem.base ) {
@@ -131,7 +131,7 @@ static int SDLCALL mem_write(SDL_RWops *context, const void *ptr, int size, int 
 }
 static int SDLCALL mem_writeconst(SDL_RWops *context, const void *ptr, int size, int num)
 {
-	SDL_SetError("Can't write to read-only memory");
+	LRSDL_SetError("Can't write to read-only memory");
 	return(-1);
 }
 static int SDLCALL mem_close(SDL_RWops *context)
@@ -151,13 +151,13 @@ SDL_RWops *LRSDL_RWFromFile(const char *file, const char *mode)
 	FILE *fp = NULL;
 	(void) fp;
 	if ( !file || !*file || !mode || !*mode ) {
-		SDL_SetError("SDL_RWFromFile(): No file or no mode specified");
+		LRSDL_SetError("SDL_RWFromFile(): No file or no mode specified");
 		return NULL;
 	}
 
 	fp = fopen(file, mode);
 	if ( fp == NULL ) {
-		SDL_SetError("Couldn't open %s", file);
+		LRSDL_SetError("Couldn't open %s", file);
 	} else {
 		rwops = LRSDL_RWFromFP(fp, 1);
 	}
@@ -220,7 +220,7 @@ SDL_RWops *LRSDL_AllocRW(void)
 
 	area = (SDL_RWops *)SDL_malloc(sizeof *area);
 	if ( area == NULL ) {
-		SDL_OutOfMemory();
+		LRSDL_OutOfMemory();
 	}
 	return(area);
 }

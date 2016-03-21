@@ -91,14 +91,14 @@ SDL_Surface * LRSDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 
 	/* Read in the BMP file header */
 	fp_offset = LRSDL_RWtell(src);
-	SDL_ClearError();
+	LRSDL_ClearError();
 	if ( LRSDL_RWread(src, magic, 1, 2) != 2 ) {
-		SDL_Error(SDL_EFREAD);
+		LRSDL_Error(SDL_EFREAD);
 		was_error = SDL_TRUE;
 		goto done;
 	}
 	if ( SDL_strncmp(magic, "BM", 2) != 0 ) {
-		SDL_SetError("File is not a Windows BMP file");
+		LRSDL_SetError("File is not a Windows BMP file");
 		was_error = SDL_TRUE;
 		goto done;
 	}
@@ -151,7 +151,7 @@ SDL_Surface * LRSDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 	}
 
 	/* Check for read error */
-	if ( SDL_strcmp(SDL_GetError(), "") != 0 ) {
+	if ( SDL_strcmp(LRSDL_GetError(), "") != 0 ) {
 		was_error = SDL_TRUE;
 		goto done;
 	}
@@ -215,7 +215,7 @@ SDL_Surface * LRSDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 			}
 			break;
 		default:
-			SDL_SetError("Compressed BMP files not supported");
+			LRSDL_SetError("Compressed BMP files not supported");
 			was_error = SDL_TRUE;
 			goto done;
 	}
@@ -254,7 +254,7 @@ SDL_Surface * LRSDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 
 	/* Read the surface pixels.  Note that the bmp image is upside down */
 	if ( LRSDL_RWseek(src, fp_offset+bfOffBits, RW_SEEK_SET) < 0 ) {
-		SDL_Error(SDL_EFSEEK);
+		LRSDL_Error(SDL_EFSEEK);
 		was_error = SDL_TRUE;
 		goto done;
 	}
@@ -288,7 +288,7 @@ SDL_Surface * LRSDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 			for ( i=0; i<surface->w; ++i ) {
 				if ( i%(8/ExpandBMP) == 0 ) {
 					if ( !LRSDL_RWread(src, &pixel, 1, 1) ) {
-						SDL_SetError(
+						LRSDL_SetError(
 					"Error reading from BMP");
 						was_error = SDL_TRUE;
 						goto done;
@@ -302,7 +302,7 @@ SDL_Surface * LRSDL_LoadBMP_RW (SDL_RWops *src, int freesrc)
 			default:
 			if ( LRSDL_RWread(src, bits, 1, surface->pitch)
 							 != surface->pitch ) {
-				SDL_Error(SDL_EFREAD);
+				LRSDL_Error(SDL_EFREAD);
 				was_error = SDL_TRUE;
 				goto done;
 			}
@@ -391,7 +391,7 @@ int LRSDL_SaveBMP_RW (SDL_Surface *saveme, SDL_RWops *dst, int freedst)
 			if ( saveme->format->BitsPerPixel == 8 ) {
 				surface = saveme;
 			} else {
-				SDL_SetError("%d bpp BMP files not supported",
+				LRSDL_SetError("%d bpp BMP files not supported",
 						saveme->format->BitsPerPixel);
 			}
 		}
@@ -427,7 +427,7 @@ int LRSDL_SaveBMP_RW (SDL_Surface *saveme, SDL_RWops *dst, int freedst)
 				if ( LRSDL_LowerBlit(saveme, &bounds, surface,
 							&bounds) < 0 ) {
 					LRSDL_FreeSurface(surface);
-					SDL_SetError(
+					LRSDL_SetError(
 					"Couldn't convert image to 24 bpp");
 					surface = NULL;
 				}
@@ -447,7 +447,7 @@ int LRSDL_SaveBMP_RW (SDL_Surface *saveme, SDL_RWops *dst, int freedst)
 
 		/* Write the BMP file header values */
 		fp_offset = LRSDL_RWtell(dst);
-		SDL_ClearError();
+		LRSDL_ClearError();
 		LRSDL_RWwrite(dst, magic, 2, 1);
 		LRSDL_WriteLE32(dst, bfSize);
 		LRSDL_WriteLE16(dst, bfReserved1);
@@ -502,11 +502,11 @@ int LRSDL_SaveBMP_RW (SDL_Surface *saveme, SDL_RWops *dst, int freedst)
 		/* Write the bitmap offset */
 		bfOffBits = LRSDL_RWtell(dst)-fp_offset;
 		if ( LRSDL_RWseek(dst, fp_offset+10, RW_SEEK_SET) < 0 ) {
-			SDL_Error(SDL_EFSEEK);
+			LRSDL_Error(SDL_EFSEEK);
 		}
 		LRSDL_WriteLE32(dst, bfOffBits);
 		if ( LRSDL_RWseek(dst, fp_offset+bfOffBits, RW_SEEK_SET) < 0 ) {
-			SDL_Error(SDL_EFSEEK);
+			LRSDL_Error(SDL_EFSEEK);
 		}
 
 		/* Write the bitmap image upside down */
@@ -515,7 +515,7 @@ int LRSDL_SaveBMP_RW (SDL_Surface *saveme, SDL_RWops *dst, int freedst)
 		while ( bits > (Uint8 *)surface->pixels ) {
 			bits -= surface->pitch;
 			if ( LRSDL_RWwrite(dst, bits, 1, bw) != bw) {
-				SDL_Error(SDL_EFWRITE);
+				LRSDL_Error(SDL_EFWRITE);
 				break;
 			}
 			if ( pad ) {
@@ -529,11 +529,11 @@ int LRSDL_SaveBMP_RW (SDL_Surface *saveme, SDL_RWops *dst, int freedst)
 		/* Write the BMP file size */
 		bfSize = LRSDL_RWtell(dst)-fp_offset;
 		if ( LRSDL_RWseek(dst, fp_offset+2, RW_SEEK_SET) < 0 ) {
-			SDL_Error(SDL_EFSEEK);
+			LRSDL_Error(SDL_EFSEEK);
 		}
 		LRSDL_WriteLE32(dst, bfSize);
 		if ( LRSDL_RWseek(dst, fp_offset+bfSize, RW_SEEK_SET) < 0 ) {
-			SDL_Error(SDL_EFSEEK);
+			LRSDL_Error(SDL_EFSEEK);
 		}
 
 		if ( surface != saveme ) {
@@ -544,5 +544,5 @@ int LRSDL_SaveBMP_RW (SDL_Surface *saveme, SDL_RWops *dst, int freedst)
 	if ( freedst && dst ) {
 		LRSDL_RWclose(dst);
 	}
-	return((SDL_strcmp(SDL_GetError(), "") == 0) ? 0 : -1);
+	return((SDL_strcmp(LRSDL_GetError(), "") == 0) ? 0 : -1);
 }

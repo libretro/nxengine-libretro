@@ -170,7 +170,7 @@ int LRSDL_CalculateBlit(SDL_Surface *surface)
 	/* Make sure we have a blit function */
 	if ( surface->map->sw_data->blit == NULL ) {
 		LRSDL_InvalidateMap(surface->map);
-		SDL_SetError("Blit combination not supported");
+		LRSDL_SetError("Blit combination not supported");
 		return(-1);
 	}
 
