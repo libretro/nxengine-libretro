@@ -483,7 +483,7 @@ int LRSDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, Uint32 color)
 			for ( y=dstrect->h; y; --y ) {
 				Uint8 *pixels = row;
 				for ( x=dstrect->w; x; --x ) {
-					SDL_memcpy(pixels, &color, 3);
+					memcpy(pixels, &color, 3);
 					pixels += 3;
 				}
 				row += dst->pitch;

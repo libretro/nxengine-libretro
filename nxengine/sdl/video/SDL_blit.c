@@ -76,7 +76,7 @@ static void LRSDL_BlitCopy(SDL_BlitInfo *info)
 	dstskip = w+info->d_skip;
 
 	while ( h-- ) {
-		SDL_memcpy(dst, src, w);
+		memcpy(dst, src, w);
 		src += srcskip;
 		dst += dstskip;
 	}
