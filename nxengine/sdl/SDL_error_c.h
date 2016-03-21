@@ -19,7 +19,7 @@
     Sam Lantinga
     slouken@libsdl.org
 */
-#include "SDL_config.h"
+#include "LRSDL_config.h"
 
 /* This file defines a structure that carries language-independent
    error messages

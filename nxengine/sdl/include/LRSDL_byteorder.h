@@ -26,4 +26,4 @@
  */
 
 /* DEPRECATED */
-#include "SDL_endian.h"
+#include "LRSDL_endian.h"

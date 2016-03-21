@@ -19,14 +19,14 @@
     Sam Lantinga
     slouken@libsdl.org
 */
-#include "SDL_config.h"
+#include "LRSDL_config.h"
 
 /* This file provides a general interface for SDL to read and write
    data sources.  It can easily be extended to files, memory, etc.
 */
 
-#include "SDL_endian.h"
-#include "SDL_rwops.h"
+#include "LRSDL_endian.h"
+#include "LRSDL_rwops.h"
 
 /* Functions to read/write stdio file pointers */
 

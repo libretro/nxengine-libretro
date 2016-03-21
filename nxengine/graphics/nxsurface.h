@@ -2,7 +2,7 @@
 #ifndef _NXSURFACE_H
 #define _NXSURFACE_H
 
-#include "../sdl/include/SDL.h"
+#include "../sdl/include/LRSDL.h"
 #include "../common/basics.h"
 
 // scaling factor for the graphics

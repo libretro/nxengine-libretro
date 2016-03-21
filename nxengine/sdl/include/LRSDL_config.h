@@ -27,7 +27,7 @@
 /* This is a set of defines to configure the SDL features */
 
 /* General platform specific identifiers */
-#include "SDL_platform.h"
+#include "LRSDL_platform.h"
 
 /* C language features */
 /* #undef const */

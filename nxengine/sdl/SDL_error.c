@@ -21,11 +21,11 @@
 */
 #include <stdio.h>
 
-#include "SDL_config.h"
+#include "LRSDL_config.h"
 
 /* Simple error handling in SDL */
 
-#include "SDL_error.h"
+#include "LRSDL_error.h"
 #include "SDL_error_c.h"
 
 /* Routine to get the thread-specific error variable */

@@ -27,9 +27,9 @@
 #ifndef _SDL_video_h
 #define _SDL_video_h
 
-#include "SDL_stdinc.h"
-#include "SDL_error.h"
-#include "SDL_rwops.h"
+#include "LRSDL_stdinc.h"
+#include "LRSDL_error.h"
+#include "LRSDL_rwops.h"
 
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */

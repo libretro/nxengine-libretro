@@ -19,12 +19,12 @@
     Sam Lantinga
     slouken@libsdl.org
 */
-#include "SDL_config.h"
+#include "LRSDL_config.h"
 
 #ifndef _SDL_blit_h
 #define _SDL_blit_h
 
-#include "SDL_endian.h"
+#include "LRSDL_endian.h"
 
 /* The structure passed to the low level blit functions */
 typedef struct {

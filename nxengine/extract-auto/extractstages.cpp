@@ -1,5 +1,5 @@
 
-#include <SDL.h>
+#include "../sdl/include/LRSDL.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>

@@ -2,7 +2,7 @@
 #ifndef _NX_H
 #define _NX_H
 
-#include "sdl/include/SDL.h"
+#include "sdl/include/LRSDL.h"
 #include <stdio.h>
 #include <ctype.h>
 #include "nx_logger.h"

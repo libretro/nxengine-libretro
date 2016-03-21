@@ -1,4 +1,4 @@
-#include "SDL_video.h"
+#include "LRSDL_video.h"
 #include "../nx.h"
 #include "font.h"
 #include "font.fdh"

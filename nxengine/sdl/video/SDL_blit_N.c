@@ -19,10 +19,10 @@
     Sam Lantinga
     slouken@libsdl.org
 */
-#include "SDL_config.h"
+#include "LRSDL_config.h"
 
-#include "SDL_video.h"
-#include "SDL_endian.h"
+#include "LRSDL_video.h"
+#include "LRSDL_endian.h"
 #include "SDL_blit.h"
 
 /* Functions to blit from N-bit surfaces to other surfaces */

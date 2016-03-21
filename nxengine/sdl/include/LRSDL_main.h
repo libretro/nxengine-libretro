@@ -23,7 +23,7 @@
 #ifndef _SDL_main_h
 #define _SDL_main_h
 
-#include "SDL_stdinc.h"
+#include "LRSDL_stdinc.h"
 
 /** @file SDL_main.h
  *  Redefine main() on Win32 and MacOS so that it is called by winmain.c

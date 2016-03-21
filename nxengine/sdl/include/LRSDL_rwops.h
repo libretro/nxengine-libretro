@@ -28,8 +28,8 @@
 #ifndef _SDL_rwops_h
 #define _SDL_rwops_h
 
-#include "SDL_stdinc.h"
-#include "SDL_error.h"
+#include "LRSDL_stdinc.h"
+#include "LRSDL_error.h"
 
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */

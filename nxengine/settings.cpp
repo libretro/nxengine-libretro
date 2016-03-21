@@ -1,6 +1,4 @@
 
-#include <SDL.h>
-
 #include <retro_file.h>
 
 #include <stdio.h>

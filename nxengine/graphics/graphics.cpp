@@ -1,6 +1,6 @@
 
 // graphics routines
-#include <SDL.h>
+#include "../sdl/include/LRSDL.h"
 
 #include <stdlib.h>
 #include "../config.h"

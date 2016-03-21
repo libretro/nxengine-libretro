@@ -28,7 +28,7 @@
 #ifndef _SDL_error_h
 #define _SDL_error_h
 
-#include "SDL_stdinc.h"
+#include "LRSDL_stdinc.h"
 
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */

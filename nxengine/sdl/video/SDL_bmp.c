@@ -19,7 +19,7 @@
     Sam Lantinga
     slouken@libsdl.org
 */
-#include "SDL_config.h"
+#include "LRSDL_config.h"
 
 /* 
    Code to load and save surfaces in Windows BMP format.
@@ -33,8 +33,8 @@
    This code currently supports Win32 DIBs in uncompressed 8 and 24 bpp.
 */
 
-#include "SDL_video.h"
-#include "SDL_endian.h"
+#include "LRSDL_video.h"
+#include "LRSDL_endian.h"
 
 /* Compression encodings for BMP files */
 #ifndef BI_RGB

@@ -19,7 +19,7 @@
     Sam Lantinga
     slouken@libsdl.org
 */
-#include "SDL_config.h"
+#include "LRSDL_config.h"
 
 #ifndef _SDL_sysvideo_h
 #define _SDL_sysvideo_h

@@ -28,7 +28,7 @@
 #ifndef _SDL_endian_h
 #define _SDL_endian_h
 
-#include "SDL_stdinc.h"
+#include "LRSDL_stdinc.h"
 
 /** @name SDL_ENDIANs
  *  The two types of endianness 

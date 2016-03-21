@@ -27,13 +27,13 @@
 #ifndef _SDL_H
 #define _SDL_H
 
-#include "SDL_main.h"
-#include "SDL_stdinc.h"
-#include "SDL_endian.h"
-#include "SDL_error.h"
-#include "SDL_rwops.h"
-#include "SDL_video.h"
-#include "SDL_version.h"
+#include "LRSDL_main.h"
+#include "LRSDL_stdinc.h"
+#include "LRSDL_endian.h"
+#include "LRSDL_error.h"
+#include "LRSDL_rwops.h"
+#include "LRSDL_video.h"
+#include "LRSDL_version.h"
 
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */

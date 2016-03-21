@@ -25,4 +25,4 @@
  */
 
 /* DEPRECATED */
-#include "SDL_stdinc.h"
+#include "LRSDL_stdinc.h"
