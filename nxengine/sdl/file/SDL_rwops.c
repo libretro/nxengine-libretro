@@ -115,7 +115,7 @@ static int SDLCALL mem_read(LRSDL_RWops *context, void *ptr, int size, int maxnu
 		total_bytes = mem_available;
 	}
 
-	SDL_memcpy(ptr, context->hidden.mem.here, total_bytes);
+	memcpy(ptr, context->hidden.mem.here, total_bytes);
 	context->hidden.mem.here += total_bytes;
 
 	return (total_bytes / size);
@@ -125,7 +125,7 @@ static int SDLCALL mem_write(LRSDL_RWops *context, const void *ptr, int size, in
 	if ( (context->hidden.mem.here + (num*size)) > context->hidden.mem.stop ) {
 		num = (context->hidden.mem.stop-context->hidden.mem.here)/size;
 	}
-	SDL_memcpy(context->hidden.mem.here, ptr, num*size);
+	memcpy(context->hidden.mem.here, ptr, num*size);
 	context->hidden.mem.here += num*size;
 	return(num);
 }
