@@ -386,25 +386,6 @@ do {						\
 }
 
 /* Don't use Duff's device to unroll loops */
-#define DUFFS_LOOP_QUATRO2(pixel_copy_increment,			\
-				double_pixel_copy_increment,		\
-				quatro_pixel_copy_increment, width)	\
-{ int n = width;								\
-        if(n & 1) {							\
-	  pixel_copy_increment;						\
-	  n--;								\
-	}								\
-	if(n & 2) {							\
-	  double_pixel_copy_increment;					\
-	  n -= 2;							\
-	}								\
-	n=n>>2;								\
-	for(; n > 0; --n) {   						\
-	  quatro_pixel_copy_increment;					\
-        }								\
-}
-
-/* Don't use Duff's device to unroll loops */
 #define DUFFS_LOOP(pixel_copy_increment, width)				\
 { int n;								\
 	for ( n=width; n > 0; --n ) {					\
