@@ -54,6 +54,7 @@ SDL_Surface * LRSDL_CreateRGBSurface (
       LRSDL_OutOfMemory();
       return NULL;
    }
+
    surface->flags  = SDL_SWSURFACE;
    surface->format = LRSDL_AllocFormat(depth, Rmask, Gmask, Bmask, Amask);
 
@@ -156,17 +157,20 @@ int LRSDL_SetColorKey (SDL_Surface *surface, Uint32 flag, Uint32 key)
 	     (key == surface->format->colorkey) )
       return 0;
 
-	if ( flag ) {
-		surface->flags |= SDL_SRCCOLORKEY;
-		surface->format->colorkey = key;
-		if ( flag & SDL_RLEACCELOK ) {
+	if ( flag )
+   {
+		surface->flags            |= SDL_SRCCOLORKEY;
+		surface->format->colorkey  = key;
+
+		if ( flag & SDL_RLEACCELOK )
 			surface->flags |= SDL_RLEACCELOK;
-		} else {
+      else
 			surface->flags &= ~SDL_RLEACCELOK;
-		}
-	} else {
-		surface->flags &= ~(SDL_SRCCOLORKEY|SDL_RLEACCELOK);
-		surface->format->colorkey = 0;
+	}
+   else
+   {
+		surface->flags            &= ~(SDL_SRCCOLORKEY|SDL_RLEACCELOK);
+		surface->format->colorkey  = 0;
 	}
 	LRSDL_InvalidateMap(surface->map);
 	return(0);
