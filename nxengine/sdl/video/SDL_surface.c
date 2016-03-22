@@ -83,11 +83,11 @@ SDL_Surface * LRSDL_CreateRGBSurface (
       if ( surface->w && surface->h )
       {
          surface->pixels = SDL_malloc(surface->h*surface->pitch);
+
          if (!surface->pixels)
          {
-            LRSDL_FreeSurface(surface);
             LRSDL_OutOfMemory();
-            return NULL;
+            goto error;
          }
 
          /* This is important for bitmaps */
@@ -98,14 +98,17 @@ SDL_Surface * LRSDL_CreateRGBSurface (
    /* Allocate an empty mapping */
    surface->map = LRSDL_AllocBlitMap();
    if (!surface->map)
-   {
-      LRSDL_FreeSurface(surface);
-      return NULL;
-   }
+      goto error;
 
    /* The surface is ready to go */
    surface->refcount = 1;
    return surface;
+
+error:
+   if (surface)
+      LRSDL_FreeSurface(surface);
+
+   return NULL;
 }
 
 /*
@@ -117,16 +120,17 @@ SDL_Surface * LRSDL_CreateRGBSurfaceFrom (void *pixels,
 {
    SDL_Surface *surface = LRSDL_CreateRGBSurface(SDL_SWSURFACE, 0, 0, depth,
          Rmask, Gmask, Bmask, Amask);
-   if (surface)
-   {
-      surface->flags |= SDL_PREALLOC;
-      surface->pixels = pixels;
-      surface->w      = width;
-      surface->h      = height;
-      surface->pitch  = pitch;
 
-      LRSDL_SetClipRect(surface, NULL);
-   }
+   if (!surface)
+      return NULL;
+
+   surface->flags |= SDL_PREALLOC;
+   surface->pixels = pixels;
+   surface->w      = width;
+   surface->h      = height;
+   surface->pitch  = pitch;
+
+   LRSDL_SetClipRect(surface, NULL);
 
    return surface;
 }
@@ -351,7 +355,10 @@ int LRSDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect,
 		   SDL_Surface *dst, SDL_Rect *dstrect)
 {
    SDL_Rect fulldst;
-   int srcx, srcy, w, h;
+   int srcx = 0;
+   int srcy = 0;
+   int w    = src->w;
+   int h    = src->h;
 
    /* If the destination rectangle is NULL, use the entire dest surface */
    if (!dstrect)
@@ -393,49 +400,53 @@ int LRSDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect,
          h = maxh;
 
    }
-   else
-   {
-      srcx = srcy = 0;
-      w = src->w;
-      h = src->h;
-   }
 
    /* clip the destination rectangle against the clip rectangle */
    {
+      int dy;
       SDL_Rect *clip = &dst->clip_rect;
-      int dx, dy;
+      int         dx = clip->x - dstrect->x;
 
-      dx = clip->x - dstrect->x;
-      if(dx > 0) {
+      if(dx > 0)
+      {
          w -= dx;
          dstrect->x += dx;
          srcx += dx;
       }
+
       dx = dstrect->x + w - clip->x - clip->w;
+
       if(dx > 0)
          w -= dx;
 
       dy = clip->y - dstrect->y;
-      if(dy > 0) {
+
+      if(dy > 0)
+      {
          h -= dy;
          dstrect->y += dy;
          srcy += dy;
       }
+
       dy = dstrect->y + h - clip->y - clip->h;
+
       if(dy > 0)
          h -= dy;
    }
 
-   if(w > 0 && h > 0) {
-      SDL_Rect sr;
-      sr.x = srcx;
-      sr.y = srcy;
-      sr.w = dstrect->w = w;
-      sr.h = dstrect->h = h;
-      return LRSDL_LowerBlit(src, &sr, dst, dstrect);
+   if(w <=  0 || h <= 0)
+   {
+      dstrect->w = 0;
+      dstrect->h = 0;
+      return 0;
    }
-   dstrect->w = dstrect->h = 0;
-   return 0;
+
+   SDL_Rect sr;
+   sr.x = srcx;
+   sr.y = srcy;
+   sr.w = dstrect->w = w;
+   sr.h = dstrect->h = h;
+   return LRSDL_LowerBlit(src, &sr, dst, dstrect);
 }
 
 /* 
