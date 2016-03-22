@@ -28,17 +28,17 @@
 
 /* The structure passed to the low level blit functions */
 typedef struct {
-	Uint8 *s_pixels;
+	uint8_t *s_pixels;
 	int s_width;
 	int s_height;
 	int s_skip;
-	Uint8 *d_pixels;
+	uint8_t *d_pixels;
 	int d_width;
 	int d_height;
 	int d_skip;
 	void *aux_data;
 	SDL_PixelFormat *src;
-	Uint8 *table;
+	uint8_t *table;
 	SDL_PixelFormat *dst;
 } SDL_BlitInfo;
 
@@ -55,7 +55,7 @@ struct private_swaccel {
 typedef struct SDL_BlitMap {
 	SDL_Surface *dst;
 	int identity;
-	Uint8 *table;
+	uint8_t *table;
 	SDL_blit hw_blit;
 	SDL_blit sw_blit;
 	struct private_hwaccel *hw_data;
@@ -118,7 +118,7 @@ do {									   \
 		break;							   \
 									   \
 		case 3: {						   \
-		        Uint8 *B = (Uint8 *)(buf);			   \
+		        uint8_t *B = (uint8_t *)(buf);			   \
 			if(SDL_BYTEORDER == SDL_LIL_ENDIAN) {		   \
 			        Pixel = B[0] + (B[1] << 8) + (B[2] << 16); \
 			} else {					   \
@@ -145,7 +145,7 @@ do {									   \
 		break;							   \
 									   \
 		case 3: {						   \
-		        Uint8 *B = (Uint8 *)buf;			   \
+		        uint8_t *B = (uint8_t *)buf;			   \
 			if(SDL_BYTEORDER == SDL_LIL_ENDIAN) {		   \
 			        Pixel = B[0] + (B[1] << 8) + (B[2] << 16); \
 			} else {					   \
@@ -299,7 +299,7 @@ do {									   \
 		break;							   \
 									   \
 		case 3:	{/* FIXME: broken code (no alpha) */		   \
-		        Uint8 *b = (Uint8 *)buf;			   \
+		        uint8_t *b = (uint8_t *)buf;			   \
 			if(SDL_BYTEORDER == SDL_LIL_ENDIAN) {		   \
 			        Pixel = b[0] + (b[1] << 8) + (b[2] << 16); \
 			} else {					   \
