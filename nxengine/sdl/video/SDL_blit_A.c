@@ -345,7 +345,7 @@ static void BlitRGBtoRGBPixelAlpha(SDL_BlitInfo *info)
 	(((s & (mask | mask << 16)) >> 1) + ((d & (mask | mask << 16)) >> 1) \
 	 + (s & d & (~(mask | mask << 16))))
 
-static void Blit16to16SurfaceAlpha128(SDL_BlitInfo *info, Uint16 mask)
+static void Blit16to16SurfaceAlpha128(SDL_BlitInfo *info, uint16_t mask)
 {
 	int width       = info->d_width;
 	int height      = info->d_height;
@@ -399,11 +399,11 @@ static void Blit16to16SurfaceAlpha128(SDL_BlitInfo *info, Uint16 mask)
          /* final pixel if any */
          if(w)
          {
-            Uint16 d = *dstp, s;
+            uint16_t d = *dstp, s;
 #ifdef MSB_FIRST
-            s = (Uint16)prev_sw;
+            s = (uint16_t)prev_sw;
 #else
-            s = (Uint16)(prev_sw >> 16);
+            s = (uint16_t)(prev_sw >> 16);
 #endif
             *dstp = BLEND16_50(d, s, mask);
             srcp++;
@@ -420,7 +420,7 @@ static void Blit16to16SurfaceAlpha128(SDL_BlitInfo *info, Uint16 mask)
          /* first odd pixel? */
          if((uintptr_t)srcp & 2)
          {
-            Uint16 d = *dstp, s = *srcp;
+            uint16_t d = *dstp, s = *srcp;
             *dstp = BLEND16_50(d, s, mask);
             srcp++;
             dstp++;
@@ -441,7 +441,7 @@ static void Blit16to16SurfaceAlpha128(SDL_BlitInfo *info, Uint16 mask)
          /* last odd pixel? */
          if(w)
          {
-            Uint16 d = *dstp, s = *srcp;
+            uint16_t d = *dstp, s = *srcp;
             *dstp = BLEND16_50(d, s, mask);
             srcp++;
             dstp++;
@@ -486,7 +486,7 @@ static void Blit565to565SurfaceAlpha(SDL_BlitInfo *info)
                d = (d | d << 16) & 0x07e0f81f;
                d += (s - d) * alpha >> 5;
                d &= 0x07e0f81f;
-               *dstp++ = (Uint16)(d | d >> 16);
+               *dstp++ = (uint16_t)(d | d >> 16);
                }, width);
          srcp += srcskip;
          dstp += dstskip;
@@ -508,9 +508,9 @@ static void Blit555to555SurfaceAlpha(SDL_BlitInfo *info)
    {
       int width    = info->d_width;
       int height   = info->d_height;
-      Uint16 *srcp = (uint16_t *)info->s_pixels;
+      uint16_t *srcp = (uint16_t *)info->s_pixels;
       int srcskip  = info->s_skip >> 1;
-      Uint16 *dstp = (uint16_t *)info->d_pixels;
+      uint16_t *dstp = (uint16_t *)info->d_pixels;
       int dstskip  = info->d_skip >> 1;
       alpha >>= 3;		/* downscale alpha to 5 bits */
 
@@ -527,7 +527,7 @@ static void Blit555to555SurfaceAlpha(SDL_BlitInfo *info)
                d = (d | d << 16) & 0x03e07c1f;
                d += (s - d) * alpha >> 5;
                d &= 0x03e07c1f;
-               *dstp++ = (Uint16)(d | d >> 16);
+               *dstp++ = (uint16_t)(d | d >> 16);
                }, width);
          srcp += srcskip;
          dstp += dstskip;
@@ -556,7 +556,7 @@ static void BlitARGBto565PixelAlpha(SDL_BlitInfo *info)
                Benchmark this! */
             if(alpha) {   
             if(alpha == (SDL_ALPHA_OPAQUE >> 3)) {
-            *dstp = (Uint16)((s >> 8 & 0xf800) + (s >> 5 & 0x7e0) + (s >> 3  & 0x1f));
+            *dstp = (uint16_t)((s >> 8 & 0xf800) + (s >> 5 & 0x7e0) + (s >> 3  & 0x1f));
             } else {
             uint32_t d = *dstp;
             /*
@@ -568,7 +568,7 @@ static void BlitARGBto565PixelAlpha(SDL_BlitInfo *info)
             d = (d | d << 16) & 0x07e0f81f;
             d += (s - d) * alpha >> 5;
             d &= 0x07e0f81f;
-            *dstp = (Uint16)(d | d >> 16);
+            *dstp = (uint16_t)(d | d >> 16);
             }
             }
             srcp++;
@@ -600,7 +600,7 @@ static void BlitARGBto555PixelAlpha(SDL_BlitInfo *info)
                Benchmark this! */
             if(alpha) {   
             if(alpha == (SDL_ALPHA_OPAQUE >> 3)) {
-            *dstp = (Uint16)((s >> 9 & 0x7c00) + (s >> 6 & 0x3e0) + (s >> 3  & 0x1f));
+            *dstp = (uint16_t)((s >> 9 & 0x7c00) + (s >> 6 & 0x3e0) + (s >> 3  & 0x1f));
             } else {
             uint32_t d = *dstp;
             /*
@@ -612,7 +612,7 @@ static void BlitARGBto555PixelAlpha(SDL_BlitInfo *info)
             d = (d | d << 16) & 0x03e07c1f;
             d += (s - d) * alpha >> 5;
             d &= 0x03e07c1f;
-            *dstp = (Uint16)(d | d >> 16);
+            *dstp = (uint16_t)(d | d >> 16);
             }
             }
             srcp++;
