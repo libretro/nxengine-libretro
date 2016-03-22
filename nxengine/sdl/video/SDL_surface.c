@@ -225,9 +225,8 @@ int LRSDL_SetAlpha (SDL_Surface *surface, Uint32 flag, Uint8 value)
 
 int LRSDL_SetAlphaChannel(SDL_Surface *surface, Uint8 value)
 {
-   int row, col;
+   int row;
    int offset;
-   uint8_t *buf;
 
    if ( (surface->format->Amask != 0xFF000000) &&
          (surface->format->Amask != 0x000000FF) )
@@ -237,23 +236,16 @@ int LRSDL_SetAlphaChannel(SDL_Surface *surface, Uint8 value)
    }
 
 #ifdef MSB_FIRST
-   if ( surface->format->Amask == 0xFF000000 )
-      offset = 0;
-   else
-      offset = 3;
+   offset = ( surface->format->Amask == 0xFF000000 ) ? 0 : 3;
 #else
-   if ( surface->format->Amask == 0xFF000000 )
-      offset = 3;
-   else
-      offset = 0;
+   offset = ( surface->format->Amask == 0xFF000000 ) ? 3 : 0;
 #endif
-
-   row = surface->h;
+   row    = surface->h;
 
    while (row--)
    {
-      col = surface->w;
-      buf = (uint8_t*)surface->pixels + row * surface->pitch + offset;
+      int      col = surface->w;
+      uint8_t *buf = (uint8_t*)surface->pixels + row * surface->pitch + offset;
 
       while(col--)
       {
