@@ -43,7 +43,7 @@ static void BlitNto1SurfaceAlpha(SDL_BlitInfo *info)
 
 	while ( height-- )
    {
-      DUFFS_LOOP4(
+      DUFFS_LOOP(
             {
             uint32_t Pixel;
             unsigned sR;
@@ -96,7 +96,7 @@ static void BlitNto1PixelAlpha(SDL_BlitInfo *info)
 	/* FIXME: fix alpha bit field expansion here too? */
 	while ( height-- )
    {
-      DUFFS_LOOP4(
+      DUFFS_LOOP(
             {
             uint32_t Pixel;
             unsigned sR;
@@ -201,7 +201,7 @@ static void BlitRGBtoRGBSurfaceAlpha128(SDL_BlitInfo *info)
 
 	while(height--)
    {
-      DUFFS_LOOP4({
+      DUFFS_LOOP({
             uint32_t s = *srcp++;
             uint32_t d = *dstp;
             *dstp++ = ((((s & 0x00fefefe) + (d & 0x00fefefe)) >> 1)
@@ -296,7 +296,7 @@ static void BlitRGBtoRGBPixelAlpha(SDL_BlitInfo *info)
 
 	while(height--)
    {
-      DUFFS_LOOP4({
+      DUFFS_LOOP({
             uint32_t dalpha;
             uint32_t d;
             uint32_t s1;
@@ -474,7 +474,7 @@ static void Blit565to565SurfaceAlpha(SDL_BlitInfo *info)
 
       while(height--)
       {
-         DUFFS_LOOP4({
+         DUFFS_LOOP({
                uint32_t s = *srcp++;
                uint32_t d = *dstp;
                /*
@@ -515,7 +515,7 @@ static void Blit555to555SurfaceAlpha(SDL_BlitInfo *info)
       alpha >>= 3;		/* downscale alpha to 5 bits */
 
       while(height--) {
-         DUFFS_LOOP4({
+         DUFFS_LOOP({
                uint32_t s = *srcp++;
                uint32_t d = *dstp;
                /*
@@ -547,7 +547,7 @@ static void BlitARGBto565PixelAlpha(SDL_BlitInfo *info)
 
 	while(height--)
    {
-      DUFFS_LOOP4({
+      DUFFS_LOOP({
             uint32_t     s = *srcp;
             unsigned alpha = s >> 27; /* downscale alpha to 5 bits */
             /* FIXME: Here we special-case opaque alpha since the
@@ -591,7 +591,7 @@ static void BlitARGBto555PixelAlpha(SDL_BlitInfo *info)
 
 	while(height--)
    {
-      DUFFS_LOOP4({
+      DUFFS_LOOP({
             uint32_t     s = *srcp;
             unsigned alpha = s >> 27; /* downscale alpha to 5 bits */
             /* FIXME: Here we special-case opaque alpha since the
@@ -643,7 +643,7 @@ static void BlitNtoNSurfaceAlpha(SDL_BlitInfo *info)
    {
       while ( height-- )
       {
-         DUFFS_LOOP4(
+         DUFFS_LOOP(
                {
                uint32_t Pixel;
                unsigned sR;
@@ -685,7 +685,7 @@ static void BlitNtoNSurfaceAlphaKey(SDL_BlitInfo *info)
 
 	while ( height-- )
    {
-      DUFFS_LOOP4(
+      DUFFS_LOOP(
             {
             uint32_t Pixel;
             unsigned sR;
@@ -731,7 +731,7 @@ static void BlitNtoNPixelAlpha(SDL_BlitInfo *info)
 	   need a branch (or a divide). */
 	while ( height-- )
    {
-      DUFFS_LOOP4(
+      DUFFS_LOOP(
             {
             uint32_t Pixel;
             unsigned sR;

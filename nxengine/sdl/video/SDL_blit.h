@@ -392,10 +392,6 @@ do {						\
 		pixel_copy_increment;					\
 	}								\
 }
-#define DUFFS_LOOP8(pixel_copy_increment, width)			\
-	DUFFS_LOOP(pixel_copy_increment, width)
-#define DUFFS_LOOP4(pixel_copy_increment, width)			\
-	DUFFS_LOOP(pixel_copy_increment, width)
 
 /* Prevent Visual C++ 6.0 from printing out stupid warnings */
 #if defined(_MSC_VER) && (_MSC_VER >= 600)

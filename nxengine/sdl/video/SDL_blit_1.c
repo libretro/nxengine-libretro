@@ -374,7 +374,7 @@ static void Blit1toNAlpha(SDL_BlitInfo *info)
       int sR, sG, sB;
       int dR, dG, dB;
 
-      DUFFS_LOOP4(
+      DUFFS_LOOP(
             {
             uint32_t pixel;
             sR = srcpal[*src].r;
