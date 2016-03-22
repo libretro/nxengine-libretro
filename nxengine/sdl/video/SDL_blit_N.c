@@ -48,24 +48,61 @@
 static void Blit_RGB888_index8(SDL_BlitInfo *info)
 {
 	int c;
-	int width, height;
-	Uint32 *src;
-	const Uint8 *map;
-	Uint8 *dst;
-	int srcskip, dstskip;
+	int width          = info->d_width;
+	int height         = info->d_height;
+	uint32_t *src      = (uint32_t*)info->s_pixels;
+	int srcskip        = info->s_skip/4;
+	uint8_t * dst      = info->d_pixels;
+	int dstskip        = info->d_skip;
+	const uint8_t *map = info->table;
 
-	/* Set up some basic variables */
-	width = info->d_width;
-	height = info->d_height;
-	src = (Uint32 *)info->s_pixels;
-	srcskip = info->s_skip/4;
-	dst = info->d_pixels;
-	dstskip = info->d_skip;
-	map = info->table;
+	if ( map )
+   {
+      int Pixel;
 
-	if ( map == NULL ) {
-		while ( height-- ) {
-			for ( c=width/4; c; --c ) {
+      while ( height-- )
+      {
+         for ( c=width/4; c; --c )
+         {
+            /* Pack RGB into 8bit pixel */
+            RGB888_RGB332(Pixel, *src);
+            *dst++ = map[Pixel];
+            ++src;
+            RGB888_RGB332(Pixel, *src);
+            *dst++ = map[Pixel];
+            ++src;
+            RGB888_RGB332(Pixel, *src);
+            *dst++ = map[Pixel];
+            ++src;
+            RGB888_RGB332(Pixel, *src);
+            *dst++ = map[Pixel];
+            ++src;
+         }
+         switch ( width & 3 )
+         {
+            case 3:
+               RGB888_RGB332(Pixel, *src);
+               *dst++ = map[Pixel];
+               ++src;
+            case 2:
+               RGB888_RGB332(Pixel, *src);
+               *dst++ = map[Pixel];
+               ++src;
+            case 1:
+               RGB888_RGB332(Pixel, *src);
+               *dst++ = map[Pixel];
+               ++src;
+         }
+         src += srcskip;
+         dst += dstskip;
+      }
+   }
+   else
+   {
+		while ( height-- )
+      {
+			for ( c=width/4; c; --c )
+         {
 				/* Pack RGB into 8bit pixel */
 				++src;
 				RGB888_RGB332(*dst++, *src);
@@ -75,7 +112,9 @@ static void Blit_RGB888_index8(SDL_BlitInfo *info)
 				RGB888_RGB332(*dst++, *src);
 				++src;
 			}
-			switch ( width & 3 ) {
+
+			switch ( width & 3 )
+         {
 				case 3:
 					RGB888_RGB332(*dst++, *src);
 					++src;
@@ -89,43 +128,7 @@ static void Blit_RGB888_index8(SDL_BlitInfo *info)
 			src += srcskip;
 			dst += dstskip;
 		}
-	} else {
-		int Pixel;
-
-		while ( height-- ) {
-			for ( c=width/4; c; --c ) {
-				/* Pack RGB into 8bit pixel */
-				RGB888_RGB332(Pixel, *src);
-				*dst++ = map[Pixel];
-				++src;
-				RGB888_RGB332(Pixel, *src);
-				*dst++ = map[Pixel];
-				++src;
-				RGB888_RGB332(Pixel, *src);
-				*dst++ = map[Pixel];
-				++src;
-				RGB888_RGB332(Pixel, *src);
-				*dst++ = map[Pixel];
-				++src;
-			}
-			switch ( width & 3 ) {
-				case 3:
-					RGB888_RGB332(Pixel, *src);
-					*dst++ = map[Pixel];
-					++src;
-				case 2:
-					RGB888_RGB332(Pixel, *src);
-					*dst++ = map[Pixel];
-					++src;
-				case 1:
-					RGB888_RGB332(Pixel, *src);
-					*dst++ = map[Pixel];
-					++src;
-			}
-			src += srcskip;
-			dst += dstskip;
-		}
-	}
+   }
 }
 /* Special optimized blit for RGB 8-8-8 --> RGB 5-5-5 */
 #define RGB888_RGB555(dst, src) { \
@@ -144,94 +147,98 @@ static void Blit_RGB888_index8(SDL_BlitInfo *info)
 static void Blit_RGB888_RGB555(SDL_BlitInfo *info)
 {
 	int c;
-	int width, height;
-	Uint32 *src;
-	Uint16 *dst;
-	int srcskip, dstskip;
-
-	/* Set up some basic variables */
-	width = info->d_width;
-	height = info->d_height;
-	src = (Uint32 *)info->s_pixels;
-	srcskip = info->s_skip/4;
-	dst = (Uint16 *)info->d_pixels;
-	dstskip = info->d_skip/2;
+	int width     = info->d_width;
+	int height    = info->d_height;
+	uint32_t *src = (uint32_t*)info->s_pixels;
+	int srcskip   = info->s_skip/4;
+	uint16_t *dst = (uint16_t*)info->d_pixels;
+	int dstskip   = info->d_skip/2;
 
 	/* Memory align at 4-byte boundary, if necessary */
-	if ( (long)dst & 0x03 ) {
-		/* Don't do anything if width is 0 */
-		if ( width == 0 ) {
-			return;
-		}
-		--width;
+	if ( (long)dst & 0x03 )
+   {
+      /* Don't do anything if width is 0 */
+      if ( width == 0 )
+         return;
+      --width;
 
-		while ( height-- ) {
-			/* Perform copy alignment */
-			RGB888_RGB555(dst, src);
-			++src;
-			++dst;
+      while ( height-- )
+      {
+         /* Perform copy alignment */
+         RGB888_RGB555(dst, src);
+         ++src;
+         ++dst;
 
-			/* Copy in 4 pixel chunks */
-			for ( c=width/4; c; --c ) {
-				RGB888_RGB555_TWO(dst, src);
-				src += 2;
-				dst += 2;
-				RGB888_RGB555_TWO(dst, src);
-				src += 2;
-				dst += 2;
-			}
-			/* Get any leftovers */
-			switch (width & 3) {
-				case 3:
-					RGB888_RGB555(dst, src);
-					++src;
-					++dst;
-				case 2:
-					RGB888_RGB555_TWO(dst, src);
-					src += 2;
-					dst += 2;
-					break;
-				case 1:
-					RGB888_RGB555(dst, src);
-					++src;
-					++dst;
-					break;
-			}
-			src += srcskip;
-			dst += dstskip;
-		}
-	} else { 
-		while ( height-- ) {
-			/* Copy in 4 pixel chunks */
-			for ( c=width/4; c; --c ) {
-				RGB888_RGB555_TWO(dst, src);
-				src += 2;
-				dst += 2;
-				RGB888_RGB555_TWO(dst, src);
-				src += 2;
-				dst += 2;
-			}
-			/* Get any leftovers */
-			switch (width & 3) {
-				case 3:
-					RGB888_RGB555(dst, src);
-					++src;
-					++dst;
-				case 2:
-					RGB888_RGB555_TWO(dst, src);
-					src += 2;
-					dst += 2;
-					break;
-				case 1:
-					RGB888_RGB555(dst, src);
-					++src;
-					++dst;
-					break;
-			}
-			src += srcskip;
-			dst += dstskip;
-		}
-	}
+         /* Copy in 4 pixel chunks */
+         for ( c=width/4; c; --c )
+         {
+            RGB888_RGB555_TWO(dst, src);
+            src += 2;
+            dst += 2;
+            RGB888_RGB555_TWO(dst, src);
+            src += 2;
+            dst += 2;
+         }
+
+         /* Get any leftovers */
+         switch (width & 3)
+         {
+            case 3:
+               RGB888_RGB555(dst, src);
+               ++src;
+               ++dst;
+            case 2:
+               RGB888_RGB555_TWO(dst, src);
+               src += 2;
+               dst += 2;
+               break;
+            case 1:
+               RGB888_RGB555(dst, src);
+               ++src;
+               ++dst;
+               break;
+         }
+         src += srcskip;
+         dst += dstskip;
+      }
+   }
+   else 
+   {
+      while ( height-- )
+      {
+         /* Copy in 4 pixel chunks */
+         for ( c=width/4; c; --c )
+         {
+            RGB888_RGB555_TWO(dst, src);
+            src += 2;
+            dst += 2;
+            RGB888_RGB555_TWO(dst, src);
+            src += 2;
+            dst += 2;
+         }
+
+         /* Get any leftovers */
+         switch (width & 3)
+         {
+            case 3:
+               RGB888_RGB555(dst, src);
+               ++src;
+               ++dst;
+            case 2:
+               RGB888_RGB555_TWO(dst, src);
+               src += 2;
+               dst += 2;
+               break;
+            case 1:
+               RGB888_RGB555(dst, src);
+               ++src;
+               ++dst;
+               break;
+         }
+         src += srcskip;
+         dst += dstskip;
+      }
+   }
 }
 /* Special optimized blit for RGB 8-8-8 --> RGB 5-6-5 */
 #define RGB888_RGB565(dst, src) { \
@@ -250,93 +257,96 @@ static void Blit_RGB888_RGB555(SDL_BlitInfo *info)
 static void Blit_RGB888_RGB565(SDL_BlitInfo *info)
 {
 	int c;
-	int width, height;
-	Uint32 *src;
-	Uint16 *dst;
-	int srcskip, dstskip;
-
-	/* Set up some basic variables */
-	width = info->d_width;
-	height = info->d_height;
-	src = (Uint32 *)info->s_pixels;
-	srcskip = info->s_skip/4;
-	dst = (Uint16 *)info->d_pixels;
-	dstskip = info->d_skip/2;
+	int width     = info->d_width;
+	int height    = info->d_height;
+	uint32_t *src = (uint32_t*)info->s_pixels;
+	int srcskip   = info->s_skip/4;
+	uint16_t *dst = (uint16_t*)info->d_pixels;
+	int dstskip   = info->d_skip/2;
 
 	/* Memory align at 4-byte boundary, if necessary */
-	if ( (long)dst & 0x03 ) {
-		/* Don't do anything if width is 0 */
-		if ( width == 0 ) {
-			return;
-		}
-		--width;
+	if ( (long)dst & 0x03 )
+   {
+      /* Don't do anything if width is 0 */
+      if ( width == 0 )
+         return;
+      --width;
 
-		while ( height-- ) {
-			/* Perform copy alignment */
-			RGB888_RGB565(dst, src);
-			++src;
-			++dst;
+      while ( height-- )
+      {
+         /* Perform copy alignment */
+         RGB888_RGB565(dst, src);
+         ++src;
+         ++dst;
 
-			/* Copy in 4 pixel chunks */
-			for ( c=width/4; c; --c ) {
-				RGB888_RGB565_TWO(dst, src);
-				src += 2;
-				dst += 2;
-				RGB888_RGB565_TWO(dst, src);
-				src += 2;
-				dst += 2;
-			}
-			/* Get any leftovers */
-			switch (width & 3) {
-				case 3:
-					RGB888_RGB565(dst, src);
-					++src;
-					++dst;
-				case 2:
-					RGB888_RGB565_TWO(dst, src);
-					src += 2;
-					dst += 2;
-					break;
-				case 1:
-					RGB888_RGB565(dst, src);
-					++src;
-					++dst;
-					break;
-			}
-			src += srcskip;
-			dst += dstskip;
-		}
-	} else { 
-		while ( height-- ) {
-			/* Copy in 4 pixel chunks */
-			for ( c=width/4; c; --c ) {
-				RGB888_RGB565_TWO(dst, src);
-				src += 2;
-				dst += 2;
-				RGB888_RGB565_TWO(dst, src);
-				src += 2;
-				dst += 2;
-			}
-			/* Get any leftovers */
-			switch (width & 3) {
-				case 3:
-					RGB888_RGB565(dst, src);
-					++src;
-					++dst;
-				case 2:
-					RGB888_RGB565_TWO(dst, src);
-					src += 2;
-					dst += 2;
-					break;
-				case 1:
-					RGB888_RGB565(dst, src);
-					++src;
-					++dst;
-					break;
-			}
-			src += srcskip;
-			dst += dstskip;
-		}
+         /* Copy in 4 pixel chunks */
+         for ( c=width/4; c; --c )
+         {
+            RGB888_RGB565_TWO(dst, src);
+            src += 2;
+            dst += 2;
+            RGB888_RGB565_TWO(dst, src);
+            src += 2;
+            dst += 2;
+         }
+         /* Get any leftovers */
+         switch (width & 3)
+         {
+            case 3:
+               RGB888_RGB565(dst, src);
+               ++src;
+               ++dst;
+            case 2:
+               RGB888_RGB565_TWO(dst, src);
+               src += 2;
+               dst += 2;
+               break;
+            case 1:
+               RGB888_RGB565(dst, src);
+               ++src;
+               ++dst;
+               break;
+         }
+         src += srcskip;
+         dst += dstskip;
+      }
+   }
+   else
+   { 
+		while ( height-- )
+      {
+         /* Copy in 4 pixel chunks */
+         for ( c=width/4; c; --c )
+         {
+            RGB888_RGB565_TWO(dst, src);
+            src += 2;
+            dst += 2;
+            RGB888_RGB565_TWO(dst, src);
+            src += 2;
+            dst += 2;
+         }
+
+         /* Get any leftovers */
+         switch (width & 3)
+         {
+            case 3:
+               RGB888_RGB565(dst, src);
+               ++src;
+               ++dst;
+            case 2:
+               RGB888_RGB565_TWO(dst, src);
+               src += 2;
+               dst += 2;
+               break;
+            case 1:
+               RGB888_RGB565(dst, src);
+               ++src;
+               ++dst;
+               break;
+         }
+         src += srcskip;
+         dst += dstskip;
+      }
 	}
 }
 
@@ -345,22 +355,18 @@ static void Blit_RGB888_RGB565(SDL_BlitInfo *info)
 static void Blit_RGB565_32(SDL_BlitInfo *info, const Uint32 *map)
 {
 	int c;
-	int width, height;
-	Uint8 *src;
-	Uint32 *dst;
-	int srcskip, dstskip;
+	int width     = info->d_width;
+	int height    = info->d_height;
+	uint8_t *src  = (Uint8 *)info->s_pixels;
+	int srcskip   = info->s_skip;
+	uint32_t *dst = (Uint32 *)info->d_pixels;
+	int dstskip   = info->d_skip/4;
 
-	/* Set up some basic variables */
-	width = info->d_width;
-	height = info->d_height;
-	src = (Uint8 *)info->s_pixels;
-	srcskip = info->s_skip;
-	dst = (Uint32 *)info->d_pixels;
-	dstskip = info->d_skip/4;
-
-	while ( height-- ) {
+	while ( height-- )
+   {
 		/* Copy in 4 pixel chunks */
-		for ( c=width/4; c; --c ) {
+		for ( c=width/4; c; --c )
+      {
 			*dst++ = RGB565_32(dst, src, map);
 			src += 2;
 			*dst++ = RGB565_32(dst, src, map);
@@ -370,8 +376,10 @@ static void Blit_RGB565_32(SDL_BlitInfo *info, const Uint32 *map)
 			*dst++ = RGB565_32(dst, src, map);
 			src += 2;
 		}
+
 		/* Get any leftovers */
-		switch (width & 3) {
+		switch (width & 3)
+      {
 			case 3:
 				*dst++ = RGB565_32(dst, src, map);
 				src += 2;
@@ -996,58 +1004,54 @@ static void Blit_RGB888_index8_map(SDL_BlitInfo *info)
 static void BlitNto1(SDL_BlitInfo *info)
 {
 	int c;
-	int width, height;
-	Uint8 *src;
-	const Uint8 *map;
-	Uint8 *dst;
-	int srcskip, dstskip;
-	int srcbpp;
-	Uint32 Pixel;
+	uint32_t Pixel;
 	int  sR, sG, sB;
-	SDL_PixelFormat *srcfmt;
+	int       width         = info->d_width;
+	int       height        = info->d_height;
+	uint8_t       *src      = info->s_pixels;
+	int srcskip             = info->s_skip;
+	uint8_t       *dst      = info->d_pixels;
+	int dstskip             = info->d_skip;
+	const uint8_t *map      = info->table;
+	SDL_PixelFormat *srcfmt = info->src;
+	int srcbpp              = srcfmt->BytesPerPixel;
 
-	/* Set up some basic variables */
-	width = info->d_width;
-	height = info->d_height;
-	src = info->s_pixels;
-	srcskip = info->s_skip;
-	dst = info->d_pixels;
-	dstskip = info->d_skip;
-	map = info->table;
-	srcfmt = info->src;
-	srcbpp = srcfmt->BytesPerPixel;
+	if ( map == NULL )
+   {
+		while ( height-- )
+      {
+			for ( c=width; c; --c )
+         {
+            DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel,
+                  sR, sG, sB);
 
-	if ( map == NULL ) {
-		while ( height-- ) {
-			for ( c=width; c; --c ) {
-				DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel,
-								sR, sG, sB);
-				if ( 1 ) {
-				  	/* Pack RGB into 8bit pixel */
-				  	*dst = ((sR>>5)<<(3+2))|
-					        ((sG>>5)<<(2)) |
-					        ((sB>>6)<<(0)) ;
-				}
-				dst++;
-				src += srcbpp;
-			}
+            /* Pack RGB into 8bit pixel */
+            *dst = ((sR>>5)<<(3+2))|
+               ((sG>>5)<<(2)) |
+               ((sB>>6)<<(0)) ;
+            dst++;
+            src += srcbpp;
+         }
 			src += srcskip;
 			dst += dstskip;
 		}
-	} else {
-		while ( height-- ) {
-			for ( c=width; c; --c ) {
-				DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel,
-								sR, sG, sB);
-				if ( 1 ) {
-				  	/* Pack RGB into 8bit pixel */
-				  	*dst = map[((sR>>5)<<(3+2))|
-						   ((sG>>5)<<(2))  |
-						   ((sB>>6)<<(0))  ];
-				}
-				dst++;
-				src += srcbpp;
-			}
+	}
+   else
+   {
+		while ( height-- )
+      {
+			for ( c=width; c; --c )
+         {
+            DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel,
+                  sR, sG, sB);
+
+            /* Pack RGB into 8bit pixel */
+            *dst = map[((sR>>5)<<(3+2))|
+               ((sG>>5)<<(2))  |
+               ((sB>>6)<<(0))  ];
+            dst++;
+            src += srcbpp;
+         }
 			src += srcskip;
 			dst += dstskip;
 		}
@@ -1113,50 +1117,54 @@ static void BlitNtoN(SDL_BlitInfo *info)
 	int dstbpp = dstfmt->BytesPerPixel;
 	unsigned alpha = dstfmt->Amask ? srcfmt->alpha : 0;
 
-	while ( height-- ) {
-		DUFFS_LOOP(
-		{
-		        Uint32 Pixel;
-			unsigned sR;
-			unsigned sG;
-			unsigned sB;
-			DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel, sR, sG, sB);
-			ASSEMBLE_RGBA(dst, dstbpp, dstfmt, sR, sG, sB, alpha);
-			dst += dstbpp;
-			src += srcbpp;
-		},
-		width);
-		src += srcskip;
-		dst += dstskip;
-	}
+	while ( height-- )
+   {
+      int n;
+      for (n = width; n > 0; --n)
+      {
+         uint32_t Pixel;
+         unsigned sR;
+         unsigned sG;
+         unsigned sB;
+         DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel, sR, sG, sB);
+         ASSEMBLE_RGBA(dst, dstbpp, dstfmt, sR, sG, sB, alpha);
+         dst += dstbpp;
+         src += srcbpp;
+      }
+
+      src += srcskip;
+      dst += dstskip;
+   }
 }
 
 static void BlitNtoNCopyAlpha(SDL_BlitInfo *info)
 {
-	int width = info->d_width;
-	int height = info->d_height;
-	Uint8 *src = info->s_pixels;
-	int srcskip = info->s_skip;
-	Uint8 *dst = info->d_pixels;
-	int dstskip = info->d_skip;
+	int width               = info->d_width;
+	int height              = info->d_height;
+	uint8_t *src            = info->s_pixels;
+	int srcskip             = info->s_skip;
+	uint8_t *dst            = info->d_pixels;
+	int dstskip             = info->d_skip;
 	SDL_PixelFormat *srcfmt = info->src;
-	int srcbpp = srcfmt->BytesPerPixel;
+	int srcbpp              = srcfmt->BytesPerPixel;
 	SDL_PixelFormat *dstfmt = info->dst;
-	int dstbpp = dstfmt->BytesPerPixel;
-	int c;
+	int dstbpp              = dstfmt->BytesPerPixel;
 
 	/* FIXME: should map alpha to [0..255] correctly! */
-	while ( height-- ) {
-		for ( c=width; c; --c ) {
-		        Uint32 Pixel;
-			unsigned sR, sG, sB, sA;
-			DISEMBLE_RGBA(src, srcbpp, srcfmt, Pixel,
-				      sR, sG, sB, sA);
-			ASSEMBLE_RGBA(dst, dstbpp, dstfmt,
-				      sR, sG, sB, sA);
-			dst += dstbpp;
-			src += srcbpp;
-		}
+	while ( height-- )
+   {
+      int c;
+		for (c = width; c; --c )
+      {
+         uint32_t Pixel;
+         unsigned sR, sG, sB, sA;
+         DISEMBLE_RGBA(src, srcbpp, srcfmt, Pixel,
+               sR, sG, sB, sA);
+         ASSEMBLE_RGBA(dst, dstbpp, dstfmt,
+               sR, sG, sB, sA);
+         dst += dstbpp;
+         src += srcbpp;
+      }
 		src += srcskip;
 		dst += dstskip;
 	}
@@ -1164,94 +1172,90 @@ static void BlitNtoNCopyAlpha(SDL_BlitInfo *info)
 
 static void BlitNto1Key(SDL_BlitInfo *info)
 {
-	int width = info->d_width;
-	int height = info->d_height;
-	Uint8 *src = info->s_pixels;
-	int srcskip = info->s_skip;
-	Uint8 *dst = info->d_pixels;
-	int dstskip = info->d_skip;
-	SDL_PixelFormat *srcfmt = info->src;
-	const Uint8 *palmap = info->table;
-	Uint32 ckey = srcfmt->colorkey;
-	Uint32 rgbmask = ~srcfmt->Amask;
-	int srcbpp;
-	Uint32 Pixel;
+	uint32_t Pixel;
 	unsigned sR, sG, sB;
+	int width               = info->d_width;
+	int height              = info->d_height;
+	uint8_t *src            = info->s_pixels;
+	int srcskip             = info->s_skip;
+	uint8_t *dst            = info->d_pixels;
+	int dstskip             = info->d_skip;
+	SDL_PixelFormat *srcfmt = info->src;
+	const uint8_t *palmap   = info->table;
+	uint32_t rgbmask        = ~srcfmt->Amask;
+	uint32_t ckey           = srcfmt->colorkey & rgbmask;
+	int srcbpp              = srcfmt->BytesPerPixel;
 
-	/* Set up some basic variables */
-	srcbpp = srcfmt->BytesPerPixel;
-	ckey &= rgbmask;
+	if (palmap)
+   {
+		while ( height-- )
+      {
+         int n;
+         for (n = width; n > 0; --n)
+         {
+            DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel,
+                  sR, sG, sB);
 
-	if ( palmap == NULL ) {
-		while ( height-- ) {
-			DUFFS_LOOP(
-			{
-				DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel,
-								sR, sG, sB);
-				if ( (Pixel & rgbmask) != ckey ) {
-				  	/* Pack RGB into 8bit pixel */
-				  	*dst = (Uint8)(((sR>>5)<<(3+2))|
-						           ((sG>>5)<<(2)) |
-						           ((sB>>6)<<(0)));
-				}
-				dst++;
-				src += srcbpp;
-			},
-			width);
-			src += srcskip;
-			dst += dstskip;
-		}
-	} else {
-		while ( height-- ) {
-			DUFFS_LOOP(
-			{
-				DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel,
-								sR, sG, sB);
-				if ( (Pixel & rgbmask) != ckey ) {
-				  	/* Pack RGB into 8bit pixel */
-				  	*dst = (Uint8)palmap[((sR>>5)<<(3+2))|
-							             ((sG>>5)<<(2))  |
-							             ((sB>>6)<<(0))  ];
-				}
-				dst++;
-				src += srcbpp;
-			},
-			width);
-			src += srcskip;
-			dst += dstskip;
-		}
+            if ((Pixel & rgbmask) != ckey)   /* Pack RGB into 8bit pixel */
+               *dst = (uint8_t)palmap[((sR>>5)<<(3+2))|
+                  ((sG>>5)<<(2))  |
+                  ((sB>>6)<<(0))  ];
+            dst++;
+            src += srcbpp;
+         }
+
+         src += srcskip;
+         dst += dstskip;
+      }
 	}
+   else
+   {
+      while ( height-- )
+      {
+         int n;
+         for (n = width; n > 0; --n)
+         {
+            DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel,
+                  sR, sG, sB);
+            if ( (Pixel & rgbmask) != ckey ) {
+               /* Pack RGB into 8bit pixel */
+               *dst = (uint8_t)(((sR>>5)<<(3+2))|
+                     ((sG>>5)<<(2)) |
+                     ((sB>>6)<<(0)));
+            }
+            dst++;
+            src += srcbpp;
+         }
+         src += srcskip;
+         dst += dstskip;
+      }
+   }
 }
 
 static void Blit2to2Key(SDL_BlitInfo *info)
 {
-	int width = info->d_width;
-	int height = info->d_height;
-	Uint16 *srcp = (Uint16 *)info->s_pixels;
-	int srcskip = info->s_skip;
-	Uint16 *dstp = (Uint16 *)info->d_pixels;
-	int dstskip = info->d_skip;
-	Uint32 ckey = info->src->colorkey;
-	Uint32 rgbmask = ~info->src->Amask;
+	int width       = info->d_width;
+	int height      = info->d_height;
+	Uint16 *srcp    = (Uint16 *)info->s_pixels;
+	int srcskip     = info->s_skip / 2;
+	Uint16 *dstp    = (Uint16 *)info->d_pixels;
+	int dstskip     = info->d_skip / 2;
+	Uint32 rgbmask  = ~info->src->Amask;
+	Uint32 ckey     = info->src->colorkey & rgbmask;
 
-	/* Set up some basic variables */
-        srcskip /= 2;
-        dstskip /= 2;
-	ckey &= rgbmask;
-
-	while ( height-- ) {
-		DUFFS_LOOP(
-		{
-			if ( (*srcp & rgbmask) != ckey ) {
-				*dstp = *srcp;
-			}
-			dstp++;
-			srcp++;
-		},
-		width);
-		srcp += srcskip;
-		dstp += dstskip;
-	}
+	while ( height-- )
+   {
+      int n;
+      for (n = width; n > 0; --n)
+      {
+         if ( (*srcp & rgbmask) != ckey )
+            *dstp = *srcp;
+         dstp++;
+         srcp++;
+      }
+      srcp += srcskip;
+      dstp += dstskip;
+   }
 }
 
 static void BlitNtoNKey(SDL_BlitInfo *info)
@@ -1297,44 +1301,42 @@ static void BlitNtoNKey(SDL_BlitInfo *info)
 
 static void BlitNtoNKeyCopyAlpha(SDL_BlitInfo *info)
 {
-	int width = info->d_width;
-	int height = info->d_height;
-	Uint8 *src = info->s_pixels;
-	int srcskip = info->s_skip;
-	Uint8 *dst = info->d_pixels;
-	int dstskip = info->d_skip;
-	Uint32 ckey = info->src->colorkey;
-	SDL_PixelFormat *srcfmt = info->src;
-	SDL_PixelFormat *dstfmt = info->dst;
-	Uint32 rgbmask = ~srcfmt->Amask;
-
-	Uint8 srcbpp;
-	Uint8 dstbpp;
 	Uint32 Pixel;
 	unsigned sR, sG, sB, sA;
-
-	/* Set up some basic variables */
-	srcbpp = srcfmt->BytesPerPixel;
-	dstbpp = dstfmt->BytesPerPixel;
-	ckey &= rgbmask;
+	int               width = info->d_width;
+	int              height = info->d_height;
+	uint8_t            *src = info->s_pixels;
+	int             srcskip = info->s_skip;
+	uint8_t            *dst = info->d_pixels;
+	int             dstskip = info->d_skip;
+	SDL_PixelFormat *srcfmt = info->src;
+	uint32_t        rgbmask = ~srcfmt->Amask;
+	uint32_t           ckey = info->src->colorkey & rgbmask;
+	SDL_PixelFormat *dstfmt = info->dst;
+	uint8_t          srcbpp = srcfmt->BytesPerPixel;
+	uint8_t          dstbpp = dstfmt->BytesPerPixel;
 
 	/* FIXME: should map alpha to [0..255] correctly! */
-	while ( height-- ) {
-		DUFFS_LOOP(
-		{
-			DISEMBLE_RGBA(src, srcbpp, srcfmt, Pixel,
-				      sR, sG, sB, sA);
-			if ( (Pixel & rgbmask) != ckey ) {
-				  ASSEMBLE_RGBA(dst, dstbpp, dstfmt,
-						sR, sG, sB, sA);
-			}
-			dst += dstbpp;
-			src += srcbpp;
-		},
-		width);
-		src += srcskip;
-		dst += dstskip;
-	}
+	while ( height-- )
+   {
+      int n;
+      for (n = width; n > 0; --n)
+      {
+         DISEMBLE_RGBA(src, srcbpp, srcfmt, Pixel,
+               sR, sG, sB, sA);
+
+         if ( (Pixel & rgbmask) != ckey )
+         {
+            ASSEMBLE_RGBA(dst, dstbpp, dstfmt,
+                  sR, sG, sB, sA);
+         }
+         dst += dstbpp;
+         src += srcbpp;
+      }
+
+      src += srcskip;
+      dst += dstskip;
+   }
 }
 
 /* Normal N to N optimized blitters */
