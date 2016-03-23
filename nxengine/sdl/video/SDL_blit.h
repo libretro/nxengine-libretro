@@ -305,29 +305,30 @@ static __inline void DISEMBLE_RGBA(void *buf, int bpp,
 /* FIXME: this isn't correct, especially for Alpha (maximum != 255) */
 #define PIXEL_FROM_RGBA(fmt, r, g, b, a) (((r>>fmt->Rloss)<<fmt->Rshift)| ((g>>fmt->Gloss)<<fmt->Gshift)| ((b>>fmt->Bloss)<<fmt->Bshift)| ((a>>fmt->Aloss)<<fmt->Ashift))
 
-#define ASSEMBLE_RGBA(buf, bpp, fmt, r, g, b, a)			\
-{									\
-	switch (bpp) {							\
-		case 2: \
-			*((uint16_t*)(buf)) = PIXEL_FROM_RGBA(fmt, r, g, b, a); \
-		break;							\
-		case 3: { /* FIXME: broken code (no alpha) */		\
-                        if(SDL_BYTEORDER == SDL_LIL_ENDIAN) {		\
-			        *((buf)+fmt->Rshift/8) = r;		\
-				*((buf)+fmt->Gshift/8) = g;		\
-				*((buf)+fmt->Bshift/8) = b;		\
-			} else {					\
-			        *((buf)+2-fmt->Rshift/8) = r;		\
-				*((buf)+2-fmt->Gshift/8) = g;		\
-				*((buf)+2-fmt->Bshift/8) = b;		\
-			}						\
-		}							\
-		break;							\
-									\
-		case 4: \
-			*((uint32_t*)(buf)) = PIXEL_FROM_RGBA(fmt, r, g, b, a);			\
-		break;							\
-	}								\
+static __inline void ASSEMBLE_RGBA(void *buf, int bpp,
+      SDL_PixelFormat *fmt, int r, int g, int b, int a)
+{
+   switch (bpp)
+   {
+      case 2:
+         *((uint16_t*)(buf)) = PIXEL_FROM_RGBA(fmt, r, g, b, a);
+         break;
+      case 3:
+         /* FIXME: broken code (no alpha) */
+#ifdef MSB_FIRST
+         *(((uint32_t*)(buf))+2-fmt->Rshift/8) = r;
+         *(((uint32_t*)(buf))+2-fmt->Gshift/8) = g;
+         *(((uint32_t*)(buf))+2-fmt->Bshift/8) = b;
+#else
+         *(((uint32_t*)(buf))+fmt->Rshift/8)   = r;
+         *(((uint32_t*)(buf))+fmt->Gshift/8)   = g;
+         *(((uint32_t*)(buf))+fmt->Bshift/8)   = b;
+#endif
+         break;
+      case 4:
+         *((uint32_t*)(buf)) = PIXEL_FROM_RGBA(fmt, r, g, b, a);
+         break;
+   }
 }
 
 /* Blend the RGB values of two Pixels based on a source alpha value */

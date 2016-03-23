@@ -1123,9 +1123,9 @@ static void BlitNtoN(SDL_BlitInfo *info)
       for (n = width; n > 0; --n)
       {
          uint32_t Pixel;
-         unsigned sR;
-         unsigned sG;
-         unsigned sB;
+         int sR;
+         int sG;
+         int sB;
          DISEMBLE_RGB(src, srcbpp, srcfmt, &Pixel, &sR, &sG, &sB);
          ASSEMBLE_RGBA(dst, dstbpp, dstfmt, sR, sG, sB, alpha);
          dst += dstbpp;
@@ -1157,7 +1157,7 @@ static void BlitNtoNCopyAlpha(SDL_BlitInfo *info)
       for (c = width; c; --c )
       {
          uint32_t Pixel;
-         unsigned sR, sG, sB, sA;
+         int sR, sG, sB, sA;
 
          DISEMBLE_RGBA(src, srcbpp, srcfmt, &Pixel,
                &sR, &sG, &sB, &sA);
@@ -1174,7 +1174,7 @@ static void BlitNtoNCopyAlpha(SDL_BlitInfo *info)
 static void BlitNto1Key(SDL_BlitInfo *info)
 {
    uint32_t Pixel;
-   unsigned sR, sG, sB;
+   int sR, sG, sB;
    int width               = info->d_width;
    int height              = info->d_height;
    uint8_t *src            = info->s_pixels;
@@ -1302,7 +1302,7 @@ static void BlitNtoNKey(SDL_BlitInfo *info)
 static void BlitNtoNKeyCopyAlpha(SDL_BlitInfo *info)
 {
    uint32_t Pixel;
-   unsigned sR, sG, sB, sA;
+   int sR, sG, sB, sA;
    int               width = info->d_width;
    int              height = info->d_height;
    uint8_t            *src = info->s_pixels;
