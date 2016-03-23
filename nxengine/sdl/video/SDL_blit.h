@@ -385,14 +385,6 @@ do {						\
     }									\
 }
 
-/* Don't use Duff's device to unroll loops */
-#define DUFFS_LOOP(pixel_copy_increment, width)				\
-{ int n;								\
-	for ( n=width; n > 0; --n ) {					\
-		pixel_copy_increment;					\
-	}								\
-}
-
 /* Prevent Visual C++ 6.0 from printing out stupid warnings */
 #if defined(_MSC_VER) && (_MSC_VER >= 600)
 #pragma warning(disable: 4550)
