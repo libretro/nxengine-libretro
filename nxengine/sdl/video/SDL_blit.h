@@ -176,43 +176,6 @@ static __inline void ASSEMBLE_RGB(void *buf, int bpp,
    }
 }
 
-/* FIXME: Should we rescale alpha into 0..255 here? */
-#define RGBA_FROM_PIXEL(Pixel, fmt, r, g, b, a)				\
-{									\
-	r = ((Pixel&fmt->Rmask)>>fmt->Rshift)<<fmt->Rloss; 		\
-	g = ((Pixel&fmt->Gmask)>>fmt->Gshift)<<fmt->Gloss; 		\
-	b = ((Pixel&fmt->Bmask)>>fmt->Bshift)<<fmt->Bloss; 		\
-	a = ((Pixel&fmt->Amask)>>fmt->Ashift)<<fmt->Aloss;	 	\
-}
-#define RGBA_FROM_8888(Pixel, fmt, r, g, b, a)	\
-{						\
-	r = (Pixel&fmt->Rmask)>>fmt->Rshift;	\
-	g = (Pixel&fmt->Gmask)>>fmt->Gshift;	\
-	b = (Pixel&fmt->Bmask)>>fmt->Bshift;	\
-	a = (Pixel&fmt->Amask)>>fmt->Ashift;	\
-}
-#define RGBA_FROM_RGBA8888(Pixel, r, g, b, a)				\
-{									\
-	r = ((Pixel >> 24));						\
-	g = ((Pixel >> 16) & 0xFF);						\
-	b = ((Pixel >> 8)  & 0xFF);						\
-	a = ((Pixel))      & 0xFF;						\
-}
-#define RGBA_FROM_ARGB8888(Pixel, r, g, b, a)				\
-{									\
-	r = ((Pixel >> 16) & 0xFF);						\
-	g = ((Pixel >> 8)  & 0xFF);						\
-	b = Pixel          & 0xFF;						\
-	a = Pixel   >> 24;						\
-}
-#define RGBA_FROM_ABGR8888(Pixel, r, g, b, a)				\
-{									\
-	r = (Pixel&0xFF);						\
-	g = ((Pixel>>8)&0xFF);						\
-	b = ((Pixel>>16)&0xFF);						\
-	a = (Pixel>>24);						\
-}
-
 static __inline void DISEMBLE_RGBA(void *buf, int bpp,
       SDL_PixelFormat *fmt, uint32_t *Pixel,
       int *r, int *g, int *b, int *a)
@@ -242,7 +205,10 @@ static __inline void DISEMBLE_RGBA(void *buf, int bpp,
          break;
    }
 
-   RGBA_FROM_PIXEL(*Pixel, fmt, *r, *g, *b, *a);
+   *r = ((*Pixel & fmt->Rmask) >> fmt->Rshift) << fmt->Rloss;
+   *g = ((*Pixel & fmt->Gmask) >> fmt->Gshift) << fmt->Gloss; 
+   *b = ((*Pixel & fmt->Bmask) >> fmt->Bshift) << fmt->Bloss;
+   *a = ((*Pixel & fmt->Amask) >> fmt->Ashift) << fmt->Aloss;
 
    *Pixel &= ~fmt->Amask;
 }
@@ -284,7 +250,6 @@ static __inline void ALPHA_BLEND(int sR, int sG, int sB, const int A,
    *dG = (((sG - *dG) * A + 255) >> 8) + *dG;
    *dB = (((sB - *dB) * A + 255) >> 8) + *dB;
 }
-
 
 /* Prevent Visual C++ 6.0 from printing out stupid warnings */
 #if defined(_MSC_VER) && (_MSC_VER >= 600)
