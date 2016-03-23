@@ -43,37 +43,39 @@ static void BlitNto1SurfaceAlpha(SDL_BlitInfo *info)
 
    while ( height-- )
    {
-      DUFFS_LOOP(
-            {
-            uint32_t Pixel;
-            unsigned sR;
-            unsigned sG;
-            unsigned sB;
-            unsigned dR;
-            unsigned dG;
-            unsigned dB;
-            DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel, sR, sG, sB);
-            dR = dstfmt->palette->colors[*dst].r;
-            dG = dstfmt->palette->colors[*dst].g;
-            dB = dstfmt->palette->colors[*dst].b;
-            ALPHA_BLEND(sR, sG, sB, A, dR, dG, dB);
-            dR &= 0xff;
-            dG &= 0xff;
-            dB &= 0xff;
-            /* Pack RGB into 8bit pixel */
-            if ( palmap == NULL ) {
+      int n;
+      for (n = width; n > 0; --n)
+      {
+         uint32_t Pixel;
+         unsigned sR;
+         unsigned sG;
+         unsigned sB;
+         unsigned dR;
+         unsigned dG;
+         unsigned dB;
+         DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel, sR, sG, sB);
+         dR = dstfmt->palette->colors[*dst].r;
+         dG = dstfmt->palette->colors[*dst].g;
+         dB = dstfmt->palette->colors[*dst].b;
+         ALPHA_BLEND(sR, sG, sB, A, dR, dG, dB);
+         dR &= 0xff;
+         dG &= 0xff;
+         dB &= 0xff;
+
+         /* Pack RGB into 8bit pixel */
+         if (palmap)
+            *dst = palmap[((dR>>5)<<(3+2))|
+               ((dG>>5)<<(2))  |
+               ((dB>>6)<<(0))];
+         else
             *dst =((dR>>5)<<(3+2))|
-            ((dG>>5)<<(2))|
-            ((dB>>6)<<(0));
-            } else {
-               *dst = palmap[((dR>>5)<<(3+2))|
-                  ((dG>>5)<<(2))  |
-                  ((dB>>6)<<(0))];
-            }
-            dst++;
-            src += srcbpp;
-            },
-         width);
+               ((dG>>5)<<(2))|
+               ((dB>>6)<<(0));
+
+         dst++;
+         src += srcbpp;
+      }
+
       src += srcskip;
       dst += dstskip;
    }
@@ -96,38 +98,39 @@ static void BlitNto1PixelAlpha(SDL_BlitInfo *info)
    /* FIXME: fix alpha bit field expansion here too? */
    while ( height-- )
    {
-      DUFFS_LOOP(
-            {
-            uint32_t Pixel;
-            unsigned sR;
-            unsigned sG;
-            unsigned sB;
-            unsigned sA;
-            unsigned dR;
-            unsigned dG;
-            unsigned dB;
-            DISEMBLE_RGBA(src,srcbpp,srcfmt,Pixel,sR,sG,sB,sA);
-            dR = dstfmt->palette->colors[*dst].r;
-            dG = dstfmt->palette->colors[*dst].g;
-            dB = dstfmt->palette->colors[*dst].b;
-            ALPHA_BLEND(sR, sG, sB, sA, dR, dG, dB);
-            dR &= 0xff;
-            dG &= 0xff;
-            dB &= 0xff;
-            /* Pack RGB into 8bit pixel */
-            if ( palmap == NULL ) {
+      int n;
+      for (n = width; n > 0; --n)
+      {
+         uint32_t Pixel;
+         unsigned sR;
+         unsigned sG;
+         unsigned sB;
+         unsigned sA;
+         unsigned dR;
+         unsigned dG;
+         unsigned dB;
+         DISEMBLE_RGBA(src,srcbpp,srcfmt,Pixel,sR,sG,sB,sA);
+         dR = dstfmt->palette->colors[*dst].r;
+         dG = dstfmt->palette->colors[*dst].g;
+         dB = dstfmt->palette->colors[*dst].b;
+         ALPHA_BLEND(sR, sG, sB, sA, dR, dG, dB);
+         dR &= 0xff;
+         dG &= 0xff;
+         dB &= 0xff;
+         /* Pack RGB into 8bit pixel */
+         if ( palmap)
+            *dst = palmap[((dR>>5)<<(3+2))|
+               ((dG>>5)<<(2))  |
+               ((dB>>6)<<(0))  ];
+         else
             *dst =((dR>>5)<<(3+2))|
                ((dG>>5)<<(2))|
                ((dB>>6)<<(0));
-            } else {
-               *dst = palmap[((dR>>5)<<(3+2))|
-                  ((dG>>5)<<(2))  |
-                  ((dB>>6)<<(0))  ];
-            }
-            dst++;
-            src += srcbpp;
-            },
-         width);
+
+         dst++;
+         src += srcbpp;
+      }
+
       src += srcskip;
       dst += dstskip;
    }
@@ -151,17 +154,18 @@ static void BlitNto1SurfaceAlphaKey(SDL_BlitInfo *info)
 
    while ( height-- )
    {
-      DUFFS_LOOP(
-            {
-            uint32_t Pixel;
-            unsigned sR;
-            unsigned sG;
-            unsigned sB;
-            unsigned dR;
-            unsigned dG;
-            unsigned dB;
-            DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel, sR, sG, sB);
-            if ( Pixel != ckey ) {
+      int n;
+      for (n = width; n > 0; --n)
+      {
+         uint32_t Pixel;
+         unsigned sR;
+         unsigned sG;
+         unsigned sB;
+         unsigned dR;
+         unsigned dG;
+         unsigned dB;
+         DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel, sR, sG, sB);
+         if ( Pixel != ckey ) {
             dR = dstfmt->palette->colors[*dst].r;
             dG = dstfmt->palette->colors[*dst].g;
             dB = dstfmt->palette->colors[*dst].b;
@@ -171,19 +175,18 @@ static void BlitNto1SurfaceAlphaKey(SDL_BlitInfo *info)
             dB &= 0xff;
             /* Pack RGB into 8bit pixel */
             if ( palmap == NULL ) {
-            *dst =((dR>>5)<<(3+2))|
-               ((dG>>5)<<(2)) |
-               ((dB>>6)<<(0));
+               *dst =((dR>>5)<<(3+2))|
+                  ((dG>>5)<<(2)) |
+                  ((dB>>6)<<(0));
             } else {
                *dst = palmap[((dR>>5)<<(3+2))|
                   ((dG>>5)<<(2))  |
                   ((dB>>6)<<(0))  ];
             }
-            }
-            dst++;
-            src += srcbpp;
-            },
-         width);
+         }
+         dst++;
+         src += srcbpp;
+      }
       src += srcskip;
       dst += dstskip;
    }
@@ -201,12 +204,14 @@ static void BlitRGBtoRGBSurfaceAlpha128(SDL_BlitInfo *info)
 
    while(height--)
    {
-      DUFFS_LOOP({
-            uint32_t s = *srcp++;
-            uint32_t d = *dstp;
-            *dstp++ = ((((s & 0x00fefefe) + (d & 0x00fefefe)) >> 1)
-                  + (s & d & 0x00010101)) | 0xff000000;
-            }, width);
+      int n;
+      for (n = width; n > 0; --n)
+      {
+         uint32_t s = *srcp++;
+         uint32_t d = *dstp;
+         *dstp++ = ((((s & 0x00fefefe) + (d & 0x00fefefe)) >> 1)
+               + (s & d & 0x00010101)) | 0xff000000;
+      }
       srcp += srcskip;
       dstp += dstskip;
    }
@@ -296,39 +301,42 @@ static void BlitRGBtoRGBPixelAlpha(SDL_BlitInfo *info)
 
    while(height--)
    {
-      DUFFS_LOOP({
-            uint32_t dalpha;
-            uint32_t d;
-            uint32_t s1;
-            uint32_t d1;
-            uint32_t s = *srcp;
-            uint32_t alpha = s >> 24;
-            /* FIXME: Here we special-case opaque alpha since the
-               compositioning used (>>8 instead of /255) doesn't handle
-               it correctly. Also special-case alpha=0 for speed?
-               Benchmark this! */
-            if(alpha) {   
+      int n;
+      for (n = width; n > 0; --n)
+      {
+         uint32_t dalpha;
+         uint32_t d;
+         uint32_t s1;
+         uint32_t d1;
+         uint32_t s = *srcp;
+         uint32_t alpha = s >> 24;
+         /* FIXME: Here we special-case opaque alpha since the
+            compositioning used (>>8 instead of /255) doesn't handle
+            it correctly. Also special-case alpha=0 for speed?
+            Benchmark this! */
+         if(alpha) {   
             if(alpha == SDL_ALPHA_OPAQUE) {
-            *dstp = (s & 0x00ffffff) | (*dstp & 0xff000000);
+               *dstp = (s & 0x00ffffff) | (*dstp & 0xff000000);
             } else {
-            /*
-             * take out the middle component (green), and process
-             * the other two in parallel. One multiply less.
-             */
-            d = *dstp;
-            dalpha = d & 0xff000000;
-            s1 = s & 0xff00ff;
-            d1 = d & 0xff00ff;
-            d1 = (d1 + ((s1 - d1) * alpha >> 8)) & 0xff00ff;
-            s &= 0xff00;
-            d &= 0xff00;
-            d = (d + ((s - d) * alpha >> 8)) & 0xff00;
-            *dstp = d1 | d | dalpha;
+               /*
+                * take out the middle component (green), and process
+                * the other two in parallel. One multiply less.
+                */
+               d = *dstp;
+               dalpha = d & 0xff000000;
+               s1 = s & 0xff00ff;
+               d1 = d & 0xff00ff;
+               d1 = (d1 + ((s1 - d1) * alpha >> 8)) & 0xff00ff;
+               s &= 0xff00;
+               d &= 0xff00;
+               d = (d + ((s - d) * alpha >> 8)) & 0xff00;
+               *dstp = d1 | d | dalpha;
             }
-            }
-            ++srcp;
-            ++dstp;
-      }, width);
+         }
+         ++srcp;
+         ++dstp;
+      }
+
       srcp += srcskip;
       dstp += dstskip;
    }
@@ -474,20 +482,24 @@ static void Blit565to565SurfaceAlpha(SDL_BlitInfo *info)
 
       while(height--)
       {
-         DUFFS_LOOP({
-               uint32_t s = *srcp++;
-               uint32_t d = *dstp;
-               /*
-                * shift out the middle component (green) to
-                * the high 16 bits, and process all three RGB
-                * components at the same time.
-                */
-               s = (s | s << 16) & 0x07e0f81f;
-               d = (d | d << 16) & 0x07e0f81f;
-               d += (s - d) * alpha >> 5;
-               d &= 0x07e0f81f;
-               *dstp++ = (uint16_t)(d | d >> 16);
-               }, width);
+         int n;
+         
+         for (n = width; n > 0; --n)
+         {
+            uint32_t s = *srcp++;
+            uint32_t d = *dstp;
+            /*
+             * shift out the middle component (green) to
+             * the high 16 bits, and process all three RGB
+             * components at the same time.
+             */
+            s = (s | s << 16) & 0x07e0f81f;
+            d = (d | d << 16) & 0x07e0f81f;
+            d += (s - d) * alpha >> 5;
+            d &= 0x07e0f81f;
+            *dstp++ = (uint16_t)(d | d >> 16);
+         }
+
          srcp += srcskip;
          dstp += dstskip;
       }
@@ -514,21 +526,26 @@ static void Blit555to555SurfaceAlpha(SDL_BlitInfo *info)
       int dstskip  = info->d_skip >> 1;
       alpha >>= 3;		/* downscale alpha to 5 bits */
 
-      while(height--) {
-         DUFFS_LOOP({
-               uint32_t s = *srcp++;
-               uint32_t d = *dstp;
-               /*
-                * shift out the middle component (green) to
-                * the high 16 bits, and process all three RGB
-                * components at the same time.
-                */
-               s = (s | s << 16) & 0x03e07c1f;
-               d = (d | d << 16) & 0x03e07c1f;
-               d += (s - d) * alpha >> 5;
-               d &= 0x03e07c1f;
-               *dstp++ = (uint16_t)(d | d >> 16);
-               }, width);
+      while(height--)
+      {
+         int n;
+
+         for (n = width; n > 0; --n)
+         {
+            uint32_t s = *srcp++;
+            uint32_t d = *dstp;
+            /*
+             * shift out the middle component (green) to
+             * the high 16 bits, and process all three RGB
+             * components at the same time.
+             */
+            s = (s | s << 16) & 0x03e07c1f;
+            d = (d | d << 16) & 0x03e07c1f;
+            d += (s - d) * alpha >> 5;
+            d &= 0x03e07c1f;
+            *dstp++ = (uint16_t)(d | d >> 16);
+         }
+
          srcp += srcskip;
          dstp += dstskip;
       }
@@ -547,33 +564,38 @@ static void BlitARGBto565PixelAlpha(SDL_BlitInfo *info)
 
    while(height--)
    {
-      DUFFS_LOOP({
-            uint32_t     s = *srcp;
-            unsigned alpha = s >> 27; /* downscale alpha to 5 bits */
-            /* FIXME: Here we special-case opaque alpha since the
-               compositioning used (>>8 instead of /255) doesn't handle
-               it correctly. Also special-case alpha=0 for speed?
-               Benchmark this! */
-            if(alpha) {   
-            if(alpha == (SDL_ALPHA_OPAQUE >> 3)) {
-            *dstp = (uint16_t)((s >> 8 & 0xf800) + (s >> 5 & 0x7e0) + (s >> 3  & 0x1f));
-            } else {
-            uint32_t d = *dstp;
-            /*
-             * convert source and destination to G0RAB65565
-             * and blend all components at the same time
-             */
-            s = ((s & 0xfc00) << 11) + (s >> 8 & 0xf800)
-            + (s >> 3 & 0x1f);
-            d = (d | d << 16) & 0x07e0f81f;
-            d += (s - d) * alpha >> 5;
-            d &= 0x07e0f81f;
-            *dstp = (uint16_t)(d | d >> 16);
+      int n;
+      
+      for (n = width; n > 0; --n)
+      {
+         uint32_t     s = *srcp;
+         unsigned alpha = s >> 27; /* downscale alpha to 5 bits */
+         /* FIXME: Here we special-case opaque alpha since the
+            compositioning used (>>8 instead of /255) doesn't handle
+            it correctly. Also special-case alpha=0 for speed?
+            Benchmark this! */
+         if(alpha)
+         {   
+            if(alpha == (SDL_ALPHA_OPAQUE >> 3))
+               *dstp = (uint16_t)((s >> 8 & 0xf800) + (s >> 5 & 0x7e0) + (s >> 3  & 0x1f));
+            else
+            {
+               uint32_t d = *dstp;
+               /*
+                * convert source and destination to G0RAB65565
+                * and blend all components at the same time
+                */
+               s = ((s & 0xfc00) << 11) + (s >> 8 & 0xf800)
+                  + (s >> 3 & 0x1f);
+               d = (d | d << 16) & 0x07e0f81f;
+               d += (s - d) * alpha >> 5;
+               d &= 0x07e0f81f;
+               *dstp = (uint16_t)(d | d >> 16);
             }
-            }
-            srcp++;
-            dstp++;
-      }, width);
+         }
+         srcp++;
+         dstp++;
+      }
       srcp += srcskip;
       dstp += dstskip;
    }
@@ -591,33 +613,37 @@ static void BlitARGBto555PixelAlpha(SDL_BlitInfo *info)
 
    while(height--)
    {
-      DUFFS_LOOP({
-            uint32_t     s = *srcp;
-            unsigned alpha = s >> 27; /* downscale alpha to 5 bits */
-            /* FIXME: Here we special-case opaque alpha since the
-               compositioning used (>>8 instead of /255) doesn't handle
-               it correctly. Also special-case alpha=0 for speed?
-               Benchmark this! */
-            if(alpha) {   
-            if(alpha == (SDL_ALPHA_OPAQUE >> 3)) {
-            *dstp = (uint16_t)((s >> 9 & 0x7c00) + (s >> 6 & 0x3e0) + (s >> 3  & 0x1f));
-            } else {
-            uint32_t d = *dstp;
-            /*
-             * convert source and destination to G0RAB65565
-             * and blend all components at the same time
-             */
-            s = ((s & 0xf800) << 10) + (s >> 9 & 0x7c00)
-            + (s >> 3 & 0x1f);
-            d = (d | d << 16) & 0x03e07c1f;
-            d += (s - d) * alpha >> 5;
-            d &= 0x03e07c1f;
-            *dstp = (uint16_t)(d | d >> 16);
+      int n;
+      for (n = width; n > 0; --n)
+      {
+         uint32_t     s = *srcp;
+         unsigned alpha = s >> 27; /* downscale alpha to 5 bits */
+         /* FIXME: Here we special-case opaque alpha since the
+            compositioning used (>>8 instead of /255) doesn't handle
+            it correctly. Also special-case alpha=0 for speed?
+            Benchmark this! */
+         if(alpha)
+         {
+            if(alpha == (SDL_ALPHA_OPAQUE >> 3))
+               *dstp = (uint16_t)((s >> 9 & 0x7c00) + (s >> 6 & 0x3e0) + (s >> 3  & 0x1f));
+            else
+            {
+               uint32_t d = *dstp;
+               /*
+                * convert source and destination to G0RAB65565
+                * and blend all components at the same time
+                */
+               s = ((s & 0xf800) << 10) + (s >> 9 & 0x7c00)
+                  + (s >> 3 & 0x1f);
+               d = (d | d << 16) & 0x03e07c1f;
+               d += (s - d) * alpha >> 5;
+               d &= 0x03e07c1f;
+               *dstp = (uint16_t)(d | d >> 16);
             }
-            }
-            srcp++;
-            dstp++;
-      }, width);
+         }
+         srcp++;
+         dstp++;
+      }
       srcp += srcskip;
       dstp += dstskip;
    }
@@ -643,23 +669,24 @@ static void BlitNtoNSurfaceAlpha(SDL_BlitInfo *info)
    {
       while ( height-- )
       {
-         DUFFS_LOOP(
-               {
-               uint32_t Pixel;
-               unsigned sR;
-               unsigned sG;
-               unsigned sB;
-               unsigned dR;
-               unsigned dG;
-               unsigned dB;
-               DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel, sR, sG, sB);
-               DISEMBLE_RGB(dst, dstbpp, dstfmt, Pixel, dR, dG, dB);
-               ALPHA_BLEND(sR, sG, sB, sA, dR, dG, dB);
-               ASSEMBLE_RGBA(dst, dstbpp, dstfmt, dR, dG, dB, dA);
-               src += srcbpp;
-               dst += dstbpp;
-               },
-               width);
+         int n;
+
+         for (n = width; n > 0; --n)
+         {
+            uint32_t Pixel;
+            unsigned sR;
+            unsigned sG;
+            unsigned sB;
+            unsigned dR;
+            unsigned dG;
+            unsigned dB;
+            DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel, sR, sG, sB);
+            DISEMBLE_RGB(dst, dstbpp, dstfmt, Pixel, dR, dG, dB);
+            ALPHA_BLEND(sR, sG, sB, sA, dR, dG, dB);
+            ASSEMBLE_RGBA(dst, dstbpp, dstfmt, dR, dG, dB, dA);
+            src += srcbpp;
+            dst += dstbpp;
+         }
          src += srcskip;
          dst += dstskip;
       }
@@ -685,26 +712,27 @@ static void BlitNtoNSurfaceAlphaKey(SDL_BlitInfo *info)
 
    while ( height-- )
    {
-      DUFFS_LOOP(
-            {
-            uint32_t Pixel;
-            unsigned sR;
-            unsigned sG;
-            unsigned sB;
-            unsigned dR;
-            unsigned dG;
-            unsigned dB;
-            RETRIEVE_RGB_PIXEL(src, srcbpp, Pixel);
-            if(sA && Pixel != ckey) {
+      int n;
+      for (n = width; n > 0; --n)
+      {
+         uint32_t Pixel;
+         unsigned sR;
+         unsigned sG;
+         unsigned sB;
+         unsigned dR;
+         unsigned dG;
+         unsigned dB;
+         RETRIEVE_RGB_PIXEL(src, srcbpp, Pixel);
+         if(sA && Pixel != ckey) {
             RGB_FROM_PIXEL(Pixel, srcfmt, sR, sG, sB);
             DISEMBLE_RGB(dst, dstbpp, dstfmt, Pixel, dR, dG, dB);
             ALPHA_BLEND(sR, sG, sB, sA, dR, dG, dB);
             ASSEMBLE_RGBA(dst, dstbpp, dstfmt, dR, dG, dB, dA);
-            }
-            src += srcbpp;
-            dst += dstbpp;
-            },
-            width);
+         }
+         src += srcbpp;
+         dst += dstbpp;
+      }
+
       src += srcskip;
       dst += dstskip;
    }
@@ -731,27 +759,29 @@ static void BlitNtoNPixelAlpha(SDL_BlitInfo *info)
       need a branch (or a divide). */
    while ( height-- )
    {
-      DUFFS_LOOP(
-            {
-            uint32_t Pixel;
-            unsigned sR;
-            unsigned sG;
-            unsigned sB;
-            unsigned dR;
-            unsigned dG;
-            unsigned dB;
-            unsigned sA;
-            unsigned dA;
-            DISEMBLE_RGBA(src, srcbpp, srcfmt, Pixel, sR, sG, sB, sA);
-            if(sA) {
+      int n;
+      for (n = width; n > 0; --n)
+      {
+         uint32_t Pixel;
+         unsigned sR;
+         unsigned sG;
+         unsigned sB;
+         unsigned dR;
+         unsigned dG;
+         unsigned dB;
+         unsigned sA;
+         unsigned dA;
+         DISEMBLE_RGBA(src, srcbpp, srcfmt, Pixel, sR, sG, sB, sA);
+
+         if(sA)
+         {
             DISEMBLE_RGBA(dst, dstbpp, dstfmt, Pixel, dR, dG, dB, dA);
             ALPHA_BLEND(sR, sG, sB, sA, dR, dG, dB);
             ASSEMBLE_RGBA(dst, dstbpp, dstfmt, dR, dG, dB, dA);
-            }
-            src += srcbpp;
-            dst += dstbpp;
-            },
-            width);
+         }
+         src += srcbpp;
+         dst += dstbpp;
+      }
       src += srcskip;
       dst += dstskip;
    }
