@@ -37,6 +37,10 @@
 extern "C" {
 #endif
 
+#if 0
+#define SDLPRINTF
+#endif
+
 /** @name Transparency definitions
  *  These define alpha as the opacity of a surface
  */
@@ -404,6 +408,13 @@ extern DECLSPEC void SDLCALL LRSDL_FreeSurface(SDL_Surface *surface);
  */
 extern DECLSPEC int SDLCALL LRSDL_LockSurface(SDL_Surface *surface);
 extern DECLSPEC void SDLCALL LRSDL_UnlockSurface(SDL_Surface *surface);
+
+/* 
+ * Convert a surface into the specified pixel format.
+ */
+extern DECLSPEC SDL_Surface * LRSDL_ConvertSurface (SDL_Surface *surface,
+					SDL_PixelFormat *format, Uint32 flags);
+
 
 /**
  * Load a surface from a seekable SDL data source (memory or file.)

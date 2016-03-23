@@ -26,6 +26,12 @@
 #include "LRSDL_video.h"
 #include "SDL_blit.h"
 
+#ifdef SDLPRINTF
+#define sdlprintf printf
+#else
+#define sdlprintf
+#endif
+
 /* Functions to blit from bitmaps to other surfaces */
 
 static void BlitBto1(SDL_BlitInfo *info)
@@ -426,14 +432,6 @@ static void BlitBtoNAlphaKey(SDL_BlitInfo *info)
    }
 }
 
-static SDL_loblit bitmap_blit[] = {
-   NULL, BlitBto1, BlitBto2, BlitBto3, BlitBto4
-};
-
-static SDL_loblit colorkey_blit[] = {
-   NULL, BlitBto1Key, BlitBto2Key, BlitBto3Key, BlitBto4Key
-};
-
 SDL_loblit LRSDL_CalculateBlit0(SDL_Surface *surface, int blit_index)
 {
    int which = 0;
@@ -448,16 +446,54 @@ SDL_loblit LRSDL_CalculateBlit0(SDL_Surface *surface, int blit_index)
    switch(blit_index)
    {
       case 0:			/* copy */
-         return bitmap_blit[which];
+         switch (which)
+         {
+            case 0:
+               return NULL;
+            case 1:
+               sdlprintf("BlitBto1.\n");
+               return BlitBto1;
+            case 2:
+               sdlprintf("BlitBto2.\n");
+               return BlitBto2;
+            case 3:
+               sdlprintf("BlitBto3.\n");
+               return BlitBto3;
+            case 4:
+               sdlprintf("BlitBto4.\n");
+               return BlitBto4;
+         }
       case 1:			/* colorkey */
-         return colorkey_blit[which];
+         switch (which)
+         {
+            case 0:
+               return NULL;
+            case 1:
+               sdlprintf("BlitBto1Key.\n");
+               return BlitBto1Key;
+            case 2:
+               sdlprintf("BlitBto2Key.\n");
+               return BlitBto2Key;
+            case 3:
+               sdlprintf("BlitBto3Key.\n");
+               return BlitBto3Key;
+            case 4:
+               sdlprintf("BlitBto4Key.\n");
+               return BlitBto4Key;
+         }
       case 2:			/* alpha */
          if (which >= 2)
+         {
+            sdlprintf("BlitBtoNAlpha.\n");
             return BlitBtoNAlpha;
+         }
          break;
       case 4:			/* alpha + colorkey */
          if (which >= 2)
+         {
+            sdlprintf("BlitBtoNAlphaKey.\n");
             return BlitBtoNAlphaKey;
+         }
          break;
    }
 

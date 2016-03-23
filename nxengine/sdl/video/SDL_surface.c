@@ -556,6 +556,112 @@ void LRSDL_UnlockSurface (SDL_Surface *surface)
    surface->pixels = (uint8_t*)surface->pixels - surface->offset;
 }
 
+/* 
+ * Convert a surface into the specified pixel format.
+ */
+SDL_Surface * LRSDL_ConvertSurface (SDL_Surface *surface,
+					SDL_PixelFormat *format, Uint32 flags)
+{
+   SDL_Surface *convert;
+   Uint32 colorkey = 0;
+   Uint8 alpha = 0;
+   Uint32 surface_flags;
+   SDL_Rect bounds;
+
+   /* Check for empty destination palette! (results in empty image) */
+   if ( format->palette != NULL ) {
+      int i;
+      for ( i=0; i<format->palette->ncolors; ++i ) {
+         if ( (format->palette->colors[i].r != 0) ||
+               (format->palette->colors[i].g != 0) ||
+               (format->palette->colors[i].b != 0) )
+            break;
+      }
+      if ( i == format->palette->ncolors ) {
+         LRSDL_SetError("Empty destination palette");
+         return(NULL);
+      }
+   }
+
+   flags &= ~SDL_HWSURFACE;
+
+   /* Create a new surface with the desired format */
+   convert = LRSDL_CreateRGBSurface(flags,
+         surface->w, surface->h, format->BitsPerPixel,
+         format->Rmask, format->Gmask, format->Bmask, format->Amask);
+   if ( convert == NULL ) {
+      return(NULL);
+   }
+
+   /* Copy the palette if any */
+   if ( format->palette && convert->format->palette ) {
+      SDL_memcpy(convert->format->palette->colors,
+            format->palette->colors,
+            format->palette->ncolors*sizeof(SDL_Color));
+      convert->format->palette->ncolors = format->palette->ncolors;
+   }
+
+   /* Save the original surface color key and alpha */
+   surface_flags = surface->flags;
+   if ( (surface_flags & SDL_SRCCOLORKEY) == SDL_SRCCOLORKEY ) {
+      /* Convert colourkeyed surfaces to RGBA if requested */
+      if((flags & SDL_SRCCOLORKEY) != SDL_SRCCOLORKEY
+            && format->Amask) {
+         surface_flags &= ~SDL_SRCCOLORKEY;
+      } else {
+         colorkey = surface->format->colorkey;
+         LRSDL_SetColorKey(surface, 0, 0);
+      }
+   }
+   if ( (surface_flags & SDL_SRCALPHA) == SDL_SRCALPHA ) {
+      /* Copy over the alpha channel to RGBA if requested */
+      if ( format->Amask ) {
+         surface->flags &= ~SDL_SRCALPHA;
+      } else {
+         alpha = surface->format->alpha;
+         LRSDL_SetAlpha(surface, 0, 0);
+      }
+   }
+
+   /* Copy over the image data */
+   bounds.x = 0;
+   bounds.y = 0;
+   bounds.w = surface->w;
+   bounds.h = surface->h;
+   LRSDL_LowerBlit(surface, &bounds, convert, &bounds);
+
+   /* Clean up the original surface, and update converted surface */
+   if ( convert != NULL ) {
+      LRSDL_SetClipRect(convert, &surface->clip_rect);
+   }
+   if ( (surface_flags & SDL_SRCCOLORKEY) == SDL_SRCCOLORKEY ) {
+      Uint32 cflags = surface_flags&(SDL_SRCCOLORKEY|SDL_RLEACCELOK);
+      if ( convert != NULL ) {
+         Uint8 keyR, keyG, keyB;
+
+         LRSDL_GetRGB(colorkey,surface->format,&keyR,&keyG,&keyB);
+         LRSDL_SetColorKey(convert, cflags|(flags&SDL_RLEACCELOK),
+               LRSDL_MapRGB(convert->format, keyR, keyG, keyB));
+      }
+      LRSDL_SetColorKey(surface, cflags, colorkey);
+   }
+   if ( (surface_flags & SDL_SRCALPHA) == SDL_SRCALPHA ) {
+      Uint32 aflags = surface_flags&(SDL_SRCALPHA|SDL_RLEACCELOK);
+      if ( convert != NULL ) {
+         LRSDL_SetAlpha(convert, aflags|(flags&SDL_RLEACCELOK),
+               alpha);
+      }
+      if ( format->Amask ) {
+         surface->flags |= SDL_SRCALPHA;
+      } else {
+         LRSDL_SetAlpha(surface, aflags, alpha);
+      }
+   }
+
+   /* We're ready to go! */
+   return(convert);
+}
+
 /*
  * Free a surface created by the above function.
  */
