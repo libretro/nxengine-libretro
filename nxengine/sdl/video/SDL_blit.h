@@ -174,30 +174,29 @@ static __inline void DISEMBLE_RGB(void *buf, int bpp,
 #define RGB555_FROM_RGB(r, g, b) ((((r) >> 3) << 10) | (((g) >> 3) << 5) | ((b) >> 3))
 #define RGB888_FROM_RGB(r, g, b) (((r)        << 16) | ((g)        << 8) | (b))
 
-#define ASSEMBLE_RGB(buf, bpp, fmt, r, g, b) 				\
-{									\
-	switch (bpp) {							\
-		case 2:						\
-			*((uint16_t*)(buf)) = PIXEL_FROM_RGB(fmt, r, g, b);		\
-		break;							\
-									\
-		case 3: {						\
-                        if(SDL_BYTEORDER == SDL_LIL_ENDIAN) {		\
-			        *((buf)+fmt->Rshift/8) = r;		\
-				*((buf)+fmt->Gshift/8) = g;		\
-				*((buf)+fmt->Bshift/8) = b;		\
-			} else {					\
-			        *((buf)+2-fmt->Rshift/8) = r;		\
-				*((buf)+2-fmt->Gshift/8) = g;		\
-				*((buf)+2-fmt->Bshift/8) = b;		\
-			}						\
-		}							\
-		break;							\
-									\
-		case 4:						\
-			*((uint32_t*)(buf)) = PIXEL_FROM_RGB(fmt, r, g, b);		\
-		break;							\
-	}								\
+static __inline void ASSEMBLE_RGB(void *buf, int bpp,
+      SDL_PixelFormat *fmt, int r, int g, int b)
+{
+   switch (bpp)
+   {
+      case 2:
+         *((uint16_t*)(buf)) = PIXEL_FROM_RGB(fmt, r, g, b);
+         break;
+      case 3:
+#ifdef MSB_FIRST
+         *(((uint32_t*)(buf))+2-fmt->Rshift/8) = r;
+         *(((uint32_t*)(buf))+2-fmt->Gshift/8) = g;
+         *(((uint32_t*)(buf))+2-fmt->Bshift/8) = b;
+#else
+         *(((uint32_t*)(buf))+fmt->Rshift/8) = r;
+         *(((uint32_t*)(buf))+fmt->Gshift/8) = g;
+         *(((uint32_t*)(buf))+fmt->Bshift/8) = b;
+#endif
+         break;
+      case 4:
+         *((uint32_t*)(buf)) = PIXEL_FROM_RGB(fmt, r, g, b);
+         break;
+   }
 }
 
 /* FIXME: Should we rescale alpha into 0..255 here? */
