@@ -1288,7 +1288,10 @@ static void BlitNtoNKey(SDL_BlitInfo *info)
 
          if ( (Pixel & rgbmask) != ckey )
          {
-            RGB_FROM_PIXEL(Pixel, srcfmt, sR, sG, sB);
+            sR = (((Pixel & srcfmt->Rmask) >> srcfmt->Rshift) << srcfmt->Rloss);
+            sG = (((Pixel & srcfmt->Gmask) >> srcfmt->Gshift) << srcfmt->Gloss);
+            sB = (((Pixel & srcfmt->Bmask) >> srcfmt->Bshift) << srcfmt->Bloss);
+            
             ASSEMBLE_RGBA(dst, dstbpp, dstfmt,
                   sR, sG, sB, alpha);
          }

@@ -84,14 +84,6 @@ extern SDL_loblit LRSDL_CalculateAlphaBlit(SDL_Surface *surface, int complex);
     ((A)->BitsPerPixel == (B)->BitsPerPixel				\
      && ((A)->Rmask == (B)->Rmask) && ((A)->Amask == (B)->Amask))
 
-/* Load pixel of the specified format from a buffer and get its R-G-B values */
-/* FIXME: rescale values to 0..255 here? */
-#define RGB_FROM_PIXEL(Pixel, fmt, r, g, b)				\
-{									\
-	r = (((Pixel&fmt->Rmask)>>fmt->Rshift)<<fmt->Rloss); 		\
-	g = (((Pixel&fmt->Gmask)>>fmt->Gshift)<<fmt->Gloss); 		\
-	b = (((Pixel&fmt->Bmask)>>fmt->Bshift)<<fmt->Bloss); 		\
-}
 #define RGB_FROM_RGB565(Pixel, r, g, b)					\
 {									\
 	r = (((Pixel&0xF800)>>11)<<3);		 			\
@@ -165,7 +157,9 @@ static __inline void DISEMBLE_RGB(void *buf, int bpp,
          break;
    }
 
-   RGB_FROM_PIXEL(*Pixel, fmt, *r, *g, *b);
+   *r = ((*Pixel & fmt->Rmask) >> fmt->Rshift) << fmt->Rloss;
+   *g = ((*Pixel & fmt->Gmask) >> fmt->Gshift) << fmt->Gloss;
+   *b = ((*Pixel & fmt->Bmask) >> fmt->Bshift) << fmt->Bloss;
 }
 
 

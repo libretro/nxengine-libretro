@@ -737,7 +737,10 @@ static void BlitNtoNSurfaceAlphaKey(SDL_BlitInfo *info)
 
          if(sA && Pixel != ckey)
          {
-            RGB_FROM_PIXEL(Pixel, srcfmt, sR, sG, sB);
+            sR = (((Pixel & srcfmt->Rmask) >> srcfmt->Rshift) << srcfmt->Rloss);
+            sG = (((Pixel & srcfmt->Gmask) >> srcfmt->Gshift) << srcfmt->Gloss);
+            sB = (((Pixel & srcfmt->Bmask) >> srcfmt->Bshift) << srcfmt->Bloss);
+
             DISEMBLE_RGB(dst, dstbpp, dstfmt, &Pixel, &dR, &dG, &dB);
             ALPHA_BLEND(sR, sG, sB, sA, &dR, &dG, &dB);
             ASSEMBLE_RGBA(dst, dstbpp, dstfmt, dR, dG, dB, dA);
