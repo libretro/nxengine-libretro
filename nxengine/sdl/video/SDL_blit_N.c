@@ -45,6 +45,13 @@
 	              (((src)&0x0000E000)>>11)| \
 	              (((src)&0x000000C0)>>6)); \
 }
+
+#if 0
+#define sdlprintf printf
+#else
+#define sdlprintf
+#endif
+
 static void Blit_RGB888_index8(SDL_BlitInfo *info)
 {
    int c;
@@ -1425,12 +1432,23 @@ SDL_loblit LRSDL_CalculateBlitN(SDL_Surface *surface, int blit_index)
 
       if(srcfmt->BytesPerPixel == 2
             && surface->map->identity)
+      {
+         sdlprintf("Blit2to2Key.\n");
          return Blit2to2Key;
+      }
       else if(dstfmt->BytesPerPixel == 1)
+      {
+         sdlprintf("BlitNto1Key.\n");
          return BlitNto1Key;
+      }
 
       if(srcfmt->Amask && dstfmt->Amask)
+      {
+         sdlprintf("BlitNtoNKeyCopyAlpha.\n");
          return BlitNtoNKeyCopyAlpha;
+      }
+
+      sdlprintf("BlitNtoNKey.\n");
       return BlitNtoNKey;
    }
 
@@ -1443,12 +1461,21 @@ SDL_loblit LRSDL_CalculateBlitN(SDL_Surface *surface, int blit_index)
             (srcfmt->Gmask == 0x0000FF00) &&
             (srcfmt->Bmask == 0x000000FF) ) {
          if ( surface->map->table )
+         {
+            sdlprintf("Blit_RGB888_index8_map.\n");
             blitfun = Blit_RGB888_index8_map;
+         }
          else
+         {
+            sdlprintf("Blit_RGB888_index8.\n");
             blitfun = Blit_RGB888_index8;
+         }
       }
       else
+      {
+         sdlprintf("BlitNto1.\n");
          blitfun = BlitNto1;
+      }
    }
    else
    {
@@ -1484,9 +1511,19 @@ SDL_loblit LRSDL_CalculateBlitN(SDL_Surface *surface, int blit_index)
                srcfmt->Rmask == dstfmt->Rmask &&
                srcfmt->Gmask == dstfmt->Gmask &&
                srcfmt->Bmask == dstfmt->Bmask )
+         {
+            sdlprintf("Blit4to4MaskAlpha.\n");
             blitfun = Blit4to4MaskAlpha;
+         }
          else if ( a_need == COPY_ALPHA )
+         {
+            sdlprintf("BlitNtoNCopyAlpha.\n");
             blitfun = BlitNtoNCopyAlpha;
+         }
+         else
+         {
+            sdlprintf("BlitNtoN.\n");
+         }
       }
    }
 
