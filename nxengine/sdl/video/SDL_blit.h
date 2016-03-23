@@ -199,37 +199,6 @@ static __inline void DISEMBLE_RGB(void *buf, int bpp,
 		break;							\
 	}								\
 }
-#define ASSEMBLE_RGB_AMASK(buf, bpp, fmt, r, g, b, Amask)		\
-{									\
-	switch (bpp) {							\
-		case 2: {						\
-			uint16_t *bufp = (uint16_t*)buf;				\
-			uint16_t Pixel = PIXEL_FROM_RGB(fmt, r, g, b);		\
-			*bufp = Pixel | (*bufp & Amask);		\
-		}							\
-		break;							\
-									\
-		case 3: {						\
-                        if(SDL_BYTEORDER == SDL_LIL_ENDIAN) {		\
-			        *((buf)+fmt->Rshift/8) = r;		\
-				*((buf)+fmt->Gshift/8) = g;		\
-				*((buf)+fmt->Bshift/8) = b;		\
-			} else {					\
-			        *((buf)+2-fmt->Rshift/8) = r;		\
-				*((buf)+2-fmt->Gshift/8) = g;		\
-				*((buf)+2-fmt->Bshift/8) = b;		\
-			}						\
-		}							\
-		break;							\
-									\
-		case 4: {						\
-			uint32_t *bufp = (uint32_t*)buf;				\
-			uint32_t Pixel = PIXEL_FROM_RGB(fmt, r, g, b);		\
-			*bufp = Pixel | (*bufp & Amask);		\
-		}							\
-		break;							\
-	}								\
-}
 
 /* FIXME: Should we rescale alpha into 0..255 here? */
 #define RGBA_FROM_PIXEL(Pixel, fmt, r, g, b, a)				\
