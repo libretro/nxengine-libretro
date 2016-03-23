@@ -237,15 +237,15 @@ static void Blit1to1Key(SDL_BlitInfo *info)
    {
       while ( height-- )
       {
-         DUFFS_LOOP(
-               {
-               if ( *src != ckey ) {
+         int n;
+         for (n = width; n > 0; --n)
+         {
+            if ( *src != ckey )
                *dst = palmap[*src];
-               }
-               dst++;
-               src++;
-               },
-               width);
+            dst++;
+            src++;
+         }
+
          src += srcskip;
          dst += dstskip;
       }
@@ -254,15 +254,15 @@ static void Blit1to1Key(SDL_BlitInfo *info)
    {
       while ( height-- )
       {
-         DUFFS_LOOP(
-               {
-               if ( *src != ckey ) {
+         int n;
+         for (n = width; n > 0; --n)
+         {
+            if ( *src != ckey )
                *dst = *src;
-               }
-               dst++;
-               src++;
-               },
-               width);
+            dst++;
+            src++;
+         }
+
          src += srcskip;
          dst += dstskip;
       }
@@ -282,15 +282,14 @@ static void Blit1to2Key(SDL_BlitInfo *info)
 
    while ( height-- )
    {
-      DUFFS_LOOP(
-            {
-            if ( *src != ckey ) {
+      int n;
+      for (n = width; n > 0; --n)
+      {
+         if ( *src != ckey )
             *dstp=palmap[*src];
-            }
-            src++;
-            dstp++;
-            },
-            width);
+         src++;
+         dstp++;
+      }
 
       src  += srcskip;
       dstp += dstskip;
@@ -311,18 +310,19 @@ static void Blit1to3Key(SDL_BlitInfo *info)
 
    while ( height-- )
    {
-      DUFFS_LOOP(
-            {
-            if ( *src != ckey ) {
+      int n;
+      for (n = width; n > 0; --n)
+      {
+         if ( *src != ckey )
+         {
             o = *src * 4;
             dst[0] = palmap[o++];
             dst[1] = palmap[o++];
             dst[2] = palmap[o++];
-            }
-            src++;
-            dst += 3;
-            },
-            width);
+         }
+         src++;
+         dst += 3;
+      }
       src += srcskip;
       dst += dstskip;
    }
@@ -341,15 +341,14 @@ static void Blit1to4Key(SDL_BlitInfo *info)
 
    while ( height-- )
    {
-      DUFFS_LOOP(
-            {
-            if ( *src != ckey ) {
+      int n;
+      for (n = width; n > 0; --n)
+      {
+         if ( *src != ckey )
             *dstp = palmap[*src];
-            }
-            src++;
-            dstp++;
-            },
-            width);
+         src++;
+         dstp++;
+      }
 
       src  += srcskip;
       dstp += dstskip;
@@ -371,23 +370,23 @@ static void Blit1toNAlpha(SDL_BlitInfo *info)
 
    while ( height-- )
    {
-      int sR, sG, sB;
       int dR, dG, dB;
+      int n;
 
-      DUFFS_LOOP(
-            {
-            uint32_t pixel;
-            sR = srcpal[*src].r;
-            sG = srcpal[*src].g;
-            sB = srcpal[*src].b;
-            DISEMBLE_RGB(dst, dstbpp, dstfmt,
-                  pixel, dR, dG, dB);
-            ALPHA_BLEND(sR, sG, sB, A, dR, dG, dB);
-            ASSEMBLE_RGB(dst, dstbpp, dstfmt, dR, dG, dB);
-            src++;
-            dst += dstbpp;
-            },
-            width);
+      for (n = width; n > 0; --n)
+      {
+         uint32_t pixel;
+         int sR = srcpal[*src].r;
+         int sG = srcpal[*src].g;
+         int sB = srcpal[*src].b;
+
+         DISEMBLE_RGB(dst, dstbpp, dstfmt,
+               pixel, dR, dG, dB);
+         ALPHA_BLEND(sR, sG, sB, A, dR, dG, dB);
+         ASSEMBLE_RGB(dst, dstbpp, dstfmt, dR, dG, dB);
+         src++;
+         dst += dstbpp;
+      }
 
       src += srcskip;
       dst += dstskip;
@@ -411,24 +410,25 @@ static void Blit1toNAlphaKey(SDL_BlitInfo *info)
 
    while ( height-- )
    {
-      int sR, sG, sB;
       int dR, dG, dB;
-      DUFFS_LOOP(
-            {
-            if ( *src != ckey ) {
+      int n;
+
+      for (n = width; n > 0; --n)
+      {
+         if ( *src != ckey )
+         {
             uint32_t pixel;
-            sR = srcpal[*src].r;
-            sG = srcpal[*src].g;
-            sB = srcpal[*src].b;
+            int sR = srcpal[*src].r;
+            int sG = srcpal[*src].g;
+            int sB = srcpal[*src].b;
             DISEMBLE_RGB(dst, dstbpp, dstfmt,
                   pixel, dR, dG, dB);
             ALPHA_BLEND(sR, sG, sB, A, dR, dG, dB);
             ASSEMBLE_RGB(dst, dstbpp, dstfmt, dR, dG, dB);
-            }
-            src++;
-            dst += dstbpp;
-            },
-            width);
+         }
+         src++;
+         dst += dstbpp;
+      }
       src += srcskip;
       dst += dstskip;
    }
