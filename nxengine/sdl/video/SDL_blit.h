@@ -119,11 +119,10 @@ do {									   \
 									   \
 		case 3: {						   \
 		        uint8_t *B = (uint8_t *)(buf);			   \
-			if(SDL_BYTEORDER == SDL_LIL_ENDIAN) {		   \
+			if(SDL_BYTEORDER == SDL_LIL_ENDIAN)		   \
 			        Pixel = B[0] + (B[1] << 8) + (B[2] << 16); \
-			} else {					   \
+			else					   \
 			        Pixel = (B[0] << 16) + (B[1] << 8) + B[2]; \
-			}						   \
 		}							   \
 		break;							   \
 									   \
@@ -146,11 +145,10 @@ do {									   \
 									   \
 		case 3: {						   \
 		        uint8_t *B = (uint8_t *)buf;			   \
-			if(SDL_BYTEORDER == SDL_LIL_ENDIAN) {		   \
+			if(SDL_BYTEORDER == SDL_LIL_ENDIAN)		   \
 			        Pixel = B[0] + (B[1] << 8) + (B[2] << 16); \
-			} else {					   \
+			else					   \
 			        Pixel = (B[0] << 16) + (B[1] << 8) + B[2]; \
-			}						   \
 		}							   \
 		break;							   \
 									   \
@@ -166,12 +164,7 @@ do {									   \
 } while(0)
 
 /* Assemble R-G-B values into a specified pixel format and store them */
-#define PIXEL_FROM_RGB(Pixel, fmt, r, g, b)				\
-{									\
-	Pixel = ((r>>fmt->Rloss)<<fmt->Rshift)|				\
-		((g>>fmt->Gloss)<<fmt->Gshift)|				\
-		((b>>fmt->Bloss)<<fmt->Bshift);				\
-}
+#define PIXEL_FROM_RGB(fmt, r, g, b) (((r>>fmt->Rloss)<<fmt->Rshift)| ((g>>fmt->Gloss)<<fmt->Gshift) | ((b>>fmt->Bloss)<<fmt->Bshift))
 
 #define RGB565_FROM_RGB(r, g, b) ((((r) >> 3) << 11) | (((g) >> 2) << 5) | ((b) >> 3))
 #define RGB555_FROM_RGB(r, g, b) ((((r) >> 3) << 10) | (((g) >> 3) << 5) | ((b) >> 3))
@@ -180,11 +173,8 @@ do {									   \
 #define ASSEMBLE_RGB(buf, bpp, fmt, r, g, b) 				\
 {									\
 	switch (bpp) {							\
-		case 2: {						\
-			uint16_t Pixel;					\
-			PIXEL_FROM_RGB(Pixel, fmt, r, g, b);		\
-			*((uint16_t*)(buf)) = Pixel;			\
-		}							\
+		case 2:						\
+			*((uint16_t*)(buf)) = PIXEL_FROM_RGB(fmt, r, g, b);		\
 		break;							\
 									\
 		case 3: {						\
@@ -200,11 +190,8 @@ do {									   \
 		}							\
 		break;							\
 									\
-		case 4: {						\
-			uint32_t Pixel;					\
-			PIXEL_FROM_RGB(Pixel, fmt, r, g, b);		\
-			*((uint32_t*)(buf)) = Pixel;			\
-		}							\
+		case 4:						\
+			*((uint32_t*)(buf)) = PIXEL_FROM_RGB(fmt, r, g, b);		\
 		break;							\
 	}								\
 }
@@ -212,9 +199,8 @@ do {									   \
 {									\
 	switch (bpp) {							\
 		case 2: {						\
-			uint16_t Pixel;					\
 			uint16_t *bufp = (uint16_t*)buf;				\
-			PIXEL_FROM_RGB(Pixel, fmt, r, g, b);		\
+			uint16_t Pixel = PIXEL_FROM_RGB(fmt, r, g, b);		\
 			*bufp = Pixel | (*bufp & Amask);		\
 		}							\
 		break;							\
@@ -233,9 +219,8 @@ do {									   \
 		break;							\
 									\
 		case 4: {						\
-			uint32_t Pixel;					\
 			uint32_t *bufp = (uint32_t*)buf;				\
-			PIXEL_FROM_RGB(Pixel, fmt, r, g, b);		\
+			uint32_t Pixel = PIXEL_FROM_RGB(fmt, r, g, b);		\
 			*bufp = Pixel | (*bufp & Amask);		\
 		}							\
 		break;							\
@@ -259,10 +244,10 @@ do {									   \
 }
 #define RGBA_FROM_RGBA8888(Pixel, r, g, b, a)				\
 {									\
-	r = (Pixel>>24);						\
-	g = ((Pixel>>16)&0xFF);						\
-	b = ((Pixel>>8)&0xFF);						\
-	a = (Pixel&0xFF);						\
+	r = ((Pixel  >> 24));						\
+	g = ((Pixel >> 16) & 0xFF);						\
+	b = ((Pixel >> 8)  & 0xFF);						\
+	a = ((Pixel))      & 0xFF;						\
 }
 #define RGBA_FROM_ARGB8888(Pixel, r, g, b, a)				\
 {									\
@@ -308,23 +293,14 @@ do {									   \
 } while(0)
 
 /* FIXME: this isn't correct, especially for Alpha (maximum != 255) */
-#define PIXEL_FROM_RGBA(Pixel, fmt, r, g, b, a)				\
-{									\
-	Pixel = ((r>>fmt->Rloss)<<fmt->Rshift)|				\
-		((g>>fmt->Gloss)<<fmt->Gshift)|				\
-		((b>>fmt->Bloss)<<fmt->Bshift)|				\
-		((a>>fmt->Aloss)<<fmt->Ashift);				\
-}
+#define PIXEL_FROM_RGBA(fmt, r, g, b, a) (((r>>fmt->Rloss)<<fmt->Rshift)| ((g>>fmt->Gloss)<<fmt->Gshift)| ((b>>fmt->Bloss)<<fmt->Bshift)| ((a>>fmt->Aloss)<<fmt->Ashift))
+
 #define ASSEMBLE_RGBA(buf, bpp, fmt, r, g, b, a)			\
 {									\
 	switch (bpp) {							\
-		case 2: {						\
-			uint16_t Pixel;					\
-			PIXEL_FROM_RGBA(Pixel, fmt, r, g, b, a);	\
-			*((uint16_t*)(buf)) = Pixel;			\
-		}							\
+		case 2: \
+			*((uint16_t*)(buf)) = PIXEL_FROM_RGBA(fmt, r, g, b, a); \
 		break;							\
-									\
 		case 3: { /* FIXME: broken code (no alpha) */		\
                         if(SDL_BYTEORDER == SDL_LIL_ENDIAN) {		\
 			        *((buf)+fmt->Rshift/8) = r;		\
@@ -338,11 +314,8 @@ do {									   \
 		}							\
 		break;							\
 									\
-		case 4: {						\
-			uint32_t Pixel;					\
-			PIXEL_FROM_RGBA(Pixel, fmt, r, g, b, a);	\
-			*((uint32_t*)(buf)) = Pixel;			\
-		}							\
+		case 4: \
+			*((uint32_t*)(buf)) = PIXEL_FROM_RGBA(fmt, r, g, b, a);			\
 		break;							\
 	}								\
 }
