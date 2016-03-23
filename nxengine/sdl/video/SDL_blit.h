@@ -84,25 +84,6 @@ extern SDL_loblit LRSDL_CalculateAlphaBlit(SDL_Surface *surface, int complex);
     ((A)->BitsPerPixel == (B)->BitsPerPixel				\
      && ((A)->Rmask == (B)->Rmask) && ((A)->Amask == (B)->Amask))
 
-#define RGB_FROM_RGB565(Pixel, r, g, b)					\
-{									\
-	r = (((Pixel&0xF800)>>11)<<3);		 			\
-	g = (((Pixel&0x07E0)>>5)<<2); 					\
-	b = ((Pixel&0x001F)<<3); 					\
-}
-#define RGB_FROM_RGB555(Pixel, r, g, b)					\
-{									\
-	r = (((Pixel&0x7C00)>>10)<<3);		 			\
-	g = (((Pixel&0x03E0)>>5)<<3); 					\
-	b = ((Pixel&0x001F)<<3); 					\
-}
-#define RGB_FROM_RGB888(Pixel, r, g, b)					\
-{									\
-	r = ((Pixel&0xFF0000)>>16);		 			\
-	g = ((Pixel&0xFF00)>>8);		 			\
-	b = (Pixel&0xFF);			 			\
-}
-
 static __inline void RETRIEVE_RGB_PIXEL(void *buf, int bpp,
       uint32_t *Pixel)
 {
