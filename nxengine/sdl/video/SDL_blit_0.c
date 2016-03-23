@@ -366,7 +366,7 @@ static void BlitBtoNAlpha(SDL_BlitInfo *info)
             int sB = srcpal[bit].b;
 
             DISEMBLE_RGB(dst, dstbpp, dstfmt,
-                  pixel, dR, dG, dB);
+                  &pixel, &dR, &dG, &dB);
             ALPHA_BLEND(sR, sG, sB, A, &dR, &dG, &dB);
             ASSEMBLE_RGB(dst, dstbpp, dstfmt, dR, dG, dB);
          }
@@ -415,7 +415,7 @@ static void BlitBtoNAlphaKey(SDL_BlitInfo *info)
             int sB = srcpal[bit].b;
 
             DISEMBLE_RGB(dst, dstbpp, dstfmt,
-                  pixel, dR, dG, dB);
+                  &pixel, &dR, &dG, &dB);
             ALPHA_BLEND(sR, sG, sB, A, &dR, &dG, &dB);
             ASSEMBLE_RGB(dst, dstbpp, dstfmt, dR, dG, dB);
          }

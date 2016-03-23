@@ -1016,8 +1016,8 @@ static void BlitNto1(SDL_BlitInfo *info)
       {
          for ( c=width; c; --c )
          {
-            DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel,
-                  sR, sG, sB);
+            DISEMBLE_RGB(src, srcbpp, srcfmt, &Pixel,
+                  &sR, &sG, &sB);
 
             /* Pack RGB into 8bit pixel */
             *dst = map[((sR>>5)<<(3+2))|
@@ -1036,8 +1036,8 @@ static void BlitNto1(SDL_BlitInfo *info)
       {
          for ( c=width; c; --c )
          {
-            DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel,
-                  sR, sG, sB);
+            DISEMBLE_RGB(src, srcbpp, srcfmt, &Pixel,
+                  &sR, &sG, &sB);
 
             /* Pack RGB into 8bit pixel */
             *dst = ((sR>>5)<<(3+2))|
@@ -1126,7 +1126,7 @@ static void BlitNtoN(SDL_BlitInfo *info)
          unsigned sR;
          unsigned sG;
          unsigned sB;
-         DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel, sR, sG, sB);
+         DISEMBLE_RGB(src, srcbpp, srcfmt, &Pixel, &sR, &sG, &sB);
          ASSEMBLE_RGBA(dst, dstbpp, dstfmt, sR, sG, sB, alpha);
          dst += dstbpp;
          src += srcbpp;
@@ -1194,8 +1194,8 @@ static void BlitNto1Key(SDL_BlitInfo *info)
          int n;
          for (n = width; n > 0; --n)
          {
-            DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel,
-                  sR, sG, sB);
+            DISEMBLE_RGB(src, srcbpp, srcfmt, &Pixel,
+                  &sR, &sG, &sB);
 
             if ((Pixel & rgbmask) != ckey)   /* Pack RGB into 8bit pixel */
                *dst = (uint8_t)palmap[((sR>>5)<<(3+2))|
@@ -1216,8 +1216,8 @@ static void BlitNto1Key(SDL_BlitInfo *info)
          int n;
          for (n = width; n > 0; --n)
          {
-            DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel,
-                  sR, sG, sB);
+            DISEMBLE_RGB(src, srcbpp, srcfmt, &Pixel,
+                  &sR, &sG, &sB);
             if ( (Pixel & rgbmask) != ckey ) {
                /* Pack RGB into 8bit pixel */
                *dst = (uint8_t)(((sR>>5)<<(3+2))|

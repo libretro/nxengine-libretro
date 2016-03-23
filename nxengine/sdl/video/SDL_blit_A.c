@@ -53,7 +53,7 @@ static void BlitNto1SurfaceAlpha(SDL_BlitInfo *info)
          int dR;
          int dG;
          int dB;
-         DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel, sR, sG, sB);
+         DISEMBLE_RGB(src, srcbpp, srcfmt, &Pixel, &sR, &sG, &sB);
          dR = dstfmt->palette->colors[*dst].r;
          dG = dstfmt->palette->colors[*dst].g;
          dB = dstfmt->palette->colors[*dst].b;
@@ -166,7 +166,7 @@ static void BlitNto1SurfaceAlphaKey(SDL_BlitInfo *info)
          int dR;
          int dG;
          int dB;
-         DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel, sR, sG, sB);
+         DISEMBLE_RGB(src, srcbpp, srcfmt, &Pixel, &sR, &sG, &sB);
 
          if ( Pixel != ckey )
          {
@@ -691,8 +691,8 @@ static void BlitNtoNSurfaceAlpha(SDL_BlitInfo *info)
             int dR;
             int dG;
             int dB;
-            DISEMBLE_RGB(src, srcbpp, srcfmt, Pixel, sR, sG, sB);
-            DISEMBLE_RGB(dst, dstbpp, dstfmt, Pixel, dR, dG, dB);
+            DISEMBLE_RGB(src, srcbpp, srcfmt, &Pixel, &sR, &sG, &sB);
+            DISEMBLE_RGB(dst, dstbpp, dstfmt, &Pixel, &dR, &dG, &dB);
             ALPHA_BLEND(sR, sG, sB, sA, &dR, &dG, &dB);
             ASSEMBLE_RGBA(dst, dstbpp, dstfmt, dR, dG, dB, dA);
             src += srcbpp;
@@ -738,7 +738,7 @@ static void BlitNtoNSurfaceAlphaKey(SDL_BlitInfo *info)
          if(sA && Pixel != ckey)
          {
             RGB_FROM_PIXEL(Pixel, srcfmt, sR, sG, sB);
-            DISEMBLE_RGB(dst, dstbpp, dstfmt, Pixel, dR, dG, dB);
+            DISEMBLE_RGB(dst, dstbpp, dstfmt, &Pixel, &dR, &dG, &dB);
             ALPHA_BLEND(sR, sG, sB, sA, &dR, &dG, &dB);
             ASSEMBLE_RGBA(dst, dstbpp, dstfmt, dR, dG, dB, dA);
          }

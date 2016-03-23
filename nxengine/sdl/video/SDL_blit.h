@@ -136,32 +136,36 @@ do {									   \
 	}								   \
 } while(0)
 
-#define DISEMBLE_RGB(buf, bpp, fmt, Pixel, r, g, b)			   \
-do {									   \
-	switch (bpp) {							   \
-		case 2:							   \
-			Pixel = *((uint16_t*)(buf));			   \
-		break;							   \
-									   \
-		case 3: {						   \
-		        uint8_t *B = (uint8_t *)buf;			   \
-			if(SDL_BYTEORDER == SDL_LIL_ENDIAN)		   \
-			        Pixel = B[0] + (B[1] << 8) + (B[2] << 16); \
-			else					   \
-			        Pixel = (B[0] << 16) + (B[1] << 8) + B[2]; \
-		}							   \
-		break;							   \
-									   \
-		case 4:							   \
-			Pixel = *((uint32_t*)(buf));			   \
-		break;							   \
-									   \
-	        default:						   \
-		        Pixel = 0;	/* prevent gcc from complaining */ \
-		break;							   \
-	}								   \
-	RGB_FROM_PIXEL(Pixel, fmt, r, g, b);				   \
-} while(0)
+static __inline void DISEMBLE_RGB(void *buf, int bpp,
+      SDL_PixelFormat *fmt, uint32_t *Pixel,
+      int *r, int *g, int *b)
+{
+   switch (bpp)
+   {
+      case 2:
+         *Pixel = *((uint16_t*)(buf));
+         break;
+      case 3:
+         {
+            uint8_t *B = (uint8_t *)buf;
+#ifdef MSB_FIRST
+            *Pixel     = (B[0] << 16) + (B[1] << 8) + B[2];
+#else
+            *Pixel     = B[0] + (B[1] << 8) + (B[2] << 16);
+#endif
+         }
+         break;
+      case 4:
+         *Pixel = *((uint32_t*)(buf));
+         break;
+      default:
+         *Pixel = 0;	/* prevent gcc from complaining */
+         break;
+   }
+
+   RGB_FROM_PIXEL(*Pixel, fmt, *r, *g, *b);
+}
+
 
 /* Assemble R-G-B values into a specified pixel format and store them */
 #define PIXEL_FROM_RGB(fmt, r, g, b) (((r>>fmt->Rloss)<<fmt->Rshift)| ((g>>fmt->Gloss)<<fmt->Gshift) | ((b>>fmt->Bloss)<<fmt->Bshift))
@@ -264,7 +268,7 @@ do {									   \
 	a = (Pixel>>24);						\
 }
 
-static __inline DISEMBLE_RGBA(void *buf, int bpp,
+static __inline void DISEMBLE_RGBA(void *buf, int bpp,
       SDL_PixelFormat *fmt, uint32_t *Pixel,
       int *r, int *g, int *b, int *a)
 {
