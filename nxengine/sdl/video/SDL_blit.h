@@ -356,12 +356,13 @@ do {									   \
 }
 
 /* Blend the RGB values of two Pixels based on a source alpha value */
-#define ALPHA_BLEND(sR, sG, sB, A, dR, dG, dB)	\
-do {						\
-	dR = (((sR-dR)*(A)+255)>>8)+dR;		\
-	dG = (((sG-dG)*(A)+255)>>8)+dG;		\
-	dB = (((sB-dB)*(A)+255)>>8)+dB;		\
-} while(0)
+static __inline void ALPHA_BLEND(int sR, int sG, int sB, const int A, 
+      int *dR, int *dG, int *dB)
+{
+   *dR = (((sR - *dR) * A + 255) >> 8) + *dR;
+   *dG = (((sG - *dG) * A + 255) >> 8) + *dG;
+   *dB = (((sB - *dB) * A + 255) >> 8) + *dB;
+}
 
 
 /* Prevent Visual C++ 6.0 from printing out stupid warnings */
