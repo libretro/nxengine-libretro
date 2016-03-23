@@ -569,7 +569,8 @@ SDL_Surface * LRSDL_ConvertSurface (SDL_Surface *surface,
    SDL_Rect bounds;
 
    /* Check for empty destination palette! (results in empty image) */
-   if ( format->palette != NULL ) {
+   if ( format->palette != NULL )
+   {
       int i;
       for ( i=0; i<format->palette->ncolors; ++i ) {
          if ( (format->palette->colors[i].r != 0) ||
@@ -589,9 +590,9 @@ SDL_Surface * LRSDL_ConvertSurface (SDL_Surface *surface,
    convert = LRSDL_CreateRGBSurface(flags,
          surface->w, surface->h, format->BitsPerPixel,
          format->Rmask, format->Gmask, format->Bmask, format->Amask);
-   if ( convert == NULL ) {
+
+   if ( convert == NULL )
       return(NULL);
-   }
 
    /* Copy the palette if any */
    if ( format->palette && convert->format->palette ) {
@@ -606,18 +607,20 @@ SDL_Surface * LRSDL_ConvertSurface (SDL_Surface *surface,
    if ( (surface_flags & SDL_SRCCOLORKEY) == SDL_SRCCOLORKEY ) {
       /* Convert colourkeyed surfaces to RGBA if requested */
       if((flags & SDL_SRCCOLORKEY) != SDL_SRCCOLORKEY
-            && format->Amask) {
+            && format->Amask)
          surface_flags &= ~SDL_SRCCOLORKEY;
-      } else {
+      else
+      {
          colorkey = surface->format->colorkey;
          LRSDL_SetColorKey(surface, 0, 0);
       }
    }
    if ( (surface_flags & SDL_SRCALPHA) == SDL_SRCALPHA ) {
       /* Copy over the alpha channel to RGBA if requested */
-      if ( format->Amask ) {
+      if ( format->Amask )
          surface->flags &= ~SDL_SRCALPHA;
-      } else {
+      else
+      {
          alpha = surface->format->alpha;
          LRSDL_SetAlpha(surface, 0, 0);
       }
@@ -631,13 +634,15 @@ SDL_Surface * LRSDL_ConvertSurface (SDL_Surface *surface,
    LRSDL_LowerBlit(surface, &bounds, convert, &bounds);
 
    /* Clean up the original surface, and update converted surface */
-   if ( convert != NULL ) {
+   if ( convert != NULL )
       LRSDL_SetClipRect(convert, &surface->clip_rect);
-   }
-   if ( (surface_flags & SDL_SRCCOLORKEY) == SDL_SRCCOLORKEY ) {
+
+   if ( (surface_flags & SDL_SRCCOLORKEY) == SDL_SRCCOLORKEY )
+   {
       Uint32 cflags = surface_flags&(SDL_SRCCOLORKEY|SDL_RLEACCELOK);
-      if ( convert != NULL ) {
-         Uint8 keyR, keyG, keyB;
+      if (convert)
+      {
+         uint8_t keyR, keyG, keyB;
 
          LRSDL_GetRGB(colorkey,surface->format,&keyR,&keyG,&keyB);
          LRSDL_SetColorKey(convert, cflags|(flags&SDL_RLEACCELOK),
@@ -645,21 +650,22 @@ SDL_Surface * LRSDL_ConvertSurface (SDL_Surface *surface,
       }
       LRSDL_SetColorKey(surface, cflags, colorkey);
    }
-   if ( (surface_flags & SDL_SRCALPHA) == SDL_SRCALPHA ) {
-      Uint32 aflags = surface_flags&(SDL_SRCALPHA|SDL_RLEACCELOK);
-      if ( convert != NULL ) {
+
+   if ( (surface_flags & SDL_SRCALPHA) == SDL_SRCALPHA )
+   {
+      uint32_t aflags = surface_flags&(SDL_SRCALPHA|SDL_RLEACCELOK);
+      if ( convert != NULL )
          LRSDL_SetAlpha(convert, aflags|(flags&SDL_RLEACCELOK),
                alpha);
-      }
-      if ( format->Amask ) {
+
+      if ( format->Amask )
          surface->flags |= SDL_SRCALPHA;
-      } else {
+      else
          LRSDL_SetAlpha(surface, aflags, alpha);
-      }
    }
 
    /* We're ready to go! */
-   return(convert);
+   return convert;
 }
 
 /*
