@@ -114,7 +114,7 @@ extern SDL_loblit LRSDL_CalculateAlphaBlit(SDL_Surface *surface, int complex);
 do {									   \
 	switch (bpp) {							   \
 		case 2:							   \
-			Pixel = *((Uint16 *)(buf));			   \
+			Pixel = *((uint16_t*)(buf));			   \
 		break;							   \
 									   \
 		case 3: {						   \
@@ -128,7 +128,7 @@ do {									   \
 		break;							   \
 									   \
 		case 4:							   \
-			Pixel = *((Uint32 *)(buf));			   \
+			Pixel = *((uint32_t*)(buf));			   \
 		break;							   \
 									   \
 		default:						   \
@@ -141,7 +141,7 @@ do {									   \
 do {									   \
 	switch (bpp) {							   \
 		case 2:							   \
-			Pixel = *((Uint16 *)(buf));			   \
+			Pixel = *((uint16_t*)(buf));			   \
 		break;							   \
 									   \
 		case 3: {						   \
@@ -155,7 +155,7 @@ do {									   \
 		break;							   \
 									   \
 		case 4:							   \
-			Pixel = *((Uint32 *)(buf));			   \
+			Pixel = *((uint32_t*)(buf));			   \
 		break;							   \
 									   \
 	        default:						   \
@@ -181,10 +181,9 @@ do {									   \
 {									\
 	switch (bpp) {							\
 		case 2: {						\
-			Uint16 Pixel;					\
-									\
+			uint16_t Pixel;					\
 			PIXEL_FROM_RGB(Pixel, fmt, r, g, b);		\
-			*((Uint16 *)(buf)) = Pixel;			\
+			*((uint16_t*)(buf)) = Pixel;			\
 		}							\
 		break;							\
 									\
@@ -202,10 +201,9 @@ do {									   \
 		break;							\
 									\
 		case 4: {						\
-			Uint32 Pixel;					\
-									\
+			uint32_t Pixel;					\
 			PIXEL_FROM_RGB(Pixel, fmt, r, g, b);		\
-			*((Uint32 *)(buf)) = Pixel;			\
+			*((uint32_t*)(buf)) = Pixel;			\
 		}							\
 		break;							\
 	}								\
@@ -214,10 +212,8 @@ do {									   \
 {									\
 	switch (bpp) {							\
 		case 2: {						\
-			Uint16 *bufp;					\
-			Uint16 Pixel;					\
-									\
-			bufp = (Uint16 *)buf;				\
+			uint16_t Pixel;					\
+			uint16_t *bufp = (uint16_t*)buf;				\
 			PIXEL_FROM_RGB(Pixel, fmt, r, g, b);		\
 			*bufp = Pixel | (*bufp & Amask);		\
 		}							\
@@ -237,10 +233,8 @@ do {									   \
 		break;							\
 									\
 		case 4: {						\
-			Uint32 *bufp;					\
-			Uint32 Pixel;					\
-									\
-			bufp = (Uint32 *)buf;				\
+			uint32_t Pixel;					\
+			uint32_t *bufp = (uint32_t*)buf;				\
 			PIXEL_FROM_RGB(Pixel, fmt, r, g, b);		\
 			*bufp = Pixel | (*bufp & Amask);		\
 		}							\
@@ -288,7 +282,7 @@ do {									   \
 do {									   \
 	switch (bpp) {							   \
 		case 2:							   \
-			Pixel = *((Uint16 *)(buf));			   \
+			Pixel = *((uint16_t*)(buf));			   \
 		break;							   \
 									   \
 		case 3:	{/* FIXME: broken code (no alpha) */		   \
@@ -302,7 +296,7 @@ do {									   \
 		break;							   \
 									   \
 		case 4:							   \
-			Pixel = *((Uint32 *)(buf));			   \
+			Pixel = *((uint32_t*)(buf)); \
 		break;							   \
 									   \
 		default:						   \
@@ -325,10 +319,9 @@ do {									   \
 {									\
 	switch (bpp) {							\
 		case 2: {						\
-			Uint16 Pixel;					\
-									\
+			uint16_t Pixel;					\
 			PIXEL_FROM_RGBA(Pixel, fmt, r, g, b, a);	\
-			*((Uint16 *)(buf)) = Pixel;			\
+			*((uint16_t*)(buf)) = Pixel;			\
 		}							\
 		break;							\
 									\
@@ -346,10 +339,9 @@ do {									   \
 		break;							\
 									\
 		case 4: {						\
-			Uint32 Pixel;					\
-									\
+			uint32_t Pixel;					\
 			PIXEL_FROM_RGBA(Pixel, fmt, r, g, b, a);	\
-			*((Uint32 *)(buf)) = Pixel;			\
+			*((uint32_t*)(buf)) = Pixel;			\
 		}							\
 		break;							\
 	}								\
