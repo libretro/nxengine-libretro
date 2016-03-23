@@ -50,11 +50,11 @@ static void Blit_RGB888_index8(SDL_BlitInfo *info)
    int c;
    int width          = info->d_width;
    int height         = info->d_height;
-   uint32_t *src      = (uint32_t*)info->s_pixels;
    int srcskip        = info->s_skip/4;
-   uint8_t * dst      = info->d_pixels;
    int dstskip        = info->d_skip;
    const uint8_t *map = info->table;
+   uint32_t *src      = (uint32_t*)info->s_pixels;
+   uint8_t * dst      = info->d_pixels;
 
    if ( map )
    {
@@ -149,10 +149,10 @@ static void Blit_RGB888_RGB555(SDL_BlitInfo *info)
    int c;
    int width     = info->d_width;
    int height    = info->d_height;
-   uint32_t *src = (uint32_t*)info->s_pixels;
    int srcskip   = info->s_skip/4;
-   uint16_t *dst = (uint16_t*)info->d_pixels;
    int dstskip   = info->d_skip/2;
+   uint32_t *src = (uint32_t*)info->s_pixels;
+   uint16_t *dst = (uint16_t*)info->d_pixels;
 
    /* Memory align at 4-byte boundary, if necessary */
    if ( (long)dst & 0x03 )
@@ -259,10 +259,10 @@ static void Blit_RGB888_RGB565(SDL_BlitInfo *info)
    int c;
    int width     = info->d_width;
    int height    = info->d_height;
-   uint32_t *src = (uint32_t*)info->s_pixels;
    int srcskip   = info->s_skip/4;
-   uint16_t *dst = (uint16_t*)info->d_pixels;
    int dstskip   = info->d_skip/2;
+   uint32_t *src = (uint32_t*)info->s_pixels;
+   uint16_t *dst = (uint16_t*)info->d_pixels;
 
    /* Memory align at 4-byte boundary, if necessary */
    if ( (long)dst & 0x03 )
@@ -357,10 +357,10 @@ static void Blit_RGB565_32(SDL_BlitInfo *info, const uint32_t *map)
    int c;
    int width     = info->d_width;
    int height    = info->d_height;
-   uint8_t *src  = (uint8_t*)info->s_pixels;
    int srcskip   = info->s_skip;
-   uint32_t *dst = (uint32_t*)info->d_pixels;
    int dstskip   = info->d_skip/4;
+   uint8_t *src  = (uint8_t*)info->s_pixels;
+   uint32_t *dst = (uint32_t*)info->d_pixels;
 
    while ( height-- )
    {
@@ -954,11 +954,11 @@ static void Blit_RGB888_index8_map(SDL_BlitInfo *info)
    int Pixel;
    int          width = info->d_width;
    int         height = info->d_height;
-   uint32_t      *src = (uint32_t *)info->s_pixels;
    int        srcskip = info->s_skip/4;
-   uint8_t       *dst = info->d_pixels;
    int        dstskip = info->d_skip;
    const uint8_t *map = info->table;
+   uint32_t      *src = (uint32_t *)info->s_pixels;
+   uint8_t       *dst = info->d_pixels;
 
    while ( height-- )
    {
@@ -1002,13 +1002,13 @@ static void BlitNto1(SDL_BlitInfo *info)
    int  sR, sG, sB;
    int       width         = info->d_width;
    int       height        = info->d_height;
-   uint8_t       *src      = info->s_pixels;
    int srcskip             = info->s_skip;
-   uint8_t       *dst      = info->d_pixels;
    int dstskip             = info->d_skip;
    const uint8_t *map      = info->table;
    SDL_PixelFormat *srcfmt = info->src;
    int srcbpp              = srcfmt->BytesPerPixel;
+   uint8_t       *src      = info->s_pixels;
+   uint8_t       *dst      = info->d_pixels;
 
    if (map)
    {
@@ -1057,12 +1057,12 @@ static void Blit4to4MaskAlpha(SDL_BlitInfo *info)
 {
    int               width = info->d_width;
    int              height = info->d_height;
-   uint32_t           *src = (uint32_t*)info->s_pixels;
    int             srcskip = info->s_skip;
-   uint32_t           *dst = (uint32_t*)info->d_pixels;
    int             dstskip = info->d_skip;
    SDL_PixelFormat *srcfmt = info->src;
    SDL_PixelFormat *dstfmt = info->dst;
+   uint32_t           *src = (uint32_t*)info->s_pixels;
+   uint32_t           *dst = (uint32_t*)info->d_pixels;
 
    if (dstfmt->Amask)
    {
@@ -1107,15 +1107,15 @@ static void BlitNtoN(SDL_BlitInfo *info)
 {
    int               width = info->d_width;
    int              height = info->d_height;
-   uint8_t            *src = info->s_pixels;
    int             srcskip = info->s_skip;
-   uint8_t            *dst = info->d_pixels;
    int             dstskip = info->d_skip;
    SDL_PixelFormat *srcfmt = info->src;
    int              srcbpp = srcfmt->BytesPerPixel;
    SDL_PixelFormat *dstfmt = info->dst;
    int              dstbpp = dstfmt->BytesPerPixel;
    unsigned          alpha = dstfmt->Amask ? srcfmt->alpha : 0;
+   uint8_t            *src = info->s_pixels;
+   uint8_t            *dst = info->d_pixels;
 
    while ( height-- )
    {
@@ -1141,14 +1141,14 @@ static void BlitNtoNCopyAlpha(SDL_BlitInfo *info)
 {
    int width               = info->d_width;
    int height              = info->d_height;
-   uint8_t *src            = info->s_pixels;
    int srcskip             = info->s_skip;
-   uint8_t *dst            = info->d_pixels;
    int dstskip             = info->d_skip;
    SDL_PixelFormat *srcfmt = info->src;
    int srcbpp              = srcfmt->BytesPerPixel;
    SDL_PixelFormat *dstfmt = info->dst;
    int dstbpp              = dstfmt->BytesPerPixel;
+   uint8_t *src            = info->s_pixels;
+   uint8_t *dst            = info->d_pixels;
 
    /* FIXME: should map alpha to [0..255] correctly! */
    while ( height-- )
@@ -1177,15 +1177,15 @@ static void BlitNto1Key(SDL_BlitInfo *info)
    int sR, sG, sB;
    int width               = info->d_width;
    int height              = info->d_height;
-   uint8_t *src            = info->s_pixels;
    int srcskip             = info->s_skip;
-   uint8_t *dst            = info->d_pixels;
    int dstskip             = info->d_skip;
    SDL_PixelFormat *srcfmt = info->src;
    const uint8_t *palmap   = info->table;
    uint32_t rgbmask        = ~srcfmt->Amask;
    uint32_t ckey           = srcfmt->colorkey & rgbmask;
    int srcbpp              = srcfmt->BytesPerPixel;
+   uint8_t *src            = info->s_pixels;
+   uint8_t *dst            = info->d_pixels;
 
    if (palmap)
    {
@@ -1237,25 +1237,26 @@ static void Blit2to2Key(SDL_BlitInfo *info)
 {
    int width         = info->d_width;
    int height        = info->d_height;
-   Uint16 *srcp      = (Uint16 *)info->s_pixels;
    int srcskip       = info->s_skip / 2;
-   Uint16 *dstp      = (Uint16 *)info->d_pixels;
    int dstskip       = info->d_skip / 2;
    uint32_t rgbmask  = ~info->src->Amask;
    uint32_t ckey     = info->src->colorkey & rgbmask;
+   uint16_t *src     = (uint16_t *)info->s_pixels;
+   uint16_t *dst     = (uint16_t *)info->d_pixels;
 
    while ( height-- )
    {
       int n;
       for (n = width; n > 0; --n)
       {
-         if ( (*srcp & rgbmask) != ckey )
-            *dstp = *srcp;
-         dstp++;
-         srcp++;
+         if ( (*src & rgbmask) != ckey )
+            *dst = *src;
+         dst++;
+         src++;
       }
-      srcp += srcskip;
-      dstp += dstskip;
+
+      src += srcskip;
+      dst += dstskip;
    }
 }
 
@@ -1263,9 +1264,7 @@ static void BlitNtoNKey(SDL_BlitInfo *info)
 {
    int               width = info->d_width;
    int              height = info->d_height;
-   uint8_t            *src = info->s_pixels;
    int             srcskip = info->s_skip;
-   uint8_t            *dst = info->d_pixels;
    int             dstskip = info->d_skip;
    SDL_PixelFormat *srcfmt = info->src;
    uint32_t        rgbmask = ~srcfmt->Amask;
@@ -1274,6 +1273,8 @@ static void BlitNtoNKey(SDL_BlitInfo *info)
    int              srcbpp = srcfmt->BytesPerPixel;
    int              dstbpp = dstfmt->BytesPerPixel;
    unsigned          alpha = dstfmt->Amask ? srcfmt->alpha : 0;
+   uint8_t            *src = info->s_pixels;
+   uint8_t            *dst = info->d_pixels;
 
    while ( height-- )
    {
@@ -1309,9 +1310,7 @@ static void BlitNtoNKeyCopyAlpha(SDL_BlitInfo *info)
    int sR, sG, sB, sA;
    int               width = info->d_width;
    int              height = info->d_height;
-   uint8_t            *src = info->s_pixels;
    int             srcskip = info->s_skip;
-   uint8_t            *dst = info->d_pixels;
    int             dstskip = info->d_skip;
    SDL_PixelFormat *srcfmt = info->src;
    uint32_t        rgbmask = ~srcfmt->Amask;
@@ -1319,6 +1318,8 @@ static void BlitNtoNKeyCopyAlpha(SDL_BlitInfo *info)
    SDL_PixelFormat *dstfmt = info->dst;
    uint8_t          srcbpp = srcfmt->BytesPerPixel;
    uint8_t          dstbpp = dstfmt->BytesPerPixel;
+   uint8_t            *src = info->s_pixels;
+   uint8_t            *dst = info->d_pixels;
 
    /* FIXME: should map alpha to [0..255] correctly! */
    while ( height-- )

@@ -31,15 +31,15 @@ static void BlitNto1SurfaceAlpha(SDL_BlitInfo *info)
 {
    int width               = info->d_width;
    int height              = info->d_height;
-   uint8_t *src            = info->s_pixels;
    int srcskip             = info->s_skip;
-   uint8_t *dst            = info->d_pixels;
    int dstskip             = info->d_skip;
    uint8_t *palmap         = info->table;
    SDL_PixelFormat *srcfmt = info->src;
    SDL_PixelFormat *dstfmt = info->dst;
    int srcbpp              = srcfmt->BytesPerPixel;
    const unsigned A        = srcfmt->alpha;
+   uint8_t *src            = info->s_pixels;
+   uint8_t *dst            = info->d_pixels;
 
    while ( height-- )
    {
@@ -86,14 +86,14 @@ static void BlitNto1PixelAlpha(SDL_BlitInfo *info)
 {
    int width               = info->d_width;
    int height              = info->d_height;
-   uint8_t *src            = info->s_pixels;
    int srcskip             = info->s_skip;
-   uint8_t *dst            = info->d_pixels;
    int dstskip             = info->d_skip;
    uint8_t *palmap         = info->table;
    SDL_PixelFormat *srcfmt = info->src;
    SDL_PixelFormat *dstfmt = info->dst;
    int srcbpp              = srcfmt->BytesPerPixel;
+   uint8_t *src            = info->s_pixels;
+   uint8_t *dst            = info->d_pixels;
 
    /* FIXME: fix alpha bit field expansion here too? */
    while ( height-- )
@@ -143,9 +143,7 @@ static void BlitNto1SurfaceAlphaKey(SDL_BlitInfo *info)
 {
    int width               = info->d_width;
    int height              = info->d_height;
-   uint8_t *src            = info->s_pixels;
    int srcskip             = info->s_skip;
-   uint8_t *dst            = info->d_pixels;
    int dstskip             = info->d_skip;
    uint8_t *palmap         = info->table;
    SDL_PixelFormat *srcfmt = info->src;
@@ -153,6 +151,8 @@ static void BlitNto1SurfaceAlphaKey(SDL_BlitInfo *info)
    int srcbpp              = srcfmt->BytesPerPixel;
    uint32_t ckey           = srcfmt->colorkey;
    const int A             = srcfmt->alpha;
+   uint8_t *src            = info->s_pixels;
+   uint8_t *dst            = info->d_pixels;
 
    while ( height-- )
    {
@@ -201,23 +201,23 @@ static void BlitRGBtoRGBSurfaceAlpha128(SDL_BlitInfo *info)
 {
    int width      = info->d_width;
    int height     = info->d_height;
-   uint32_t *srcp = (uint32_t *)info->s_pixels;
    int srcskip    = info->s_skip >> 2;
-   uint32_t *dstp = (uint32_t *)info->d_pixels;
    int dstskip    = info->d_skip >> 2;
+   uint32_t *src  = (uint32_t *)info->s_pixels;
+   uint32_t *dst  = (uint32_t *)info->d_pixels;
 
    while(height--)
    {
       int n;
       for (n = width; n > 0; --n)
       {
-         uint32_t s = *srcp++;
-         uint32_t d = *dstp;
-         *dstp++ = ((((s & 0x00fefefe) + (d & 0x00fefefe)) >> 1)
+         uint32_t s = *src++;
+         uint32_t d = *dst;
+         *dst++ = ((((s & 0x00fefefe) + (d & 0x00fefefe)) >> 1)
                + (s & d & 0x00010101)) | 0xff000000;
       }
-      srcp += srcskip;
-      dstp += dstskip;
+      src += srcskip;
+      dst += dstskip;
    }
 }
 
@@ -228,10 +228,10 @@ static void BlitRGBtoRGBSurfaceAlpha(SDL_BlitInfo *info)
    unsigned alpha = info->src->alpha;
    int width      = info->d_width;
    int height     = info->d_height;
-   uint32_t *srcp = (uint32_t*)info->s_pixels;
    int srcskip    = info->s_skip >> 2;
-   uint32_t *dstp = (uint32_t*)info->d_pixels;
    int dstskip    = info->d_skip >> 2;
+   uint32_t *src  = (uint32_t*)info->s_pixels;
+   uint32_t *dst  = (uint32_t*)info->d_pixels;
 
    if(alpha == 128)
    {
@@ -246,8 +246,8 @@ static void BlitRGBtoRGBSurfaceAlpha(SDL_BlitInfo *info)
       if (n & 1)
       {
          /* One Pixel Blend */
-         s = *srcp;
-         d = *dstp;
+         s = *src;
+         d = *dst;
          s1 = s & 0xff00ff;
          d1 = d & 0xff00ff;
          d1 = (d1 + ((s1 - d1) * alpha >> 8))
@@ -255,9 +255,9 @@ static void BlitRGBtoRGBSurfaceAlpha(SDL_BlitInfo *info)
          s &= 0xff00;
          d &= 0xff00;
          d = (d + ((s - d) * alpha >> 8)) & 0xff00;
-         *dstp = d1 | d | 0xff000000;
-         ++srcp;
-         ++dstp;
+         *dst = d1 | d | 0xff000000;
+         ++src;
+         ++dst;
          n--;
       }
 
@@ -266,37 +266,37 @@ static void BlitRGBtoRGBSurfaceAlpha(SDL_BlitInfo *info)
       for (; n > 0; --n)
       {
          /* Two Pixels Blend */
-         s = *srcp;
-         d = *dstp;
+         s = *src;
+         d = *dst;
          s1 = s & 0xff00ff;
          d1 = d & 0xff00ff;
          d1 += (s1 - d1) * alpha >> 8;
          d1 &= 0xff00ff;
 
          s = ((s & 0xff00) >> 8) | 
-            ((srcp[1] & 0xff00) << 8);
+            ((src[1] & 0xff00) << 8);
          d = ((d & 0xff00) >> 8) |
-            ((dstp[1] & 0xff00) << 8);
+            ((dst[1] & 0xff00) << 8);
          d += (s - d) * alpha >> 8;
          d &= 0x00ff00ff;
 
-         *dstp++ = d1 | ((d << 8) & 0xff00) | 0xff000000;
-         ++srcp;
+         *dst++ = d1 | ((d << 8) & 0xff00) | 0xff000000;
+         ++src;
 
-         s1 = *srcp;
-         d1 = *dstp;
+         s1 = *src;
+         d1 = *dst;
          s1 &= 0xff00ff;
          d1 &= 0xff00ff;
          d1 += (s1 - d1) * alpha >> 8;
          d1 &= 0xff00ff;
 
-         *dstp = d1 | ((d >> 8) & 0xff00) | 0xff000000;
-         ++srcp;
-         ++dstp;
+         *dst = d1 | ((d >> 8) & 0xff00) | 0xff000000;
+         ++src;
+         ++dst;
       }
 
-      srcp += srcskip;
-      dstp += dstskip;
+      src += srcskip;
+      dst += dstskip;
    }
 }
 
@@ -305,10 +305,10 @@ static void BlitRGBtoRGBPixelAlpha(SDL_BlitInfo *info)
 {
    int width       = info->d_width;
    int height      = info->d_height;
-   uint32_t *srcp  = (uint32_t*)info->s_pixels;
    int srcskip     = info->s_skip >> 2;
-   uint32_t *dstp  = (uint32_t*)info->d_pixels;
    int dstskip     = info->d_skip >> 2;
+   uint32_t *src   = (uint32_t*)info->s_pixels;
+   uint32_t *dst   = (uint32_t*)info->d_pixels;
 
    while(height--)
    {
@@ -319,7 +319,7 @@ static void BlitRGBtoRGBPixelAlpha(SDL_BlitInfo *info)
          uint32_t d;
          uint32_t s1;
          uint32_t d1;
-         uint32_t s = *srcp;
+         uint32_t s = *src;
          uint32_t alpha = s >> 24;
          /* FIXME: Here we special-case opaque alpha since the
             compositioning used (>>8 instead of /255) doesn't handle
@@ -327,13 +327,13 @@ static void BlitRGBtoRGBPixelAlpha(SDL_BlitInfo *info)
             Benchmark this! */
          if(alpha) {   
             if(alpha == SDL_ALPHA_OPAQUE) {
-               *dstp = (s & 0x00ffffff) | (*dstp & 0xff000000);
+               *dst = (s & 0x00ffffff) | (*dst & 0xff000000);
             } else {
                /*
                 * take out the middle component (green), and process
                 * the other two in parallel. One multiply less.
                 */
-               d = *dstp;
+               d = *dst;
                dalpha = d & 0xff000000;
                s1 = s & 0xff00ff;
                d1 = d & 0xff00ff;
@@ -341,15 +341,15 @@ static void BlitRGBtoRGBPixelAlpha(SDL_BlitInfo *info)
                s &= 0xff00;
                d &= 0xff00;
                d = (d + ((s - d) * alpha >> 8)) & 0xff00;
-               *dstp = d1 | d | dalpha;
+               *dst = d1 | d | dalpha;
             }
          }
-         ++srcp;
-         ++dstp;
+         ++src;
+         ++dst;
       }
 
-      srcp += srcskip;
-      dstp += dstskip;
+      src += srcskip;
+      dst += dstskip;
    }
 }
 
@@ -368,14 +368,14 @@ static void Blit16to16SurfaceAlpha128(SDL_BlitInfo *info, uint16_t mask)
 {
    int width       = info->d_width;
    int height      = info->d_height;
-   uint16_t *srcp  = (uint16_t *)info->s_pixels;
    int srcskip     = info->s_skip >> 1;
-   uint16_t *dstp  = (uint16_t *)info->d_pixels;
    int dstskip     = info->d_skip >> 1;
+   uint16_t *src   = (uint16_t *)info->s_pixels;
+   uint16_t *dst   = (uint16_t *)info->d_pixels;
 
    while(height--)
    {
-      if(((uintptr_t)srcp ^ (uintptr_t)dstp) & 2)
+      if(((uintptr_t)src ^ (uintptr_t)dst) & 2)
       {
          /*
           * Source and destination not aligned, pipeline it.
@@ -386,50 +386,50 @@ static void Blit16to16SurfaceAlpha128(SDL_BlitInfo *info, uint16_t mask)
          int w = width;
 
          /* handle odd destination */
-         if((uintptr_t)dstp & 2)
+         if((uintptr_t)dst & 2)
          {
-            uint16_t d = *dstp, s = *srcp;
-            *dstp = BLEND16_50(d, s, mask);
-            dstp++;
-            srcp++;
+            uint16_t d = *dst, s = *src;
+            *dst = BLEND16_50(d, s, mask);
+            dst++;
+            src++;
             w--;
          }
-         srcp++;	/* srcp is now 32-bit aligned */
+         src++;	/* src is now 32-bit aligned */
 
          /* bootstrap pipeline with first halfword */
-         prev_sw = ((uint32_t *)srcp)[-1];
+         prev_sw = ((uint32_t *)src)[-1];
 
          while(w > 1)
          {
-            uint32_t sw = *(uint32_t *)srcp;
-            uint32_t dw = *(uint32_t *)dstp;
+            uint32_t sw = *(uint32_t *)src;
+            uint32_t dw = *(uint32_t *)dst;
 #ifdef MSB_FIRST
             uint32_t s = (prev_sw << 16) + (sw >> 16);
 #else
             uint32_t s = (prev_sw >> 16) + (sw << 16);
 #endif
             prev_sw = sw;
-            *(uint32_t *)dstp = BLEND2x16_50(dw, s, mask);
-            dstp += 2;
-            srcp += 2;
+            *(uint32_t *)dst = BLEND2x16_50(dw, s, mask);
+            dst += 2;
+            src += 2;
             w -= 2;
          }
 
          /* final pixel if any */
          if(w)
          {
-            uint16_t d = *dstp, s;
+            uint16_t d = *dst, s;
 #ifdef MSB_FIRST
             s = (uint16_t)prev_sw;
 #else
             s = (uint16_t)(prev_sw >> 16);
 #endif
-            *dstp = BLEND16_50(d, s, mask);
-            srcp++;
-            dstp++;
+            *dst = BLEND16_50(d, s, mask);
+            src++;
+            dst++;
          }
-         srcp += srcskip - 1;
-         dstp += dstskip;
+         src += srcskip - 1;
+         dst += dstskip;
       }
       else
       {
@@ -437,36 +437,36 @@ static void Blit16to16SurfaceAlpha128(SDL_BlitInfo *info, uint16_t mask)
          int w = width;
 
          /* first odd pixel? */
-         if((uintptr_t)srcp & 2)
+         if((uintptr_t)src & 2)
          {
-            uint16_t d = *dstp, s = *srcp;
-            *dstp = BLEND16_50(d, s, mask);
-            srcp++;
-            dstp++;
+            uint16_t d = *dst, s = *src;
+            *dst = BLEND16_50(d, s, mask);
+            src++;
+            dst++;
             w--;
          }
-         /* srcp and dstp are now 32-bit aligned */
+         /* src and dst are now 32-bit aligned */
 
          while(w > 1)
          {
-            uint32_t sw = *(uint32_t *)srcp;
-            uint32_t dw = *(uint32_t *)dstp;
-            *(uint32_t *)dstp = BLEND2x16_50(dw, sw, mask);
-            srcp += 2;
-            dstp += 2;
+            uint32_t sw = *(uint32_t *)src;
+            uint32_t dw = *(uint32_t *)dst;
+            *(uint32_t *)dst = BLEND2x16_50(dw, sw, mask);
+            src += 2;
+            dst += 2;
             w -= 2;
          }
 
          /* last odd pixel? */
          if(w)
          {
-            uint16_t d = *dstp, s = *srcp;
-            *dstp = BLEND16_50(d, s, mask);
-            srcp++;
-            dstp++;
+            uint16_t d = *dst, s = *src;
+            *dst = BLEND16_50(d, s, mask);
+            src++;
+            dst++;
          }
-         srcp += srcskip;
-         dstp += dstskip;
+         src += srcskip;
+         dst += dstskip;
       }
    }
 }
@@ -484,10 +484,10 @@ static void Blit565to565SurfaceAlpha(SDL_BlitInfo *info)
    {
       int width      = info->d_width;
       int height     = info->d_height;
-      uint16_t *srcp = (uint16_t *)info->s_pixels;
       int srcskip    = info->s_skip >> 1;
-      uint16_t *dstp = (uint16_t *)info->d_pixels;
       int dstskip    = info->d_skip >> 1;
+      uint16_t *src  = (uint16_t *)info->s_pixels;
+      uint16_t *dst  = (uint16_t *)info->d_pixels;
 
       alpha >>= 3;	/* downscale alpha to 5 bits */
 
@@ -497,8 +497,8 @@ static void Blit565to565SurfaceAlpha(SDL_BlitInfo *info)
          
          for (n = width; n > 0; --n)
          {
-            uint32_t s = *srcp++;
-            uint32_t d = *dstp;
+            uint32_t s = *src++;
+            uint32_t d = *dst;
             /*
              * shift out the middle component (green) to
              * the high 16 bits, and process all three RGB
@@ -508,11 +508,11 @@ static void Blit565to565SurfaceAlpha(SDL_BlitInfo *info)
             d = (d | d << 16) & 0x07e0f81f;
             d += (s - d) * alpha >> 5;
             d &= 0x07e0f81f;
-            *dstp++ = (uint16_t)(d | d >> 16);
+            *dst++ = (uint16_t)(d | d >> 16);
          }
 
-         srcp += srcskip;
-         dstp += dstskip;
+         src += srcskip;
+         dst += dstskip;
       }
    }
 }
@@ -529,12 +529,12 @@ static void Blit555to555SurfaceAlpha(SDL_BlitInfo *info)
    }
 
    {
-      int width    = info->d_width;
-      int height   = info->d_height;
-      uint16_t *srcp = (uint16_t *)info->s_pixels;
-      int srcskip  = info->s_skip >> 1;
-      uint16_t *dstp = (uint16_t *)info->d_pixels;
-      int dstskip  = info->d_skip >> 1;
+      int width      = info->d_width;
+      int height     = info->d_height;
+      int srcskip    = info->s_skip >> 1;
+      int dstskip    = info->d_skip >> 1;
+      uint16_t *src  = (uint16_t *)info->s_pixels;
+      uint16_t *dst  = (uint16_t *)info->d_pixels;
       alpha >>= 3;		/* downscale alpha to 5 bits */
 
       while(height--)
@@ -543,8 +543,8 @@ static void Blit555to555SurfaceAlpha(SDL_BlitInfo *info)
 
          for (n = width; n > 0; --n)
          {
-            uint32_t s = *srcp++;
-            uint32_t d = *dstp;
+            uint32_t s = *src++;
+            uint32_t d = *dst;
             /*
              * shift out the middle component (green) to
              * the high 16 bits, and process all three RGB
@@ -554,11 +554,11 @@ static void Blit555to555SurfaceAlpha(SDL_BlitInfo *info)
             d = (d | d << 16) & 0x03e07c1f;
             d += (s - d) * alpha >> 5;
             d &= 0x03e07c1f;
-            *dstp++ = (uint16_t)(d | d >> 16);
+            *dst++ = (uint16_t)(d | d >> 16);
          }
 
-         srcp += srcskip;
-         dstp += dstskip;
+         src += srcskip;
+         dst += dstskip;
       }
    }
 }
@@ -570,8 +570,8 @@ static void BlitARGBto565PixelAlpha(SDL_BlitInfo *info)
    int height     = info->d_height;
    int srcskip    = info->s_skip >> 2;
    int dstskip    = info->d_skip >> 1;
-   uint32_t *srcp = (uint32_t *)info->s_pixels;
-   uint16_t *dstp = (uint16_t *)info->d_pixels;
+   uint32_t *src  = (uint32_t *)info->s_pixels;
+   uint16_t *dst = (uint16_t *)info->d_pixels;
 
    while(height--)
    {
@@ -579,7 +579,7 @@ static void BlitARGBto565PixelAlpha(SDL_BlitInfo *info)
       
       for (n = width; n > 0; --n)
       {
-         uint32_t     s = *srcp;
+         uint32_t     s = *src;
          unsigned alpha = s >> 27; /* downscale alpha to 5 bits */
          /* FIXME: Here we special-case opaque alpha since the
             compositioning used (>>8 instead of /255) doesn't handle
@@ -588,10 +588,10 @@ static void BlitARGBto565PixelAlpha(SDL_BlitInfo *info)
          if(alpha)
          {   
             if(alpha == (SDL_ALPHA_OPAQUE >> 3))
-               *dstp = (uint16_t)((s >> 8 & 0xf800) + (s >> 5 & 0x7e0) + (s >> 3  & 0x1f));
+               *dst = (uint16_t)((s >> 8 & 0xf800) + (s >> 5 & 0x7e0) + (s >> 3  & 0x1f));
             else
             {
-               uint32_t d = *dstp;
+               uint32_t d = *dst;
                /*
                 * convert source and destination to G0RAB65565
                 * and blend all components at the same time
@@ -601,14 +601,14 @@ static void BlitARGBto565PixelAlpha(SDL_BlitInfo *info)
                d = (d | d << 16) & 0x07e0f81f;
                d += (s - d) * alpha >> 5;
                d &= 0x07e0f81f;
-               *dstp = (uint16_t)(d | d >> 16);
+               *dst = (uint16_t)(d | d >> 16);
             }
          }
-         srcp++;
-         dstp++;
+         src++;
+         dst++;
       }
-      srcp += srcskip;
-      dstp += dstskip;
+      src += srcskip;
+      dst += dstskip;
    }
 }
 
@@ -619,15 +619,15 @@ static void BlitARGBto555PixelAlpha(SDL_BlitInfo *info)
    int height     = info->d_height;
    int srcskip    = info->s_skip >> 2;
    int dstskip    = info->d_skip >> 1;
-   uint32_t *srcp = (uint32_t*)info->s_pixels;
-   uint16_t *dstp = (uint16_t*)info->d_pixels;
+   uint32_t *src  = (uint32_t*)info->s_pixels;
+   uint16_t *dst  = (uint16_t*)info->d_pixels;
 
    while(height--)
    {
       int n;
       for (n = width; n > 0; --n)
       {
-         uint32_t     s = *srcp;
+         uint32_t     s = *src;
          unsigned alpha = s >> 27; /* downscale alpha to 5 bits */
          /* FIXME: Here we special-case opaque alpha since the
             compositioning used (>>8 instead of /255) doesn't handle
@@ -636,10 +636,10 @@ static void BlitARGBto555PixelAlpha(SDL_BlitInfo *info)
          if(alpha)
          {
             if(alpha == (SDL_ALPHA_OPAQUE >> 3))
-               *dstp = (uint16_t)((s >> 9 & 0x7c00) + (s >> 6 & 0x3e0) + (s >> 3  & 0x1f));
+               *dst = (uint16_t)((s >> 9 & 0x7c00) + (s >> 6 & 0x3e0) + (s >> 3  & 0x1f));
             else
             {
-               uint32_t d = *dstp;
+               uint32_t d = *dst;
                /*
                 * convert source and destination to G0RAB65565
                 * and blend all components at the same time
@@ -649,14 +649,14 @@ static void BlitARGBto555PixelAlpha(SDL_BlitInfo *info)
                d = (d | d << 16) & 0x03e07c1f;
                d += (s - d) * alpha >> 5;
                d &= 0x03e07c1f;
-               *dstp = (uint16_t)(d | d >> 16);
+               *dst = (uint16_t)(d | d >> 16);
             }
          }
-         srcp++;
-         dstp++;
+         src++;
+         dst++;
       }
-      srcp += srcskip;
-      dstp += dstskip;
+      src += srcskip;
+      dst += dstskip;
    }
 }
 

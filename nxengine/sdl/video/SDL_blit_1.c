@@ -32,11 +32,11 @@ static void Blit1to1(SDL_BlitInfo *info)
 {
    int width     = info->d_width;
    int height    = info->d_height;
-   uint8_t *src  = info->s_pixels;
    int srcskip   = info->s_skip;
-   uint8_t *dst  = info->d_pixels;
    int dstskip   = info->d_skip;
    uint8_t *map  = info->table;
+   uint8_t *src  = info->s_pixels;
+   uint8_t *dst  = info->d_pixels;
 
    while ( height-- )
    {
@@ -65,11 +65,11 @@ static void Blit1to2(SDL_BlitInfo *info)
    int c;
    int width     = info->d_width;
    int height    = info->d_height;
-   uint8_t *src  = info->s_pixels;
    int srcskip   = info->s_skip;
-   uint8_t *dst  = info->d_pixels;
    int dstskip   = info->d_skip;
    uint16_t *map = (uint16_t *)info->table;
+   uint8_t *src  = info->s_pixels;
+   uint8_t *dst  = info->d_pixels;
 
    /* Memory align at 4-byte boundary, if necessary */
    if ( (long)dst & 0x03 )
@@ -164,11 +164,11 @@ static void Blit1to3(SDL_BlitInfo *info)
 {
    int width    = info->d_width;
    int height   = info->d_height;
-   uint8_t *src = info->s_pixels;
    int srcskip  = info->s_skip;
-   uint8_t *dst = info->d_pixels;
    int dstskip  = info->d_skip;
    uint8_t *map = info->table;
+   uint8_t *src = info->s_pixels;
+   uint8_t *dst = info->d_pixels;
 
    while ( height-- )
    {
@@ -190,11 +190,11 @@ static void Blit1to4(SDL_BlitInfo *info)
 {
    int width     = info->d_width;
    int height    = info->d_height;
-   uint8_t *src  = info->s_pixels;
    int srcskip   = info->s_skip;
-   uint32_t *dst = (uint32_t*)info->d_pixels;
    int dstskip   = info->d_skip/4;
    uint32_t *map = (uint32_t*)info->table;
+   uint8_t *src  = info->s_pixels;
+   uint32_t *dst = (uint32_t*)info->d_pixels;
 
    while ( height-- )
    {
@@ -226,12 +226,12 @@ static void Blit1to1Key(SDL_BlitInfo *info)
 {
    int width       = info->d_width;
    int height      = info->d_height;
-   uint8_t *src    = info->s_pixels;
    int srcskip     = info->s_skip;
-   uint8_t *dst    = info->d_pixels;
    int dstskip     = info->d_skip;
    uint8_t *palmap = info->table;
    uint32_t ckey   = info->src->colorkey;
+   uint8_t *src    = info->s_pixels;
+   uint8_t *dst    = info->d_pixels;
 
    if ( palmap )
    {
@@ -273,12 +273,12 @@ static void Blit1to2Key(SDL_BlitInfo *info)
 {
    int width        = info->d_width;
    int height       = info->d_height;
-   uint8_t *src     = info->s_pixels;
    int srcskip      = info->s_skip;
-   uint16_t *dstp   = (uint16_t*)info->d_pixels;
    int dstskip      = info->d_skip / 2;
    uint16_t *palmap = (uint16_t*)info->table;
    uint32_t ckey    = info->src->colorkey;
+   uint8_t *src     = info->s_pixels;
+   uint16_t *dst    = (uint16_t*)info->d_pixels;
 
    while ( height-- )
    {
@@ -286,13 +286,13 @@ static void Blit1to2Key(SDL_BlitInfo *info)
       for (n = width; n > 0; --n)
       {
          if ( *src != ckey )
-            *dstp=palmap[*src];
+            *dst = palmap[*src];
          src++;
-         dstp++;
+         dst++;
       }
 
       src  += srcskip;
-      dstp += dstskip;
+      dst  += dstskip;
    }
 }
 
@@ -301,12 +301,12 @@ static void Blit1to3Key(SDL_BlitInfo *info)
    int o;
    int width       = info->d_width;
    int height      = info->d_height;
-   uint8_t *src    = info->s_pixels;
    int srcskip     = info->s_skip;
-   uint8_t *dst    = info->d_pixels;
    int dstskip     = info->d_skip;
    uint8_t *palmap = info->table;
    uint32_t ckey   = info->src->colorkey;
+   uint8_t *src    = info->s_pixels;
+   uint8_t *dst    = info->d_pixels;
 
    while ( height-- )
    {
@@ -332,12 +332,12 @@ static void Blit1to4Key(SDL_BlitInfo *info)
 {
    int width        = info->d_width;
    int height       = info->d_height;
-   uint8_t *src     = info->s_pixels;
    int srcskip      = info->s_skip;
-   uint32_t *dstp   = (uint32_t *)info->d_pixels;
    int dstskip      = info->d_skip / 4;
    uint32_t *palmap = (uint32_t *)info->table;
    uint32_t ckey    = info->src->colorkey;
+   uint8_t *src     = info->s_pixels;
+   uint32_t *dst    = (uint32_t *)info->d_pixels;
 
    while ( height-- )
    {
@@ -345,13 +345,13 @@ static void Blit1to4Key(SDL_BlitInfo *info)
       for (n = width; n > 0; --n)
       {
          if ( *src != ckey )
-            *dstp = palmap[*src];
+            *dst = palmap[*src];
          src++;
-         dstp++;
+         dst++;
       }
 
       src  += srcskip;
-      dstp += dstskip;
+      dst += dstskip;
    }
 }
 
@@ -359,14 +359,14 @@ static void Blit1toNAlpha(SDL_BlitInfo *info)
 {
    int width               = info->d_width;
    int height              = info->d_height;
-   uint8_t *src            = info->s_pixels;
    int srcskip             = info->s_skip;
-   uint8_t *dst            = info->d_pixels;
    int dstskip             = info->d_skip;
    SDL_PixelFormat *dstfmt = info->dst;
    const SDL_Color *srcpal	= info->src->palette->colors;
    const int A             = info->src->alpha;
    int dstbpp              = dstfmt->BytesPerPixel;
+   uint8_t *src            = info->s_pixels;
+   uint8_t *dst            = info->d_pixels;
 
    while ( height-- )
    {
@@ -397,9 +397,7 @@ static void Blit1toNAlphaKey(SDL_BlitInfo *info)
 {
    int width               = info->d_width;
    int height              = info->d_height;
-   uint8_t *src            = info->s_pixels;
    int srcskip             = info->s_skip;
-   uint8_t *dst            = info->d_pixels;
    int dstskip             = info->d_skip;
    SDL_PixelFormat *srcfmt = info->src;
    SDL_PixelFormat *dstfmt = info->dst;
@@ -407,6 +405,8 @@ static void Blit1toNAlphaKey(SDL_BlitInfo *info)
    uint32_t ckey           = srcfmt->colorkey;
    const int A             = srcfmt->alpha;
    int dstbpp              = dstfmt->BytesPerPixel;
+   uint8_t *src            = info->s_pixels;
+   uint8_t *dst            = info->d_pixels;
 
    while ( height-- )
    {
