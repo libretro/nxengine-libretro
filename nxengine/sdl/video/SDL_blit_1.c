@@ -41,7 +41,7 @@ static void Blit1to1(SDL_BlitInfo *info)
    while ( height-- )
    {
       int c;
-      for ( c=width; c; --c )
+      for (c = width; c; --c )
       {
          *dst = map[*src];
          dst++;

@@ -371,20 +371,6 @@ do {						\
 } while(0)
 
 
-/* Don't use Duff's device to unroll loops */
-#define DUFFS_LOOP_DOUBLE2(pixel_copy_increment,			\
-			 double_pixel_copy_increment, width)		\
-{ int n = width;								\
-    if( n & 1 ) {							\
-	pixel_copy_increment;						\
-	n--;								\
-    }									\
-    n=n>>1;								\
-    for(; n > 0; --n) {   						\
-	double_pixel_copy_increment;					\
-    }									\
-}
-
 /* Prevent Visual C++ 6.0 from printing out stupid warnings */
 #if defined(_MSC_VER) && (_MSC_VER >= 600)
 #pragma warning(disable: 4550)

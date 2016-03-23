@@ -220,7 +220,14 @@ static void BlitRGBtoRGBSurfaceAlpha128(SDL_BlitInfo *info)
 /* fast RGB888->(A)RGB888 blending with surface alpha */
 static void BlitRGBtoRGBSurfaceAlpha(SDL_BlitInfo *info)
 {
+   uint32_t s, d, s1, d1;
    unsigned alpha = info->src->alpha;
+   int width      = info->d_width;
+   int height     = info->d_height;
+   uint32_t *srcp = (uint32_t*)info->s_pixels;
+   int srcskip    = info->s_skip >> 2;
+   uint32_t *dstp = (uint32_t*)info->d_pixels;
+   int dstskip    = info->d_skip >> 2;
 
    if(alpha == 128)
    {
@@ -228,64 +235,64 @@ static void BlitRGBtoRGBSurfaceAlpha(SDL_BlitInfo *info)
       return;
    }
 
+   while(height--)
    {
-      uint32_t s, d, s1, d1;
-      int width      = info->d_width;
-      int height     = info->d_height;
-      uint32_t *srcp = (uint32_t*)info->s_pixels;
-      int srcskip    = info->s_skip >> 2;
-      uint32_t *dstp = (uint32_t*)info->d_pixels;
-      int dstskip    = info->d_skip >> 2;
+      int n = width;
 
-      while(height--)
+      if (n & 1)
       {
-         DUFFS_LOOP_DOUBLE2({
-               /* One Pixel Blend */
-               s = *srcp;
-               d = *dstp;
-               s1 = s & 0xff00ff;
-               d1 = d & 0xff00ff;
-               d1 = (d1 + ((s1 - d1) * alpha >> 8))
-               & 0xff00ff;
-               s &= 0xff00;
-               d &= 0xff00;
-               d = (d + ((s - d) * alpha >> 8)) & 0xff00;
-               *dstp = d1 | d | 0xff000000;
-               ++srcp;
-               ++dstp;
-               },{
-               /* Two Pixels Blend */
-               s = *srcp;
-               d = *dstp;
-               s1 = s & 0xff00ff;
-               d1 = d & 0xff00ff;
-               d1 += (s1 - d1) * alpha >> 8;
-               d1 &= 0xff00ff;
-
-               s = ((s & 0xff00) >> 8) | 
-                  ((srcp[1] & 0xff00) << 8);
-               d = ((d & 0xff00) >> 8) |
-                  ((dstp[1] & 0xff00) << 8);
-               d += (s - d) * alpha >> 8;
-               d &= 0x00ff00ff;
-
-               *dstp++ = d1 | ((d << 8) & 0xff00) | 0xff000000;
-               ++srcp;
-
-               s1 = *srcp;
-               d1 = *dstp;
-               s1 &= 0xff00ff;
-               d1 &= 0xff00ff;
-               d1 += (s1 - d1) * alpha >> 8;
-               d1 &= 0xff00ff;
-
-               *dstp = d1 | ((d >> 8) & 0xff00) | 0xff000000;
-               ++srcp;
-               ++dstp;
-               }, width);
-         srcp += srcskip;
-         dstp += dstskip;
+         /* One Pixel Blend */
+         s = *srcp;
+         d = *dstp;
+         s1 = s & 0xff00ff;
+         d1 = d & 0xff00ff;
+         d1 = (d1 + ((s1 - d1) * alpha >> 8))
+            & 0xff00ff;
+         s &= 0xff00;
+         d &= 0xff00;
+         d = (d + ((s - d) * alpha >> 8)) & 0xff00;
+         *dstp = d1 | d | 0xff000000;
+         ++srcp;
+         ++dstp;
+         n--;
       }
+
+      n = n >> 1;
+
+      for (; n > 0; --n)
+      {
+         /* Two Pixels Blend */
+         s = *srcp;
+         d = *dstp;
+         s1 = s & 0xff00ff;
+         d1 = d & 0xff00ff;
+         d1 += (s1 - d1) * alpha >> 8;
+         d1 &= 0xff00ff;
+
+         s = ((s & 0xff00) >> 8) | 
+            ((srcp[1] & 0xff00) << 8);
+         d = ((d & 0xff00) >> 8) |
+            ((dstp[1] & 0xff00) << 8);
+         d += (s - d) * alpha >> 8;
+         d &= 0x00ff00ff;
+
+         *dstp++ = d1 | ((d << 8) & 0xff00) | 0xff000000;
+         ++srcp;
+
+         s1 = *srcp;
+         d1 = *dstp;
+         s1 &= 0xff00ff;
+         d1 &= 0xff00ff;
+         d1 += (s1 - d1) * alpha >> 8;
+         d1 &= 0xff00ff;
+
+         *dstp = d1 | ((d >> 8) & 0xff00) | 0xff000000;
+         ++srcp;
+         ++dstp;
+      }
+
+      srcp += srcskip;
+      dstp += dstskip;
    }
 }
 
