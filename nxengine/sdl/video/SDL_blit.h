@@ -110,31 +110,33 @@ extern SDL_loblit LRSDL_CalculateAlphaBlit(SDL_Surface *surface, int complex);
 	g = ((Pixel&0xFF00)>>8);		 			\
 	b = (Pixel&0xFF);			 			\
 }
-#define RETRIEVE_RGB_PIXEL(buf, bpp, Pixel)				   \
-do {									   \
-	switch (bpp) {							   \
-		case 2:							   \
-			Pixel = *((uint16_t*)(buf));			   \
-		break;							   \
-									   \
-		case 3: {						   \
-		        uint8_t *B = (uint8_t *)(buf);			   \
-			if(SDL_BYTEORDER == SDL_LIL_ENDIAN)		   \
-			        Pixel = B[0] + (B[1] << 8) + (B[2] << 16); \
-			else					   \
-			        Pixel = (B[0] << 16) + (B[1] << 8) + B[2]; \
-		}							   \
-		break;							   \
-									   \
-		case 4:							   \
-			Pixel = *((uint32_t*)(buf));			   \
-		break;							   \
-									   \
-		default:						   \
-			Pixel = 0; /* appease gcc */			   \
-		break;							   \
-	}								   \
-} while(0)
+
+static __inline void RETRIEVE_RGB_PIXEL(void *buf, int bpp,
+      uint32_t *Pixel)
+{
+   switch (bpp)
+   {
+      case 2:
+         *Pixel = *((uint16_t*)(buf));
+         break;
+      case 3:
+         {
+            uint8_t *B = (uint8_t *)(buf);
+#ifdef MSB_FIRST
+            *Pixel = (B[0] << 16) + (B[1] << 8) + B[2];
+#else
+            *Pixel = B[0] + (B[1] << 8) + (B[2] << 16);
+#endif
+         }
+         break;
+      case 4:
+         *Pixel = *((uint32_t*)(buf));
+         break;
+      default:
+         *Pixel = 0; /* appease gcc */
+         break;
+   }
+}
 
 static __inline void DISEMBLE_RGB(void *buf, int bpp,
       SDL_PixelFormat *fmt, uint32_t *Pixel,

@@ -1284,7 +1284,8 @@ static void BlitNtoNKey(SDL_BlitInfo *info)
          unsigned sR;
          unsigned sG;
          unsigned sB;
-         RETRIEVE_RGB_PIXEL(src, srcbpp, Pixel);
+         RETRIEVE_RGB_PIXEL(src, srcbpp, &Pixel);
+
          if ( (Pixel & rgbmask) != ckey )
          {
             RGB_FROM_PIXEL(Pixel, srcfmt, sR, sG, sB);

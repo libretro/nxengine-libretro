@@ -733,7 +733,7 @@ static void BlitNtoNSurfaceAlphaKey(SDL_BlitInfo *info)
          int dR;
          int dG;
          int dB;
-         RETRIEVE_RGB_PIXEL(src, srcbpp, Pixel);
+         RETRIEVE_RGB_PIXEL(src, srcbpp, &Pixel);
 
          if(sA && Pixel != ckey)
          {
