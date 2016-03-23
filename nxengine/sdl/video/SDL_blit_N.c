@@ -1158,8 +1158,9 @@ static void BlitNtoNCopyAlpha(SDL_BlitInfo *info)
       {
          uint32_t Pixel;
          unsigned sR, sG, sB, sA;
-         DISEMBLE_RGBA(src, srcbpp, srcfmt, Pixel,
-               sR, sG, sB, sA);
+
+         DISEMBLE_RGBA(src, srcbpp, srcfmt, &Pixel,
+               &sR, &sG, &sB, &sA);
          ASSEMBLE_RGBA(dst, dstbpp, dstfmt,
                sR, sG, sB, sA);
          dst += dstbpp;
@@ -1321,8 +1322,8 @@ static void BlitNtoNKeyCopyAlpha(SDL_BlitInfo *info)
       int n;
       for (n = width; n > 0; --n)
       {
-         DISEMBLE_RGBA(src, srcbpp, srcfmt, Pixel,
-               sR, sG, sB, sA);
+         DISEMBLE_RGBA(src, srcbpp, srcfmt, &Pixel,
+               &sR, &sG, &sB, &sA);
 
          if ( (Pixel & rgbmask) != ckey )
          {

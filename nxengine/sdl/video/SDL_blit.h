@@ -263,33 +263,40 @@ do {									   \
 	b = ((Pixel>>16)&0xFF);						\
 	a = (Pixel>>24);						\
 }
-#define DISEMBLE_RGBA(buf, bpp, fmt, Pixel, r, g, b, a)			   \
-do {									   \
-	switch (bpp) {							   \
-		case 2:							   \
-			Pixel = *((uint16_t*)(buf));			   \
-		break;							   \
-									   \
-		case 3:	{/* FIXME: broken code (no alpha) */		   \
-		        uint8_t *b = (uint8_t *)buf;			   \
-			if(SDL_BYTEORDER == SDL_LIL_ENDIAN)		   \
-			        Pixel = b[0] + (b[1] << 8) + (b[2] << 16); \
-			else					   \
-			        Pixel = (b[0] << 16) + (b[1] << 8) + b[2]; \
-		}							   \
-		break;							   \
-									   \
-		case 4:							   \
-			Pixel = *((uint32_t*)(buf)); \
-		break;							   \
-									   \
-		default:						   \
-		        Pixel = 0; /* stop gcc complaints */		   \
-		break;							   \
-	}								   \
-	RGBA_FROM_PIXEL(Pixel, fmt, r, g, b, a);			   \
-	Pixel &= ~fmt->Amask;						   \
-} while(0)
+
+static __inline DISEMBLE_RGBA(void *buf, int bpp,
+      SDL_PixelFormat *fmt, uint32_t *Pixel,
+      int *r, int *g, int *b, int *a)
+{
+   switch (bpp)
+   {
+      case 2:
+         *Pixel = *((uint16_t*)(buf));
+         break;
+      case 3:
+         {
+            /* FIXME: broken code (no alpha) */
+            uint8_t *b = (uint8_t *)buf;
+
+#ifdef MSB_FIRST
+            *Pixel = (b[0] << 16) + (b[1] << 8) + b[2];
+#else
+            *Pixel = b[0] + (b[1] << 8) + (b[2] << 16);
+#endif
+         }
+         break;
+      case 4:
+         *Pixel = *((uint32_t*)(buf));
+         break;
+      default:
+         *Pixel = 0; /* stop gcc complaints */
+         break;
+   }
+
+   RGBA_FROM_PIXEL(*Pixel, fmt, *r, *g, *b, *a);
+
+   *Pixel &= ~fmt->Amask;
+}
 
 /* FIXME: this isn't correct, especially for Alpha (maximum != 255) */
 #define PIXEL_FROM_RGBA(fmt, r, g, b, a) (((r>>fmt->Rloss)<<fmt->Rshift)| ((g>>fmt->Gloss)<<fmt->Gshift)| ((b>>fmt->Bloss)<<fmt->Bshift)| ((a>>fmt->Aloss)<<fmt->Ashift))

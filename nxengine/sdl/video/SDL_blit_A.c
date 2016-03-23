@@ -109,7 +109,9 @@ static void BlitNto1PixelAlpha(SDL_BlitInfo *info)
          int dR;
          int dG;
          int dB;
-         DISEMBLE_RGBA(src,srcbpp,srcfmt,Pixel,sR,sG,sB,sA);
+
+         DISEMBLE_RGBA(src, srcbpp, srcfmt, &Pixel, &sR, &sG, &sB, &sA);
+
          dR = dstfmt->palette->colors[*dst].r;
          dG = dstfmt->palette->colors[*dst].g;
          dB = dstfmt->palette->colors[*dst].b;
@@ -782,11 +784,12 @@ static void BlitNtoNPixelAlpha(SDL_BlitInfo *info)
          int dB;
          int sA;
          int dA;
-         DISEMBLE_RGBA(src, srcbpp, srcfmt, Pixel, sR, sG, sB, sA);
+
+         DISEMBLE_RGBA(src, srcbpp, srcfmt, &Pixel, &sR, &sG, &sB, &sA);
 
          if(sA)
          {
-            DISEMBLE_RGBA(dst, dstbpp, dstfmt, Pixel, dR, dG, dB, dA);
+            DISEMBLE_RGBA(dst, dstbpp, dstfmt, &Pixel, &dR, &dG, &dB, &dA);
             ALPHA_BLEND(sR, sG, sB, sA, &dR, &dG, &dB);
             ASSEMBLE_RGBA(dst, dstbpp, dstfmt, dR, dG, dB, dA);
          }
