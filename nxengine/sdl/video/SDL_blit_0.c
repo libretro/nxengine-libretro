@@ -115,16 +115,16 @@ static void BlitBto2(SDL_BlitInfo *info)
 
 static void BlitBto3(SDL_BlitInfo *info)
 {
-	int c, o;
-	int width    = info->d_width;
-	int height   = info->d_height;
-	uint8_t *src = info->s_pixels;
-	uint8_t *dst = info->d_pixels;
-	int dstskip  = info->d_skip;
-	uint8_t *map = info->table;
-	int srcskip  = info->s_skip + width-(width+7)/8;
+   int c, o;
+   int width    = info->d_width;
+   int height   = info->d_height;
+   uint8_t *src = info->s_pixels;
+   uint8_t *dst = info->d_pixels;
+   int dstskip  = info->d_skip;
+   uint8_t *map = info->table;
+   int srcskip  = info->s_skip + width-(width+7)/8;
 
-	while ( height-- )
+   while ( height-- )
    {
       uint8_t bit;
       uint8_t byte = 0;
@@ -428,11 +428,11 @@ static void BlitBtoNAlphaKey(SDL_BlitInfo *info)
 }
 
 static SDL_loblit bitmap_blit[] = {
-	NULL, BlitBto1, BlitBto2, BlitBto3, BlitBto4
+   NULL, BlitBto1, BlitBto2, BlitBto3, BlitBto4
 };
 
 static SDL_loblit colorkey_blit[] = {
-    NULL, BlitBto1Key, BlitBto2Key, BlitBto3Key, BlitBto4Key
+   NULL, BlitBto1Key, BlitBto2Key, BlitBto3Key, BlitBto4Key
 };
 
 SDL_loblit LRSDL_CalculateBlit0(SDL_Surface *surface, int blit_index)

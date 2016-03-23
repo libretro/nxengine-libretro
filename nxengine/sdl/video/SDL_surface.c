@@ -116,8 +116,8 @@ error:
  * Create an RGB surface from an existing memory buffer
  */
 SDL_Surface * LRSDL_CreateRGBSurfaceFrom (void *pixels,
-			int width, int height, int depth, int pitch,
-			Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
+      int width, int height, int depth, int pitch,
+      Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
    SDL_Surface *surface = LRSDL_CreateRGBSurface(SDL_SWSURFACE, 0, 0, depth,
          Rmask, Gmask, Bmask, Amask);
@@ -141,39 +141,39 @@ SDL_Surface * LRSDL_CreateRGBSurfaceFrom (void *pixels,
  */
 int LRSDL_SetColorKey (SDL_Surface *surface, Uint32 flag, Uint32 key)
 {
-	/* Sanity check the flag as it gets passed in */
-	if ( flag & SDL_SRCCOLORKEY )
+   /* Sanity check the flag as it gets passed in */
+   if ( flag & SDL_SRCCOLORKEY )
    {
-		if ( flag & (SDL_RLEACCEL|SDL_RLEACCELOK) )
-			flag = (SDL_SRCCOLORKEY | SDL_RLEACCELOK);
+      if ( flag & (SDL_RLEACCEL|SDL_RLEACCELOK) )
+         flag = (SDL_SRCCOLORKEY | SDL_RLEACCELOK);
       else
-			flag = SDL_SRCCOLORKEY;
-	}
+         flag = SDL_SRCCOLORKEY;
+   }
    else
-		flag = 0;
+      flag = 0;
 
-	/* Optimize away operations that don't change anything */
-	if ( (flag == (surface->flags & (SDL_SRCCOLORKEY|SDL_RLEACCELOK))) &&
-	     (key == surface->format->colorkey) )
+   /* Optimize away operations that don't change anything */
+   if ( (flag == (surface->flags & (SDL_SRCCOLORKEY|SDL_RLEACCELOK))) &&
+         (key == surface->format->colorkey) )
       return 0;
 
-	if ( flag )
+   if ( flag )
    {
-		surface->flags            |= SDL_SRCCOLORKEY;
-		surface->format->colorkey  = key;
+      surface->flags            |= SDL_SRCCOLORKEY;
+      surface->format->colorkey  = key;
 
-		if ( flag & SDL_RLEACCELOK )
-			surface->flags |= SDL_RLEACCELOK;
+      if ( flag & SDL_RLEACCELOK )
+         surface->flags |= SDL_RLEACCELOK;
       else
-			surface->flags &= ~SDL_RLEACCELOK;
-	}
+         surface->flags &= ~SDL_RLEACCELOK;
+   }
    else
    {
-		surface->flags            &= ~(SDL_SRCCOLORKEY|SDL_RLEACCELOK);
-		surface->format->colorkey  = 0;
-	}
-	LRSDL_InvalidateMap(surface->map);
-	return(0);
+      surface->flags            &= ~(SDL_SRCCOLORKEY|SDL_RLEACCELOK);
+      surface->format->colorkey  = 0;
+   }
+   LRSDL_InvalidateMap(surface->map);
+   return(0);
 }
 /* This function sets the alpha channel of a surface */
 int LRSDL_SetAlpha (SDL_Surface *surface, Uint32 flag, Uint8 value)
@@ -260,38 +260,38 @@ int LRSDL_SetAlphaChannel(SDL_Surface *surface, Uint8 value)
  * A function to calculate the intersection of two rectangles:
  * return true if the rectangles intersect, false otherwise
  */
-static __inline__
+   static __inline__
 LRSDL_bool LRSDL_IntersectRect(const SDL_Rect *A,
       const SDL_Rect *B, SDL_Rect *intersection)
 {
-	/* Horizontal intersection */
-	int Amin = A->x;
-	int Amax = Amin + A->w;
-	int Bmin = B->x;
-	int Bmax = Bmin + B->w;
+   /* Horizontal intersection */
+   int Amin = A->x;
+   int Amax = Amin + A->w;
+   int Bmin = B->x;
+   int Bmax = Bmin + B->w;
 
-	if(Bmin > Amin)
-	        Amin = Bmin;
+   if(Bmin > Amin)
+      Amin = Bmin;
 
-	intersection->x = Amin;
+   intersection->x = Amin;
 
-	if(Bmax < Amax)
-	        Amax = Bmax;
-	intersection->w = Amax - Amin > 0 ? Amax - Amin : 0;
+   if(Bmax < Amax)
+      Amax = Bmax;
+   intersection->w = Amax - Amin > 0 ? Amax - Amin : 0;
 
-	/* Vertical intersection */
-	Amin = A->y;
-	Amax = Amin + A->h;
-	Bmin = B->y;
-	Bmax = Bmin + B->h;
-	if(Bmin > Amin)
-	        Amin = Bmin;
-	intersection->y = Amin;
-	if(Bmax < Amax)
-	        Amax = Bmax;
-	intersection->h = Amax - Amin > 0 ? Amax - Amin : 0;
+   /* Vertical intersection */
+   Amin = A->y;
+   Amax = Amin + A->h;
+   Bmin = B->y;
+   Bmax = Bmin + B->h;
+   if(Bmin > Amin)
+      Amin = Bmin;
+   intersection->y = Amin;
+   if(Bmax < Amax)
+      Amax = Bmax;
+   intersection->h = Amax - Amin > 0 ? Amax - Amin : 0;
 
-	return (LRSDL_bool)(intersection->w && intersection->h);
+   return (LRSDL_bool)(intersection->w && intersection->h);
 }
 
 /*
@@ -299,26 +299,26 @@ LRSDL_bool LRSDL_IntersectRect(const SDL_Rect *A,
  */
 LRSDL_bool LRSDL_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect)
 {
-	SDL_Rect full_rect;
+   SDL_Rect full_rect;
 
-	/* Don't do anything if there's no surface to act on */
-	if ( ! surface )
-		return LRSDL_FALSE;
+   /* Don't do anything if there's no surface to act on */
+   if ( ! surface )
+      return LRSDL_FALSE;
 
-	/* Set up the full surface rectangle */
-	full_rect.x = 0;
-	full_rect.y = 0;
-	full_rect.w = surface->w;
-	full_rect.h = surface->h;
+   /* Set up the full surface rectangle */
+   full_rect.x = 0;
+   full_rect.y = 0;
+   full_rect.w = surface->w;
+   full_rect.h = surface->h;
 
-	/* Set the clipping rectangle */
-	if (!rect)
+   /* Set the clipping rectangle */
+   if (!rect)
    {
-		surface->clip_rect = full_rect;
-		return (LRSDL_bool)1;
-	}
+      surface->clip_rect = full_rect;
+      return (LRSDL_bool)1;
+   }
 
-	return LRSDL_IntersectRect(rect, &full_rect, &surface->clip_rect);
+   return LRSDL_IntersectRect(rect, &full_rect, &surface->clip_rect);
 }
 
 /* 
@@ -333,22 +333,22 @@ LRSDL_bool LRSDL_SetClipRect(SDL_Surface *surface, const SDL_Rect *rect)
  * by calling the one(s) you need.
  */
 int LRSDL_LowerBlit (SDL_Surface *src, SDL_Rect *srcrect,
-				SDL_Surface *dst, SDL_Rect *dstrect)
+      SDL_Surface *dst, SDL_Rect *dstrect)
 {
-	/* Check to make sure the blit mapping is valid */
-	if ( (src->map->dst != dst) ||
-             (src->map->dst->format_version != src->map->format_version) )
+   /* Check to make sure the blit mapping is valid */
+   if ( (src->map->dst != dst) ||
+         (src->map->dst->format_version != src->map->format_version) )
    {
-		if ( LRSDL_MapSurface(src, dst) < 0 )
+      if ( LRSDL_MapSurface(src, dst) < 0 )
          return -1;
-	}
+   }
 
-	return(src->map->sw_blit(src, srcrect, dst, dstrect));
+   return(src->map->sw_blit(src, srcrect, dst, dstrect));
 }
 
 
 int LRSDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect,
-		   SDL_Surface *dst, SDL_Rect *dstrect)
+      SDL_Surface *dst, SDL_Rect *dstrect)
 {
    SDL_Rect fulldst;
    int srcx = 0;
@@ -553,7 +553,7 @@ int LRSDL_LockSurface (SDL_Surface *surface)
  */
 void LRSDL_UnlockSurface (SDL_Surface *surface)
 {
-	surface->pixels = (uint8_t*)surface->pixels - surface->offset;
+   surface->pixels = (uint8_t*)surface->pixels - surface->offset;
 }
 
 /*
@@ -561,27 +561,27 @@ void LRSDL_UnlockSurface (SDL_Surface *surface)
  */
 void LRSDL_FreeSurface (SDL_Surface *surface)
 {
-	/* Free anything that's not NULL, and not the screen surface */
-	if (!surface)
-		return;
+   /* Free anything that's not NULL, and not the screen surface */
+   if (!surface)
+      return;
 
-	if ( --surface->refcount > 0 )
-		return;
+   if ( --surface->refcount > 0 )
+      return;
 
-	if (surface->format)
+   if (surface->format)
    {
-		LRSDL_FreeFormat(surface->format);
-		surface->format = NULL;
-	}
+      LRSDL_FreeFormat(surface->format);
+      surface->format = NULL;
+   }
 
-	if (surface->map)
+   if (surface->map)
    {
-		LRSDL_FreeBlitMap(surface->map);
-		surface->map = NULL;
-	}
+      LRSDL_FreeBlitMap(surface->map);
+      surface->map = NULL;
+   }
 
-	if ( surface->pixels &&
-	     ((surface->flags & SDL_PREALLOC) != SDL_PREALLOC) )
-		SDL_free(surface->pixels);
-	SDL_free(surface);
+   if ( surface->pixels &&
+         ((surface->flags & SDL_PREALLOC) != SDL_PREALLOC) )
+      SDL_free(surface->pixels);
+   SDL_free(surface);
 }

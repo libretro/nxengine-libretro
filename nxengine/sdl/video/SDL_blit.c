@@ -33,34 +33,34 @@
 static int LRSDL_SoftBlit(SDL_Surface *src, SDL_Rect *srcrect,
 			SDL_Surface *dst, SDL_Rect *dstrect)
 {
-	/* Set up source and destination buffer pointers, and BLIT! */
-	if (srcrect->w && srcrect->h )
+   /* Set up source and destination buffer pointers, and BLIT! */
+   if (srcrect->w && srcrect->h )
    {
-		SDL_BlitInfo info;
-		SDL_loblit RunBlit;
+      SDL_BlitInfo info;
+      SDL_loblit RunBlit;
 
-		/* Set up the blit information */
-		info.s_pixels = (uint8_t*)src->pixels +
+      /* Set up the blit information */
+      info.s_pixels = (uint8_t*)src->pixels +
          (uint16_t)srcrect->y * src->pitch +
          (uint16_t)srcrect->x * src->format->BytesPerPixel;
-		info.s_width  = srcrect->w;
-		info.s_height = srcrect->h;
-		info.s_skip   = src->pitch-info.s_width*src->format->BytesPerPixel;
-		info.d_pixels = (uint8_t*)dst->pixels +
+      info.s_width  = srcrect->w;
+      info.s_height = srcrect->h;
+      info.s_skip   = src->pitch-info.s_width*src->format->BytesPerPixel;
+      info.d_pixels = (uint8_t*)dst->pixels +
          (uint16_t)dstrect->y * dst->pitch +
          (uint16_t)dstrect->x * dst->format->BytesPerPixel;
-		info.d_width  = dstrect->w;
-		info.d_height = dstrect->h;
-		info.d_skip   = dst->pitch-info.d_width*dst->format->BytesPerPixel;
-		info.aux_data = src->map->sw_data->aux_data;
-		info.src      = src->format;
-		info.table    = src->map->table;
-		info.dst      = dst->format;
-		RunBlit       = src->map->sw_data->blit;
+      info.d_width  = dstrect->w;
+      info.d_height = dstrect->h;
+      info.d_skip   = dst->pitch-info.d_width*dst->format->BytesPerPixel;
+      info.aux_data = src->map->sw_data->aux_data;
+      info.src      = src->format;
+      info.table    = src->map->table;
+      info.dst      = dst->format;
+      RunBlit       = src->map->sw_data->blit;
 
-		/* Run the actual software blit */
-		RunBlit(&info);
-	}
+      /* Run the actual software blit */
+      RunBlit(&info);
+   }
 
    return 0;
 }
@@ -84,60 +84,60 @@ static void LRSDL_BlitCopy(SDL_BlitInfo *info)
 
 static void LRSDL_BlitCopyOverlap(SDL_BlitInfo *info)
 {
-	int        w = info->d_width*info->dst->BytesPerPixel;
-	int        h = info->d_height;
-	uint8_t *src = info->s_pixels;
-	uint8_t *dst = info->d_pixels;
-	int srcskip  = w+info->s_skip;
-	int dstskip  = w+info->d_skip;
+   int        w = info->d_width*info->dst->BytesPerPixel;
+   int        h = info->d_height;
+   uint8_t *src = info->s_pixels;
+   uint8_t *dst = info->d_pixels;
+   int srcskip  = w+info->s_skip;
+   int dstskip  = w+info->d_skip;
 
-	if ( dst < src )
+   if ( dst < src )
    {
-		while ( h-- )
+      while ( h-- )
       {
-			memmove(dst, src, w);
-			src += srcskip;
-			dst += dstskip;
-		}
-	}
+         memmove(dst, src, w);
+         src += srcskip;
+         dst += dstskip;
+      }
+   }
    else
    {
-		src += ((h-1) * srcskip);
-		dst += ((h-1) * dstskip);
+      src += ((h-1) * srcskip);
+      dst += ((h-1) * dstskip);
 
-		while ( h-- )
+      while ( h-- )
       {
-			memmove(dst, src, w);
-			src -= srcskip;
-			dst -= dstskip;
-		}
-	}
+         memmove(dst, src, w);
+         src -= srcskip;
+         dst -= dstskip;
+      }
+   }
 }
 
 /* Figure out which of many blit routines to set up on a surface */
 int LRSDL_CalculateBlit(SDL_Surface *surface)
 {
-	int blit_index;
+   int blit_index;
 
-	/* Clean everything out to start */
-	surface->map->sw_blit = NULL;
+   /* Clean everything out to start */
+   surface->map->sw_blit = NULL;
 
-	/* Figure out if an accelerated hardware blit is possible */
-	surface->flags &= ~SDL_HWACCEL;
+   /* Figure out if an accelerated hardware blit is possible */
+   surface->flags &= ~SDL_HWACCEL;
 
-	/* Get the blit function index, based on surface mode */
-	/* { 0 = nothing, 1 = colorkey, 2 = alpha, 3 = colorkey+alpha } */
-	blit_index  = 0;
-	blit_index |= (!!(surface->flags & SDL_SRCCOLORKEY)) << 0;
+   /* Get the blit function index, based on surface mode */
+   /* { 0 = nothing, 1 = colorkey, 2 = alpha, 3 = colorkey+alpha } */
+   blit_index  = 0;
+   blit_index |= (!!(surface->flags & SDL_SRCCOLORKEY)) << 0;
 
-	if ( surface->flags & SDL_SRCALPHA
-	     && (surface->format->alpha != SDL_ALPHA_OPAQUE
-		 || surface->format->Amask) ) {
-	        blit_index |= 2;
-	}
+   if ( surface->flags & SDL_SRCALPHA
+         && (surface->format->alpha != SDL_ALPHA_OPAQUE
+            || surface->format->Amask) ) {
+      blit_index |= 2;
+   }
 
-	/* Check for special "identity" case -- copy blit */
-	if ( surface->map->identity && blit_index == 0 )
+   /* Check for special "identity" case -- copy blit */
+   if ( surface->map->identity && blit_index == 0 )
    {
       surface->map->sw_data->blit = LRSDL_BlitCopy;
 
@@ -170,8 +170,8 @@ int LRSDL_CalculateBlit(SDL_Surface *surface)
          }
       }
    }
-	/* Make sure we have a blit function */
-	if (!surface->map->sw_data->blit)
+   /* Make sure we have a blit function */
+   if (!surface->map->sw_data->blit)
       goto error;
 
    surface->map->sw_blit = LRSDL_SoftBlit;

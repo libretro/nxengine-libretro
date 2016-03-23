@@ -51,7 +51,7 @@ SDL_PixelFormat *LRSDL_AllocFormat(int bpp,
    /* Set up the format */
    format->BitsPerPixel  = bpp;
    format->BytesPerPixel = (bpp+7)/8;
-   
+
    if ( Rmask || Bmask || Gmask ) /* Packed pixels with custom mask */
    {
       format->palette = NULL;
@@ -239,17 +239,17 @@ error:
 }
 
 SDL_PixelFormat *LRSDL_ReallocFormat(SDL_Surface *surface, int bpp,
-			Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
+      Uint32 Rmask, Uint32 Gmask, Uint32 Bmask, Uint32 Amask)
 {
-	if ( surface->format )
+   if ( surface->format )
    {
-		LRSDL_FreeFormat(surface->format);
-		LRSDL_FormatChanged(surface);
-	}
+      LRSDL_FreeFormat(surface->format);
+      LRSDL_FormatChanged(surface);
+   }
 
-	surface->format = LRSDL_AllocFormat(bpp, Rmask, Gmask, Bmask, Amask);
+   surface->format = LRSDL_AllocFormat(bpp, Rmask, Gmask, Bmask, Amask);
 
-	return surface->format;
+   return surface->format;
 }
 
 /*
@@ -320,10 +320,10 @@ void LRSDL_DitherColors(SDL_Color *colors, int bpp)
  */
 Uint16 LRSDL_CalculatePitch(SDL_Surface *surface)
 {
-	/* Surface should be 4-byte aligned for speed */
-	uint16_t pitch = surface->w*surface->format->BytesPerPixel;
+   /* Surface should be 4-byte aligned for speed */
+   uint16_t pitch = surface->w*surface->format->BytesPerPixel;
 
-	switch (surface->format->BitsPerPixel)
+   switch (surface->format->BitsPerPixel)
    {
       case 1:
          pitch = (pitch+7)/8;
@@ -335,7 +335,7 @@ Uint16 LRSDL_CalculatePitch(SDL_Surface *surface)
          break;
    }
 
-	pitch = (pitch + 3) & ~3;	/* 4-byte aligning */
+   pitch = (pitch + 3) & ~3;	/* 4-byte aligning */
 
    return pitch;
 }
@@ -373,21 +373,21 @@ Uint8 LRSDL_FindColor(SDL_Palette *pal, Uint8 r, Uint8 g, Uint8 b)
 }
 
 /* Find the opaque pixel value corresponding to an RGB triple */
-Uint32 LRSDL_MapRGB
+   Uint32 LRSDL_MapRGB
 (const SDL_PixelFormat * const format,
  const Uint8 r, const Uint8 g, const Uint8 b)
 {
-	if ( format->palette == NULL )
-		return (r >> format->Rloss) << format->Rshift
-		       | (g >> format->Gloss) << format->Gshift
-		       | (b >> format->Bloss) << format->Bshift
-		       | format->Amask;
+   if ( format->palette == NULL )
+      return (r >> format->Rloss) << format->Rshift
+         | (g >> format->Gloss) << format->Gshift
+         | (b >> format->Bloss) << format->Bshift
+         | format->Amask;
 
    return LRSDL_FindColor(format->palette, r, g, b);
 }
 
 /* Find the pixel value corresponding to an RGBA quadruple */
-Uint32 LRSDL_MapRGBA
+   Uint32 LRSDL_MapRGBA
 (const SDL_PixelFormat * const format,
  const Uint8 r, const Uint8 g, const Uint8 b, const Uint8 a)
 {
@@ -401,9 +401,9 @@ Uint32 LRSDL_MapRGBA
 }
 
 void LRSDL_GetRGBA(Uint32 pixel, const SDL_PixelFormat * const fmt,
-		 Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a)
+      Uint8 *r, Uint8 *g, Uint8 *b, Uint8 *a)
 {
-	if ( fmt->palette)
+   if ( fmt->palette)
    {
       *r = fmt->palette->colors[pixel].r;
       *g = fmt->palette->colors[pixel].g;
@@ -440,7 +440,7 @@ void LRSDL_GetRGBA(Uint32 pixel, const SDL_PixelFormat * const fmt,
 }
 
 void LRSDL_GetRGB(Uint32 pixel, const SDL_PixelFormat * const fmt,
-                Uint8 *r,Uint8 *g,Uint8 *b)
+      Uint8 *r,Uint8 *g,Uint8 *b)
 {
    if (fmt->palette )
    {
@@ -463,45 +463,45 @@ void LRSDL_GetRGB(Uint32 pixel, const SDL_PixelFormat * const fmt,
 
 /* Apply gamma to a set of colors - this is easy. :) */
 void LRSDL_ApplyGamma(Uint16 *gamma, SDL_Color *colors, SDL_Color *output,
-							int ncolors)
+      int ncolors)
 {
-	int i;
+   int i;
 
-	for ( i=0; i < ncolors; ++i )
+   for ( i=0; i < ncolors; ++i )
    {
-		output[i].r = gamma[0*256 + colors[i].r] >> 8;
-		output[i].g = gamma[1*256 + colors[i].g] >> 8;
-		output[i].b = gamma[2*256 + colors[i].b] >> 8;
-	}
+      output[i].r = gamma[0*256 + colors[i].r] >> 8;
+      output[i].g = gamma[1*256 + colors[i].g] >> 8;
+      output[i].b = gamma[2*256 + colors[i].b] >> 8;
+   }
 }
 
 /* Map from Palette to Palette */
 static Uint8 *Map1to1(SDL_Palette *src, SDL_Palette *dst, int *identical)
 {
-	uint8_t *map;
-	int i;
+   uint8_t *map;
+   int i;
 
-	if ( identical )
+   if ( identical )
    {
-		if ( src->ncolors <= dst->ncolors )
+      if ( src->ncolors <= dst->ncolors )
       {
-			/* If an identical palette, no need to map */
-			if ( SDL_memcmp(src->colors, dst->colors, src->ncolors*
-						sizeof(SDL_Color)) == 0 )
+         /* If an identical palette, no need to map */
+         if ( SDL_memcmp(src->colors, dst->colors, src->ncolors*
+                  sizeof(SDL_Color)) == 0 )
          {
-				*identical = 1;
-				return(NULL);
-			}
-		}
-		*identical = 0;
-	}
+            *identical = 1;
+            return(NULL);
+         }
+      }
+      *identical = 0;
+   }
 
-	map = (uint8_t*)SDL_malloc(src->ncolors);
+   map = (uint8_t*)SDL_malloc(src->ncolors);
 
-	if (!map)
+   if (!map)
       goto error;
 
-	for ( i=0; i<src->ncolors; ++i )
+   for ( i=0; i<src->ncolors; ++i )
    {
       map[i] = LRSDL_FindColor(dst,
             src->colors[i].r, src->colors[i].g, src->colors[i].b);
@@ -516,25 +516,25 @@ error:
 /* Map from Palette to BitField */
 static Uint8 *Map1toN(SDL_PixelFormat *src, SDL_PixelFormat *dst)
 {
-	int i;
-	unsigned alpha   = 0;
-	SDL_Palette *pal = src->palette;
-	int bpp          = ((dst->BytesPerPixel == 3) ? 4 : dst->BytesPerPixel);
-	uint8_t *map     = (uint8_t*)SDL_malloc(pal->ncolors * bpp);
+   int i;
+   unsigned alpha   = 0;
+   SDL_Palette *pal = src->palette;
+   int bpp          = ((dst->BytesPerPixel == 3) ? 4 : dst->BytesPerPixel);
+   uint8_t *map     = (uint8_t*)SDL_malloc(pal->ncolors * bpp);
 
-	if (!map)
+   if (!map)
       goto error;
 
    if (dst->Amask)
       alpha = src->alpha;
 
-	/* We memory copy to the pixel map so the endianness is preserved */
-	for ( i=0; i < pal->ncolors; ++i )
+   /* We memory copy to the pixel map so the endianness is preserved */
+   for ( i=0; i < pal->ncolors; ++i )
    {
-		ASSEMBLE_RGBA(&map[i*bpp], dst->BytesPerPixel, dst,
-			      pal->colors[i].r, pal->colors[i].g,
-			      pal->colors[i].b, alpha);
-	}
+      ASSEMBLE_RGBA(&map[i*bpp], dst->BytesPerPixel, dst,
+            pal->colors[i].r, pal->colors[i].g,
+            pal->colors[i].b, alpha);
+   }
 
    return map;
 

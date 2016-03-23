@@ -29,19 +29,19 @@
 /* N->1 blending with per-surface alpha */
 static void BlitNto1SurfaceAlpha(SDL_BlitInfo *info)
 {
-	int width               = info->d_width;
-	int height              = info->d_height;
-	uint8_t *src            = info->s_pixels;
-	int srcskip             = info->s_skip;
-	uint8_t *dst            = info->d_pixels;
-	int dstskip             = info->d_skip;
-	uint8_t *palmap         = info->table;
-	SDL_PixelFormat *srcfmt = info->src;
-	SDL_PixelFormat *dstfmt = info->dst;
-	int srcbpp              = srcfmt->BytesPerPixel;
-	const unsigned A        = srcfmt->alpha;
+   int width               = info->d_width;
+   int height              = info->d_height;
+   uint8_t *src            = info->s_pixels;
+   int srcskip             = info->s_skip;
+   uint8_t *dst            = info->d_pixels;
+   int dstskip             = info->d_skip;
+   uint8_t *palmap         = info->table;
+   SDL_PixelFormat *srcfmt = info->src;
+   SDL_PixelFormat *dstfmt = info->dst;
+   int srcbpp              = srcfmt->BytesPerPixel;
+   const unsigned A        = srcfmt->alpha;
 
-	while ( height-- )
+   while ( height-- )
    {
       DUFFS_LOOP(
             {
@@ -82,19 +82,19 @@ static void BlitNto1SurfaceAlpha(SDL_BlitInfo *info)
 /* N->1 blending with pixel alpha */
 static void BlitNto1PixelAlpha(SDL_BlitInfo *info)
 {
-	int width               = info->d_width;
-	int height              = info->d_height;
-	uint8_t *src            = info->s_pixels;
-	int srcskip             = info->s_skip;
-	uint8_t *dst            = info->d_pixels;
-	int dstskip             = info->d_skip;
-	uint8_t *palmap         = info->table;
-	SDL_PixelFormat *srcfmt = info->src;
-	SDL_PixelFormat *dstfmt = info->dst;
-	int srcbpp              = srcfmt->BytesPerPixel;
+   int width               = info->d_width;
+   int height              = info->d_height;
+   uint8_t *src            = info->s_pixels;
+   int srcskip             = info->s_skip;
+   uint8_t *dst            = info->d_pixels;
+   int dstskip             = info->d_skip;
+   uint8_t *palmap         = info->table;
+   SDL_PixelFormat *srcfmt = info->src;
+   SDL_PixelFormat *dstfmt = info->dst;
+   int srcbpp              = srcfmt->BytesPerPixel;
 
-	/* FIXME: fix alpha bit field expansion here too? */
-	while ( height-- )
+   /* FIXME: fix alpha bit field expansion here too? */
+   while ( height-- )
    {
       DUFFS_LOOP(
             {
@@ -136,20 +136,20 @@ static void BlitNto1PixelAlpha(SDL_BlitInfo *info)
 /* colorkeyed N->1 blending with per-surface alpha */
 static void BlitNto1SurfaceAlphaKey(SDL_BlitInfo *info)
 {
-	int width               = info->d_width;
-	int height              = info->d_height;
-	uint8_t *src            = info->s_pixels;
-	int srcskip             = info->s_skip;
-	uint8_t *dst            = info->d_pixels;
-	int dstskip             = info->d_skip;
-	uint8_t *palmap         = info->table;
-	SDL_PixelFormat *srcfmt = info->src;
-	SDL_PixelFormat *dstfmt = info->dst;
-	int srcbpp              = srcfmt->BytesPerPixel;
-	uint32_t ckey           = srcfmt->colorkey;
-	const int A             = srcfmt->alpha;
+   int width               = info->d_width;
+   int height              = info->d_height;
+   uint8_t *src            = info->s_pixels;
+   int srcskip             = info->s_skip;
+   uint8_t *dst            = info->d_pixels;
+   int dstskip             = info->d_skip;
+   uint8_t *palmap         = info->table;
+   SDL_PixelFormat *srcfmt = info->src;
+   SDL_PixelFormat *dstfmt = info->dst;
+   int srcbpp              = srcfmt->BytesPerPixel;
+   uint32_t ckey           = srcfmt->colorkey;
+   const int A             = srcfmt->alpha;
 
-	while ( height-- )
+   while ( height-- )
    {
       DUFFS_LOOP(
             {
@@ -192,14 +192,14 @@ static void BlitNto1SurfaceAlphaKey(SDL_BlitInfo *info)
 /* fast RGB888->(A)RGB888 blending with surface alpha=128 special case */
 static void BlitRGBtoRGBSurfaceAlpha128(SDL_BlitInfo *info)
 {
-	int width      = info->d_width;
-	int height     = info->d_height;
-	uint32_t *srcp = (uint32_t *)info->s_pixels;
-	int srcskip    = info->s_skip >> 2;
-	uint32_t *dstp = (uint32_t *)info->d_pixels;
-	int dstskip    = info->d_skip >> 2;
+   int width      = info->d_width;
+   int height     = info->d_height;
+   uint32_t *srcp = (uint32_t *)info->s_pixels;
+   int srcskip    = info->s_skip >> 2;
+   uint32_t *dstp = (uint32_t *)info->d_pixels;
+   int dstskip    = info->d_skip >> 2;
 
-	while(height--)
+   while(height--)
    {
       DUFFS_LOOP({
             uint32_t s = *srcp++;
@@ -215,24 +215,24 @@ static void BlitRGBtoRGBSurfaceAlpha128(SDL_BlitInfo *info)
 /* fast RGB888->(A)RGB888 blending with surface alpha */
 static void BlitRGBtoRGBSurfaceAlpha(SDL_BlitInfo *info)
 {
-	unsigned alpha = info->src->alpha;
+   unsigned alpha = info->src->alpha;
 
-	if(alpha == 128)
+   if(alpha == 128)
    {
-		BlitRGBtoRGBSurfaceAlpha128(info);
+      BlitRGBtoRGBSurfaceAlpha128(info);
       return;
    }
 
    {
-		uint32_t s, d, s1, d1;
-		int width      = info->d_width;
-		int height     = info->d_height;
-		uint32_t *srcp = (uint32_t*)info->s_pixels;
-		int srcskip    = info->s_skip >> 2;
-		uint32_t *dstp = (uint32_t*)info->d_pixels;
-		int dstskip    = info->d_skip >> 2;
+      uint32_t s, d, s1, d1;
+      int width      = info->d_width;
+      int height     = info->d_height;
+      uint32_t *srcp = (uint32_t*)info->s_pixels;
+      int srcskip    = info->s_skip >> 2;
+      uint32_t *dstp = (uint32_t*)info->d_pixels;
+      int dstskip    = info->d_skip >> 2;
 
-		while(height--)
+      while(height--)
       {
          DUFFS_LOOP_DOUBLE2({
                /* One Pixel Blend */
@@ -281,20 +281,20 @@ static void BlitRGBtoRGBSurfaceAlpha(SDL_BlitInfo *info)
          srcp += srcskip;
          dstp += dstskip;
       }
-	}
+   }
 }
 
 /* fast ARGB888->(A)RGB888 blending with pixel alpha */
 static void BlitRGBtoRGBPixelAlpha(SDL_BlitInfo *info)
 {
-	int width       = info->d_width;
-	int height      = info->d_height;
-	uint32_t *srcp  = (uint32_t*)info->s_pixels;
-	int srcskip     = info->s_skip >> 2;
-	uint32_t *dstp  = (uint32_t*)info->d_pixels;
-	int dstskip     = info->d_skip >> 2;
+   int width       = info->d_width;
+   int height      = info->d_height;
+   uint32_t *srcp  = (uint32_t*)info->s_pixels;
+   int srcskip     = info->s_skip >> 2;
+   uint32_t *dstp  = (uint32_t*)info->d_pixels;
+   int dstskip     = info->d_skip >> 2;
 
-	while(height--)
+   while(height--)
    {
       DUFFS_LOOP({
             uint32_t dalpha;
@@ -338,25 +338,25 @@ static void BlitRGBtoRGBPixelAlpha(SDL_BlitInfo *info)
 
 /* blend a single 16 bit pixel at 50% */
 #define BLEND16_50(d, s, mask)						\
-	((((s & mask) + (d & mask)) >> 1) + (s & d & (~mask & 0xffff)))
+   ((((s & mask) + (d & mask)) >> 1) + (s & d & (~mask & 0xffff)))
 
 /* blend two 16 bit pixels at 50% */
 #define BLEND2x16_50(d, s, mask)					     \
-	(((s & (mask | mask << 16)) >> 1) + ((d & (mask | mask << 16)) >> 1) \
-	 + (s & d & (~(mask | mask << 16))))
+   (((s & (mask | mask << 16)) >> 1) + ((d & (mask | mask << 16)) >> 1) \
+    + (s & d & (~(mask | mask << 16))))
 
 static void Blit16to16SurfaceAlpha128(SDL_BlitInfo *info, uint16_t mask)
 {
-	int width       = info->d_width;
-	int height      = info->d_height;
-	uint16_t *srcp  = (uint16_t *)info->s_pixels;
-	int srcskip     = info->s_skip >> 1;
-	uint16_t *dstp  = (uint16_t *)info->d_pixels;
-	int dstskip     = info->d_skip >> 1;
+   int width       = info->d_width;
+   int height      = info->d_height;
+   uint16_t *srcp  = (uint16_t *)info->s_pixels;
+   int srcskip     = info->s_skip >> 1;
+   uint16_t *dstp  = (uint16_t *)info->d_pixels;
+   int dstskip     = info->d_skip >> 1;
 
-	while(height--)
+   while(height--)
    {
-		if(((uintptr_t)srcp ^ (uintptr_t)dstp) & 2)
+      if(((uintptr_t)srcp ^ (uintptr_t)dstp) & 2)
       {
          /*
           * Source and destination not aligned, pipeline it.
@@ -449,18 +449,18 @@ static void Blit16to16SurfaceAlpha128(SDL_BlitInfo *info, uint16_t mask)
          srcp += srcskip;
          dstp += dstskip;
       }
-	}
+   }
 }
 
 /* fast RGB565->RGB565 blending with surface alpha */
 static void Blit565to565SurfaceAlpha(SDL_BlitInfo *info)
 {
-	unsigned alpha = info->src->alpha;
-	if(alpha == 128)
+   unsigned alpha = info->src->alpha;
+   if(alpha == 128)
    {
-		Blit16to16SurfaceAlpha128(info, 0xf7de);
+      Blit16to16SurfaceAlpha128(info, 0xf7de);
       return;
-	}
+   }
 
    {
       int width      = info->d_width;
@@ -497,14 +497,14 @@ static void Blit565to565SurfaceAlpha(SDL_BlitInfo *info)
 /* fast RGB555->RGB555 blending with surface alpha */
 static void Blit555to555SurfaceAlpha(SDL_BlitInfo *info)
 {
-	unsigned alpha = info->src->alpha; /* downscale alpha to 5 bits */
+   unsigned alpha = info->src->alpha; /* downscale alpha to 5 bits */
 
-	if(alpha == 128)
+   if(alpha == 128)
    {
-		Blit16to16SurfaceAlpha128(info, 0xfbde);
+      Blit16to16SurfaceAlpha128(info, 0xfbde);
       return;
-	}
-   
+   }
+
    {
       int width    = info->d_width;
       int height   = info->d_height;
@@ -538,14 +538,14 @@ static void Blit555to555SurfaceAlpha(SDL_BlitInfo *info)
 /* fast ARGB8888->RGB565 blending with pixel alpha */
 static void BlitARGBto565PixelAlpha(SDL_BlitInfo *info)
 {
-	int width      = info->d_width;
-	int height     = info->d_height;
-	int srcskip    = info->s_skip >> 2;
-	int dstskip    = info->d_skip >> 1;
-	uint32_t *srcp = (uint32_t *)info->s_pixels;
-	uint16_t *dstp = (uint16_t *)info->d_pixels;
+   int width      = info->d_width;
+   int height     = info->d_height;
+   int srcskip    = info->s_skip >> 2;
+   int dstskip    = info->d_skip >> 1;
+   uint32_t *srcp = (uint32_t *)info->s_pixels;
+   uint16_t *dstp = (uint16_t *)info->d_pixels;
 
-	while(height--)
+   while(height--)
    {
       DUFFS_LOOP({
             uint32_t     s = *srcp;
@@ -582,14 +582,14 @@ static void BlitARGBto565PixelAlpha(SDL_BlitInfo *info)
 /* fast ARGB8888->RGB555 blending with pixel alpha */
 static void BlitARGBto555PixelAlpha(SDL_BlitInfo *info)
 {
-	int width      = info->d_width;
-	int height     = info->d_height;
-	int srcskip    = info->s_skip >> 2;
-	int dstskip    = info->d_skip >> 1;
-	uint32_t *srcp = (uint32_t*)info->s_pixels;
-	uint16_t *dstp = (uint16_t*)info->d_pixels;
+   int width      = info->d_width;
+   int height     = info->d_height;
+   int srcskip    = info->s_skip >> 2;
+   int dstskip    = info->d_skip >> 1;
+   uint32_t *srcp = (uint32_t*)info->s_pixels;
+   uint16_t *dstp = (uint16_t*)info->d_pixels;
 
-	while(height--)
+   while(height--)
    {
       DUFFS_LOOP({
             uint32_t     s = *srcp;
@@ -626,20 +626,20 @@ static void BlitARGBto555PixelAlpha(SDL_BlitInfo *info)
 /* General (slow) N->N blending with per-surface alpha */
 static void BlitNtoNSurfaceAlpha(SDL_BlitInfo *info)
 {
-	int width               = info->d_width;
-	int height              = info->d_height;
-	uint8_t *src            = info->s_pixels;
-	int srcskip             = info->s_skip;
-	uint8_t *dst            = info->d_pixels;
-	int dstskip             = info->d_skip;
-	SDL_PixelFormat *srcfmt = info->src;
-	SDL_PixelFormat *dstfmt = info->dst;
-	int srcbpp              = srcfmt->BytesPerPixel;
-	int dstbpp              = dstfmt->BytesPerPixel;
-	unsigned sA             = srcfmt->alpha;
-	unsigned dA             = dstfmt->Amask ? SDL_ALPHA_OPAQUE : 0;
+   int width               = info->d_width;
+   int height              = info->d_height;
+   uint8_t *src            = info->s_pixels;
+   int srcskip             = info->s_skip;
+   uint8_t *dst            = info->d_pixels;
+   int dstskip             = info->d_skip;
+   SDL_PixelFormat *srcfmt = info->src;
+   SDL_PixelFormat *dstfmt = info->dst;
+   int srcbpp              = srcfmt->BytesPerPixel;
+   int dstbpp              = dstfmt->BytesPerPixel;
+   unsigned sA             = srcfmt->alpha;
+   unsigned dA             = dstfmt->Amask ? SDL_ALPHA_OPAQUE : 0;
 
-	if(sA)
+   if(sA)
    {
       while ( height-- )
       {
@@ -669,21 +669,21 @@ static void BlitNtoNSurfaceAlpha(SDL_BlitInfo *info)
 /* General (slow) colorkeyed N->N blending with per-surface alpha */
 static void BlitNtoNSurfaceAlphaKey(SDL_BlitInfo *info)
 {
-	int width               = info->d_width;
-	int height              = info->d_height;
-	uint8_t *src            = info->s_pixels;
-	int srcskip             = info->s_skip;
-	uint8_t *dst            = info->d_pixels;
-	int dstskip             = info->d_skip;
-	SDL_PixelFormat *srcfmt = info->src;
-	SDL_PixelFormat *dstfmt = info->dst;
-	uint32_t ckey           = srcfmt->colorkey;
-	int srcbpp              = srcfmt->BytesPerPixel;
-	int dstbpp              = dstfmt->BytesPerPixel;
-	unsigned sA             = srcfmt->alpha;
-	unsigned dA             = dstfmt->Amask ? SDL_ALPHA_OPAQUE : 0;
+   int width               = info->d_width;
+   int height              = info->d_height;
+   uint8_t *src            = info->s_pixels;
+   int srcskip             = info->s_skip;
+   uint8_t *dst            = info->d_pixels;
+   int dstskip             = info->d_skip;
+   SDL_PixelFormat *srcfmt = info->src;
+   SDL_PixelFormat *dstfmt = info->dst;
+   uint32_t ckey           = srcfmt->colorkey;
+   int srcbpp              = srcfmt->BytesPerPixel;
+   int dstbpp              = dstfmt->BytesPerPixel;
+   unsigned sA             = srcfmt->alpha;
+   unsigned dA             = dstfmt->Amask ? SDL_ALPHA_OPAQUE : 0;
 
-	while ( height-- )
+   while ( height-- )
    {
       DUFFS_LOOP(
             {
@@ -713,23 +713,23 @@ static void BlitNtoNSurfaceAlphaKey(SDL_BlitInfo *info)
 /* General (slow) N->N blending with pixel alpha */
 static void BlitNtoNPixelAlpha(SDL_BlitInfo *info)
 {
-	int width               = info->d_width;
-	int height              = info->d_height;
-	uint8_t *src            = info->s_pixels;
-	int srcskip             = info->s_skip;
-	uint8_t *dst            = info->d_pixels;
-	int dstskip             = info->d_skip;
-	SDL_PixelFormat *srcfmt = info->src;
-	SDL_PixelFormat *dstfmt = info->dst;
-	int srcbpp              = srcfmt->BytesPerPixel;
-	int dstbpp              = dstfmt->BytesPerPixel;
+   int width               = info->d_width;
+   int height              = info->d_height;
+   uint8_t *src            = info->s_pixels;
+   int srcskip             = info->s_skip;
+   uint8_t *dst            = info->d_pixels;
+   int dstskip             = info->d_skip;
+   SDL_PixelFormat *srcfmt = info->src;
+   SDL_PixelFormat *dstfmt = info->dst;
+   int srcbpp              = srcfmt->BytesPerPixel;
+   int dstbpp              = dstfmt->BytesPerPixel;
 
-	/* FIXME: for 8bpp source alpha, this doesn't get opaque values
-	   quite right. for <8bpp source alpha, it gets them very wrong
-	   (check all macros!)
-	   It is unclear whether there is a good general solution that doesn't
-	   need a branch (or a divide). */
-	while ( height-- )
+   /* FIXME: for 8bpp source alpha, this doesn't get opaque values
+      quite right. for <8bpp source alpha, it gets them very wrong
+      (check all macros!)
+      It is unclear whether there is a good general solution that doesn't
+      need a branch (or a divide). */
+   while ( height-- )
    {
       DUFFS_LOOP(
             {
@@ -760,87 +760,87 @@ static void BlitNtoNPixelAlpha(SDL_BlitInfo *info)
 
 SDL_loblit LRSDL_CalculateAlphaBlit(SDL_Surface *surface, int blit_index)
 {
-    SDL_PixelFormat *sf = surface->format;
-    SDL_PixelFormat *df = surface->map->dst->format;
+   SDL_PixelFormat *sf = surface->format;
+   SDL_PixelFormat *df = surface->map->dst->format;
 
-    if(sf->Amask == 0)
-    {
-       if((surface->flags & SDL_SRCCOLORKEY) == SDL_SRCCOLORKEY)
-       {
-          if(df->BytesPerPixel == 1)
-             return BlitNto1SurfaceAlphaKey;
-          return BlitNtoNSurfaceAlphaKey;
-       }
-       else
-       {
-          /* Per-surface alpha blits */
-          switch(df->BytesPerPixel)
-          {
-             case 1:
-                return BlitNto1SurfaceAlpha;
-             case 2:
-                if(surface->map->identity)
-                {
-                   if(df->Gmask == 0x7e0)
-                      return Blit565to565SurfaceAlpha;
-                   else if(df->Gmask == 0x3e0)
-                      return Blit555to555SurfaceAlpha;
-                }
-                return BlitNtoNSurfaceAlpha;
+   if(sf->Amask == 0)
+   {
+      if((surface->flags & SDL_SRCCOLORKEY) == SDL_SRCCOLORKEY)
+      {
+         if(df->BytesPerPixel == 1)
+            return BlitNto1SurfaceAlphaKey;
+         return BlitNtoNSurfaceAlphaKey;
+      }
+      else
+      {
+         /* Per-surface alpha blits */
+         switch(df->BytesPerPixel)
+         {
+            case 1:
+               return BlitNto1SurfaceAlpha;
+            case 2:
+               if(surface->map->identity)
+               {
+                  if(df->Gmask == 0x7e0)
+                     return Blit565to565SurfaceAlpha;
+                  else if(df->Gmask == 0x3e0)
+                     return Blit555to555SurfaceAlpha;
+               }
+               return BlitNtoNSurfaceAlpha;
 
-             case 4:
-                if(sf->Rmask == df->Rmask
-                      && sf->Gmask == df->Gmask
-                      && sf->Bmask == df->Bmask
-                      && sf->BytesPerPixel == 4)
-                {
-                   if((sf->Rmask | sf->Gmask | sf->Bmask) == 0xffffff)
-                      return BlitRGBtoRGBSurfaceAlpha;
-                }
-                return BlitNtoNSurfaceAlpha;
+            case 4:
+               if(sf->Rmask == df->Rmask
+                     && sf->Gmask == df->Gmask
+                     && sf->Bmask == df->Bmask
+                     && sf->BytesPerPixel == 4)
+               {
+                  if((sf->Rmask | sf->Gmask | sf->Bmask) == 0xffffff)
+                     return BlitRGBtoRGBSurfaceAlpha;
+               }
+               return BlitNtoNSurfaceAlpha;
 
-             case 3:
-             default:
-                return BlitNtoNSurfaceAlpha;
-          }
-       }
-    }
-    else
-    {
-       /* Per-pixel alpha blits */
-       switch(df->BytesPerPixel)
-       {
-          case 1:
-             return BlitNto1PixelAlpha;
+            case 3:
+            default:
+               return BlitNtoNSurfaceAlpha;
+         }
+      }
+   }
+   else
+   {
+      /* Per-pixel alpha blits */
+      switch(df->BytesPerPixel)
+      {
+         case 1:
+            return BlitNto1PixelAlpha;
 
-          case 2:
-             if(sf->BytesPerPixel == 4 && sf->Amask == 0xff000000
-                   && sf->Gmask == 0xff00
-                   && ((sf->Rmask == 0xff && df->Rmask == 0x1f)
-                      || (sf->Bmask == 0xff && df->Bmask == 0x1f)))
-             {
-                if(df->Gmask == 0x7e0)
-                   return BlitARGBto565PixelAlpha;
-                else if(df->Gmask == 0x3e0)
-                   return BlitARGBto555PixelAlpha;
-             }
-             return BlitNtoNPixelAlpha;
+         case 2:
+            if(sf->BytesPerPixel == 4 && sf->Amask == 0xff000000
+                  && sf->Gmask == 0xff00
+                  && ((sf->Rmask == 0xff && df->Rmask == 0x1f)
+                     || (sf->Bmask == 0xff && df->Bmask == 0x1f)))
+            {
+               if(df->Gmask == 0x7e0)
+                  return BlitARGBto565PixelAlpha;
+               else if(df->Gmask == 0x3e0)
+                  return BlitARGBto555PixelAlpha;
+            }
+            return BlitNtoNPixelAlpha;
 
-          case 4:
-             if(sf->Rmask == df->Rmask
-                   && sf->Gmask == df->Gmask
-                   && sf->Bmask == df->Bmask
-                   && sf->BytesPerPixel == 4)
-             {
-                if(sf->Amask == 0xff000000)
-                   return BlitRGBtoRGBPixelAlpha;
-             }
-             return BlitNtoNPixelAlpha;
+         case 4:
+            if(sf->Rmask == df->Rmask
+                  && sf->Gmask == df->Gmask
+                  && sf->Bmask == df->Bmask
+                  && sf->BytesPerPixel == 4)
+            {
+               if(sf->Amask == 0xff000000)
+                  return BlitRGBtoRGBPixelAlpha;
+            }
+            return BlitNtoNPixelAlpha;
 
-          case 3:
-          default:
-             return BlitNtoNPixelAlpha;
-       }
-    }
+         case 3:
+         default:
+            return BlitNtoNPixelAlpha;
+      }
+   }
 }
 
