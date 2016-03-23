@@ -168,7 +168,7 @@ do {									   \
 
 #define RGB565_FROM_RGB(r, g, b) ((((r) >> 3) << 11) | (((g) >> 2) << 5) | ((b) >> 3))
 #define RGB555_FROM_RGB(r, g, b) ((((r) >> 3) << 10) | (((g) >> 3) << 5) | ((b) >> 3))
-#define RGB888_FROM_RGB(r, g, b) (((r) << 16) | ((g) << 8) | (b))
+#define RGB888_FROM_RGB(r, g, b) (((r)        << 16) | ((g)        << 8) | (b))
 
 #define ASSEMBLE_RGB(buf, bpp, fmt, r, g, b) 				\
 {									\
@@ -244,17 +244,17 @@ do {									   \
 }
 #define RGBA_FROM_RGBA8888(Pixel, r, g, b, a)				\
 {									\
-	r = ((Pixel  >> 24));						\
+	r = ((Pixel >> 24));						\
 	g = ((Pixel >> 16) & 0xFF);						\
 	b = ((Pixel >> 8)  & 0xFF);						\
 	a = ((Pixel))      & 0xFF;						\
 }
 #define RGBA_FROM_ARGB8888(Pixel, r, g, b, a)				\
 {									\
-	r = ((Pixel>>16)&0xFF);						\
-	g = ((Pixel>>8)&0xFF);						\
-	b = (Pixel&0xFF);						\
-	a = (Pixel>>24);						\
+	r = ((Pixel >> 16) & 0xFF);						\
+	g = ((Pixel >> 8)  & 0xFF);						\
+	b = Pixel          & 0xFF;						\
+	a = Pixel   >> 24;						\
 }
 #define RGBA_FROM_ABGR8888(Pixel, r, g, b, a)				\
 {									\
@@ -272,11 +272,10 @@ do {									   \
 									   \
 		case 3:	{/* FIXME: broken code (no alpha) */		   \
 		        uint8_t *b = (uint8_t *)buf;			   \
-			if(SDL_BYTEORDER == SDL_LIL_ENDIAN) {		   \
+			if(SDL_BYTEORDER == SDL_LIL_ENDIAN)		   \
 			        Pixel = b[0] + (b[1] << 8) + (b[2] << 16); \
-			} else {					   \
+			else					   \
 			        Pixel = (b[0] << 16) + (b[1] << 8) + b[2]; \
-			}						   \
 		}							   \
 		break;							   \
 									   \
