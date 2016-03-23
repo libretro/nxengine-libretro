@@ -172,18 +172,11 @@ do {									   \
 		((g>>fmt->Gloss)<<fmt->Gshift)|				\
 		((b>>fmt->Bloss)<<fmt->Bshift);				\
 }
-#define RGB565_FROM_RGB(Pixel, r, g, b)					\
-{									\
-	Pixel = ((r>>3)<<11)|((g>>2)<<5)|(b>>3);			\
-}
-#define RGB555_FROM_RGB(Pixel, r, g, b)					\
-{									\
-	Pixel = ((r>>3)<<10)|((g>>3)<<5)|(b>>3);			\
-}
-#define RGB888_FROM_RGB(Pixel, r, g, b)					\
-{									\
-	Pixel = (r<<16)|(g<<8)|b;					\
-}
+
+#define RGB565_FROM_RGB(r, g, b) ((((r) >> 3) << 11) | (((g) >> 2) << 5) | ((b) >> 3))
+#define RGB555_FROM_RGB(r, g, b) ((((r) >> 3) << 10) | (((g) >> 3) << 5) | ((b) >> 3))
+#define RGB888_FROM_RGB(r, g, b) (((r) << 16) | ((g) << 8) | (b))
+
 #define ASSEMBLE_RGB(buf, bpp, fmt, r, g, b) 				\
 {									\
 	switch (bpp) {							\
