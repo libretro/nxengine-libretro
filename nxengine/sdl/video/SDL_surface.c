@@ -563,9 +563,9 @@ SDL_Surface * LRSDL_ConvertSurface (SDL_Surface *surface,
 					SDL_PixelFormat *format, Uint32 flags)
 {
    SDL_Surface *convert;
-   Uint32 colorkey = 0;
-   Uint8 alpha = 0;
-   Uint32 surface_flags;
+   uint32_t surface_flags;
+   uint32_t colorkey = 0;
+   uint8_t alpha = 0;
    SDL_Rect bounds;
 
    /* Check for empty destination palette! (results in empty image) */
@@ -639,7 +639,7 @@ SDL_Surface * LRSDL_ConvertSurface (SDL_Surface *surface,
 
    if ( (surface_flags & SDL_SRCCOLORKEY) == SDL_SRCCOLORKEY )
    {
-      Uint32 cflags = surface_flags&(SDL_SRCCOLORKEY|SDL_RLEACCELOK);
+      uint32_t cflags = surface_flags&(SDL_SRCCOLORKEY|SDL_RLEACCELOK);
       if (convert)
       {
          uint8_t keyR, keyG, keyB;
