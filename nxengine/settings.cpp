@@ -1,5 +1,5 @@
 
-#include <retro_file.h>
+#include <streams/file_stream.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -69,7 +69,7 @@ static bool tryload(Settings *setfile)
 
    retro_create_path_string(setfilename_tmp, sizeof(setfilename_tmp), g_dir, setfilename);
 
-   fp = retro_fopen(setfilename_tmp, RFILE_MODE_READ, -1);
+   fp = filestream_open(setfilename_tmp, RFILE_MODE_READ, -1);
    if (!fp)
    {
       NX_ERR("Couldn't open file %s.\n", setfilename_tmp);
@@ -79,7 +79,7 @@ static bool tryload(Settings *setfile)
    NX_LOG("Loading settings...\n");
 
    setfile->version = 0;
-   retro_fread(fp, setfile, sizeof(Settings));
+   filestream_read(fp, setfile, sizeof(Settings));
 
    if (setfile->version != SETTINGS_VERSION)
    {
@@ -87,7 +87,7 @@ static bool tryload(Settings *setfile)
       return 1;
    }
 
-   retro_fclose(fp);
+   filestream_close(fp);
    return 0;
 }
 
@@ -102,7 +102,7 @@ bool settings_save(Settings *setfile)
 
    retro_create_path_string(setfilename_tmp, sizeof(setfilename_tmp), g_dir, setfilename);
 
-   fp = retro_fopen(setfilename_tmp, RFILE_MODE_WRITE, -1);
+   fp = filestream_open(setfilename_tmp, RFILE_MODE_WRITE, -1);
    if (!fp)
    {
       NX_ERR("Couldn't open file %s.\n", setfilename_tmp);
@@ -115,9 +115,8 @@ bool settings_save(Settings *setfile)
       setfile->input_mappings[i] = input_get_mapping(i);
 
    setfile->version = SETTINGS_VERSION;
-   retro_fwrite(fp, setfile, sizeof(Settings));
-
-   retro_fclose(fp);
+   filestream_write(fp, setfile, sizeof(Settings));
+   filestream_close(fp);
    return 0;
 }
 

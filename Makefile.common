@@ -12,7 +12,7 @@ SOURCES_C   := $(CORE_DIR)/sdl/SDL_error.c \
 					$(CORE_DIR)/sdl/video/SDL_surface.c
 
 ifneq ($(STATIC_LINKING), 1)
-SOURCES_C   += $(CORE_DIR)/libretro/libretro-common/file/retro_file.c
+SOURCES_C   += $(CORE_DIR)/libretro/libretro-common/streams/file_stream.c
 endif
 
 SOURCES_CXX := $(CORE_DIR)/ai/ai.cpp \

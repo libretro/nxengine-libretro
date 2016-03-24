@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
-#include <retro_file.h>
+#include <streams/file_stream.h>
 #include "nx.h"
 #include "niku.fdh"
 #include "libretro_shared.h"
@@ -27,7 +27,7 @@ bool niku_load(uint32_t *value_out)
 
    retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
 
-   fp = retro_fopen(fname_tmp, RFILE_MODE_READ, -1);
+   fp = filestream_open(fname_tmp, RFILE_MODE_READ, -1);
    if (!fp)
    {
 #ifdef DEBUG
@@ -38,8 +38,8 @@ bool niku_load(uint32_t *value_out)
       return 1;
    }
 
-   retro_fread(fp, buffer, 20);
-   retro_fclose(fp);
+   filestream_read(fp, buffer, 20);
+   filestream_close(fp);
 
    for(i=0;i<4;i++)
    {
@@ -110,15 +110,15 @@ bool niku_save(uint32_t value)
 
    retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
 
-   fp = retro_fopen(fname_tmp, RFILE_MODE_WRITE, -1);
+   fp = filestream_open(fname_tmp, RFILE_MODE_WRITE, -1);
    if (!fp)
    {
       NX_ERR("niku_save: failed to open '%s'", fname_tmp);
       return 1;
    }
 
-   retro_fwrite(fp, buf_byte, 20);
-   retro_fclose(fp);
+   filestream_write(fp, buf_byte, 20);
+   filestream_close(fp);
 
 #ifdef DEBUG
    NX_LOG("niku_save: wrote value 0x%08x", value);
