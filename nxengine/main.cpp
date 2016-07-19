@@ -27,7 +27,6 @@ int framecount = 0;
 bool freezeframe = false;
 
 static bool inhibit_loadfade = false;
-static bool error = false;
 static bool freshstart;
 
 //extern bool extract_files(FILE *exefp);
@@ -35,65 +34,92 @@ extern bool extract_stages(FILE *exefp);
 
 bool pre_main(void)
 {
-	error = false;
-#ifdef DEBUG_LOG
-char debug_fname[1024];
-retro_create_path_string(debug_fname, sizeof(debug_fname), g_dir, "debug.txt");
-SetLogFilename(debug_fname);
-#endif
-	// start up inputs first thing because settings_load may remap them
-	input_init();
-	
-	// load settings, or at least get the defaults,
-	// so we know the initial screen resolution.
-	settings_load();
-
    char filename[1024];
-	FILE *fp;
+   FILE *fp;
 
-	NX_LOG("= Extracting Files =\n");
+#ifdef DEBUG_LOG
+   char debug_fname[1024];
+   retro_create_path_string(debug_fname, sizeof(debug_fname), g_dir, "debug.txt");
+   SetLogFilename(debug_fname);
+#endif
+   // start up inputs first thing because settings_load may remap them
+   input_init();
 
-	retro_create_path_string(filename, sizeof(filename), g_dir, "Doukutsu.exe");
-	fp = fopen(filename, "rb");
+   // load settings, or at least get the defaults,
+   // so we know the initial screen resolution.
+   settings_load();
+
+   NX_LOG("= Extracting Files =\n");
+
+   retro_create_path_string(filename, sizeof(filename), g_dir, "Doukutsu.exe");
+   fp = fopen(filename, "rb");
 
    //extract_files(fp);
    cachefiles_init(fp);
 
-	if (sound_init(fp)) { fatal("Failed to initialize sound."); error = 1; return error; }
-   
-	extract_stages(fp);
+   if (sound_init(fp))
+   {
+      fatal("Failed to initialize sound.");
+      return 1;
+   }
 
-	fclose(fp);
-	
+   if (extract_stages(fp))
+   {
+      fclose(fp);
+      return 1;
+   }
+
+   fclose(fp);
+
    settings->files_extracted = true;
    settings_save();
-	
-	if (Graphics::init(settings->resolution)) { NX_ERR("Failed to initialize graphics.\n"); error = 1; return error; }
-	if (font_init()) { NX_ERR("Failed to load font.\n"); error = 1; return error; }
-	
-	//return error;
-	
-	if (check_data_exists())
-	{
-		error = 1;
-		return error;
-	}
-	
-	if (trig_init()) { fatal("Failed trig module init."); error = 1; return error; }
-	
-	if (tsc_init()) { fatal("Failed to initialize script engine."); error = 1; return error; }
-	if (textbox.Init()) { fatal("Failed to initialize textboxes."); error = 1; return error; }
-	if (Carets::init()) { fatal("Failed to initialize carets."); error = 1; return error; }
-	
-	if (game.init())
-	{
-		error = 1;
-		return error;
-	}
-	game.setmode(GM_NORMAL);
-	// set null stage just to have something to do while we go to intro
-	game.switchstage.mapno = 0;
-	
+
+   if (Graphics::init(settings->resolution))
+   {
+      NX_ERR("Failed to initialize graphics.\n");
+      return 1;
+   }
+   if (font_init())
+   {
+      NX_ERR("Failed to load font.\n");
+      return 1;
+   }
+
+   //return error;
+
+   if (check_data_exists())
+      return 1;
+
+   if (trig_init())
+   {
+      fatal("Failed trig module init.");
+      return 1;
+   }
+
+   if (tsc_init())
+   {
+      fatal("Failed to initialize script engine.");
+      return 1;
+   }
+
+   if (textbox.Init())
+   {
+      fatal("Failed to initialize textboxes.");
+      return 1;
+   }
+   if (Carets::init())
+   {
+      fatal("Failed to initialize carets.");
+      return 1;
+   }
+
+   if (game.init())
+      return 1;
+
+   game.setmode(GM_NORMAL);
+   // set null stage just to have something to do while we go to intro
+   game.switchstage.mapno = 0;
+
    //game.switchstage.mapno = LOAD_GAME;
    //game.pause(GP_OPTIONS);
 
@@ -101,17 +127,17 @@ SetLogFilename(debug_fname);
       game.switchstage.mapno = LOAD_GAME;
    else
       game.setmode(GM_INTRO);
-	
-	// for debug
-	if (game.paused) { game.switchstage.mapno = 0; game.switchstage.eventonentry = 0; }
-	if (game.switchstage.mapno == LOAD_GAME) inhibit_loadfade = true;
-	
-	game.running = true;
-	freshstart = true;
-	
-	NX_LOG("Entering main loop...\n");
-	
-	return error;
+
+   // for debug
+   if (game.paused) { game.switchstage.mapno = 0; game.switchstage.eventonentry = 0; }
+   if (game.switchstage.mapno == LOAD_GAME) inhibit_loadfade = true;
+
+   game.running = true;
+   freshstart = true;
+
+   NX_LOG("Entering main loop...\n");
+
+   return 0;
 }
 
 void post_main(void)
@@ -168,8 +194,7 @@ bool run_main(void)
 		{
 			fatal("savefile error");
 			game.running = false;
-			error = 1;
-			return false;
+			return 1;
 		}
 
 		if (!inhibit_loadfade) fade.Start(FADE_IN, FADE_CENTER);
@@ -195,8 +220,7 @@ bool run_main(void)
 		if (load_stage(game.switchstage.mapno))
 		{
 			game.running = false;
-			error = 1;
-			return false;
+			return 1;
 		}
 
 		player->x = (game.switchstage.playerx * TILE_W) << CSF;
@@ -207,8 +231,7 @@ bool run_main(void)
 	if (game.initlevel())
 	{
 		game.running = false;
-		error = 1;
-		return false;
+		return 1;
 	}
 
 	if (freshstart)

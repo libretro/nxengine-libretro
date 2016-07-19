@@ -160,8 +160,8 @@ bool retro_load_game(const struct retro_game_info *game)
    NX_LOG("g_dir: %s\n", g_dir);
 
    if (pre_main())
-      return 0;
-   return 1;
+      return false;
+   return true;
 }
 
 void retro_deinit(void)
