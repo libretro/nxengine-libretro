@@ -55,7 +55,8 @@ bool pre_main(void)
    fp = fopen(filename, "rb");
 
    //extract_files(fp);
-   cachefiles_init(fp);
+   if (!cachefiles_init(fp))
+      return 1;
 
    if (sound_init(fp))
    {

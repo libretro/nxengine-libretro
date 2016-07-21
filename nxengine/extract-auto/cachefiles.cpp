@@ -479,7 +479,7 @@ static struct hash_struct *filemap = NULL;
 
 extern signed short wavetable[100][256];
 
-void cachefiles_init(FILE *exefp)
+bool cachefiles_init(FILE *exefp)
 {
    unsigned i;
    for (i = 0; i < sizeof(filenames) / sizeof(filenames[0]); i++)
@@ -506,6 +506,8 @@ void cachefiles_init(FILE *exefp)
             strcpy(entry->filename, filenames[i]);
             HASH_ADD_STR(filemap, filename, entry);
          }
+         else
+            return false;
 
          continue;
       }
@@ -570,6 +572,8 @@ void cachefiles_init(FILE *exefp)
       strcpy(entry->filename, bmp_files[i].filename);
       HASH_ADD_STR(filemap, filename, entry);
    }
+
+   return true;
 }
 
 CFILE *copen(const char *fname, const char *mode)

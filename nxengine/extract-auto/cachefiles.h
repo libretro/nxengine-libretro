@@ -4,7 +4,7 @@
 
 typedef struct file_data CFILE;
 
-void cachefiles_init(FILE *exefp);
+bool cachefiles_init(FILE *exefp);
 CFILE *copen(const char *fname, const char *mode);
 void cclose(CFILE *f);
 void cseek(CFILE *f, int offset, int origin);
