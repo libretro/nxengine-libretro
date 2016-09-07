@@ -329,7 +329,7 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>_DEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST;SDL_BYTEORDER=SDL_BIG_ENDIAN</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST</PreprocessorDefinitions>
       <CallAttributedProfiling>Callcap</CallAttributedProfiling>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\sdl\include;$(SolutionDir)..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -349,7 +349,7 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>_DEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST;SDL_BYTEORDER=SDL_BIG_ENDIAN</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST</PreprocessorDefinitions>
       <CallAttributedProfiling>Callcap</CallAttributedProfiling>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\sdl\include;$(SolutionDir)..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -370,7 +370,7 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>NDEBUG;_XBOX;PROFILE;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST;SDL_BYTEORDER=SDL_BIG_ENDIAN</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_XBOX;PROFILE;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST</PreprocessorDefinitions>
       <CallAttributedProfiling>Callcap</CallAttributedProfiling>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\sdl\include;$(SolutionDir)..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -395,7 +395,7 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>NDEBUG;_XBOX;PROFILE;FASTCAP;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST;SDL_BYTEORDER=SDL_BIG_ENDIAN</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_XBOX;PROFILE;FASTCAP;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\sdl\include;$(SolutionDir)..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -417,7 +417,7 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>NDEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST;SDL_BYTEORDER=SDL_BIG_ENDIAN</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\sdl\include;$(SolutionDir)..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -439,7 +439,7 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>NDEBUG;_XBOX;LTCG;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST;SDL_BYTEORDER=SDL_BIG_ENDIAN</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_XBOX;LTCG;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;FRONTEND_SUPPORTS_RGB565;INLINE=_inline;_XBOX360;MSB_FIRST</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\sdl\include;$(SolutionDir)..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>

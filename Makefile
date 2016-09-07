@@ -61,7 +61,7 @@ else ifeq ($(platform), osx)
    fpic := -fPIC
    SHARED := -dynamiclib
 ifeq ($(arch),ppc)
-   CFLAGS += -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
+   CFLAGS += -DMSB_FIRST=1 
 endif
    CFLAGS += -DOSX
    OSXVER = `sw_vers -productVersion | cut -d. -f 2`
@@ -110,28 +110,28 @@ else ifeq ($(platform), qnx)
    AR = QCC -Vgcc_ntoarmv7le
 	CFLAGS += -D__BLACKBERRY_QNX__ -marm -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=softfp -lcpp
 else ifeq ($(platform), ps3)
-   TARGET := $(TARGET_NAME)_libretro_ps3.a
+   TARGET := $(TARGET_NAME)_libretro_$(platform).a
    CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
    CXX = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-g++.exe
    AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe
-   CFLAGS += -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
+   CFLAGS += -DMSB_FIRST=1
 	STATIC_LINKING = 1
 else ifeq ($(platform), sncps3)
    TARGET := $(TARGET_NAME)_libretro_ps3.a
    CC = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    CXX = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    AR = $(CELL_SDK)/host-win32/sn/bin/ps3snarl.exe
-   CFLAGS +=  -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
+   CFLAGS +=  -DMSB_FIRST=1
 	STATIC_LINKING = 1
 else ifeq ($(platform), psl1ght)
-   TARGET := $(TARGET_NAME)_libretro_psl1ght.a
+   TARGET := $(TARGET_NAME)_libretro_$(platform).a
    CC = $(PS3DEV)/ppu/bin/ppu-gcc$(EXE_EXT)
    CXX = $(PS3DEV)/ppu/bin/ppu-g++$(EXE_EXT)
    AR = $(PS3DEV)/ppu/bin/ppu-ar$(EXE_EXT)
-   CFLAGS += -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
+   CFLAGS += -DMSB_FIRST=1
 	STATIC_LINKING = 1
 else ifeq ($(platform), psp1)
-   TARGET := $(TARGET_NAME)_libretro_psp1.a
+   TARGET := $(TARGET_NAME)_libretro_$(platform).a
    CC = psp-gcc$(EXE_EXT)
    CXX = psp-g++$(EXE_EXT)
    AR = psp-ar$(EXE_EXT)
@@ -141,7 +141,7 @@ else ifeq ($(platform), psp1)
    MIN_AUDIO_PROCESSING_PER_FRAME = 1
 
 else ifeq ($(platform), vita)
-   TARGET := $(TARGET_NAME)_libretro_vita.a
+   TARGET := $(TARGET_NAME)_libretro_$(platform).a
 	CC = arm-vita-eabi-gcc$(EXE_EXT)
 	CXX = arm-vita-eabi-g++$(EXE_EXT)
 	AR = arm-vita-eabi-ar$(EXE_EXT)
@@ -150,7 +150,7 @@ else ifeq ($(platform), vita)
    SINGLE_PRECISION_FLOATS = 1
    MIN_AUDIO_PROCESSING_PER_FRAME = 1
 else ifeq ($(platform), ctr)
-   TARGET := $(TARGET_NAME)_libretro_ctr.a
+   TARGET := $(TARGET_NAME)_libretro_$(platform).a
    CC = $(DEVKITARM)/bin/arm-none-eabi-gcc$(EXE_EXT)
    CXX = $(DEVKITARM)/bin/arm-none-eabi-g++$(EXE_EXT)
    AR = $(DEVKITARM)/bin/arm-none-eabi-ar$(EXE_EXT)
@@ -202,22 +202,29 @@ else ifeq ($(platform), xenon)
    CC = xenon-gcc$(EXE_EXT)
    CXX = xenon-g++$(EXE_EXT)
    AR = xenon-ar$(EXE_EXT)
-   CFLAGS += -D__LIBXENON__ -D__ppc_ -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
+   CFLAGS += -D__LIBXENON__ -D__ppc_ -DMSB_FIRST=1
 	STATIC_LINKING = 1
 else ifeq ($(platform), ngc)
-   TARGET := $(TARGET_NAME)_libretro_ngc.a
+   TARGET := $(TARGET_NAME)_libretro_$(platform).a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
-   CFLAGS += -DGEKKO -DHW_DOL -mrvl -mcpu=750 -meabi -mhard-float -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
+   CFLAGS += -DGEKKO -DHW_DOL -mrvl -mcpu=750 -meabi -mhard-float -DMSB_FIRST=1
 	STATIC_LINKING = 1
 else ifeq ($(platform), wii)
-   TARGET := $(TARGET_NAME)_libretro_wii.a
+   TARGET := $(TARGET_NAME)_libretro_$(platform).a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
-   CFLAGS += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -DMSB_FIRST=1 -DSDL_BYTEORDER=SDL_BIG_ENDIAN
+   CFLAGS += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float -DMSB_FIRST=1
 	STATIC_LINKING = 1
+
+else ifeq ($(platform),emscripten)
+   TARGET := $(TARGET_NAME)_libretro_$(platform).bc
+	STATIC_LINKING = 1
+   SINGLE_PRECISION_FLOATS = 1
+   MIN_AUDIO_PROCESSING_PER_FRAME = 1
+
 else ifneq (,$(findstring armv,$(platform)))
    TARGET := $(TARGET_NAME)_libretro.so
    fpic := -fPIC
