@@ -41,7 +41,6 @@ TARGET_NAME := nxengine
 CORE_DIR     := nxengine
 EXTRACTDIR   := $(CORE_DIR)/extract-auto
 
-CC         = gcc
 
 ifeq ($(ARCHFLAGS),)
 ifeq ($(archs),ppc)
