@@ -154,6 +154,9 @@ bool retro_load_game(const struct retro_game_info *game)
       { 0 },
    };
 
+   if (!game)
+      return false;
+
    environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);
 
    extract_directory(g_dir, game->path, sizeof(g_dir));

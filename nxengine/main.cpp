@@ -143,7 +143,8 @@ bool pre_main(void)
 
 void post_main(void)
 {
-	game.close();
+   if (game.close)
+      game.close();
 	Carets::close();
 	
 	Graphics::close();
