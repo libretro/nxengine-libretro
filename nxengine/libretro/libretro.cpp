@@ -73,7 +73,7 @@ void retro_get_system_info(struct retro_system_info *info)
 {
    info->need_fullpath = true;
    info->valid_extensions = "exe";
-   info->library_version = "1.0.0.4";
+   info->library_version = "1.0.0.6";
    info->library_name = "NXEngine";
    info->block_extract = false;
 }
