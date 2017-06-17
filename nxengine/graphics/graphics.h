@@ -3,9 +3,6 @@
 #define _GRAPHICS_H
 
 #include "nxsurface.h"
-// (unscaled) screen size/video mode
-#define SCREEN_WIDTH		320
-#define SCREEN_HEIGHT		240
 
 extern NXSurface *screen;
 extern const NXColor DK_BLUE;
@@ -15,6 +12,9 @@ extern bool use_palette;
 
 namespace Graphics
 {
+   extern int SCREEN_HEIGHT;
+   extern int SCREEN_WIDTH;
+
 	bool init(int resolution);
 	void close();
 	

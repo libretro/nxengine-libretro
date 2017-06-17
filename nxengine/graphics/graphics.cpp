@@ -21,6 +21,9 @@ const NXColor CLEAR(0, 0, 0);			// the transparent/colorkey color
 
 static int current_res = -1;
 
+int Graphics::SCREEN_WIDTH = 320;
+int Graphics::SCREEN_HEIGHT = 240;
+
 bool Graphics::init(int resolution)
 {
 	screen_bpp = 16;	// the default
@@ -88,6 +91,18 @@ void Graphics::SetFullscreen(bool enable)
 // 3 - Windowed scale x3 (960x720)
 bool Graphics::SetResolution(int r, bool restoreOnFailure)
 {
+		if (1) //widescreen
+		{
+		    r = r-5;
+		    SCREEN_HEIGHT = 270;
+		    SCREEN_WIDTH = 480;
+		}
+		else
+		{
+		    r = r;
+		    SCREEN_HEIGHT = 240;
+		    SCREEN_WIDTH = 320;
+		}
 	NX_LOG("Graphics::SetResolution(%d)\n", r);
 	if (r == current_res)
 		return 0;
