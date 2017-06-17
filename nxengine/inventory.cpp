@@ -80,9 +80,9 @@ int curwpn = 0;
 	inv.h = 152;
 	inv.x = (SCREEN_WIDTH / 2) - (inv.w / 2);
 	if (widescreen)
-    	inv.y = 30;
+	 	inv.y = 30;
 	else
-    	inv.y = 8;
+	 	inv.y = 8;
 	
 	// find current weapon and count # items for armssel selector
 	inv.armssel.items[0] = 0;		// show "no weapon" in case of no weapon
@@ -308,7 +308,7 @@ char toggle = 0;
 			ExitInventory();
 	}
 
-   if (justpushed(INVENTORYKEY))
+	if (justpushed(INVENTORYKEY))
 			ExitInventory();
 }
 

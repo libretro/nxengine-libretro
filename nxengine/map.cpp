@@ -62,9 +62,9 @@ slash = '/';
 	map.scrolltype = stages[stage_no].scroll_type;
 	map.motionpos = 0;
 
-   //hack to show nice backdrop in menu, like nicalis
-   stages[0].bg_no=9;
-   stages[0].scroll_type=BK_FASTLEFT_LAYERS;
+	//hack to show nice backdrop in menu, like nicalis
+	stages[0].bg_no=9;
+	stages[0].scroll_type=BK_FASTLEFT_LAYERS;
 	
 	return 0;
 }
@@ -79,7 +79,7 @@ bool load_map(const char *fname)
 	CFILE *fp;
 	int x, y;
 
-   NX_LOG("load_map: %s\n", fname);
+	NX_LOG("load_map: %s\n", fname);
 
 	fp = copen(fname, "rb");
 	if (!fp)
@@ -121,29 +121,29 @@ bool load_map(const char *fname)
 	
 	if (widescreen)
 	{
-        if (map.xsize * TILE_W<SCREEN_WIDTH && map.ysize * TILE_W<SCREEN_HEIGHT) {
-            map.maxxscroll = (((map.xsize * TILE_W) - (SCREEN_WIDTH - 80)) - 8) << CSF;
-            map.maxyscroll = (((map.ysize * TILE_H) - (SCREEN_HEIGHT - 16)) - 8) << CSF;
-        } else if (map.xsize * TILE_W<SCREEN_WIDTH) {
-            if (x == 25) { // MazeI
-                map.maxxscroll = (((map.xsize * TILE_W) - (SCREEN_WIDTH - 48)) - 8) << CSF;
-                map.maxyscroll = (((map.ysize * TILE_H) - SCREEN_HEIGHT) - 8) << CSF;
-            } else { // Others
-                map.maxxscroll = (((map.xsize * TILE_W) - (SCREEN_WIDTH - 80)) - 8) << CSF;
-                map.maxyscroll = (((map.ysize * TILE_H) - SCREEN_HEIGHT) - 8) << CSF;
-            }
-        } else if (map.ysize * TILE_W<SCREEN_HEIGHT) {
-            map.maxxscroll = (((map.xsize * TILE_W) - SCREEN_WIDTH) - 8) << CSF;
-            map.maxyscroll = (((map.ysize * TILE_H) - (SCREEN_HEIGHT - 16)) - 8) << CSF;
-        } else {
-            map.maxxscroll = (((map.xsize * TILE_W) - SCREEN_WIDTH) - 8) << CSF;
-            map.maxyscroll = (((map.ysize * TILE_H) - SCREEN_HEIGHT) - 8) << CSF;
-        }
+		  if (map.xsize * TILE_W<SCREEN_WIDTH && map.ysize * TILE_W<SCREEN_HEIGHT) {
+				map.maxxscroll = (((map.xsize * TILE_W) - (SCREEN_WIDTH - 80)) - 8) << CSF;
+				map.maxyscroll = (((map.ysize * TILE_H) - (SCREEN_HEIGHT - 16)) - 8) << CSF;
+		  } else if (map.xsize * TILE_W<SCREEN_WIDTH) {
+				if (x == 25) { // MazeI
+					 map.maxxscroll = (((map.xsize * TILE_W) - (SCREEN_WIDTH - 48)) - 8) << CSF;
+					 map.maxyscroll = (((map.ysize * TILE_H) - SCREEN_HEIGHT) - 8) << CSF;
+				} else { // Others
+					 map.maxxscroll = (((map.xsize * TILE_W) - (SCREEN_WIDTH - 80)) - 8) << CSF;
+					 map.maxyscroll = (((map.ysize * TILE_H) - SCREEN_HEIGHT) - 8) << CSF;
+				}
+		  } else if (map.ysize * TILE_W<SCREEN_HEIGHT) {
+				map.maxxscroll = (((map.xsize * TILE_W) - SCREEN_WIDTH) - 8) << CSF;
+				map.maxyscroll = (((map.ysize * TILE_H) - (SCREEN_HEIGHT - 16)) - 8) << CSF;
+		  } else {
+				map.maxxscroll = (((map.xsize * TILE_W) - SCREEN_WIDTH) - 8) << CSF;
+				map.maxyscroll = (((map.ysize * TILE_H) - SCREEN_HEIGHT) - 8) << CSF;
+		  }
 	}
 	else
 	{
-    	map.maxxscroll = (((map.xsize * TILE_W) - SCREEN_WIDTH) - 8) << CSF;
-    	map.maxyscroll = (((map.ysize * TILE_H) - SCREEN_HEIGHT) - 8) << CSF;
+	 	map.maxxscroll = (((map.xsize * TILE_W) - SCREEN_WIDTH) - 8) << CSF;
+	 	map.maxyscroll = (((map.ysize * TILE_H) - SCREEN_HEIGHT) - 8) << CSF;
 	}
 	
 	NX_LOG("load_map: '%s' loaded OK! - %dx%d\n", fname, map.xsize, map.ysize);
@@ -191,7 +191,7 @@ int nEntities;
 		
 		int dir = (flags & FLAG_FACES_RIGHT) ? RIGHT : LEFT;
 		
-		//lprintf(" %d:   [%d, %d]\t id1=%d\t id2=%d   Type %d   flags %04x\n", i, x, y, id1, id2, type, flags);
+		//lprintf(" %d:	[%d, %d]\t id1=%d\t id2=%d	Type %d	flags %04x\n", i, x, y, id1, id2, type, flags);
 		
 		// most maps have apparently garbage entities--invisible do-nothing objects??
 		// i dunno but no point in spawning those...
@@ -217,7 +217,7 @@ int nEntities;
 			{
 				// hack for chests (can we do this elsewhere?)
 				if (type == OBJ_CHEST_OPEN) y++;
-            // hack for skydragon in Fall end cinematic
+				// hack for skydragon in Fall end cinematic
 				if (type == OBJ_SKY_DRAGON && id2 == 230) y++;
 				
 				Object *o = CreateObject((x * TILE_W) << CSF, \
@@ -264,7 +264,7 @@ unsigned char tc;
 		tc = cgetc(fp);
 		tilecode[i] = tc;
 		tileattr[i] = tilekey[tc];
-		//NX_LOG("Tile %02x   TC %02x    Attr %08x   tilekey[%02x] = %08x\n", i, tc, tileattr[i], tc, tilekey[tc]);
+		//NX_LOG("Tile %02x	TC %02x	 Attr %08x	tilekey[%02x] = %08x\n", i, tc, tileattr[i], tc, tilekey[tc]);
 		
 		//FIXME: Destroyable star tiles not showing up right now
 		if (tc == 0x43)	// destroyable block - have to replace graphics
@@ -298,7 +298,7 @@ bool load_stages(void)
 
 bool initmapfirsttime(void)
 {
-        char fname[1024];
+		  char fname[1024];
 	FILE *fp;
 	int i;
 
@@ -309,13 +309,13 @@ bool initmapfirsttime(void)
 	{
 		NX_LOG("%s is missing, using default\n", fname);
 	}
-   else
-   {
-      for(i=0;i<256;i++)
-         tilekey[i] = fgetl(fp);
-      
-      fclose(fp);
-   }
+	else
+	{
+		for(i=0;i<256;i++)
+			tilekey[i] = fgetl(fp);
+		
+		fclose(fp);
+	}
 	return load_stages();
 }
 
@@ -412,17 +412,17 @@ int x, y;
 // blit OSide's BK_FASTLEFT_LAYERS
 static void DrawFastLeftLayered(void)
 {
-   int layer_ys[] = { 80, 122, 145, 176, 240 };
+	int layer_ys[] = { 80, 122, 145, 176, 240 };
 
-   if (widescreen)
-   {
-     layer_ys[4] = 272;
-   }
+	if (widescreen)
+	{
+	  layer_ys[4] = 272;
+	}
 
-   static const int move_spd[] = { 0,    1,   2,   4,   8 };
-   int nlayers = 6;
-   int y1, y2;
-   int i, x;
+	static const int move_spd[] = { 0,	 1,	2,	4,	8 };
+	int nlayers = 6;
+	int y1, y2;
+	int i, x;
 
 	const int W = backdrop[map.backdrop]->Width();
 
@@ -463,24 +463,24 @@ slash = '/';
 		bool use_chromakey = (backdrop_no == 8);
 		
 		snprintf(fname, sizeof(fname), "%s%c%s.pbm", data_dir, slash, backdrop_names[backdrop_no]);
-      if (widescreen)
-      {
-          if (backdrop_no == 9) {
-              if (sprintf(fname, "%s/%s.pbm", data_dir, "bkMoon480fix") < 0) {
-                  printf("Error opening bkMoon480fix file");
-              }
-          } else if (backdrop_no == 10) {
-              if (sprintf(fname, "%s/%s.pbm", data_dir, "bkFog480fix")) {
-                  printf("Error opening bkFog480fix file");
-              }
-          }   else {
-              sprintf(fname, "%s/%s.pbm", data_dir, backdrop_names[backdrop_no]);
-          }
-      }
-      else
-      {
-          sprintf(fname, "%s/%s.pbm", data_dir, backdrop_names[backdrop_no]);
-      }
+		if (widescreen)
+		{
+			 if (backdrop_no == 9) {
+				  if (sprintf(fname, "%s/%s.pbm", data_dir, "bkMoon480fix") < 0) {
+						printf("Error opening bkMoon480fix file");
+				  }
+			 } else if (backdrop_no == 10) {
+				  if (sprintf(fname, "%s/%s.pbm", data_dir, "bkFog480fix")) {
+						printf("Error opening bkFog480fix file");
+				  }
+			 }	else {
+				  sprintf(fname, "%s/%s.pbm", data_dir, backdrop_names[backdrop_no]);
+			 }
+		}
+		else
+		{
+			 sprintf(fname, "%s/%s.pbm", data_dir, backdrop_names[backdrop_no]);
+		}
 		
 		backdrop[backdrop_no] = NXSurface::FromFile(fname, use_chromakey);
 		if (!backdrop[backdrop_no])
@@ -683,7 +683,7 @@ void map_scroll_do(void)
 			{
 				scroll_normal();
 				
-            doing_normal_scroll = true;
+				doing_normal_scroll = true;
 			}
 		}
 	}
