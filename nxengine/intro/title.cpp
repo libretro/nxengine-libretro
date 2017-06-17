@@ -213,7 +213,7 @@ static void draw_title()
 {
 	// background is dk grey, not pure black
 	ClearScreen(0x20, 0x20, 0x20);
-   map_draw_backdrop();
+   //map_draw_backdrop();
 	
 	// top logo
 	int tx = (SCREEN_WIDTH / 2) - (sprites[SPR_TITLE].w / 2) - 2;
