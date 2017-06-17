@@ -88,8 +88,16 @@ int i;
 	objprop[OBJ_SISTERS_HEAD].hurt_sound = SND_ENEMY_HURT_COOL;
 	
 	mainangle = 0;
-	main->xmark = 180;
-	main->ymark = 61;
+	if (widescreen)
+	{
+	    main->xmark = 180*2;
+	    main->ymark = 61*2;
+	}
+	else
+	{
+	    main->xmark = 180;
+	    main->ymark = 61;
+	}
 	main->timer2 = random(700, 1200);
 	main->hp = 500;
 	
