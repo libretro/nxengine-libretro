@@ -449,37 +449,37 @@ static void DrawFastLeftLayered(void)
 // loads a backdrop into memory, if it hasn't already been loaded
 static bool LoadBackdropIfNeeded(int backdrop_no)
 {
-char fname[MAXPATHLEN];
-char slash;
+	char fname[MAXPATHLEN];
+	char slash;
 #ifdef _WIN32
-slash = '\\';
+	slash = '\\';
 #else
-slash = '/';
+	slash = '/';
 #endif
+
 	// load backdrop now if it hasn't already been loaded
 	if (!backdrop[backdrop_no])
 	{
 		// use chromakey (transparency) on bkwater, all others don't
 		bool use_chromakey = (backdrop_no == 8);
-		
-		snprintf(fname, sizeof(fname), "%s%c%s.pbm", data_dir, slash, backdrop_names[backdrop_no]);
+
 		if (widescreen)
 		{
 			 if (backdrop_no == 9) {
-				  if (sprintf(fname, "%s/%s.pbm", data_dir, "bkMoon480fix") < 0) {
+				  if (snprintf(fname, sizeof(fname), "%s%c%s.pbm", data_dir, slash, "bkMoon480fix") < 0) {
 						printf("Error opening bkMoon480fix file");
 				  }
 			 } else if (backdrop_no == 10) {
-				  if (sprintf(fname, "%s/%s.pbm", data_dir, "bkFog480fix")) {
+				  if (snprintf(fname, sizeof(fname), "%s%c%s.pbm", data_dir, slash, "bkFog480fix")) {
 						printf("Error opening bkFog480fix file");
 				  }
 			 }	else {
-				  sprintf(fname, "%s/%s.pbm", data_dir, backdrop_names[backdrop_no]);
+				  snprintf(fname, sizeof(fname), "%s%c%s.pbm", data_dir, slash, backdrop_names[backdrop_no]);
 			 }
 		}
 		else
 		{
-			 sprintf(fname, "%s/%s.pbm", data_dir, backdrop_names[backdrop_no]);
+			 snprintf(fname, sizeof(fname), "%s%c%s.pbm", data_dir, slash, backdrop_names[backdrop_no]);
 		}
 		
 		backdrop[backdrop_no] = NXSurface::FromFile(fname, use_chromakey);
