@@ -363,6 +363,10 @@ int x, y;
 		case BK_PARALLAX:
 			map.parscroll_y = (map.displayed_yscroll >> CSF) / 2;
 			map.parscroll_x = (map.displayed_xscroll >> CSF) / 2;
+			map.parscroll_x %= backdrop[map.backdrop]->Width();
+			map.parscroll_y %= backdrop[map.backdrop]->Height();
+			if (map.parscroll_x < 0 ) map.parscroll_x = map.parscroll_x * 2;
+			if (map.parscroll_y < 0 ) map.parscroll_y = map.parscroll_y * 2;
 		break;
 		
 		case BK_FASTLEFT:		// Ironhead
