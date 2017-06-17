@@ -595,13 +595,13 @@ int scroll_x, scroll_y;
 		for(x=0; x <= (SCREEN_WIDTH / TILE_W)+MAP_DRAW_EXTRA_X; x++)
 		{
 			int t = map.tiles[mapx+x][mapy+y];
-			//fixes drawing of debug tiles in Stream and Fall maps
+/*			//fixes drawing of debug tiles in Stream and Fall maps
 			draw_tile(blit_x, blit_y, t);
-			if( ((game.curmap == 71) && (tilecode[t] == 0x41))
+			if( ((game.curmap == 74) && (tilecode[t] == 0x41))
 				 ||
 				 ((game.curmap == 31) && (tilecode[t] == 0x46))
 			) {}
-			else
+			else*/
 				if ((tileattr[t] & TA_FOREGROUND) == foreground)
 					draw_tile(blit_x, blit_y, t);
 			
