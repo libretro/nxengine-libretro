@@ -23,7 +23,7 @@ static int current_res = -1;
 
 int Graphics::SCREEN_WIDTH = 320;
 int Graphics::SCREEN_HEIGHT = 240;
-bool Graphics::widescreen = false;
+bool Graphics::widescreen = true;
 
 bool Graphics::init(int resolution)
 {
