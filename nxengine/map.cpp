@@ -235,14 +235,13 @@ int nEntities;
 				o->OnSpawn();
 								if (type == OBJ_MOTION_WALL)
 				{
-					 stat("spawning extra motion wall");
 					 o = CreateObject(((x+22) * TILE_W) << CSF, \
 										 (y * TILE_H) << CSF, type,
 										 0, 0, dir, NULL, CF_NO_SPAWN_EVENT);
 					 o->id1 = id1;
 					 o->id2 = id2;
 					 o->flags |= flags;
-				
+
 					 ID2Lookup[o->id2] = o;
 				
 					 // now that it's all set up, execute OnSpawn,
@@ -447,26 +446,28 @@ int x, y;
 }
 
 // blit OSide's BK_FASTLEFT_LAYERS
-static void DrawFastLeftLayered(void)
+void DrawFastLeftLayered(void)
 {
-	int layer_ys[] = { 80, 122, 145, 176, 240 };
+    int layer_ys[] = { 80, 122, 145, 176, 240 };
+    if (widescreen)
+    {
+        layer_ys[4] = 272;
+    }
 
-	if (widescreen)
-	{
-	  layer_ys[4] = 272;
-	}
+    static const int move_spd[] = { 0,    1,   2,   4,   8 };
+    int nlayers = 5;
+    int y1, y2;
+    int i, x;
 
-	static const int move_spd[] = { 0,	 1,	2,	4,	8 };
-	int nlayers = 6;
-	int y1, y2;
-	int i, x;
-
-	const int W = backdrop[map.backdrop]->Width();
-
-	if (--map.parscroll_x <= -(W*2))
+	if (--map.parscroll_x <= -(480*SCALE*2))
 		map.parscroll_x = 0;
 	
 	y1 = x = 0;
+	// fix for extra height
+	if (map.backdrop == 9)
+	    ClearScreen(111,156,214);
+	else if (map.backdrop == 10 && game.curmap != 64 )
+	    ClearScreen(111,107,86);
 	for(i=0;i<nlayers;i++)
 	{
 		y2 = layer_ys[i];
@@ -474,12 +475,14 @@ static void DrawFastLeftLayered(void)
 		if (i)	// not the static moon layer?
 		{
 			x = (map.parscroll_x * move_spd[i]) >> 1;
-			x %= W;
+//			x %= SCREEN_WIDTH;
 		}
-		
 		BlitPatternAcross(backdrop[map.backdrop], x, y1, y1, (y2-y1)+1);
 		y1 = (y2 + 1);
 	}
+	int mapy = map.displayed_yscroll >> CSF;
+	if (mapy<0)
+		FillRect(0,0,SCREEN_WIDTH, -mapy,0,0,0);
 }
 
 
