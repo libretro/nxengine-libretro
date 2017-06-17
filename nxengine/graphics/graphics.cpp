@@ -23,6 +23,7 @@ static int current_res = -1;
 
 int Graphics::SCREEN_WIDTH = 320;
 int Graphics::SCREEN_HEIGHT = 240;
+bool Graphics::widescreen = false;
 
 bool Graphics::init(int resolution)
 {
@@ -91,7 +92,7 @@ void Graphics::SetFullscreen(bool enable)
 // 3 - Windowed scale x3 (960x720)
 bool Graphics::SetResolution(int r, bool restoreOnFailure)
 {
-		if (1) //widescreen
+		if (widescreen) //widescreen
 		{
 		    r = r-5;
 		    SCREEN_HEIGHT = 270;
