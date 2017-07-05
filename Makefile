@@ -354,6 +354,9 @@ endif
 ifeq ($(platform), sncps3)
 WARNINGS_DEFINES =
 CODE_DEFINES =
+else ifneq (,$(findstring msvc,$(platform)))
+WARNINGS_DEFINES =
+CODE_DEFINES =
 else
 WARNINGS_DEFINES = -Wall -W -Wno-unused-parameter
 CODE_DEFINES = -fomit-frame-pointer
