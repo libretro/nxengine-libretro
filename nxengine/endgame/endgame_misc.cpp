@@ -67,7 +67,8 @@ int type;
 		{
 			cloud->x = o->x;
 			cloud->y = o->y + MAPY(random(-7, 7));
-			cloud->xinertia = -(0x400 >> type);
+			if (widescreen) cloud->y+=(32 << CSF);
+				cloud->xinertia = -(0x400 >> type);
 		}
 		
 		// cut down on the amount of time Kazuma is flying

@@ -5,16 +5,27 @@
 using namespace Options;
 extern FocusStack optionstack;
 
-#define DLG_X		((SCREEN_WIDTH / 2) - 88)
-#define DLG_Y		((SCREEN_HEIGHT / 2) - 90)
-#define DLG_W		190
-#define DLG_H		180
-
 #define REPEAT_WAIT	30
 #define REPEAT_RATE	4
 
 Dialog::Dialog()
 {
+	
+	if (widescreen)
+	{
+		DLG_X = ((SCREEN_WIDTH / 2) - 110);
+		DLG_Y = ((SCREEN_HEIGHT / 2) - 90);
+		DLG_W = 240;
+		DLG_H = 180;
+	}
+	else
+	{
+		DLG_X = ((SCREEN_WIDTH / 2) - 88);
+		DLG_Y = ((SCREEN_HEIGHT / 2) - 90);
+		DLG_W = 190;
+		DLG_H = 180;
+	}
+
 	onclear = NULL;
 	ondismiss = NULL;
 	
@@ -33,7 +44,7 @@ Dialog::Dialog()
 
 Dialog::~Dialog()
 {
-   ODItem *item;
+	ODItem *item;
 	for(int i=0; item = ItemAt(i);i++)
 		delete item;
 	
@@ -219,7 +230,7 @@ void Dialog::Dismiss()
 
 void Dialog::Refresh()
 {
-   ODItem *item;
+	ODItem *item;
 	for(int i=0; item = ItemAt(i);i++)
 	{
 		if (item->update)
@@ -232,7 +243,7 @@ void Dialog::Clear()
 	if (onclear)
 		(*onclear)();
 	
-   ODItem *item;
+	ODItem *item;
 	for(int i=0; item = ItemAt(i);i++)
 		delete item;
 	

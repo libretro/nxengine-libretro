@@ -40,6 +40,7 @@ TARGET_NAME := nxengine
 
 CORE_DIR     := nxengine
 EXTRACTDIR   := $(CORE_DIR)/extract-auto
+LIBS         := -lm
 
 
 ifeq ($(ARCHFLAGS),)
@@ -257,6 +258,58 @@ else ifneq (,$(findstring hardfloat,$(platform)))
    CFLAGS += -mfloat-abi=hard
 endif
    CFLAGS += -DARM
+# Windows MSVC 2010 x64
+else ifeq ($(platform), windows_msvc2010_x64)
+	LIBS=
+	CC  = cl.exe
+	CXX = cl.exe
+
+PATH := $(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../../VC/bin/amd64"):$(PATH)
+PATH := $(PATH):$(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../IDE")
+LIB := $(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../../VC/lib/amd64")
+INCLUDE := $(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../../VC/include")
+
+WindowsSdkDir := $(shell reg query "HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.0A" -v "InstallationFolder" | grep -o '[A-Z]:\\.*')lib/x64
+WindowsSdkDir ?= $(shell reg query "HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.1A" -v "InstallationFolder" | grep -o '[A-Z]:\\.*')lib/x64
+
+WindowsSdkDirInc := $(shell reg query "HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.0A" -v "InstallationFolder" | grep -o '[A-Z]:\\.*')Include
+WindowsSdkDirInc ?= $(shell reg query "HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.1A" -v "InstallationFolder" | grep -o '[A-Z]:\\.*')Include
+
+
+INCFLAGS_PLATFORM = -I"$(WindowsSdkDirInc)"
+export INCLUDE := $(INCLUDE)
+export LIB := $(LIB);$(WindowsSdkDir)
+TARGET := $(TARGET_NAME)_libretro.dll
+PSS_STYLE :=2
+LDFLAGS += -DLL
+LIBS =
+# Windows MSVC 2010 x86
+else ifeq ($(platform), windows_msvc2010_x86)
+	LIBS=
+	CC  = cl.exe
+	CXX = cl.exe
+
+PATH := $(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../../VC/bin"):$(PATH)
+PATH := $(PATH):$(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../IDE")
+LIB := $(shell IFS=$$'\n'; cygpath -w "$(VS100COMNTOOLS)../../VC/lib")
+INCLUDE := $(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../../VC/include")
+
+WindowsSdkDir := $(shell reg query "HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.0A" -v "InstallationFolder" | grep -o '[A-Z]:\\.*')lib
+WindowsSdkDir ?= $(shell reg query "HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.1A" -v "InstallationFolder" | grep -o '[A-Z]:\\.*')lib
+
+WindowsSdkDirInc := $(shell reg query "HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.0A" -v "InstallationFolder" | grep -o '[A-Z]:\\.*')Include
+WindowsSdkDirInc ?= $(shell reg query "HKLM\SOFTWARE\Microsoft\Microsoft SDKs\Windows\v7.1A" -v "InstallationFolder" | grep -o '[A-Z]:\\.*')Include
+
+
+INCFLAGS_PLATFORM = -I"$(WindowsSdkDirInc)"
+export INCLUDE := $(INCLUDE)
+export LIB := $(LIB);$(WindowsSdkDir)
+TARGET := $(TARGET_NAME)_libretro.dll
+PSS_STYLE :=2
+LDFLAGS += -DLL
+LIBS =
+
+# Windows
 else
    TARGET := $(TARGET_NAME)_libretro.dll
    CC = gcc
@@ -267,7 +320,7 @@ endif
 ifeq ($(DEBUG), 1)
 CFLAGS += -O0 -g
 else
-CFLAGS += -O3
+CFLAGS += -O2 -DNDEBUG
 endif
 
 ifeq ($(RELEASE_BUILD), 1)
@@ -290,7 +343,13 @@ include Makefile.common
 
 OBJECTS := $(SOURCES_CXX:.cpp=.o) $(SOURCES_C:.c=.o)
 
-DEFINES := -DHAVE_INTTYPES_H -D__LIBRETRO__ -DINLINE=inline -DFRONTEND_SUPPORTS_RGB565
+DEFINES := -DHAVE_INTTYPES_H -D__LIBRETRO__ -DFRONTEND_SUPPORTS_RGB565
+
+ifneq (,$(findstring msvc,$(platform)))
+DEFINES += -DINLINE="_inline"
+else
+DEFINES += -DINLINE="inline"
+endif
 
 ifeq ($(platform), sncps3)
 WARNINGS_DEFINES =
@@ -308,18 +367,29 @@ ifndef ($(NOUNIVERSAL))
 endif
 endif
 
-COMMON_DEFINES += $(CODE_DEFINES) $(WARNINGS_DEFINES) -DNDEBUG=1 $(fpic)
+COMMON_DEFINES += $(CODE_DEFINES) $(WARNINGS_DEFINES) $(fpic) $(INCFLAGS) $(INCFLAGS_PLATFORM)
 
 CFLAGS     += $(DEFINES) $(COMMON_DEFINES)
 
+OBJOUT   = -o
+LINKOUT  = -o 
+
+ifneq (,$(findstring msvc,$(platform)))
+	OBJOUT = -Fo
+	LINKOUT = -out:
+	LD = link.exe
+else
+	LD = $(CXX)
+endif
+
 %.o: %.c
-	$(CC) $(INCFLAGS) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c $(OBJOUT)$@ $<
 
 %.o: %.cpp
-	$(CXX) $(INCFLAGS) $(CFLAGS) -c -o $@ $<
+	$(CXX) $(CFLAGS) -c $(OBJOUT)$@ $<
 
 ifeq ($(platform), theos_ios)
-COMMON_FLAGS := -DIOS -DARM $(COMMON_DEFINES) $(INCFLAGS) -I$(THEOS_INCLUDE_PATH) -Wno-error
+COMMON_FLAGS := -DIOS -DARM $(COMMON_DEFINES) -I$(THEOS_INCLUDE_PATH) -Wno-error
 $(LIBRARY_NAME)_CFLAGS += $(CFLAGS) $(COMMON_FLAGS)
 $(LIBRARY_NAME)_CXXFLAGS += $(CXXFLAGS) $(COMMON_FLAGS)
 ${LIBRARY_NAME}_FILES = $(SOURCES_CXX) $(SOURCES_C)
@@ -331,7 +401,7 @@ $(TARGET): $(OBJECTS)
 ifeq ($(STATIC_LINKING), 1)
 	$(AR) rcs $@ $(OBJECTS)
 else
-	$(CXX) $(fpic) $(SHARED) $(INCFLAGS) $(CFLAGS) -o $@ $(OBJECTS) -lm
+	$(LD) $(fpic) $(SHARED) $(CFLAGS) $(LINKOUT)$@ $(OBJECTS) $(LIBS)
 endif
 
 

@@ -21,6 +21,10 @@ const NXColor CLEAR(0, 0, 0);			// the transparent/colorkey color
 
 static int current_res = -1;
 
+int Graphics::SCREEN_WIDTH = 320;
+int Graphics::SCREEN_HEIGHT = 240;
+bool Graphics::widescreen = true;
+
 bool Graphics::init(int resolution)
 {
 	screen_bpp = 16;	// the default
@@ -54,7 +58,7 @@ SDL_Surface *sdl_screen;
 	if (drawtarget == screen) drawtarget = NULL;
 	if (screen) delete screen;
 	
-   sdl_screen = (SDL_Surface*)AllocNewSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	sdl_screen = (SDL_Surface*)AllocNewSurface(0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	pitch = 320 << 1;
 
 	if (!sdl_screen)
@@ -88,6 +92,18 @@ void Graphics::SetFullscreen(bool enable)
 // 3 - Windowed scale x3 (960x720)
 bool Graphics::SetResolution(int r, bool restoreOnFailure)
 {
+		if (widescreen) //widescreen
+		{
+			 r = r-5;
+			 SCREEN_HEIGHT = 270;
+			 SCREEN_WIDTH = 480;
+		}
+		else
+		{
+			 r = r;
+			 SCREEN_HEIGHT = 240;
+			 SCREEN_WIDTH = 320;
+		}
 	NX_LOG("Graphics::SetResolution(%d)\n", r);
 	if (r == current_res)
 		return 0;
@@ -104,7 +120,7 @@ bool Graphics::SetResolution(int r, bool restoreOnFailure)
 // return a pointer to a null-terminated list of available resolutions.
 const char **Graphics::GetResolutions()
 {
-static const char *res_str[]   =
+static const char *res_str[]	=
 {
 	"Fullscreen",
 	"320x240", "640x480", "960x720",
@@ -172,7 +188,7 @@ void Graphics::DrawSurface(NXSurface *src, int x, int y)
 
 // blit the specified portion of the surface to the screen
 void Graphics::DrawSurface(NXSurface *src, \
-						   int dstx, int dsty, int srcx, int srcy, int wd, int ht)
+							int dstx, int dsty, int srcx, int srcy, int wd, int ht)
 {
 	drawtarget->DrawSurface(src, dstx, dsty, srcx, srcy, wd, ht);
 }

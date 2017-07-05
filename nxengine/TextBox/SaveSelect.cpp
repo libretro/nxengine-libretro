@@ -35,10 +35,20 @@ void TB_SaveSelect::SetVisible(bool enable, bool saving)
 	if (!enable) return;
 	game.showmapnametime = 0;
 	
-	fCoords.x = 38;
-	fCoords.y = 8;
 	fCoords.w = 244;
 	fCoords.h = 152;
+
+	if (widescreen)
+	{
+		fCoords.x = (SCREEN_WIDTH / 2) - (fCoords.w / 2);
+		fCoords.y = 30;
+	}
+	else
+	{
+		fCoords.x = 38;
+		fCoords.y = 8;
+	}
+
 	fNumFiles = MAX_SAVE_SLOTS;
 	fSaving = saving;
 	
@@ -105,11 +115,11 @@ int start;
 	
 	if (buttonjustpushed())
 	{
-      if (fSaving)
-         game_save(fCurSel);
+		if (fSaving)
+			game_save(fCurSel);
 
-      settings->last_save_slot = fCurSel;
-      settings_save();		// record new save/load slot
+		settings->last_save_slot = fCurSel;
+		settings_save();		// record new save/load slot
 		
 		SetVisible(false);
 		
