@@ -350,6 +350,7 @@ int LRSDL_LowerBlit (SDL_Surface *src, SDL_Rect *srcrect,
 int LRSDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect,
       SDL_Surface *dst, SDL_Rect *dstrect)
 {
+   SDL_Rect sr;
    SDL_Rect fulldst;
    int srcx = 0;
    int srcy = 0;
@@ -437,7 +438,6 @@ int LRSDL_UpperBlit (SDL_Surface *src, SDL_Rect *srcrect,
       return 0;
    }
 
-   SDL_Rect sr;
    sr.x = srcx;
    sr.y = srcy;
    sr.w = dstrect->w = w;
