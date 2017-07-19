@@ -312,7 +312,6 @@ void retro_create_path_string(char *fname, size_t fname_size, const char * dir, 
 	snprintf(fname, fname_size, "%s%c%s", dir, slash, filename);
 }
 
-
 /**
  * Retrieve the desired save directory.
  */
