@@ -311,3 +311,19 @@ void retro_create_path_string(char *fname, size_t fname_size, const char * dir, 
 #endif
 	snprintf(fname, fname_size, "%s%c%s", dir, slash, filename);
 }
+
+
+/**
+ * Retrieve the desired save directory.
+ */
+const char* retro_get_save_dir() {
+   const char* dir = NULL;
+
+   // Attempt to get the save directory from the frontend.
+   if (environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &dir) && dir && *dir) {
+      return dir;
+   }
+
+   // If the save directory isn't available, use the game path.
+   return g_dir;
+}
