@@ -4,8 +4,11 @@
 #include <unistd.h>
 #endif
 #include <string>
+#include <stdio.h>
 
 #include "libretro.h"
+#include "libretro_shared.h"
+#include "../common/misc.fdh"
 #include "../graphics/graphics.h"
 #include "../nx.h"
 
@@ -162,6 +165,8 @@ bool retro_load_game(const struct retro_game_info *game)
    extract_directory(g_dir, game->path, sizeof(g_dir));
    NX_LOG("g_dir: %s\n", g_dir);
 
+   retro_init_saves();
+
    if (pre_main())
       return false;
    return true;
@@ -316,7 +321,8 @@ void retro_create_path_string(char *fname, size_t fname_size, const char * dir, 
 /**
  * Retrieve the desired save directory.
  */
-const char* retro_get_save_dir() {
+const char* retro_get_save_dir()
+{
    const char* dir = NULL;
 
    // Attempt to get the save directory from the frontend.
@@ -326,4 +332,74 @@ const char* retro_get_save_dir() {
 
    // If the save directory isn't available, use the game path.
    return g_dir;
+}
+
+/**
+ * Copy any missing profiles from the content directory to the save directory.
+ */
+void retro_init_saves()
+{
+   // Copy any profiles into the save directory.
+   const char* save_dir = retro_get_save_dir();
+
+   // Check to see if the save directory is different than content directory.
+   if (strcmp(save_dir, g_dir) != 0) {
+      // Parse through all the different profiles.
+      for (int i = 0; i < 5; i++) {
+         // Get the profile as seen in the game directory.
+         const char* profile_file = retro_GetProfileName(i, g_dir);
+         printf("Profile file: %s - ", profile_file);
+         if (file_exists(profile_file)) {
+         printf("Exists!", profile_file);
+            // See if we are to copy it over.
+            const char* dest_file = retro_GetProfileName(i, save_dir);
+            if (!file_exists(dest_file)) {
+               int result = retro_copy_file(profile_file, dest_file);
+               printf("\n\nCopied %s to %s - Result: %d\n", profile_file, dest_file, result);
+               printf("Save: %s - Game: %s\n", save_dir, g_dir);
+            }
+         }
+      }
+   }
+}
+
+int retro_copy_file(const char* from, const char* to)
+{
+   FILE *ffrom = fopen(from, "r");
+   if (!ffrom) {
+      return -1;
+   }
+
+   FILE *fto = fopen(to, "w");
+   if (!fto) {
+      return 0;
+   }
+
+   int inch;
+   while (inch = fgetc(ffrom)) {
+      if (inch == EOF) {
+         break;
+      }
+      if (fputc(inch, fto) == EOF) {
+         break;
+      }
+   }
+   fclose(fto);
+   fclose(ffrom);
+   return 1;
+}
+
+// returns the filename for a save file given it's number
+void retro_GetProfileName(char* out, int num, const char* parent_dir)
+{
+   char pfname_tmp[1024];
+   char profile_name[1024];
+
+   if (num == 0)
+      snprintf(profile_name, sizeof(profile_name), "profile.dat");
+   else
+      snprintf(profile_name, sizeof(profile_name), "profile%d.dat", num+1);
+
+   retro_create_path_string(pfname_tmp, sizeof(pfname_tmp), parent_dir, profile_name);
+   return pfname_tmp;
 }
