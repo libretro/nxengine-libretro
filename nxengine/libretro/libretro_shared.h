@@ -9,8 +9,7 @@ void retro_create_subpath_string(char *fname, size_t fname_size, const char * di
 void retro_create_path_string(char *fname, size_t fname_size, const char * dir, const char * filename);
 const char* retro_get_save_dir();
 void retro_init_saves();
-int retro_copy_file(const char* old_filename, const char* new_filename);
-const char *retro_GetProfileName(int num, const char* parent_dir);
+bool retro_copy_file(const char* from, const char* to);
 
 extern char g_dir[1024];
 

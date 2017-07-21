@@ -341,65 +341,84 @@ void retro_init_saves()
 {
    // Copy any profiles into the save directory.
    const char* save_dir = retro_get_save_dir();
+   char gamedirProfile[1024];
+   char savedirProfile[1024];
+   char profile_name[1024];
 
-   // Check to see if the save directory is different than content directory.
+   // Copy profiles only if te folders are different.
    if (strcmp(save_dir, g_dir) != 0) {
       // Parse through all the different profiles.
       for (int i = 0; i < 5; i++) {
-         // Get the profile as seen in the game directory.
-         const char* profile_file = retro_GetProfileName(i, g_dir);
-         printf("Profile file: %s - ", profile_file);
-         if (file_exists(profile_file)) {
-         printf("Exists!", profile_file);
-            // See if we are to copy it over.
-            const char* dest_file = retro_GetProfileName(i, save_dir);
-            if (!file_exists(dest_file)) {
-               int result = retro_copy_file(profile_file, dest_file);
-               printf("\n\nCopied %s to %s - Result: %d\n", profile_file, dest_file, result);
-               printf("Save: %s - Game: %s\n", save_dir, g_dir);
+         // Create the profile filename.
+         if (i == 0) {
+            snprintf(profile_name, sizeof(profile_name), "profile.dat");
+         }
+         else {
+            snprintf(profile_name, sizeof(profile_name), "profile%d.dat", i + 1);
+         }
+
+         // Get the profile's file path in the game directory.
+         retro_create_path_string(gamedirProfile, sizeof(gamedirProfile), g_dir, profile_name);
+
+         // Make sure the profile exists.
+         if (file_exists(gamedirProfile)) {
+            // Create the profile's file path in the save directory.
+            retro_create_path_string(savedirProfile, sizeof(savedirProfile), save_dir, profile_name);
+
+            // Copy the file to the save directory only if it doesn't exist.
+            if (!file_exists(savedirProfile)) {
+               if (retro_copy_file(gamedirProfile, savedirProfile)) {
+                  printf("[nxengine] Copied profile %s to save directory at %s\n", gamedirProfile, savedirProfile);
+               }
+               else {
+                  printf("[nxengine] Failed to copy profile %s to %s\n", gamedirProfile, savedirProfile);
+               }
             }
          }
       }
    }
 }
 
-int retro_copy_file(const char* from, const char* to)
+/**
+ * Copy a file to the given destination.
+ */
+bool retro_copy_file(const char* from, const char* to)
 {
-   FILE *ffrom = fopen(from, "r");
-   if (!ffrom) {
-      return -1;
+   // Open the file for reading.
+   FILE *fd1 = fopen(from, "r");
+   if (!fd1) {
+      return false;
    }
 
-   FILE *fto = fopen(to, "w");
-   if (!fto) {
-      return 0;
+   // Prepare the destination.
+   FILE *fd2 = fopen(to, "w");
+   if(!fd2) {
+      fclose(fd1);
+      return false;
    }
 
-   int inch;
-   while (inch = fgetc(ffrom)) {
-      if (inch == EOF) {
-         break;
+   // Prepare the buffer.
+   size_t l1;
+   unsigned char buffer[8192];
+
+   // Loop through the from file through the buffer.
+   while((l1 = fread(buffer, 1, sizeof buffer, fd1)) > 0) {
+      // Write the data to the destination file.
+      size_t l2 = fwrite(buffer, 1, l1, fd2);
+
+      // Check if there was an error writing.
+      if (l2 < l1) {
+         // Display an error message.
+         if (ferror(fd2)) {
+            printf("[nxengine] Error copying profile from %s to %s\n", from, to);
+         }
+         else {
+            printf("[nxengine] Error copying profile, media full from %s to %s\n", from, to);
+         }
+         return false;
       }
-      if (fputc(inch, fto) == EOF) {
-         break;
-      }
    }
-   fclose(fto);
-   fclose(ffrom);
-   return 1;
-}
-
-// returns the filename for a save file given it's number
-void retro_GetProfileName(char* out, int num, const char* parent_dir)
-{
-   char pfname_tmp[1024];
-   char profile_name[1024];
-
-   if (num == 0)
-      snprintf(profile_name, sizeof(profile_name), "profile.dat");
-   else
-      snprintf(profile_name, sizeof(profile_name), "profile%d.dat", num+1);
-
-   retro_create_path_string(pfname_tmp, sizeof(pfname_tmp), parent_dir, profile_name);
-   return pfname_tmp;
+   fclose(fd1);
+   fclose(fd2);
+   return true;
 }
