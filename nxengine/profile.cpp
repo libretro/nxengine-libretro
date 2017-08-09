@@ -216,13 +216,14 @@ const char *GetProfileName(int num)
 {
    static char pfname_tmp[1024];
    char profile_name[1024];
+   const char* save_dir = retro_get_save_dir();
 
    if (num == 0)
       snprintf(profile_name, sizeof(profile_name), "profile.dat");
    else
       snprintf(profile_name, sizeof(profile_name), "profile%d.dat", num+1);
 
-   retro_create_path_string(pfname_tmp, sizeof(pfname_tmp), g_dir, profile_name);
+   retro_create_path_string(pfname_tmp, sizeof(pfname_tmp), save_dir, profile_name);
    return pfname_tmp;
 }
 
