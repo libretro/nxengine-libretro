@@ -1,4 +1,9 @@
-INCFLAGS := -I$(CORE_DIR) -I$(CORE_DIR)/graphics -I$(CORE_DIR)/libretro -I$(CORE_DIR)/libretro/libretro-common/include -I$(CORE_DIR)/sdl/include 
+LIBRETRO_COMM_DIR := $(CORE_DIR)/libretro/libretro-common
+INCFLAGS := -I$(CORE_DIR) -I$(CORE_DIR)/graphics -I$(CORE_DIR)/libretro -I$(LIBRETRO_COMM_DIR)/include -I$(CORE_DIR)/sdl/include 
+
+ifneq (,$(findstring msvc2003,$(platform)))
+INCFLAGS += -I$(LIBRETRO_COMM_DIR)/include/compat/msvc
+endif
 
 SOURCES_C   := $(CORE_DIR)/sdl/SDL_error.c \
 					$(CORE_DIR)/sdl/file/SDL_rwops.c \
