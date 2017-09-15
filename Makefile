@@ -40,7 +40,10 @@ TARGET_NAME := nxengine
 
 CORE_DIR     := nxengine
 EXTRACTDIR   := $(CORE_DIR)/extract-auto
-LIBS         := -lm
+LIBS         :=
+ifeq (,$(findstring msvc,$(platform)))
+LIBS         += -lm
+endif
 
 
 ifeq ($(ARCHFLAGS),)

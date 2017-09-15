@@ -15,10 +15,6 @@
 #include <direct.h>
 #endif
 
-#ifdef _XBOX
-#include <xtl.h>
-#endif
-
 static struct
 {
 	const char *name;
