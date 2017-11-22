@@ -147,7 +147,7 @@ void ai_hvtrigger(Object *o)
 		game.switchstage.mapno == -1)	// no repeat exec after <TRA
 	{
 #ifdef DEBUG
-		stat("HVTrigger %04d (%08x) activated", o->id2, o);
+		NX_LOG("HVTrigger %04d (%08x) activated", o->id2, o);
 #endif
 		StartScript(o->id2);
 	}
@@ -1186,7 +1186,7 @@ void onspawn_spike_small(Object *o)
 	if (tileattr[tile] & TA_SOLID)
 	{
 #ifdef DEBUG
-		stat("onspawn_spike_small: spike %08x embedded in wall, deleting", o);
+		NX_LOG("onspawn_spike_small: spike %08x embedded in wall, deleting", o);
 #endif
 		o->Delete();
 	}

@@ -102,7 +102,7 @@ Object * const &o = this;
 	o->flags = (objprop[type].defaultflags & ~flags_to_keep) | keep;
 	
 #ifdef DEBUG
-	stat("new flags: %04x", o->flags);
+	NX_LOG("new flags: %04x", o->flags);
 #endif
 	
 	// setup default clipping extents, in case object turns on clip_enable
