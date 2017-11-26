@@ -5,6 +5,8 @@
 #include "StringList.h"
 #include "StringList.fdh"
 
+#include "../nx_logger.h"
+
 #ifdef _WIN32
 #include "../libretro/msvc_compat.h"
 #endif
