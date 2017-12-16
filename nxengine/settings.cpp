@@ -69,7 +69,8 @@ static bool tryload(Settings *setfile)
 
    retro_create_path_string(setfilename_tmp, sizeof(setfilename_tmp), g_dir, setfilename);
 
-   fp = filestream_open(setfilename_tmp, RFILE_MODE_READ, -1);
+   fp = filestream_open(setfilename_tmp, RETRO_VFS_FILE_ACCESS_READ, 
+         RETRO_VFS_FILE_ACCESS_HINT_NONE);
    if (!fp)
    {
       NX_ERR("Couldn't open file %s.\n", setfilename_tmp);
@@ -102,7 +103,8 @@ bool settings_save(Settings *setfile)
 
    retro_create_path_string(setfilename_tmp, sizeof(setfilename_tmp), g_dir, setfilename);
 
-   fp = filestream_open(setfilename_tmp, RFILE_MODE_WRITE, -1);
+   fp = filestream_open(setfilename_tmp, RETRO_VFS_FILE_ACCESS_WRITE, 
+         RETRO_VFS_FILE_ACCESS_HINT_NONE);
    if (!fp)
    {
       NX_ERR("Couldn't open file %s.\n", setfilename_tmp);

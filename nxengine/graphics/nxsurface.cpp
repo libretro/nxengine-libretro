@@ -1,12 +1,14 @@
 
 #include <string.h>
 #include <stdint.h>
+
+#include <libretro.h>
+
 #include "../settings.h"
 #include "../config.h"
 #include "graphics.h"
 #include "nxsurface.h"
 #include "nxsurface.fdh"
-#include "../libretro/libretro.h"
 #include "../nx.h"
 #include "../extract-auto/cachefiles.h"
 

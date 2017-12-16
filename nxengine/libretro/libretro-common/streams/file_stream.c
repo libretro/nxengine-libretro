@@ -1,4 +1,4 @@
-/* Copyright  (C) 2010-2016 The RetroArch team
+/* Copyright  (C) 2010-2017 The RetroArch team
  *
  * ---------------------------------------------------------------------------------------
  * The following license statement only applies to this file (file_stream.c).
@@ -23,419 +23,342 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 #include <errno.h>
 
-#if defined(_WIN32)
-#  ifdef _MSC_VER
-#    define setmode _setmode
-#  endif
-#  ifdef _XBOX
-#    include <xtl.h>
-#    define INVALID_FILE_ATTRIBUTES -1
-#  else
-#    include <io.h>
-#    include <fcntl.h>
-#    include <direct.h>
-#    include <windows.h>
-#  endif
-#elif defined(VITA)
-#  include <psp2/io/fcntl.h>
-#  include <psp2/io/dirent.h>
-
-#define PSP_O_RDONLY PSP2_O_RDONLY
-#define PSP_O_RDWR   PSP2_O_RDWR
-#define PSP_O_CREAT  PSP2_O_CREAT
-#define PSP_O_WRONLY PSP2_O_WRONLY
-#define PSP_O_TRUNC  PSP2_O_TRUNC
-#else
-#  if defined(PSP)
-#    include <pspiofilemgr.h>
-#  endif
-#  include <sys/types.h>
-#  include <sys/stat.h>
-#  include <dirent.h>
-#  include <unistd.h>
-#endif
-
-#ifdef __CELLOS_LV2__
-#include <cell/cell_fs.h>
-#else
-#include <fcntl.h>
+#ifdef HAVE_CONFIG_H
+#include "config.h"
 #endif
 
 #include <streams/file_stream.h>
-#include <memmap.h>
+#include <vfs/vfs_implementation.h>
 
-#if 1
-#define HAVE_BUFFERED_IO 1
-#endif
+static const int64_t vfs_error_return_value      = -1;
+
+static retro_vfs_get_path_t filestream_get_path_cb = NULL;
+static retro_vfs_open_t filestream_open_cb         = NULL;
+static retro_vfs_close_t filestream_close_cb       = NULL;
+static retro_vfs_size_t filestream_size_cb         = NULL;
+static retro_vfs_tell_t filestream_tell_cb         = NULL;
+static retro_vfs_seek_t filestream_seek_cb         = NULL;
+static retro_vfs_read_t filestream_read_cb         = NULL;
+static retro_vfs_write_t filestream_write_cb       = NULL;
+static retro_vfs_flush_t filestream_flush_cb       = NULL;
+static retro_vfs_remove_t filestream_remove_cb     = NULL;
+static retro_vfs_rename_t filestream_rename_cb     = NULL;
 
 struct RFILE
 {
-   unsigned hints;
-#if defined(PSP) || defined(VITA)
-   SceUID fd;
-#elif defined(__CELLOS_LV2__)
-   int fd;
-#else
-#if defined(HAVE_BUFFERED_IO)
-   FILE *fp;
-#endif
-#if defined(HAVE_MMAP)
-   uint8_t *mapped;
-   uint64_t mappos;
-   uint64_t mapsize;
-#endif
-   int fd;
-#endif
+   struct retro_vfs_file_handle *hfile;
+	bool error_flag;
 };
 
-int filestream_get_fd(RFILE *stream)
+/* VFS Initialization */
+
+void filestream_vfs_init(const struct retro_vfs_interface_info* vfs_info)
 {
-   if (!stream)
-      return -1;
-#if defined(VITA) || defined(PSP) || defined(__CELLOS_LV2__)
-   return stream->fd;
-#else
-#if defined(HAVE_BUFFERED_IO)
-   if ((stream->hints & RFILE_HINT_UNBUFFERED) == 0)
-      return fileno(stream->fp);
-#endif
-   return stream->fd;
-#endif
+	const struct retro_vfs_interface* vfs_iface;
+
+	filestream_get_path_cb = NULL;
+	filestream_open_cb     = NULL;
+	filestream_close_cb    = NULL;
+	filestream_tell_cb     = NULL;
+	filestream_size_cb     = NULL;
+	filestream_seek_cb     = NULL;
+	filestream_read_cb     = NULL;
+	filestream_write_cb    = NULL;
+	filestream_flush_cb    = NULL;
+	filestream_remove_cb   = NULL;
+	filestream_rename_cb   = NULL;
+
+	vfs_iface              = vfs_info->iface;
+
+	if (vfs_info->required_interface_version < FILESTREAM_REQUIRED_VFS_VERSION
+	    || !vfs_iface)
+		return;
+
+	filestream_get_path_cb = vfs_iface->get_path;
+	filestream_open_cb     = vfs_iface->open;
+	filestream_close_cb    = vfs_iface->close;
+	filestream_size_cb     = vfs_iface->size;
+	filestream_tell_cb     = vfs_iface->tell;
+	filestream_seek_cb     = vfs_iface->seek;
+	filestream_read_cb     = vfs_iface->read;
+	filestream_write_cb    = vfs_iface->write;
+	filestream_flush_cb    = vfs_iface->flush;
+	filestream_remove_cb   = vfs_iface->remove;
+	filestream_rename_cb   = vfs_iface->rename;
 }
 
-RFILE *filestream_open(const char *path, unsigned mode, ssize_t len)
+/* Callback wrappers */
+bool filestream_exists(const char *path)
 {
-   int            flags = 0;
-   int         mode_int = 0;
-   const char *mode_str = NULL;
-   RFILE        *stream = (RFILE*)calloc(1, sizeof(*stream));
+   RFILE *dummy              = NULL;
 
+   if (!path || !*path)
+      return false;
+   
+   dummy = filestream_open(path,
+         RETRO_VFS_FILE_ACCESS_READ,
+         RETRO_VFS_FILE_ACCESS_HINT_NONE);
+
+   if (!dummy)
+      return false;
+
+   filestream_close(dummy);
+   return true;
+}
+
+int64_t filestream_get_size(RFILE *stream)
+{
+   int64_t output;
+
+   if (filestream_size_cb != NULL)
+      output = filestream_size_cb(stream->hfile);
+   else
+      output = retro_vfs_file_size_impl((libretro_vfs_implementation_file*)stream->hfile);
+
+   if (output == vfs_error_return_value)
+      stream->error_flag = true;
+
+   return output;
+}
+
+/**
+ * filestream_open:
+ * @path               : path to file
+ * @mode               : file mode to use when opening (read/write)
+ * @hints              :
+ *
+ * Opens a file for reading or writing, depending on the requested mode.
+ * Returns a pointer to an RFILE if opened successfully, otherwise NULL.
+ **/
+RFILE *filestream_open(const char *path, unsigned mode, unsigned hints)
+{
+   struct retro_vfs_file_handle  *fp = NULL;
+	RFILE* output                     = NULL;
+
+	if (filestream_open_cb != NULL)
+		fp = (struct retro_vfs_file_handle*)
+         filestream_open_cb(path, mode, hints);
+	else
+		fp = (struct retro_vfs_file_handle*)
+         retro_vfs_file_open_impl(path, mode, hints);
+
+	if (!fp)
+		return NULL;
+
+	output             = (RFILE*)malloc(sizeof(RFILE));
+	output->error_flag = false;
+	output->hfile      = fp;
+	return output;
+}
+
+char *filestream_gets(RFILE *stream, char *s, size_t len)
+{
+   int c   = 0;
+   char *p = NULL;
    if (!stream)
       return NULL;
 
-   (void)mode_str;
-   (void)mode_int;
-   (void)flags;
+   /* get max bytes or up to a newline */
 
-   stream->hints = mode;
-
-#ifdef HAVE_MMAP
-   if (stream->hints & RFILE_HINT_MMAP && (stream->hints & 0xff) == RFILE_MODE_READ)
-      stream->hints |= RFILE_HINT_UNBUFFERED;
-   else
-#endif
-      stream->hints &= ~RFILE_HINT_MMAP;
-
-   switch (mode & 0xff)
+   for (p = s, len--; len > 0; len--)
    {
-      case RFILE_MODE_READ:
-#if defined(VITA) || defined(PSP)
-         mode_int = 0777;
-         flags    = PSP_O_RDONLY;
-#elif defined(__CELLOS_LV2__)
-         mode_int = 0777;
-         flags    = CELL_FS_O_RDONLY;
-#else
-#if defined(HAVE_BUFFERED_IO)
-         if ((stream->hints & RFILE_HINT_UNBUFFERED) == 0)
-            mode_str = "rb";
-#endif
-         /* No "else" here */
-         flags    = O_RDONLY;
-#endif
+      if ((c = filestream_getc(stream)) == EOF)
          break;
-      case RFILE_MODE_WRITE:
-#if defined(VITA) || defined(PSP)
-         mode_int = 0777;
-         flags    = PSP_O_CREAT | PSP_O_WRONLY | PSP_O_TRUNC;
-#elif defined(__CELLOS_LV2__)
-         mode_int = 0777;
-         flags    = CELL_FS_O_CREAT | CELL_FS_O_WRONLY | CELL_FS_O_TRUNC;
-#else
-#if defined(HAVE_BUFFERED_IO)
-         if ((stream->hints & RFILE_HINT_UNBUFFERED) == 0)
-            mode_str = "wb";
-#endif
-         else
-         {
-            flags    = O_WRONLY | O_CREAT | O_TRUNC;
-#ifndef _WIN32
-            flags   |=  S_IRUSR | S_IWUSR;
-#endif
-         }
-#endif
-         break;
-      case RFILE_MODE_READ_WRITE:
-#if defined(VITA) || defined(PSP)
-         mode_int = 0777;
-         flags    = PSP_O_RDWR;
-#elif defined(__CELLOS_LV2__)
-         mode_int = 0777;
-         flags    = CELL_FS_O_RDWR;
-#else
-#if defined(HAVE_BUFFERED_IO)
-         if ((stream->hints & RFILE_HINT_UNBUFFERED) == 0)
-            mode_str = "w+";
-#endif
-         else
-         {
-            flags    = O_RDWR;
-#ifdef _WIN32
-            flags   |= O_BINARY;
-#endif
-         }
-#endif
+      *p++ = c;
+      if (c == '\n')
          break;
    }
+   *p = 0;
 
-#if defined(VITA) || defined(PSP)
-   stream->fd = sceIoOpen(path, flags, mode_int);
-#elif defined(__CELLOS_LV2__)
-   cellFsOpen(path, flags, &stream->fd, NULL, 0);
-#else
-#if defined(HAVE_BUFFERED_IO)
-   if ((stream->hints & RFILE_HINT_UNBUFFERED) == 0)
-   {
-      stream->fp = fopen(path, mode_str);
-      if (!stream->fp)
-         goto error;
-   }
-   else
-#endif
-   {
-      stream->fd = open(path, flags);
-      if (stream->fd == -1)
-         goto error;
-#ifdef HAVE_MMAP
-      if (stream->hints & RFILE_HINT_MMAP)
-      {
-         stream->mappos  = 0;
-         stream->mapped  = NULL;
-         stream->mapsize = filestream_seek(stream, 0, SEEK_END);
+   if (p == s || c == EOF)
+      return NULL;
+   return (p);
+}
 
-         if (stream->mapsize == (uint64_t)-1)
-            goto error;
-
-         filestream_rewind(stream);
-
-         stream->mapped = (uint8_t*)mmap((void*)0, stream->mapsize, PROT_READ,  MAP_SHARED, stream->fd, 0);
-
-         if (stream->mapped == MAP_FAILED)
-            stream->hints &= ~RFILE_HINT_MMAP;
-      }
-#endif
-   }
-#endif
-
-#if defined(VITA) || defined(PSP) || defined(__CELLOS_LV2__)
-   if (stream->fd == -1)
-      goto error;
-#endif
-
-   return stream;
-
-error:
-   filestream_close(stream);
-   return NULL;
+int filestream_getc(RFILE *stream)
+{
+   char c = 0;
+   if (!stream)
+      return 0;
+   if(filestream_read(stream, &c, 1) == 1)
+      return (int)c;
+   return EOF;
 }
 
 ssize_t filestream_seek(RFILE *stream, ssize_t offset, int whence)
 {
-   int ret = 0;
-   if (!stream)
-      return -1;
+   int64_t output;
 
-   (void)ret;
-
-#if defined(VITA) || defined(PSP)
-   ret = sceIoLseek(stream->fd, (SceOff)offset, whence);
-   if (ret == -1)
-      return -1;
-   return 0;
-#elif defined(__CELLOS_LV2__)
-   uint64_t pos = 0;
-   if (cellFsLseek(stream->fd, offset, whence, &pos) != CELL_FS_SUCCEEDED)
-      return -1;
-   return 0;
-#else
-#if defined(HAVE_BUFFERED_IO)
-   if ((stream->hints & RFILE_HINT_UNBUFFERED) == 0)
-      return fseek(stream->fp, (long)offset, whence);
+   if (filestream_seek_cb != NULL)
+      output = filestream_seek_cb(stream->hfile, offset, whence);
    else
-#endif
-#ifdef HAVE_MMAP
-      /* Need to check stream->mapped because this function is 
-       * called in filestream_open() */
-      if (stream->mapped && stream->hints & RFILE_HINT_MMAP)
-      {
-         /* fseek() returns error on under/overflow but allows cursor > EOF for
-            read-only file descriptors. */
-         switch (whence)
-         {
-            case SEEK_SET:
-               if (offset < 0)
-                  return -1;
+      output = retro_vfs_file_seek_impl((libretro_vfs_implementation_file*)stream->hfile, offset, whence);
 
-               stream->mappos = offset;
-               break;
+   if (output == vfs_error_return_value)
+      stream->error_flag = true;
 
-            case SEEK_CUR:
-               if ((offset < 0 && stream->mappos + offset > stream->mappos) ||
-                   (offset > 0 && stream->mappos + offset < stream->mappos))
-                  return -1;
-
-               stream->mappos += offset;
-               break;
-
-            case SEEK_END:
-               if (stream->mapsize + offset < stream->mapsize)
-                  return -1;
-
-               stream->mappos = stream->mapsize + offset;
-
-               break;
-         }
-
-         return stream->mappos;
-      }
-      else
-#endif
-      {
-         ret = lseek(stream->fd, offset, whence);
-         return ret < 0 ? -1 : ret;
-      }
-#endif
+   return output;
 }
+
+int filestream_eof(RFILE *stream)
+{
+   int64_t current_position = filestream_tell(stream);
+   int64_t end_position     = filestream_get_size(stream);
+
+   if (current_position >= end_position)
+      return 1;
+   return 0;
+}
+
 
 ssize_t filestream_tell(RFILE *stream)
 {
-   if (!stream)
-      return -1;
-#if defined(VITA) || defined(PSP)
-   return sceIoLseek(stream->fd, 0, SEEK_CUR);
-#elif defined(__CELLOS_LV2__)
-   uint64_t pos = 0;
-   if (cellFsLseek(stream->fd, 0, CELL_FS_SEEK_CUR, &pos) != CELL_FS_SUCCEEDED)
-      return -1;
-   return 0;
-#else
-#if defined(HAVE_BUFFERED_IO)
-   if ((stream->hints & RFILE_HINT_UNBUFFERED) == 0)
-      return ftell(stream->fp);
+   ssize_t output;
+
+   if (filestream_size_cb != NULL)
+      output = filestream_tell_cb(stream->hfile);
    else
-#endif
-#ifdef HAVE_MMAP
-      /* Need to check stream->mapped because this function 
-       * is called in filestream_open() */
-      if (stream->mapped && stream->hints & RFILE_HINT_MMAP)
-         return stream->mappos;
-      else
-#endif
-         return lseek(stream->fd, 0, SEEK_CUR);
-#endif
+      output = retro_vfs_file_tell_impl((libretro_vfs_implementation_file*)stream->hfile);
+
+   if (output == vfs_error_return_value)
+      stream->error_flag = true;
+
+   return output;
 }
 
 void filestream_rewind(RFILE *stream)
 {
-   filestream_seek(stream, 0L, SEEK_SET);
-}
-
-ssize_t filestream_read(RFILE *stream, void *s, size_t len)
-{
-   if (!stream || !s)
-      return -1;
-#if defined(VITA) || defined(PSP)
-   return sceIoRead(stream->fd, s, len);
-#elif defined(__CELLOS_LV2__)
-   uint64_t bytes_written;
-   if (cellFsRead(stream->fd, s, len, &bytes_written) != CELL_FS_SUCCEEDED)
-      return -1;
-   return bytes_written;
-#else
-#if defined(HAVE_BUFFERED_IO)
-   if ((stream->hints & RFILE_HINT_UNBUFFERED) == 0)
-      return fread(s, 1, len, stream->fp);
-   else
-#endif
-#ifdef HAVE_MMAP
-      if (stream->hints & RFILE_HINT_MMAP)
-      {
-         if (stream->mappos > stream->mapsize)
-            return -1;
-
-         if (stream->mappos + len > stream->mapsize)
-            len = stream->mapsize - stream->mappos;
-
-         memcpy(s, &stream->mapped[stream->mappos], len);
-         stream->mappos += len;
-
-         return len;
-      }
-      else
-#endif
-         return read(stream->fd, s, len);
-#endif
-}
-
-ssize_t filestream_write(RFILE *stream, const void *s, size_t len)
-{
    if (!stream)
-      return -1;
-#if defined(VITA) || defined(PSP)
-   return sceIoWrite(stream->fd, s, len);
-#elif defined(__CELLOS_LV2__)
-   uint64_t bytes_written;
-   if (cellFsWrite(stream->fd, s, len, &bytes_written) != CELL_FS_SUCCEEDED)
-      return -1;
-   return bytes_written;
-#else
-#if defined(HAVE_BUFFERED_IO)
-   if ((stream->hints & RFILE_HINT_UNBUFFERED) == 0)
-      return fwrite(s, 1, len, stream->fp);
+      return;
+   filestream_seek(stream, 0L, SEEK_SET);
+   stream->error_flag = false;
+}
+
+ssize_t filestream_read(RFILE *stream, void *s, int64_t len)
+{
+   int64_t output;
+
+   if (filestream_read_cb != NULL)
+      output = filestream_read_cb(stream->hfile, s, len);
    else
-#endif
-#ifdef HAVE_MMAP
-      if (stream->hints & RFILE_HINT_MMAP)
-         return -1;
-      else
-#endif
-         return write(stream->fd, s, len);
-#endif
+      output = retro_vfs_file_read_impl(
+            (libretro_vfs_implementation_file*)stream->hfile, s, len);
+
+   if (output == vfs_error_return_value)
+      stream->error_flag = true;
+
+   return output;
+}
+
+int filestream_flush(RFILE *stream)
+{
+   int output;
+
+   if (filestream_flush_cb != NULL)
+      output = filestream_flush_cb(stream->hfile);
+   else
+      output = retro_vfs_file_flush_impl((libretro_vfs_implementation_file*)stream->hfile);
+
+   if (output == vfs_error_return_value)
+      stream->error_flag = true;
+
+   return output;
+}
+
+int filestream_delete(const char *path)
+{
+   if (filestream_remove_cb != NULL)
+      return filestream_remove_cb(path);
+
+   return retro_vfs_file_remove_impl(path);
+}
+
+int filestream_rename(const char *old_path, const char *new_path)
+{
+   if (filestream_rename_cb != NULL)
+      return filestream_rename_cb(old_path, new_path);
+
+   return retro_vfs_file_rename_impl(old_path, new_path);
+}
+
+const char *filestream_get_path(RFILE *stream)
+{
+   if (filestream_get_path_cb != NULL)
+      return filestream_get_path_cb(stream->hfile);
+
+   return retro_vfs_file_get_path_impl((libretro_vfs_implementation_file*)stream->hfile);
+}
+
+ssize_t filestream_write(RFILE *stream, const void *s, int64_t len)
+{
+   int64_t output;
+
+   if (filestream_write_cb != NULL)
+      output = filestream_write_cb(stream->hfile, s, len);
+   else
+      output = retro_vfs_file_write_impl((libretro_vfs_implementation_file*)stream->hfile, s, len);
+
+   if (output == vfs_error_return_value)
+      stream->error_flag = true;
+
+   return output;
+}
+
+int filestream_putc(RFILE *stream, int c)
+{
+   char c_char = (char)c;
+   if (!stream)
+      return EOF;
+	return filestream_write(stream, &c_char, 1);
+}
+
+int filestream_vprintf(RFILE *stream, const char* format, va_list args)
+{
+	static char buffer[8 * 1024];
+	int num_chars = vsprintf(buffer, format, args);
+
+	if (num_chars < 0)
+		return -1;
+	else if (num_chars == 0)
+		return 0;
+
+	return filestream_write(stream, buffer, num_chars);
+}
+
+int filestream_printf(RFILE *stream, const char* format, ...)
+{
+	va_list vl;
+   int result;
+	va_start(vl, format);
+	result = filestream_vprintf(stream, format, vl);
+	va_end(vl);
+	return result;
+}
+
+int filestream_error(RFILE *stream)
+{
+   if (stream && stream->error_flag)
+      return 1;
+   return 0;
 }
 
 int filestream_close(RFILE *stream)
 {
-   if (!stream)
-      return -1;
+   int output;
+   struct retro_vfs_file_handle* fp = stream->hfile;
 
-#if defined(VITA) || defined(PSP)
-   if (stream->fd > 0)
-      sceIoClose(stream->fd);
-#elif defined(__CELLOS_LV2__)
-   if (stream->fd > 0)
-      cellFsClose(stream->fd);
-#else
-#if defined(HAVE_BUFFERED_IO)
-   if ((stream->hints & RFILE_HINT_UNBUFFERED) == 0)
-   {
-      if (stream->fp)
-         fclose(stream->fp);
-   }
+   if (filestream_close_cb != NULL)
+      output = filestream_close_cb(fp);
    else
-#endif
-#ifdef HAVE_MMAP
-      if (stream->hints & RFILE_HINT_MMAP)
-         munmap(stream->mapped, stream->mapsize);
-#endif
+      output = retro_vfs_file_close_impl((libretro_vfs_implementation_file*)fp);
 
-      if (stream->fd > 0)
-         close(stream->fd);
-#endif
-   free(stream);
+   if (output == 0)
+      free(stream);
 
-   return 0;
+   return output;
 }
 
 /**
@@ -451,42 +374,34 @@ int filestream_close(RFILE *stream)
 int filestream_read_file(const char *path, void **buf, ssize_t *len)
 {
    ssize_t ret              = 0;
-   ssize_t content_buf_size = 0;
+   int64_t content_buf_size = 0;
    void *content_buf        = NULL;
-   RFILE *file              = filestream_open(path, RFILE_MODE_READ, -1);
+   RFILE *file              = filestream_open(path,
+         RETRO_VFS_FILE_ACCESS_READ,
+         RETRO_VFS_FILE_ACCESS_HINT_NONE);
 
    if (!file)
    {
-#if __STDC_VERSION__ >= 199901L
-      fprintf(stderr, "%s: Failed to open %s: %s\n", __FUNCTION__, path, strerror(errno));
-#else
       fprintf(stderr, "Failed to open %s: %s\n", path, strerror(errno));
-#endif
       goto error;
    }
 
-   if (filestream_seek(file, 0, SEEK_END) != 0)
-      goto error;
+   content_buf_size = filestream_get_size(file);
 
-   content_buf_size = filestream_tell(file);
    if (content_buf_size < 0)
       goto error;
 
-   filestream_rewind(file);
-
-   content_buf = malloc(content_buf_size + 1);
+   content_buf      = malloc((size_t)(content_buf_size + 1));
 
    if (!content_buf)
       goto error;
+   if ((size_t)(content_buf_size + 1) != (content_buf_size + 1))
+      goto error;
 
-   ret = filestream_read(file, content_buf, content_buf_size);
+   ret = filestream_read(file, content_buf, (int64_t)content_buf_size);
    if (ret < 0)
    {
-#if __STDC_VERSION__ >= 199901L
-      fprintf(stderr, "%s: Failed to read %s: %s\n", __FUNCTION__, path, strerror(errno));
-#else
       fprintf(stderr, "Failed to read %s: %s\n", path, strerror(errno));
-#endif
       goto error;
    }
 
@@ -496,7 +411,7 @@ int filestream_read_file(const char *path, void **buf, ssize_t *len)
 
    /* Allow for easy reading of strings to be safe.
     * Will only work with sane character formatting (Unix). */
-   ((char*)content_buf)[content_buf_size] = '\0';
+   ((char*)content_buf)[ret] = '\0';
 
    if (len)
       *len = ret;
@@ -527,12 +442,52 @@ error:
 bool filestream_write_file(const char *path, const void *data, ssize_t size)
 {
    ssize_t ret   = 0;
-   RFILE *file   = filestream_open(path, RFILE_MODE_WRITE, -1);
+   RFILE *file   = filestream_open(path,
+         RETRO_VFS_FILE_ACCESS_WRITE,
+         RETRO_VFS_FILE_ACCESS_HINT_NONE);
    if (!file)
       return false;
 
    ret = filestream_write(file, data, size);
    filestream_close(file);
 
-   return (ret == size);
+   if (ret != size)
+      return false;
+
+   return true;
+}
+
+char *filestream_getline(RFILE *stream)
+{
+   char* newline     = (char*)malloc(9);
+   char* newline_tmp = NULL;
+   size_t cur_size   = 8;
+   size_t idx        = 0;
+   int in            = filestream_getc(stream);
+
+   if (!newline)
+      return NULL;
+
+   while (in != EOF && in != '\n')
+   {
+      if (idx == cur_size)
+      {
+         cur_size *= 2;
+         newline_tmp = (char*)realloc(newline, cur_size + 1);
+
+         if (!newline_tmp)
+         {
+            free(newline);
+            return NULL;
+         }
+
+         newline = newline_tmp;
+      }
+
+      newline[idx++] = in;
+      in             = filestream_getc(stream);
+   }
+
+   newline[idx] = '\0';
+   return newline;
 }

@@ -27,7 +27,7 @@ bool niku_load(uint32_t *value_out)
 
    retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
 
-   fp = filestream_open(fname_tmp, RFILE_MODE_READ, -1);
+   fp = filestream_open(fname_tmp, RETRO_VFS_FILE_ACCESS_READ, RETRO_VFS_FILE_ACCESS_HINT_NONE);
    if (!fp)
    {
 #ifdef DEBUG
@@ -110,7 +110,8 @@ bool niku_save(uint32_t value)
 
    retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
 
-   fp = filestream_open(fname_tmp, RFILE_MODE_WRITE, -1);
+   fp = filestream_open(fname_tmp, RETRO_VFS_FILE_ACCESS_WRITE,
+         RETRO_VFS_FILE_ACCESS_HINT_NONE);
    if (!fp)
    {
       NX_ERR("niku_save: failed to open '%s'", fname_tmp);
