@@ -391,38 +391,32 @@ void retro_init_saves()
  */
 bool retro_copy_file(const char* from, const char* to)
 {
-   size_t l1;
-   unsigned char buffer[8192];
-   /* Open the file for reading. */
-   RFILE *fd2 = NULL;
-   RFILE *fd1 = filestream_open(from, RETRO_VFS_FILE_ACCESS_READ,
-         RETRO_VFS_FILE_ACCESS_HINT_NONE);
-   if (!fd1)
-      return false;
-
-   /* Prepare the destination. */
-   fd2 = filestream_open(to, RETRO_VFS_FILE_ACCESS_WRITE,
-         RETRO_VFS_FILE_ACCESS_HINT_NONE);
-   if(!fd2)
-   {
-      filestream_close(fd1);
+   // Open the file for reading.
+   FILE *fd1 = fopen(from, "r");
+   if (!fd1) {
       return false;
    }
 
-   /* Prepare the buffer. */
+   // Prepare the destination.
+   FILE *fd2 = fopen(to, "w");
+   if(!fd2) {
+      fclose(fd1);
+      return false;
+   }
 
-   /* Loop through the from file through the buffer. */
-   while((l1 = filestream_read(fd1, buffer, sizeof(buffer))) > 0)
-   {
-      /* Write the data to the destination file. */
-      size_t l2 = filestream_write(fd2, buffer, l1);
+   // Prepare the buffer.
+   size_t l1;
+   unsigned char buffer[8192];
 
-      /* Check if there was an error writing. */
-      if (l2 < l1)
-      {
-         /* Display an error message. */
-         if (filestream_error(fd2))
-         {
+   // Loop through the from file through the buffer.
+   while((l1 = fread(buffer, 1, sizeof buffer, fd1)) > 0) {
+      // Write the data to the destination file.
+      size_t l2 = fwrite(buffer, 1, l1, fd2);
+
+      // Check if there was an error writing.
+      if (l2 < l1) {
+         // Display an error message.
+         if (ferror(fd2)) {
             printf("[nxengine] Error copying profile from %s to %s\n", from, to);
          }
          else {
@@ -431,7 +425,7 @@ bool retro_copy_file(const char* from, const char* to)
          return false;
       }
    }
-   filestream_close(fd1);
-   filestream_close(fd2);
+   fclose(fd1);
+   fclose(fd2);
    return true;
 }
