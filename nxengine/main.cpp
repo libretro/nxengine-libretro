@@ -336,9 +336,10 @@ static bool check_data_exists()
 
 void visible_warning(const char *fmt, ...)
 {
-#ifndef _XBOX1
-va_list ar;
-char buffer[80];
+#if defined(_MSC_VER) && _MSC_VER <= 1310
+#else
+   va_list ar;
+   char buffer[80];
 
 	va_start(ar, fmt);
 	vsnprintf(buffer, sizeof(buffer), fmt, ar);

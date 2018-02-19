@@ -18,9 +18,15 @@
 #define __NX_LOGGER_H
 
 #ifdef RELEASE_BUILD
+#if defined(_MSC_VER) && _MSC_VER <= 1310
+void NX_LOG(const char *fmt, ...);
+void NX_WARN(const char *fmt, ...);
+void NX_ERR(const char *fmt, ...);
+#else
 #define NX_LOG(...)
 #define NX_ERR(...)
 #define NX_WARN(...)
+#endif
 #else
 
 #if defined(ANDROID) && defined(HAVE_LOGGER)
@@ -36,6 +42,8 @@
 #ifndef NX_LOG
 #if defined(ANDROID) && defined(HAVE_LOGGER)
 #define  NX_LOG(...)  __android_log_print(ANDROID_LOG_INFO, "NX: ", __VA_ARGS__)
+#elif defined(_MSC_VER) && _MSC_VER <= 1310
+void NX_LOG(const char *fmt, ...);
 #else
 #define NX_LOG(...) do { \
    fprintf(LOG_FILE, "NX: " __VA_ARGS__); \

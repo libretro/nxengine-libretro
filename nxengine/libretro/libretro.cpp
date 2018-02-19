@@ -429,3 +429,17 @@ bool retro_copy_file(const char* from, const char* to)
    fclose(fd2);
    return true;
 }
+
+#if defined(_MSC_VER) && _MSC_VER <= 1310
+void NX_LOG(const char *fmt, ...)
+{
+}
+
+void NX_WARN(const char *fmt, ...)
+{
+}
+
+void NX_ERR(const char *fmt, ...)
+{
+}
+#endif

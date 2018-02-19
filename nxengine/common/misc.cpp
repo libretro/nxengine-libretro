@@ -252,7 +252,7 @@ bool file_exists(const char *fname)
 
 char *stprintf(const char *fmt, ...)
 {
-#ifdef _XBOX1
+#if defined(_MSC_VER) && _MSC_VER <= 1310
    return "";
 #else
    va_list ar;
