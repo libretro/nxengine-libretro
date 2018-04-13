@@ -411,7 +411,7 @@ else
    TARGET := $(TARGET_NAME)_libretro.dll
    CC = gcc
    SHARED := -shared -static-libgcc -static-libstdc++ -s -Wl,--version-script=$(CORE_DIR)/libretro/link.T
-   CFLAGS += -D__WIN32__ -D__WIN32_LIBRETRO__ -Wno-missing-field-initializers
+   CFLAGS += -D__WIN32__ -Wno-missing-field-initializers
 endif
 
 ifeq ($(DEBUG), 1)
