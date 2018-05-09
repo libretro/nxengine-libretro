@@ -108,7 +108,7 @@ bool load_map(const char *fname)
 	}
 	else
 	{
-		printf("load_map: level size %dx%d\n", map.xsize, map.ysize);
+		NX_LOG("load_map: level size %dx%d\n", map.xsize, map.ysize);
 	}
 	
 	for(y=0;y<map.ysize;y++)
