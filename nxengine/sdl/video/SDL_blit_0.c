@@ -27,7 +27,7 @@
 #include "SDL_blit.h"
 
 #ifdef SDLPRINTF
-#define sdlprintf printf
+#define sdlprintf NX_LOG
 #else
 #define sdlprintf
 #endif

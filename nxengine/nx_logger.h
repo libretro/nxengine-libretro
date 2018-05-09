@@ -17,97 +17,45 @@
 #ifndef __NX_LOGGER_H
 #define __NX_LOGGER_H
 
+#include <libretro.h>
+
+extern retro_log_printf_t log_cb;
+
+#ifndef NDEBUG
+#define  NX_DBG(...) do { \
+   if (log_cb) \
+      log_cb(RETRO_LOG_DEBUG, __VA_ARGS__); \
+   } while (0)
+#else
+#if defined(_MSC_VER) && _MSC_VER <= 1310
+void NX_DBG(const char *fmt, ...);
+#else
+#define NX_DBG(...)
+#endif
+#endif
+
 #ifdef RELEASE_BUILD
 #if defined(_MSC_VER) && _MSC_VER <= 1310
 void NX_LOG(const char *fmt, ...);
-void NX_WARN(const char *fmt, ...);
-void NX_ERR(const char *fmt, ...);
 #else
 #define NX_LOG(...)
-#define NX_ERR(...)
-#define NX_WARN(...)
 #endif
 #else
 
-#if defined(ANDROID) && defined(HAVE_LOGGER)
-#include <android/log.h>
-#endif
-
-#define LOG_FILE (stderr)
-
-#if defined(_XBOX1)
-#include "logger_override_xbox1.h"
-#else
-
-#ifndef NX_LOG
-#if defined(ANDROID) && defined(HAVE_LOGGER)
-#define  NX_LOG(...)  __android_log_print(ANDROID_LOG_INFO, "NX: ", __VA_ARGS__)
-#elif defined(_MSC_VER) && _MSC_VER <= 1310
-void NX_LOG(const char *fmt, ...);
-#else
-#define NX_LOG(...) do { \
-   fprintf(LOG_FILE, "NX: " __VA_ARGS__); \
-   fflush(LOG_FILE); \
+#define  NX_LOG(...) do { \
+   if (log_cb) \
+      log_cb(RETRO_LOG_INFO, __VA_ARGS__); \
    } while (0)
-#endif
+
 #endif
 
-#ifndef NX_LOG_OUTPUT
-#if defined(ANDROID) && defined(HAVE_LOGGER)
-#define  NX_LOG_OUTPUT(...)  __android_log_print(ANDROID_LOG_INFO,"stderr: ",__VA_ARGS__)
-#else
-#define NX_LOG_OUTPUT(...) do { \
-   fprintf(LOG_FILE, __VA_ARGS__); \
-   fflush(LOG_FILE); \
+#define  NX_WARN(...) do { \
+   if (log_cb) \
+      log_cb(RETRO_LOG_WARN, __VA_ARGS__); \
    } while (0)
-#endif
-#endif
-
-#ifndef NX_ERR
-#if defined(ANDROID) && defined(HAVE_LOGGER)
-#define  NX_ERR(...)  __android_log_print(ANDROID_LOG_INFO, "NX [ERROR] :: ", __VA_ARGS__)
-#else
-#define NX_ERR(...) do { \
-      fprintf(LOG_FILE, "NX [ERROR] :: " __VA_ARGS__); \
-      fflush(LOG_FILE); \
+#define  NX_ERR(...) do { \
+   if (log_cb) \
+      log_cb(RETRO_LOG_ERROR, __VA_ARGS__); \
    } while (0)
-#endif
-#endif
-
-#ifndef NX_ERR_OUTPUT
-#if defined(ANDROID) && defined(HAVE_LOGGER)
-#define  NX_ERR_OUTPUT(...)  __android_log_print(ANDROID_LOG_INFO, "stderr [ERROR] :: ", __VA_ARGS__)
-#else
-#define NX_ERR_OUTPUT(...) do { \
-      fprintf(LOG_FILE, "stderr [ERROR] :: " __VA_ARGS__); \
-      fflush(LOG_FILE); \
-   } while (0)
-#endif
-#endif
-
-#ifndef NX_WARN
-#if defined(ANDROID) && defined(HAVE_LOGGER)
-#define  NX_WARN(...)  __android_log_print(ANDROID_LOG_INFO, "NX [WARN] :: ", __VA_ARGS__)
-#else
-#define NX_WARN(...) do { \
-      fprintf(LOG_FILE, "NX [WARN] :: " __VA_ARGS__); \
-      fflush(LOG_FILE); \
-   } while (0)
-#endif
-#endif
-
-#ifndef NX_WARN
-#if defined(ANDROID) && defined(HAVE_LOGGER)
-#define  NX_WARN_OUTPUT(...)  __android_log_print(ANDROID_LOG_INFO, "stderr [WARN] :: ", __VA_ARGS__)
-#else
-#define NX_WARN_OUTPUT(...) do { \
-      fprintf(LOG_FILE, "stderr [WARN] :: " __VA_ARGS__); \
-      fflush(LOG_FILE); \
-   } while (0)
-#endif
-#endif
-#endif
-
-#endif
 
 #endif

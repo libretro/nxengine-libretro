@@ -116,7 +116,7 @@ bool extract_org(FILE *exefp)
       fseek(exefp, files[i].offset, SEEK_SET);
       fread(file, files[i].length, 1, exefp);
 
-      fprintf(stderr, "file: %s\n", files[i].filename);
+      NX_DBG("file: %s\n", files[i].filename);
 
       // write out the file
       

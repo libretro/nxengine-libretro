@@ -22,7 +22,7 @@ unsigned retro_frame_buffer_width;
 unsigned retro_frame_buffer_height;
 unsigned retro_frame_buffer_pitch;
 
-static retro_log_printf_t log_cb;
+retro_log_printf_t log_cb;
 static retro_video_refresh_t video_cb;
 static retro_input_poll_t poll_cb;
 retro_input_state_t input_cb;
@@ -375,10 +375,10 @@ void retro_init_saves()
             // Copy the file to the save directory only if it doesn't exist.
             if (!file_exists(savedirProfile)) {
                if (retro_copy_file(gamedirProfile, savedirProfile)) {
-                  printf("[nxengine] Copied profile %s to save directory at %s\n", gamedirProfile, savedirProfile);
+                  NX_LOG("Copied profile %s to save directory at %s\n", gamedirProfile, savedirProfile);
                }
                else {
-                  printf("[nxengine] Failed to copy profile %s to %s\n", gamedirProfile, savedirProfile);
+                  NX_ERR("Failed to copy profile %s to %s\n", gamedirProfile, savedirProfile);
                }
             }
          }
@@ -417,10 +417,10 @@ bool retro_copy_file(const char* from, const char* to)
       if (l2 < l1) {
          // Display an error message.
          if (ferror(fd2)) {
-            printf("[nxengine] Error copying profile from %s to %s\n", from, to);
+            NX_ERR("Error copying profile from %s to %s\n", from, to);
          }
          else {
-            printf("[nxengine] Error copying profile, media full from %s to %s\n", from, to);
+            NX_ERR("Error copying profile, media full from %s to %s\n", from, to);
          }
          return false;
       }
@@ -431,15 +431,17 @@ bool retro_copy_file(const char* from, const char* to)
 }
 
 #if defined(_MSC_VER) && _MSC_VER <= 1310
+
+#ifdef NDEBUG
+void NX_DBG(const char *fmt, ...)
+{
+}
+#endif
+
+#ifndef RELEASE_BUILD
 void NX_LOG(const char *fmt, ...)
 {
 }
+#endif
 
-void NX_WARN(const char *fmt, ...)
-{
-}
-
-void NX_ERR(const char *fmt, ...)
-{
-}
 #endif

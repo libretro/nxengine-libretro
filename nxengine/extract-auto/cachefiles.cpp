@@ -495,7 +495,7 @@ bool cachefiles_init(FILE *exefp)
          continue;
       char fname[1024];
       retro_create_path_string(fname, sizeof(fname), g_dir, filenames[i]);
-      printf("%s\n", fname);
+      NX_DBG("%s\n", fname);
       FILE *f = fopen(fname, "rb");
       if (!f)
       {
@@ -538,7 +538,7 @@ bool cachefiles_init(FILE *exefp)
       HASH_FIND_STR(filemap, bmp_files[i].filename, entry);
       if (entry)
          continue;
-      printf("%s\n", bmp_files[i].filename);
+      NX_DBG("%s\n", bmp_files[i].filename);
       entry = (struct hash_struct *) calloc(sizeof(struct hash_struct), 1);
       if (!entry)
          continue;
@@ -556,7 +556,7 @@ bool cachefiles_init(FILE *exefp)
 
       if (strcmp(bmp_files[i].filename, "wavetable.dat") == 0)
       {
-         fprintf(stderr, "found wavetable.dat\n");
+         NX_DBG("found wavetable.dat\n");
          // wavetable.dat
          signed char *ptr = (signed char*)&entry->fd.data[0];
          int wav, sampl;
@@ -579,7 +579,6 @@ bool cachefiles_init(FILE *exefp)
 CFILE *copen(const char *fname, const char *mode)
 {
    (void)mode;
-   printf("copen %s\n", fname);
 
    // create local copy in case we have the same file open multiple times
    CFILE *f = (CFILE *)malloc(sizeof(CFILE));
