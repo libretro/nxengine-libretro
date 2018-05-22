@@ -160,7 +160,10 @@ Object *target;
 				sound(SND_BUBBLE);
 				
 				if ((target = mbubble_find_target()))
-					target->invisible = true;
+				{
+					target->Delete();
+//					target->invisible = true;
+				}
 			}
 		break;
 		
