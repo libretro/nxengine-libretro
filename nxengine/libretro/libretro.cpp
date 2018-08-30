@@ -429,19 +429,3 @@ bool retro_copy_file(const char* from, const char* to)
    fclose(fd2);
    return true;
 }
-
-#if defined(_MSC_VER) && _MSC_VER <= 1310
-
-#ifdef NDEBUG
-void NX_DBG(const char *fmt, ...)
-{
-}
-#endif
-
-#ifndef RELEASE_BUILD
-void NX_LOG(const char *fmt, ...)
-{
-}
-#endif
-
-#endif

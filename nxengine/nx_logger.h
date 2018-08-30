@@ -18,37 +18,20 @@
 #define __NX_LOGGER_H
 
 #include <libretro.h>
+#include <retro_inline.h>
 
 extern retro_log_printf_t log_cb;
 
 #ifndef NDEBUG
+
 #define  NX_DBG(...) do { \
    if (log_cb) \
       log_cb(RETRO_LOG_DEBUG, __VA_ARGS__); \
    } while (0)
-#else
-#if defined(_MSC_VER) && _MSC_VER <= 1310
-void NX_DBG(const char *fmt, ...);
-#else
-#define NX_DBG(...)
-#endif
-#endif
-
-#ifdef RELEASE_BUILD
-#if defined(_MSC_VER) && _MSC_VER <= 1310
-void NX_LOG(const char *fmt, ...);
-#else
-#define NX_LOG(...)
-#endif
-#else
-
 #define  NX_LOG(...) do { \
    if (log_cb) \
       log_cb(RETRO_LOG_INFO, __VA_ARGS__); \
    } while (0)
-
-#endif
-
 #define  NX_WARN(...) do { \
    if (log_cb) \
       log_cb(RETRO_LOG_WARN, __VA_ARGS__); \
@@ -57,5 +40,11 @@ void NX_LOG(const char *fmt, ...);
    if (log_cb) \
       log_cb(RETRO_LOG_ERROR, __VA_ARGS__); \
    } while (0)
+#else
+static INLINE void NX_DBG(const char *fmt, ...) { }
+static INLINE void NX_LOG(const char *fmt, ...) { }
+static INLINE void NX_WARN(const char *fmt, ...) { }
+static INLINE void NX_ERR(const char *fmt, ...) { }
+#endif
 
 #endif
