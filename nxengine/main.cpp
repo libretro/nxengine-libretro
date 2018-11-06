@@ -248,6 +248,7 @@ loop:
 
 	game.stageboss.OnMapExit();
 	freshstart = false;
+	return false;
 }
 
 static inline void run_tick()
