@@ -1,7 +1,7 @@
 LIBRETRO_COMM_DIR := $(CORE_DIR)/libretro/libretro-common
 INCFLAGS := -I$(CORE_DIR) -I$(CORE_DIR)/graphics -I$(CORE_DIR)/libretro -I$(LIBRETRO_COMM_DIR)/include -I$(CORE_DIR)/sdl/include 
 
-ifneq (,$(findstring msvc2003,$(platform)))
+ifneq (,$(findstring msvc200,$(platform)))
 INCFLAGS += -I$(LIBRETRO_COMM_DIR)/include/compat/msvc
 endif
 

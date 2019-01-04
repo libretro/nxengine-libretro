@@ -1,5 +1,5 @@
 #ifdef _WIN32
-#include "msvc_compat.h"
+#include <direct.h>
 #else
 #include <unistd.h>
 #endif
