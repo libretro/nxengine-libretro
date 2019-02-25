@@ -3,7 +3,6 @@
 #else
 #include <unistd.h>
 #endif
-#include <string>
 #include <stdio.h>
 
 #include <libretro.h>
