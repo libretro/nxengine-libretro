@@ -11,6 +11,8 @@
 #include "libretro_shared.h"
 #include "../common/misc.fdh"
 #include "../graphics/graphics.h"
+#include "../input.fdh"
+#include "../input.h"
 #include "../nx.h"
 
 void post_main();
@@ -90,7 +92,68 @@ void retro_get_system_info(struct retro_system_info *info)
 
 char g_dir[1024];
 
-void retro_set_controller_port_device(unsigned port, unsigned device) {}
+void retro_set_controller_port_device(unsigned port, unsigned device)
+{
+   if (port != 0) return;
+
+   memset(inputs, 0, sizeof(inputs));
+   memset(lastinputs, 0, sizeof(lastinputs));
+   memset(mappings, 0, sizeof(mappings));
+   for (unsigned i = 0; i < INPUT_COUNT; ++i)
+      mappings[i] = RETROK_DUMMY;
+
+   if (device == RETRO_DEVICE_KEYBOARD) {
+      // Use the original keybindings
+      controller_device = RETRO_DEVICE_KEYBOARD;
+      mappings[LEFTKEY]  = RETROK_LEFT;
+      mappings[RIGHTKEY] = RETROK_RIGHT;
+      mappings[UPKEY]    = RETROK_UP;
+      mappings[DOWNKEY]  = RETROK_DOWN;
+
+      mappings[JUMPKEY] = RETROK_z;
+      mappings[FIREKEY] = RETROK_x;
+
+      mappings[PREVWPNKEY] = RETROK_a;
+      mappings[NEXTWPNKEY] = RETROK_s;
+
+      mappings[INVENTORYKEY] = RETROK_q;
+      mappings[MAPSYSTEMKEY] = RETROK_w;
+
+      mappings[ESCKEY] = RETROK_ESCAPE;
+      mappings[F1KEY]  = RETROK_F1;
+      mappings[F2KEY]  = RETROK_F2;
+      mappings[F3KEY]  = RETROK_F3;
+   } else {
+      // Use a joypad model in all other cases
+      controller_device = RETRO_DEVICE_JOYPAD;
+      mappings[LEFTKEY]  = RETRO_DEVICE_ID_JOYPAD_LEFT;
+      mappings[RIGHTKEY] = RETRO_DEVICE_ID_JOYPAD_RIGHT;
+      mappings[UPKEY]    = RETRO_DEVICE_ID_JOYPAD_UP;
+      mappings[DOWNKEY]  = RETRO_DEVICE_ID_JOYPAD_DOWN;
+
+      mappings[JUMPKEY] = RETRO_DEVICE_ID_JOYPAD_B;
+      mappings[FIREKEY] = RETRO_DEVICE_ID_JOYPAD_A;
+
+      mappings[PREVWPNKEY] = RETRO_DEVICE_ID_JOYPAD_L;
+      mappings[NEXTWPNKEY] = RETRO_DEVICE_ID_JOYPAD_R;
+
+      mappings[MAPSYSTEMKEY] = RETRO_DEVICE_ID_JOYPAD_X;
+      mappings[INVENTORYKEY] = RETRO_DEVICE_ID_JOYPAD_START;
+
+      mappings[F3KEY] = RETRO_DEVICE_ID_JOYPAD_SELECT;
+   }
+
+   // Declare the bindings to the frontend
+   struct retro_input_descriptor desc[INPUT_COUNT+1];
+   unsigned j = 0;
+   for (unsigned i = 0; i < INPUT_COUNT; ++i) {
+      if (mappings[i] != RETROK_DUMMY)
+         desc[j++] = { 0, controller_device, 0, mappings[i], input_get_name(i) };
+   }
+   desc[j] = { 0 };
+
+   environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);
+}
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
@@ -118,6 +181,9 @@ void retro_init(void)
       log_cb = log.log;
    else
       log_cb = NULL;
+
+   // initialize joypad mappings
+   retro_set_controller_port_device(0, 1);
 
 #ifdef FRONTEND_SUPPORTS_RGB565
    rgb565 = RETRO_PIXEL_FORMAT_RGB565;
@@ -148,26 +214,8 @@ static void extract_directory(char *buf, const char *path, size_t size)
 
 bool retro_load_game(const struct retro_game_info *game)
 {
-   struct retro_input_descriptor desc[] = {
-      { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_LEFT,  "D-Pad Left" },
-      { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_UP,    "D-Pad Up" },
-      { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_DOWN,  "D-Pad Down" },
-      { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_RIGHT, "D-Pad Right" },
-      { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_B,     "Jump" },
-      { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_A,     "Fire" },
-      { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X,     "Show/Hide Map" },
-      { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L,     "Previous Weapon" },
-      { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R,     "Next Weapon" },
-      { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT,    "Settings" },
-      { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START,    "Inventory" },
-
-      { 0 },
-   };
-
    if (!game)
       return false;
-
-   environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);
 
    extract_directory(g_dir, game->path, sizeof(g_dir));
    NX_LOG("g_dir: %s\n", g_dir);
@@ -263,6 +311,8 @@ void retro_run(void)
    if (log_cb)
       log_cb(RETRO_LOG_INFO, "[NX]: Frame took %lld usec.\n", (long long)total_time);
 #endif
+
+   if (!game.running) environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, NULL);
 }
 
 size_t retro_serialize_size(void)

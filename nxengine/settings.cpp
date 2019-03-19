@@ -113,9 +113,6 @@ bool settings_save(Settings *setfile)
 
    NX_LOG("Writing settings...\n");
 
-   for(int i=0;i<INPUT_COUNT;i++)
-      setfile->input_mappings[i] = input_get_mapping(i);
-
    setfile->version = SETTINGS_VERSION;
    filestream_write(fp, setfile, sizeof(Settings));
    filestream_close(fp);
