@@ -51,7 +51,7 @@ void input_poll(void)
 {
    extern retro_input_state_t input_cb;
 
-   for (unsigned ino = 0; ino < INPUT_COUNT; ino++)
+   for (unsigned ino = 0; ino < F4KEY; ino++)
    {
       int rcode = mappings[ino];
 
