@@ -251,6 +251,22 @@ static __inline void ALPHA_BLEND(int sR, int sG, int sB, const int A,
    *dB = (((sB - *dB) * A + 255) >> 8) + *dB;
 }
 
+/* 8-times unrolled loop */
+#define DUFFS_LOOP8(pixel_copy_increment, width)                        \
+{ int n = (width+7)/8;                                                  \
+    switch (width & 7) {                                                \
+    case 0: do {    pixel_copy_increment; /* fallthrough */             \
+    case 7:     pixel_copy_increment;     /* fallthrough */             \
+    case 6:     pixel_copy_increment;     /* fallthrough */             \
+    case 5:     pixel_copy_increment;     /* fallthrough */             \
+    case 4:     pixel_copy_increment;     /* fallthrough */             \
+    case 3:     pixel_copy_increment;     /* fallthrough */             \
+    case 2:     pixel_copy_increment;     /* fallthrough */             \
+    case 1:     pixel_copy_increment;     /* fallthrough */             \
+        } while ( --n > 0 );                                            \
+    }                                                                   \
+}
+
 /* Prevent Visual C++ 6.0 from printing out stupid warnings */
 #if defined(_MSC_VER) && (_MSC_VER >= 600)
 #pragma warning(disable: 4550)

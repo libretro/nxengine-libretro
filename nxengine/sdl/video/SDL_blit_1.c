@@ -76,6 +76,21 @@ static void Blit1to2(SDL_BlitInfo *info)
    uint16_t *map = (uint16_t *)info->table;
    uint8_t *src  = info->s_pixels;
    uint8_t *dst  = info->d_pixels;
+#define USE_DUFFS_LOOP
+#ifdef USE_DUFFS_LOOP
+    while (height--) {
+        /* *INDENT-OFF* */
+        DUFFS_LOOP8(
+        {
+            *(uint16_t *)dst = map[*src++];
+            dst += 2;
+        },
+        width);
+        /* *INDENT-ON* */
+        src += srcskip;
+        dst += dstskip;
+    }
+#else
 
    /* Memory align at 4-byte boundary, if necessary */
    if ( (long)dst & 0x03 )
@@ -165,6 +180,7 @@ static void Blit1to2(SDL_BlitInfo *info)
          dst += dstskip;
       }
    }
+#endif /* USE_DUFFS_LOOP */
 }
 static void Blit1to3(SDL_BlitInfo *info)
 {
