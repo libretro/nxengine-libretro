@@ -974,13 +974,17 @@ Object * const &o = this;
 void c------------------------------() {}
 */
 
-#ifdef _XBOX
+#if defined(_XBOX) || defined(PSP)
+#define AVOID_POINTER_TABLE
+#endif
+
+#ifdef AVOID_POINTER_TABLE
 #include "objfunc_ptrs.h"
 #endif
 
 void Object::OnTick()
 {
-#ifdef _XBOX
+#ifdef AVOID_POINTER_TABLE
    switch(type)
    {
       case OBJ_BAT_BLUE:
@@ -1897,7 +1901,7 @@ void Object::OnTick()
 
 void Object::OnAftermove()
 {
-#ifdef _XBOX
+#ifdef AVOID_POINTER_TABLE
    switch (type)
    {
       case OBJ_BLADE12_SHOT:
@@ -1967,7 +1971,7 @@ void Object::OnAftermove()
 
 void Object::OnSpawn()
 {
-#ifdef _XBOX
+#ifdef AVOID_POINTER_TABLE
    switch (type)
    {
       case OBJ_BALFROG:
@@ -2013,7 +2017,7 @@ void Object::OnSpawn()
 
 void Object::OnDeath()
 {
-#ifdef _XBOX
+#ifdef AVOID_POINTER_TABLE
    switch (type)
    {
       case OBJ_POLISH:
