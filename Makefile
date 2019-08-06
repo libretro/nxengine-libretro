@@ -170,7 +170,7 @@ else ifeq ($(platform), rpi1)
    SHARED := -shared -Wl,--version-script=$(CORE_DIR)/libretro/link.T -Wl,-no-undefined
    CFLAGS += -DARM -DGNU_SOURCE=1
    CFLAGS += -marm -march=armv6j -mfpu=vfp -mfloat-abi=hard
-   CFLAGS += -fomit-frame-pointer -fstrict-aliasing -ffast-math
+   CFLAGS += -fomit-frame-pointer -fstrict-aliasing
    CFLAGS += -fno-rtti -fno-exceptions -std=gnu++11
    SINGLE_PRECISION_FLOATS = 1
    MIN_AUDIO_PROCESSING_PER_FRAME = 1
@@ -181,7 +181,7 @@ else ifeq ($(platform), rpi2)
    SHARED := -shared -Wl,--version-script=$(CORE_DIR)/libretro/link.T -Wl,-no-undefined
    CFLAGS += -DARM -DGNU_SOURCE=1
    CFLAGS += -marm -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
-   CFLAGS += -fomit-frame-pointer -fstrict-aliasing -ffast-math
+   CFLAGS += -fomit-frame-pointer -fstrict-aliasing
    CFLAGS += -fno-rtti -fno-exceptions -std=gnu++11
    SINGLE_PRECISION_FLOATS = 1
    MIN_AUDIO_PROCESSING_PER_FRAME = 1
@@ -192,7 +192,18 @@ else ifeq ($(platform), rpi3)
    SHARED := -shared -Wl,--version-script=$(CORE_DIR)/libretro/link.T -Wl,-no-undefined
    CFLAGS += -DARM -DGNU_SOURCE=1
    CFLAGS += -marm -mcpu=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard
-   CFLAGS += -fomit-frame-pointer -fstrict-aliasing -ffast-math
+   CFLAGS += -fomit-frame-pointer -fstrict-aliasing
+   CFLAGS += -fno-rtti -fno-exceptions -std=gnu++11
+   SINGLE_PRECISION_FLOATS = 1
+   MIN_AUDIO_PROCESSING_PER_FRAME = 1
+   HAVE_NEON = 1
+else ifeq ($(platform), rpi3_64)
+   TARGET := $(TARGET_NAME)_libretro.so
+   fpic := -fPIC
+   SHARED := -shared -Wl,--version-script=$(CORE_DIR)/libretro/link.T -Wl,-no-undefined
+   CFLAGS += -DARM -DGNU_SOURCE=1
+   CFLAGS += -march=armv8-a+crc -mtune=cortex-a53
+   CFLAGS += -fomit-frame-pointer -fstrict-aliasing
    CFLAGS += -fno-rtti -fno-exceptions -std=gnu++11
    SINGLE_PRECISION_FLOATS = 1
    MIN_AUDIO_PROCESSING_PER_FRAME = 1
