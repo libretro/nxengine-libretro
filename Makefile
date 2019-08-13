@@ -90,8 +90,8 @@ ifeq ($(IOSSDK),)
    IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
 endif
 
-ifeq ($(platform),ios-arm64)
-	 CC = clang -arch armv64-isysroot $(IOSSDK)
+ifeq ($(platform), ios-arm64)
+	 CC = clang -arch arm64 -isysroot $(IOSSDK)
 	 CXX = clang++ -arch arm64 -isysroot $(IOSSDK)
 else
 	 CC = clang -arch armv7 -isysroot $(IOSSDK)
