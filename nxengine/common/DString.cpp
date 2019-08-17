@@ -100,7 +100,8 @@ void DString::ReplaceString(const char *repstr_old, const char *repstr_new)
 		if (ptr == str)
 		{
 			oldLength = strlen(repstr_old);
-			if (oldLength == 0) return;
+			if (oldLength == 0)
+            return;
 			
 			newLength = strlen(repstr_new);
 		}

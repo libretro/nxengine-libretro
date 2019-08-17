@@ -9,10 +9,10 @@
 
 DBuffer::DBuffer()
 {
-	fData = &fBuiltInData[0];
-	fAllocSize = DBUFFER_BUILTIN_SIZE;
+	fData           = &fBuiltInData[0];
+	fAllocSize      = DBUFFER_BUILTIN_SIZE;
 	fAllocdExternal = false;
-	fLength = 0;
+	fLength         = 0;
 }
 
 DBuffer::~DBuffer()
@@ -28,7 +28,8 @@ void c------------------------------() {}
 // append data to the end of the buffer
 void DBuffer::AppendData(const uint8_t *data, int length)
 {
-	if (length <= 0) return;
+	if (length <= 0)
+      return;
 	EnsureAlloc(fLength + length);
 	
 	memcpy(&fData[fLength], data, length);
@@ -97,21 +98,17 @@ void c------------------------------() {}
 
 void DBuffer::ReplaceUnprintableChars()
 {
-char *data = (char *)fData;
-int length = fLength;
-int i;
+   char *data = (char *)fData;
+   int length = fLength;
+   int i;
 
-	for(i=0;i<length;i++)
-	{
-		if (data[i] == '\n' || data[i] == '\r')
-		{
-			data[i] = '+';
-		}
-		else if (((uchar)data[i] < 32 || (uchar)data[i] > 127) && data[i] != 0)
-		{
-			data[i] = '`';
-		}
-	}
+   for(i=0;i<length;i++)
+   {
+      if (data[i] == '\n' || data[i] == '\r')
+         data[i] = '+';
+      else if (((uchar)data[i] < 32 || (uchar)data[i] > 127) && data[i] != 0)
+         data[i] = '`';
+   }
 }
 
 /*
@@ -137,19 +134,19 @@ uint8_t *DBuffer::Data()
 // DBuffer internally to build the data.
 uint8_t *DBuffer::TakeData()
 {
-	if (!fAllocdExternal)
-	{	// we can't give them ownership of the data, because it's still small enough
-		// that it's located within our own object. So give them a copy instead.
-		uint8_t *copy = (uint8_t *)malloc(fLength);
-		memcpy(copy, fData, fLength);
-		return copy;
-	}
-	
-	uint8_t *data = fData;			// save our pointer
-	fData = NULL;					// now forget it, so it's not freed in the destructor
-	fAllocdExternal = false;		// revert to internal data buffer
-	
-	return data;
+   if (!fAllocdExternal)
+   {	// we can't give them ownership of the data, because it's still small enough
+      // that it's located within our own object. So give them a copy instead.
+      uint8_t *copy = (uint8_t *)malloc(fLength);
+      memcpy(copy, fData, fLength);
+      return copy;
+   }
+
+   uint8_t *data   = fData;		// save our pointer
+   fData           = NULL;			// now forget it, so it's not freed in the destructor
+   fAllocdExternal = false;		// revert to internal data buffer
+
+   return data;
 }
 
 // return the data, along with a trailing null-terminator

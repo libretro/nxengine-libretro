@@ -146,11 +146,24 @@ void retro_set_controller_port_device(unsigned port, unsigned device)
    // Declare the bindings to the frontend
    struct retro_input_descriptor desc[INPUT_COUNT+1];
    unsigned j = 0;
-   for (unsigned i = 0; i < INPUT_COUNT; ++i) {
+   for (unsigned i = 0; i < INPUT_COUNT; ++i)
+   {
       if (mappings[i] != RETROK_DUMMY)
-         desc[j++] = { 0, controller_device, 0, mappings[i], input_get_name(i) };
+      {
+         desc[j].port        = 0;
+	 desc[j].device      = controller_device;
+	 desc[j].index       = 0;
+	 desc[j].id          = mappings[i];
+	 desc[j].description = input_get_name(i);
+	 j++;
+      }
    }
-   desc[j] = { 0 };
+
+   desc[j].port        = 0;
+   desc[j].device      = 0; 
+   desc[j].index       = 0;
+   desc[j].id          = 0;
+   desc[j].description = NULL; 
 
    environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);
 }

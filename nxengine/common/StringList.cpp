@@ -22,44 +22,42 @@ void c------------------------------() {}
 
 void StringList::Shuffle()
 {
-int i, count = CountItems();
+   int i, count = CountItems();
 
-	for(i=0;i<count;i++)
-	{
-		int swap = random(0, count - 1);
-		if (swap != i)
-		{
-			SwapItems(i, swap);
-		}
-	}
+   for(i=0;i<count;i++)
+   {
+      int swap = random(0, count - 1);
+      if (swap != i)
+         SwapItems(i, swap);
+   }
 }
 
 bool StringList::ContainsString(const char *term)
 {
-int i;
-char *str;
+   int i;
+   char *str;
 
-	for(i=0; (str = StringAt(i)); i++)
-	{
-		if (!strcmp(str, term))
-			return true;
-	}
-	
-	return false;
+   for(i=0; (str = StringAt(i)); i++)
+   {
+      if (!strcmp(str, term))
+         return true;
+   }
+
+   return false;
 }
 
 bool StringList::ContainsCaseString(const char *term)
 {
-int i;
-char *str;
+   int i;
+   char *str;
 
-	for(i=0; (str = StringAt(i)); i++)
-	{
-		if (!strcasecmp(str, term))
-			return true;
-	}
-	
-	return false;
+   for(i=0; (str = StringAt(i)); i++)
+   {
+      if (!strcasecmp(str, term))
+         return true;
+   }
+
+   return false;
 }
 
 /*
@@ -68,21 +66,24 @@ void c------------------------------() {}
 
 void StringList::AddString(const char *str)
 {
-	BList::AddItem(strdup(str));
+   BList::AddItem(strdup(str));
 }
 
 bool StringList::SetString(int index, const char *newstring)
 {
-	char *str = StringAt(index);
-	if (!str) return 1;
-	if (str == newstring) return 0;
-	
-	int copylen = strlen(newstring) + 1;
-	str = (char *)realloc(str, copylen);
-	memcpy(str, newstring, copylen);
-	
-	BList::ReplaceItem(index, str);
-	return 0;
+   int copylen;
+   char *str = StringAt(index);
+   if (!str)
+      return 1;
+   if (str == newstring)
+      return 0;
+
+   copylen = strlen(newstring) + 1;
+   str     = (char *)realloc(str, copylen);
+   memcpy(str, newstring, copylen);
+
+   BList::ReplaceItem(index, str);
+   return 0;
 }
 
 void StringList::RemoveString(int index)
@@ -97,34 +98,34 @@ void StringList::RemoveString(int index)
 
 void StringList::RemoveString(const char *str)
 {
-int i;
-char *entry;
+   int i;
+   char *entry;
 
-	for(i=0; (entry = StringAt(i)); i++)
-	{
-		if (!strcmp(entry, str))
-		{
-			BList::RemoveItem(i);
-			free(entry);
-			i--;
-		}
-	}
+   for(i=0; (entry = StringAt(i)); i++)
+   {
+      if (!strcmp(entry, str))
+      {
+         BList::RemoveItem(i);
+         free(entry);
+         i--;
+      }
+   }
 }
 
 void StringList::RemoveIString(const char *str)
 {
-int i;
-char *entry;
+   int i;
+   char *entry;
 
-	for(i=0; (entry = StringAt(i)); i++)
-	{
-		if (!strcasecmp(entry, str))
-		{
-			BList::RemoveItem(i);
-			free(entry);
-			i--;
-		}
-	}
+   for(i=0; (entry = StringAt(i)); i++)
+   {
+      if (!strcasecmp(entry, str))
+      {
+         BList::RemoveItem(i);
+         free(entry);
+         i--;
+      }
+   }
 }
 
 /*
@@ -165,9 +166,7 @@ void StringList::MakeEmpty()
 {
 	int i, count = CountItems();
 	for(i=0;i<count;i++)
-	{
 		free(ItemAt(i));
-	}
 	
 	BList::MakeEmpty();
 }
@@ -183,7 +182,8 @@ StringList &StringList::operator= (const StringList &other)
 	for(int i=0;;i++)
 	{
 		char *str = other.StringAt(i);
-		if (!str) break;
+		if (!str)
+         break;
 		
 		AddString(str);
 	}
