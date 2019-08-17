@@ -37,8 +37,10 @@ enum INPUTS
 #define DEBUG_SAVE_KEY		F4KEY
 #define FFWDKEY				F5KEY
 
+extern unsigned int mappings[INPUT_COUNT];
 extern bool inputs[INPUT_COUNT];
 extern bool lastinputs[INPUT_COUNT];
 extern int last_sdl_key;
+extern unsigned controller_device;
 
 #endif

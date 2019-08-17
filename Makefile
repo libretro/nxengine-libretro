@@ -287,18 +287,6 @@ include $(DEVKITPRO)/libnx/switch_rules
     CFLAGS += -std=gnu11
     STATIC_LINKING = 1
 
-else ifeq ($(platform), genode)
-   TARGET   := $(TARGET_NAME)_libretro.lib.so
-   CC       := $(shell pkg-config genode-base --variable=cc)
-   CXX      := $(shell pkg-config genode-base --variable=cxx)
-   LD       := $(shell pkg-config genode-base --variable=ld)
-   AR       := $(shell pkg-config genode-base --variable=ar) -rcs
-   CFLAGS   += $(shell pkg-config --cflags genode-libc)
-   CXXFLAGS += $(shell pkg-config --cflags genode-stdcxx)
-   LDFLAGS  += -shared --version-script=$(CORE_DIR)/libretro/link.T
-   LDFLAGS  += $(shell pkg-config --libs genode-lib genode-libc genode-stdcxx)
-   LIBS =
-
 else ifneq (,$(findstring armv,$(platform)))
    TARGET := $(TARGET_NAME)_libretro.so
    fpic := -fPIC
@@ -599,6 +587,10 @@ endif
 
 include Makefile.common
 
+ifneq (,$(findstring msvc2003,$(platform)))
+INCFLAGS += -I$(LIBRETRO_COMM_DIR)/include/compat/msvc
+endif
+
 OBJECTS := $(SOURCES_CXX:.cpp=.o) $(SOURCES_C:.c=.o)
 
 DEFINES := -DHAVE_INTTYPES_H -D__LIBRETRO__ -DFRONTEND_SUPPORTS_RGB565
@@ -645,16 +637,14 @@ else
 	LD = link.exe
 endif
 else
-ifneq ($(platform),genode)
 	LD = $(CXX)
-endif
 endif
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c $(OBJOUT)$@ $<
 
 %.o: %.cpp
-	$(CXX) $(CFLAGS) $(CXXFLAGS) -c $(OBJOUT)$@ $<
+	$(CXX) $(CFLAGS) -c $(OBJOUT)$@ $<
 
 ifeq ($(platform), theos_ios)
 COMMON_FLAGS := -DIOS -DARM $(COMMON_DEFINES) -I$(THEOS_INCLUDE_PATH) -Wno-error
@@ -669,7 +659,7 @@ $(TARGET): $(OBJECTS)
 ifeq ($(STATIC_LINKING), 1)
 	$(AR) rcs $@ $(OBJECTS)
 else
-	$(LD) $(fpic) $(SHARED) $(LINKOUT)$@ $(OBJECTS) $(LDFLAGS) $(LIBS)
+	$(LD) $(fpic) $(SHARED) $(LDFLAGS) $(LINKOUT)$@ $(OBJECTS) $(LIBS)
 endif
 
 

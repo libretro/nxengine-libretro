@@ -3,56 +3,22 @@
 #include "input.fdh"
 #include "libretro.h"
 
-#undef SDLK_LAST
-#define SDLK_LAST 12
+extern retro_log_printf_t log_cb;
 
-uint8_t mappings[SDLK_LAST];
-
+unsigned int mappings[INPUT_COUNT];
 bool inputs[INPUT_COUNT];
 bool lastinputs[INPUT_COUNT];
 int last_sdl_key;
+unsigned controller_device;
 
 bool input_init(void)
 {
-	memset(inputs, 0, sizeof(inputs));
-	memset(lastinputs, 0, sizeof(lastinputs));
-	memset(mappings, 0xff, sizeof(mappings));
-
-	mappings[RETRO_DEVICE_ID_JOYPAD_LEFT]   = LEFTKEY;  
-	mappings[RETRO_DEVICE_ID_JOYPAD_RIGHT]  = RIGHTKEY;  
-	mappings[RETRO_DEVICE_ID_JOYPAD_UP]     = UPKEY;  
-	mappings[RETRO_DEVICE_ID_JOYPAD_DOWN]   = DOWNKEY;  
-
-	mappings[RETRO_DEVICE_ID_JOYPAD_B] = JUMPKEY;
-	mappings[RETRO_DEVICE_ID_JOYPAD_A] = FIREKEY;
-	mappings[RETRO_DEVICE_ID_JOYPAD_L] = PREVWPNKEY;
-	mappings[RETRO_DEVICE_ID_JOYPAD_R] = NEXTWPNKEY;
-	mappings[RETRO_DEVICE_ID_JOYPAD_X] = MAPSYSTEMKEY;
-
-	mappings[RETRO_DEVICE_ID_JOYPAD_SELECT] = F3KEY;
-	mappings[RETRO_DEVICE_ID_JOYPAD_START] = INVENTORYKEY;
-	
-	return 0;
 }
 
 
 // set the SDL key that triggers an input
 void input_remap(int keyindex, int sdl_key)
 {
-}
-
-// get which SDL key triggers a given input
-int input_get_mapping(int keyindex)
-{
-int i;
-
-	for(i=0;i<SDLK_LAST;i++)
-	{
-		if (mappings[i] == keyindex)
-			return i;
-	}
-	
-	return -1;
 }
 
 const char *input_get_name(int index)
@@ -85,19 +51,19 @@ void input_poll(void)
 {
    extern retro_input_state_t input_cb;
 
-   for (unsigned i = 0; i < 12; i++)
+   for (unsigned ino = 0; ino < F4KEY; ino++)
    {
-      int ino = mappings[i];
+      int rcode = mappings[ino];
 
       if (ino != F3KEY)
       {
-         if (ino != 0xff)
-            inputs[ino] = input_cb(0, RETRO_DEVICE_JOYPAD, 0, i);
+         if (rcode != RETROK_DUMMY)
+            inputs[ino] = input_cb(0, controller_device, 0, rcode);
       }
       else
       {
          static bool old;
-         bool input = input_cb(0, RETRO_DEVICE_JOYPAD, 0, i);
+         bool input = input_cb(0, controller_device, 0, rcode);
          inputs[ino] = input && !old;
          old = input;
       }

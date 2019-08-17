@@ -1,9 +1,8 @@
-LIBRETRO_COMM_DIR := $(CORE_DIR)/libretro/libretro-common
-INCFLAGS := -I$(CORE_DIR) -I$(CORE_DIR)/graphics -I$(CORE_DIR)/libretro -I$(LIBRETRO_COMM_DIR)/include -I$(CORE_DIR)/sdl/include 
-
-ifneq (,$(findstring msvc200,$(platform)))
-INCFLAGS += -I$(LIBRETRO_COMM_DIR)/include/compat/msvc
+ifeq ($(LIBRETRO_COMM_DIR),)
+	LIBRETRO_COMM_DIR := $(CORE_DIR)/libretro/libretro-common
 endif
+
+INCFLAGS := -I$(CORE_DIR) -I$(CORE_DIR)/graphics -I$(CORE_DIR)/libretro -I$(LIBRETRO_COMM_DIR)/include -I$(CORE_DIR)/sdl/include 
 
 SOURCES_C   := $(CORE_DIR)/sdl/SDL_error.c \
 					$(CORE_DIR)/sdl/file/SDL_rwops.c \
