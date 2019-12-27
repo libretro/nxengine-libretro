@@ -6,17 +6,17 @@ MIN_AUDIO_PROCESSING_PER_FRAME=0
 
 ifeq ($(platform),)
 platform = unix
-ifeq ($(shell uname -a),)
+ifeq ($(shell uname -s),)
    platform = win
-else ifneq ($(findstring MINGW,$(shell uname -a)),)
+else ifneq ($(findstring MINGW,$(shell uname -s)),)
    platform = win
-else ifneq ($(findstring Darwin,$(shell uname -a)),)
+else ifneq ($(findstring Darwin,$(shell uname -s)),)
    platform = osx
 	arch = intel
 ifeq ($(shell uname -p),powerpc)
 	arch = ppc
 endif
-else ifneq ($(findstring win,$(shell uname -a)),)
+else ifneq ($(findstring win,$(shell uname -s)),)
    platform = win
 endif
 endif
@@ -43,15 +43,6 @@ EXTRACTDIR   := $(CORE_DIR)/extract-auto
 LIBS         :=
 ifeq (,$(findstring msvc,$(platform)))
 LIBS         += -lm
-endif
-
-
-ifeq ($(ARCHFLAGS),)
-ifeq ($(archs),ppc)
-   ARCHFLAGS = -arch ppc -arch ppc64
-else
-   ARCHFLAGS = -arch i386 -arch x86_64
-endif
 endif
 
 SPACE :=
