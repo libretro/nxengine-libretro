@@ -13,6 +13,7 @@ unsigned controller_device;
 
 bool input_init(void)
 {
+   return true;
 }
 
 
