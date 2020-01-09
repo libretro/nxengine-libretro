@@ -54,8 +54,8 @@ bool font_init(void)
 	SetColorKey(font, SDL_SRCCOLORKEY, 0);
 
 	error |= whitefont.InitChars(font, 0xffffff);
-	error |= greenfont.InitChars(font, 0x00ff80);
-	error |= bluefont.InitChars(font, 0xa0b5de);
+	error |= greenfont.InitChars(font, 0xffffff); // Workaround for avoiding diacritics to show in green color
+	error |= bluefont.InitCharsShadowed(font, 0xffffff, 0x000000); // Workaround for avoiding diacritics not showing on map location names
 	error |= shadowfont.InitCharsShadowed(font, 0xffffff, 0x000000);
 	error |= create_shade_sfc();
 

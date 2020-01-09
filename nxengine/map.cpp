@@ -837,7 +837,7 @@ void map_draw_map_name(void)
 {
 	if (game.showmapnametime)
 	{
-		font_draw(game.mapname_x, 84, map_get_stage_name(game.curmap), 0, &shadowfont);
+		font_draw(game.mapname_x, 84, map_get_stage_name(game.curmap), 0, &bluefont); // Workaround for avoiding diacritics not showing on map location names
 		game.showmapnametime--;
 	}
 }

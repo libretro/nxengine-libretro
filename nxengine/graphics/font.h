@@ -3,7 +3,7 @@
 #define _FONT_H
 
 #define NUM_FONT_LETTERS		256
-#define NUM_LETTERS_RENDERED	128
+#define NUM_LETTERS_RENDERED	256 // Allow usage of the other half of the font, containing the diacritics
 #define FONT_DEFAULT_SPACING	5
 
 class NXFont
