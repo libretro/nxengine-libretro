@@ -30,6 +30,8 @@ retro_input_state_t input_cb;
 static retro_audio_sample_batch_t audio_batch_cb;
 static retro_environment_t environ_cb;
 
+bool libretro_supports_bitmasks = false;
+
 static unsigned g_frame_cnt;
 
 bool retro_60hz = true;
@@ -204,6 +206,9 @@ void retro_init(void)
       log_cb(RETRO_LOG_INFO, "Frontend supports RGB565 - will use that instead of XRGB1555.\n");
 #endif
    check_system_specs();
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_INPUT_BITMASKS, NULL))
+      libretro_supports_bitmasks = true;
 }
 
 static void extract_directory(char *buf, const char *path, size_t size)
@@ -242,6 +247,7 @@ bool retro_load_game(const struct retro_game_info *game)
 
 void retro_deinit(void)
 {
+   libretro_supports_bitmasks = false;
 }
 
 void retro_reset(void)

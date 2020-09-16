@@ -51,6 +51,15 @@ void c------------------------------() {}
 void input_poll(void)
 {
    extern retro_input_state_t input_cb;
+   extern bool libretro_supports_bitmasks;
+   bool joypad_bitmask = false;
+   int16_t joypad_bits = 0;
+
+   if(libretro_supports_bitmasks && (mappings[LEFTKEY] == RETRO_DEVICE_ID_JOYPAD_LEFT))
+   {
+      joypad_bits = input_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_MASK);
+      joypad_bitmask = true;
+   }
 
    for (unsigned ino = 0; ino < F4KEY; ino++)
    {
@@ -59,12 +68,23 @@ void input_poll(void)
       if (ino != F3KEY)
       {
          if (rcode != RETROK_DUMMY)
-            inputs[ino] = input_cb(0, controller_device, 0, rcode);
+         {
+            if(joypad_bitmask)
+               inputs[ino] = joypad_bits & (1 << rcode) ? 1 : 0;
+            else
+               inputs[ino] = input_cb(0, controller_device, 0, rcode);
+         }
       }
       else
       {
          static bool old;
-         bool input = input_cb(0, controller_device, 0, rcode);
+         bool input = false;
+
+         if(joypad_bitmask)
+            input = joypad_bits & (1 << rcode) ? 1 : 0;
+         else
+            input = input_cb(0, controller_device, 0, rcode);
+
          inputs[ino] = input && !old;
          old = input;
       }
