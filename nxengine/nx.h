@@ -3,7 +3,6 @@
 #define _NX_H
 
 #include "sdl/include/LRSDL.h"
-#include <stdio.h>
 #include <ctype.h>
 #include "nx_logger.h"
 
