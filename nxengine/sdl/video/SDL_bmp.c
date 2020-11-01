@@ -178,9 +178,15 @@ SDL_Surface * LRSDL_LoadBMP_RW (LRSDL_RWops *src, int freesrc)
             switch (biBitCount) {
                case 15:
                case 16:
+#if defined(ABGR1555)
+                  Bmask = 0x7C00;
+                  Gmask = 0x03E0;
+                  Rmask = 0x001F;
+#else
                   Rmask = 0x7C00;
                   Gmask = 0x03E0;
                   Bmask = 0x001F;
+#endif
                   break;
                case 24:
 #ifdef MSB_FIRST
@@ -190,9 +196,15 @@ SDL_Surface * LRSDL_LoadBMP_RW (LRSDL_RWops *src, int freesrc)
                   break;
 #endif
                case 32:
+#if defined(ABGR1555)
+                  Bmask = 0x00FF0000;
+                  Gmask = 0x0000FF00;
+                  Rmask = 0x000000FF;
+#else
                   Rmask = 0x00FF0000;
                   Gmask = 0x0000FF00;
                   Bmask = 0x000000FF;
+#endif
                   break;
                default:
                   break;

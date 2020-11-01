@@ -17,11 +17,25 @@
 #define RED_SHIFT 11
 #define GREEN_SHIFT 5
 #define BLUE_SHIFT 0
+#define RED_MASK 0x1f
+#define GREEN_MASK 0x3f
+#define BLUE_MASK 0x1f
+#elif defined(ABGR1555)
+#define SCREEN_BPP 15
+#define RED_SHIFT 0
+#define GREEN_SHIFT 5
+#define BLUE_SHIFT 10
+#define RED_MASK 0x1f
+#define GREEN_MASK 0x1f
+#define BLUE_MASK 0x1f
 #else
 #define SCREEN_BPP 15
 #define RED_SHIFT 10
 #define GREEN_SHIFT 5
 #define BLUE_SHIFT 0
+#define RED_MASK 0x1f
+#define GREEN_MASK 0x1f
+#define BLUE_MASK 0x1f
 #endif
 
 NXSurface::NXSurface()
@@ -34,7 +48,7 @@ NXSurface::NXSurface()
 void *AllocNewSurface(uint32_t colorkey, int wd, int ht)
 {
    SDL_Surface *surf = NULL;
-	surf = LRSDL_CreateRGBSurface(colorkey, wd, ht, SCREEN_BPP, 0x1f << RED_SHIFT, 0x3f << GREEN_SHIFT, 0x1f << BLUE_SHIFT, 0);
+	surf = LRSDL_CreateRGBSurface(colorkey, wd, ht, SCREEN_BPP, RED_MASK << RED_SHIFT, GREEN_MASK << GREEN_SHIFT, BLUE_MASK << BLUE_SHIFT, 0);
 	
 	if (!surf)
 	{
