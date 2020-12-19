@@ -55,16 +55,7 @@
 #  include <unistd.h>
 #endif
 
-#ifdef __CELLOS_LV2__
-#include <cell/cell_fs.h>
-#define O_RDONLY CELL_FS_O_RDONLY
-#define O_WRONLY CELL_FS_O_WRONLY
-#define O_CREAT CELL_FS_O_CREAT
-#define O_TRUNC CELL_FS_O_TRUNC
-#define O_RDWR CELL_FS_O_RDWR
-#else
 #include <fcntl.h>
-#endif
 
 /* Assume W-functions do not work below Win2K and Xbox platforms */
 #if defined(_WIN32_WINNT) && _WIN32_WINNT < 0x0500 || defined(_XBOX)
@@ -123,7 +114,7 @@ int64_t retro_vfs_file_seek_internal(libretro_vfs_implementation_file *stream, i
 /* VC2005 and up have a special 64-bit fseek */
 #ifdef ATLEAST_VC2005
       return _fseeki64(stream->fp, offset, whence);
-#elif defined(__CELLOS_LV2__) || defined(_MSC_VER) && _MSC_VER <= 1310
+#elif defined(_MSC_VER) && _MSC_VER <= 1310
       return fseek(stream->fp, (long)offset, whence);
 #else
       return fseeko(stream->fp, (off_t)offset, whence);
