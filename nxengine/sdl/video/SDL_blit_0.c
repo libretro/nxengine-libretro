@@ -26,12 +26,6 @@
 #include "LRSDL_video.h"
 #include "SDL_blit.h"
 
-#ifdef SDLPRINTF
-#define sdlprintf NX_LOG
-#else
-#define sdlprintf
-#endif
-
 /* Functions to blit from bitmaps to other surfaces */
 
 static void BlitBto1(SDL_BlitInfo *info)
@@ -451,16 +445,12 @@ SDL_loblit LRSDL_CalculateBlit0(SDL_Surface *surface, int blit_index)
             case 0:
                return NULL;
             case 1:
-               sdlprintf("BlitBto1.\n");
                return BlitBto1;
             case 2:
-               sdlprintf("BlitBto2.\n");
                return BlitBto2;
             case 3:
-               sdlprintf("BlitBto3.\n");
                return BlitBto3;
             case 4:
-               sdlprintf("BlitBto4.\n");
                return BlitBto4;
          }
       case 1:			/* colorkey */
@@ -469,31 +459,21 @@ SDL_loblit LRSDL_CalculateBlit0(SDL_Surface *surface, int blit_index)
             case 0:
                return NULL;
             case 1:
-               sdlprintf("BlitBto1Key.\n");
                return BlitBto1Key;
             case 2:
-               sdlprintf("BlitBto2Key.\n");
                return BlitBto2Key;
             case 3:
-               sdlprintf("BlitBto3Key.\n");
                return BlitBto3Key;
             case 4:
-               sdlprintf("BlitBto4Key.\n");
                return BlitBto4Key;
          }
       case 2:			/* alpha */
          if (which >= 2)
-         {
-            sdlprintf("BlitBtoNAlpha.\n");
             return BlitBtoNAlpha;
-         }
          break;
       case 4:			/* alpha + colorkey */
          if (which >= 2)
-         {
-            sdlprintf("BlitBtoNAlphaKey.\n");
             return BlitBtoNAlphaKey;
-         }
          break;
    }
 

@@ -629,7 +629,7 @@ WARNINGS_DEFINES =
 CODE_DEFINES =
 else
 WARNINGS_DEFINES = -Wall -W -Wno-unused-parameter
-CODE_DEFINES = -fomit-frame-pointer
+CODE_DEFINES = 
 endif
 
 ifeq ($(platform), osx)
