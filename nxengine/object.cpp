@@ -974,7 +974,7 @@ Object * const &o = this;
 void c------------------------------() {}
 */
 
-#if defined(_XBOX) || defined(PSP)
+#if defined(_XBOX) || defined(PSP) || defined(DJGPP)
 #define AVOID_POINTER_TABLE
 #endif
 
