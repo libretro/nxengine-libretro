@@ -37,10 +37,6 @@
 extern "C" {
 #endif
 
-#if 0
-#define SDLPRINTF
-#endif
-
 /** @name Transparency definitions
  *  These define alpha as the opacity of a surface
  */
