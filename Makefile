@@ -248,6 +248,13 @@ else ifeq ($(platform), xenon)
    AR = xenon-ar$(EXE_EXT)
    CFLAGS += -D__LIBXENON__ -D__ppc_ -DMSB_FIRST=1
 	STATIC_LINKING = 1
+else ifeq ($(platform), dos)
+   TARGET := $(TARGET_NAME)_libretro_djgpp.a
+   CC = i586-pc-msdosdjgpp-gcc$(EXE_EXT)
+   CXX = i586-pc-msdosdjgpp-g++$(EXE_EXT)
+   AR = i586-pc-msdosdjgpp-ar$(EXE_EXT)
+   STATIC_LINKING=1
+   STATIC_LINKING_LINK=1
 else ifeq ($(platform), ngc)
    TARGET := $(TARGET_NAME)_libretro_$(platform).a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
