@@ -200,7 +200,7 @@ void retro_init(void)
    // initialize joypad mappings
    retro_set_controller_port_device(0, 1);
 
-#ifdef FRONTEND_SUPPORTS_RGB565
+#if defined(FRONTEND_SUPPORTS_RGB565) || defined(ABGR1555)
    rgb565 = RETRO_PIXEL_FORMAT_RGB565;
    if(environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &rgb565) && log_cb)
       log_cb(RETRO_LOG_INFO, "Frontend supports RGB565 - will use that instead of XRGB1555.\n");

@@ -8,21 +8,17 @@
 static int text_draw(int x, int y, const char *text, int spacing=0, NXFont *font=&whitefont);
 
 #ifdef FRONTEND_SUPPORTS_RGB565
-#define SCREEN_BPP 16
 #define RED_SHIFT 11
 #define GREEN_SHIFT 5
 #define BLUE_SHIFT 0
-#define RED_MASK (0x1f << 11)
-#define GREEN_MASK (0x3f << 5)
-#define BLUE_MASK (0x1f << 0)
+#elif defined(ABGR1555)
+#define RED_SHIFT 0
+#define GREEN_SHIFT 5
+#define BLUE_SHIFT 10
 #else
-#define SCREEN_BPP 15
 #define RED_SHIFT 10
 #define GREEN_SHIFT 5
 #define BLUE_SHIFT 0
-#define RED_MASK (0x1f << 10)
-#define GREEN_MASK (0x1f << 5)
-#define BLUE_MASK (0x1f << 0)
 #endif
 
 

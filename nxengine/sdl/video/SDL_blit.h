@@ -147,10 +147,6 @@ static __inline void DISEMBLE_RGB(void *buf, int bpp,
 /* Assemble R-G-B values into a specified pixel format and store them */
 #define PIXEL_FROM_RGB(fmt, r, g, b) (((r>>fmt->Rloss)<<fmt->Rshift)| ((g>>fmt->Gloss)<<fmt->Gshift) | ((b>>fmt->Bloss)<<fmt->Bshift))
 
-#define RGB565_FROM_RGB(r, g, b) ((((r) >> 3) << 11) | (((g) >> 2) << 5) | ((b) >> 3))
-#define RGB555_FROM_RGB(r, g, b) ((((r) >> 3) << 10) | (((g) >> 3) << 5) | ((b) >> 3))
-#define RGB888_FROM_RGB(r, g, b) (((r)        << 16) | ((g)        << 8) | (b))
-
 static __inline void ASSEMBLE_RGB(void *buf, int bpp,
       SDL_PixelFormat *fmt, int r, int g, int b)
 {

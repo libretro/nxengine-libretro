@@ -3,6 +3,7 @@ DEBUGLOG=0
 RELEASE_BUILD=1
 SINGLE_PRECISION_FLOATS=0
 MIN_AUDIO_PROCESSING_PER_FRAME=0
+FRONTEND_SUPPORTS_RGB565=1
 
 ifeq ($(platform),)
 platform = unix
@@ -152,6 +153,16 @@ else ifeq ($(platform), psl1ght)
    AR = $(PS3DEV)/ppu/bin/ppu-ar$(EXE_EXT)
    CFLAGS += -DMSB_FIRST=1
 	STATIC_LINKING = 1
+else ifeq ($(platform), ps2)
+   TARGET := $(TARGET_NAME)_libretro_$(platform).a
+   CC =  mips64r5900el-ps2-elf-gcc$(EXE_EXT)
+   CXX =  mips64r5900el-ps2-elf-g++$(EXE_EXT)
+   AR =  mips64r5900el-ps2-elf-ar$(EXE_EXT)
+   CFLAGS += -DGNU_SOURCE=1 -G0 -DABGR1555
+   STATIC_LINKING = 1
+   SINGLE_PRECISION_FLOATS = 1
+   MIN_AUDIO_PROCESSING_PER_FRAME = 1
+   FRONTEND_SUPPORTS_RGB565 = 0
 else ifeq ($(platform), psp1)
    TARGET := $(TARGET_NAME)_libretro_$(platform).a
    CC = psp-gcc$(EXE_EXT)
@@ -608,6 +619,10 @@ ifeq ($(DEBUGLOG), 1)
 CFLAGS += -DDEBUG_LOG=1
 endif
 
+ifeq ($(FRONTEND_SUPPORTS_RGB565), 1)
+CFLAGS += -DFRONTEND_SUPPORTS_RGB565
+endif
+
 include Makefile.common
 
 ifneq (,$(findstring msvc2003,$(platform)))
@@ -616,7 +631,7 @@ endif
 
 OBJECTS := $(SOURCES_CXX:.cpp=.o) $(SOURCES_C:.c=.o)
 
-DEFINES := -DHAVE_INTTYPES_H -D__LIBRETRO__ -DFRONTEND_SUPPORTS_RGB565
+DEFINES := -DHAVE_INTTYPES_H -D__LIBRETRO__ 
 
 ifneq (,$(findstring msvc,$(platform)))
 DEFINES += -DINLINE="_inline"
