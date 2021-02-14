@@ -578,36 +578,21 @@ endif
 
 ifeq ($(DEBUG), 1)
 ifneq (,$(findstring msvc,$(platform)))
-	ifeq ($(STATIC_LINKING),1)
-	CFLAGS += -MTd
-	CXXFLAGS += -MTd
+   CFLAGS   += -MTd
+   CXXFLAGS += -MTd
+   CFLAGS   += -Od -Zi -DDEBUG -D_DEBUG
+   CXXFLAGS += -Od -Zi -DDEBUG -D_DEBUG
 else
-	CFLAGS += -MDd
-	CXXFLAGS += -MDd
-endif
-
-CFLAGS += -Od -Zi -DDEBUG -D_DEBUG
-CXXFLAGS += -Od -Zi -DDEBUG -D_DEBUG
-	else
-	CFLAGS += -O0 -g -DDEBUG
-	CXXFLAGS += -O0 -g -DDEBUG
+   CFLAGS   += -O0 -g -DDEBUG
+   CXXFLAGS += -O0 -g -DDEBUG
 endif
 else
 ifneq (,$(findstring msvc,$(platform)))
-ifeq ($(STATIC_LINKING),1)
-	CFLAGS += -MT
-	CXXFLAGS += -MT
-else
-	CFLAGS += -MD
-	CXXFLAGS += -MD
+   CFLAGS   += -MT
+   CXXFLAGS += -MT
 endif
-
-CFLAGS += -O2 -DNDEBUG
-CXXFLAGS += -O2 -DNDEBUG
-else
-	CFLAGS += -O2 -DNDEBUG
-	CXXFLAGS += -O2 -DNDEBUG
-endif
+   CFLAGS   += -O2 -DNDEBUG
+   CXXFLAGS += -O2 -DNDEBUG
 endif
 
 ifeq ($(RELEASE_BUILD), 1)
