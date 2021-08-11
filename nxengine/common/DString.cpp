@@ -78,7 +78,7 @@ void DString::ReplaceString(const char *repstr_old, const char *repstr_new)
 	DString newString;
 	char *str = String();
 	char *ptr = str;
-	int oldLength, newLength;
+	int oldLength = 0, newLength = 0;
 	char *hit;
 	
 	for(;;)

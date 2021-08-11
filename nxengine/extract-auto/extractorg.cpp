@@ -95,9 +95,6 @@ bool extract_org(FILE *exefp)
 {
    uint8_t *buffer;
    uint8_t *file;
-   uint32_t length;
-   uint32_t crc;
-   bool first_crc_failure = true;
    
    if (org_extracted)
       return 0;
@@ -110,13 +107,10 @@ bool extract_org(FILE *exefp)
    {
       if (!files[i].filename) break;
       file = buffer;
-      length = files[i].length;
 
       // read data from exe
       fseek(exefp, files[i].offset, SEEK_SET);
       fread(file, files[i].length, 1, exefp);
-
-      NX_DBG("file: %s\n", files[i].filename);
 
       // write out the file
       
@@ -127,27 +121,4 @@ bool extract_org(FILE *exefp)
    free(buffer);
    org_extracted = 1;
    return 0;
-}
-
-
-static void createdir(const char *fname)
-{
-	char *dir = strdup(fname);
-#if defined(_WIN32)
-	char *ptr = strrchr(dir, '\\');
-#else
-	char *ptr = strrchr(dir, '/');
-#endif
-	if (ptr)
-	{
-		*ptr = 0;
-		
-		#if defined(_WIN32)
-			_mkdir(dir);
-		#else
-			mkdir(dir, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
-		#endif
-	}
-	
-	free(dir);
 }

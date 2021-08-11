@@ -25,6 +25,7 @@ void ai_misery_float(Object *o)
 			o->ymark = o->y;
 			o->frame = 0;
 			o->timer = 0;
+                        /* fall-through */
 		case 1:
 			if (DoTeleportIn(o, 1))
 				o->state = 10;
@@ -35,6 +36,7 @@ void ai_misery_float(Object *o)
 			o->timer = 0;
 			o->animframe = 0;
 			o->yinertia = (1<<CSF);
+                        /* fall-through */
 		case 11:
 			if (o->y > o->ymark) o->yinertia -= 16;
 			if (o->y < o->ymark) o->yinertia += 16;
@@ -67,6 +69,7 @@ void ai_misery_float(Object *o)
 			o->frame = 4;
 			o->timer = 0;
 			o->state = 16;
+                        /* fall-through */
 		case 16:
 		{
 			o->timer++;
@@ -146,8 +149,6 @@ Object *target;
 			o->state = 1;
 			
 			// correct values: 0x3F0, 0xAE
-			NX_LOG("Computed toss values xi: 0x%x, 0x%x\n", o->xinertia, o->yinertia);
-			NX_LOG("Target x/y: 0x%x, 0x%x\n", target->x, target->y);
 		}
 		case 1:
 			ANIMATE(1, 0, 1);

@@ -23,8 +23,6 @@ struct CredCommand
 	int type;
 	int parm, parm2;
 	char text[80];
-	
-	void DumpContents();
 };
 
 class CredReader

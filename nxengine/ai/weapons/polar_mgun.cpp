@@ -93,26 +93,31 @@ void ai_polar_shot(Object *o)
 // the trails of a machine-gun L2 or L3 shot
 void ai_mgun_trail(Object *o)
 {
-	// linkedobject points to the leader
-	ASSERT(o->linkedobject != NULL);
-	
-	// check if the leader has hit something
-	if (o->linkedobject->state == STATE_SHOT_HIT)
-	{
-		bool passed_leader;
+   // check if the leader has hit something
+   if (o->linkedobject->state == STATE_SHOT_HIT)
+   {
+      bool passed_leader = false;
 		
-		// dissappear as we pass the point it hit at
-		switch(o->shot.dir)
-		{
-			case RIGHT: passed_leader = ((o->Right() >> CSF) >= (o->linkedobject->Right() >> CSF)); break;
-			case LEFT:  passed_leader = ((o->Left() >> CSF) <= (o->linkedobject->Left() >> CSF)); break;
-			case UP:    passed_leader = ((o->Top() >> CSF) <= (o->linkedobject->Top() >> CSF)); break;
-			case DOWN:  passed_leader = ((o->Bottom() >> CSF) >= (o->linkedobject->Bottom() >> CSF)); break;
-		}
+      // dissappear as we pass the point it hit at
+      switch(o->shot.dir)
+      {
+         case RIGHT:
+            passed_leader = ((o->Right() >> CSF) >= (o->linkedobject->Right() >> CSF));
+            break;
+         case LEFT:
+            passed_leader = ((o->Left() >> CSF) <= (o->linkedobject->Left() >> CSF));
+            break;
+         case UP:
+            passed_leader = ((o->Top() >> CSF) <= (o->linkedobject->Top() >> CSF));
+            break;
+         case DOWN:
+            passed_leader = ((o->Bottom() >> CSF) >= (o->linkedobject->Bottom() >> CSF));
+            break;
+      }
 		
-		if (passed_leader)
-			o->Delete();
-	}
+      if (passed_leader)
+         o->Delete();
+   }
 }
 
 // this invisible object is dropped by the player every time he fires an L2/3 machine-gun shot.

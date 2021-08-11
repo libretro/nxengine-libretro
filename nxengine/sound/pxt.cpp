@@ -812,16 +812,6 @@ error:
 	return 1;
 }
 
-static char LoadComponent(FILE *fp, stPXWave *pxw)
-{
-	if (pxt_SetModel(pxw, fgeticsv(fp))) return 1;
-	
-	pxw->repeat = fgetfcsv(fp);
-	pxw->volume = fgeticsv(fp);
-	pxw->offset = fgeticsv(fp);
-	return 0;
-}
-
 /*
 	how to use it--it's pretty easy
 	

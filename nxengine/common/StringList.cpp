@@ -137,22 +137,6 @@ void StringList::SwapItems(int index1, int index2)
 	BList::SwapItems(index1, index2);
 }
 
-void StringList::DumpContents()
-{
-	int i, count = CountItems();
-
-#ifdef DEBUG
-	NX_LOG("StringList %08x; %d entries\n", this, count);
-#endif
-	for(i=0;i<count;i++)
-	{
-		char *str = StringAt(i);
-#ifdef DEBUG
-		NX_LOG("(%d) <%08x>: '%s'\n", i, str, str ? str : "(null)");
-#endif
-	}
-}
-
 /*
 void c------------------------------() {}
 */

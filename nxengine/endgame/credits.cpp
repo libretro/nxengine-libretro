@@ -85,8 +85,6 @@ CredCommand cmd;
 		return;
 	}
 	
-	cmd.DumpContents();
-	
 	switch(cmd.type)
 	{
 		case CC_TEXT:

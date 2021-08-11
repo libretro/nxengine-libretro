@@ -17,31 +17,38 @@ const char *stage_dir = "data/Stage";
 const char *pic_dir = "endpic";
 const char *nxdata_dir = ".";
 
-int fps = 0;
-static int fps_so_far = 0;
-static uint32_t fpstimer = 0;
-
 #define GAME_WAIT			(1000/GAME_FPS)	// sets framerate
 #define VISFLAGS			(SDL_APPACTIVE | SDL_APPINPUTFOCUS)
-int framecount = 0;
 bool freezeframe = false;
 
 static bool inhibit_loadfade = false;
 static bool freshstart;
 
-//extern bool extract_files(FILE *exefp);
 extern bool extract_stages(FILE *exefp);
+
+static bool check_data_exists(void)
+{
+   char fname[1024];
+   retro_create_subpath_string(fname, sizeof(fname), g_dir, data_dir, "npc.tbl");
+   NX_LOG("check_data_exists: %s\n", fname);
+
+   if (!file_exists(fname))
+   {
+      NX_ERR("Fatal Error\n");
+
+      NX_ERR("Missing \"%s\" directory.\n", data_dir);
+      NX_ERR("Please copy it over from a Doukutsu installation.\n");
+      return 1;
+   }
+	
+   return 0;
+}
+
 
 bool pre_main(void)
 {
    char filename[1024];
    FILE *fp;
-
-#ifdef DEBUG_LOG
-   char debug_fname[1024];
-   retro_create_path_string(debug_fname, sizeof(debug_fname), g_dir, "debug.txt");
-   SetLogFilename(debug_fname);
-#endif
    // start up inputs first thing because settings_load may remap them
    input_init();
 
@@ -59,10 +66,7 @@ bool pre_main(void)
       return 1;
 
    if (sound_init(fp))
-   {
-      fatal("Failed to initialize sound.");
       return 1;
-   }
 
    if (extract_stages(fp))
    {
@@ -86,33 +90,19 @@ bool pre_main(void)
       return 1;
    }
 
-   //return error;
-
    if (check_data_exists())
       return 1;
 
    if (trig_init())
-   {
-      fatal("Failed trig module init.");
       return 1;
-   }
 
    if (tsc_init())
-   {
-      fatal("Failed to initialize script engine.");
       return 1;
-   }
 
    if (textbox.Init())
-   {
-      fatal("Failed to initialize textboxes.");
       return 1;
-   }
    if (Carets::init())
-   {
-      fatal("Failed to initialize carets.");
       return 1;
-   }
 
    if (game.init())
       return 1;
@@ -145,29 +135,24 @@ void post_main(void)
 {
    if (game.close)
       game.close();
-	Carets::close();
+   Carets::close();
 	
-	Graphics::close();
-	input_close();
-	font_close();
-	sound_close();
-	tsc_close();
-	textbox.Deinit();
+   Graphics::close();
+   input_close();
+   font_close();
+   sound_close();
+   tsc_close();
+   textbox.Deinit();
 }
 
 static bool gameloop(void)
 {
-	//uint32_t gametimer;
-
-	//gametimer = -GAME_WAIT*10;
-
-	if(game.switchstage.mapno < 0)
-	{
-		run_tick();
-		return true;
-	}
-	else
-		return false;
+   if(game.switchstage.mapno < 0)
+   {
+      run_tick();
+      return true;
+   }
+   return false;
 }
 
 static bool in_gameloop = false;
@@ -180,12 +165,10 @@ bool run_main(void)
 	// stopped, or you die & reload. It seems a bit risky to me,
 	// but that's the spec.
 	if (game.switchstage.mapno >= MAPNO_SPECIALS)
-	{
 		StopLoopSounds();
-	}
 
 	// enter next stage, whatever it may be
-	if (game.switchstage.mapno == LOAD_GAME || \
+	if (game.switchstage.mapno == LOAD_GAME ||
 			game.switchstage.mapno == LOAD_GAME_FROM_MENU)
 	{
 		if (game.switchstage.mapno == LOAD_GAME_FROM_MENU)
@@ -194,7 +177,6 @@ bool run_main(void)
 		NX_LOG("= Loading game =\n");
 		if (game_load(settings->last_save_slot))
 		{
-			fatal("savefile error");
 			game.running = false;
 			return 1;
 		}
@@ -251,7 +233,7 @@ loop:
 	return false;
 }
 
-static inline void run_tick()
+static inline void run_tick(void)
 {
 	input_poll();
 	
@@ -263,14 +245,10 @@ static inline void run_tick()
 			game.running = false;
 		}
 		else if (!game.paused)		// no pause from Options
-		{
 			game.pause(GP_PAUSED);
-		}
 	}
 	else if (justpushed(F3KEY))
-	{
 		game.pause(GP_OPTIONS);
-	}
 	
 	// freeze frame
 	game.tick();
@@ -313,28 +291,6 @@ void InitNewGame(bool with_intro)
 void c------------------------------() {}
 */
 
-static void fatal(const char *str)
-{
-	NX_ERR("Fatal error: '%s'\n", str);
-}
-
-static bool check_data_exists()
-{
-   char fname[1024];
-	retro_create_subpath_string(fname, sizeof(fname), g_dir, data_dir, "npc.tbl");
-	NX_LOG("check_data_exists: %s\n", fname);
-
-	if (file_exists(fname))
-      return 0;
-	
-   NX_ERR("Fatal Error\n");
-
-   NX_ERR("Missing \"%s\" directory.\n", data_dir);
-   NX_ERR("Please copy it over from a Doukutsu installation.\n");
-	
-	return 1;
-}
-
 void visible_warning(const char *fmt, ...)
 {
 #if defined(_MSC_VER) && _MSC_VER <= 1310
@@ -342,8 +298,8 @@ void visible_warning(const char *fmt, ...)
    va_list ar;
    char buffer[80];
 
-	va_start(ar, fmt);
-	vsnprintf(buffer, sizeof(buffer), fmt, ar);
-	va_end(ar);
+   va_start(ar, fmt);
+   vsnprintf(buffer, sizeof(buffer), fmt, ar);
+   va_end(ar);
 #endif
 }

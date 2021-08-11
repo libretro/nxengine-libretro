@@ -94,23 +94,6 @@ int CredReader::ReadNumber()
 	return num;
 }
 
-
-/*
-struct CredCommand
-{
-	int type;
-	int parm1, parm2;
-	char text[80];
-	
-	void DumpContents();
-};
-*/
-
-void CredCommand::DumpContents()
-{
-	NX_LOG("CC '%c': [%s]:%04d:%04d\n", type, text, parm, parm2);
-}
-
 void CredReader::Rewind()
 {
 	dataindex = 0;

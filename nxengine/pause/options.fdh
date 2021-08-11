@@ -45,11 +45,6 @@ void _sound_change(ODItem *item, int dir);
 void _sound_get(ODItem *item);
 void _music_change(ODItem *item, int dir);
 void _music_get(ODItem *item);
-static void EnterControlsMenu(ODItem *item, int dir);
-static void _upd_control(ODItem *item);
-static void _edit_control(ODItem *item, int dir);
-static void _finish_control_edit(Message *msg);
-
 
 /* located in sound/sound.cpp */
 

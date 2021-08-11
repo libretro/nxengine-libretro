@@ -46,10 +46,10 @@ Object *s;
 // for example if an object smashed into ground you could pass DOWN in dir.
 void SmokeSide(Object *o, int nclouds, int dir)
 {
-int xmin, xmax, ymin, ymax;
-int xi_min, xi_max, yi_min, yi_max;
-static const int SSLOW = 0x155;
-static const int SFAST = 0x600;
+   int xmin = 0, xmax = 0, ymin = 0, ymax = 0;
+   int xi_min = 0, xi_max = 0, yi_min = 0, yi_max = 0;
+   static const int SSLOW = 0x155;
+   static const int SFAST = 0x600;
 
 	switch(dir)
 	{

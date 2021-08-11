@@ -25,7 +25,7 @@ void ai_nemesis_shot(Object *o)
 		// it goes BLUE, YELLOW, BLUE--that's when the first cloud appears.
 		if ((++o->timer % 4) == 3)
 		{
-			int x, y, xi, yi;
+			int x = 0, y = 0, xi = 0, yi = 0;
 			
 			switch(o->shot.dir)
 			{

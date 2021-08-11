@@ -21,7 +21,6 @@ void ms_close(void);
 void ms_tick(void);
 static void draw_expand(void);
 static void draw_banner(void);
-static void draw_row(int y);
 static int get_color(int tilecode);
 
 

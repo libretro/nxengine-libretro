@@ -29,7 +29,6 @@ public:
 	void RemoveIString(const char *str);
 	
 	void SwapItems(int index1, int index2);
-	void DumpContents();
 	
 	int32_t CountItems() const { return BList::CountItems(); }
 	

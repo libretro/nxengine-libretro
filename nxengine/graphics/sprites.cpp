@@ -64,7 +64,7 @@ void c------------------------------() {}
 */
 
 // ensure the given spritesheet is loaded
-static void Sprites::LoadSheetIfNeeded(int sheetno)
+static void Sprites_LoadSheetIfNeeded(int sheetno)
 {
 	if (!spritesheet[sheetno])
 	{
@@ -95,18 +95,18 @@ static void Sprites::LoadSheetIfNeeded(int sheetno)
 
 
 // master sprite drawing function
-static void Sprites::BlitSprite(int x, int y, int s, int frame, uint8_t dir, \
-								int xoff, int yoff, int wd, int ht)
+static void Sprites_BlitSprite(int x, int y, int s, int frame, uint8_t dir,
+		int xoff, int yoff, int wd, int ht)
 {
-	LoadSheetIfNeeded(sprites[s].spritesheet);
+	Sprites_LoadSheetIfNeeded(sprites[s].spritesheet);
 	
 	dir %= sprites[s].ndirs;
 	SIFDir *sprdir = &sprites[s].frame[frame].dir[dir];
 	
-	DrawSurface(spritesheet[sprites[s].spritesheet], \
-				x, y, \
-				(sprdir->sheet_offset.x + xoff), \
-				(sprdir->sheet_offset.y + yoff), \
+	DrawSurface(spritesheet[sprites[s].spritesheet], 
+				x, y,
+				(sprdir->sheet_offset.x + xoff), 
+				(sprdir->sheet_offset.y + yoff), 
 				wd, ht);
 }
 
@@ -118,7 +118,7 @@ void c------------------------------() {}
 // draw sprite "s" at [x,y]. drawing frame "frame" and dir "dir".
 void Sprites::draw_sprite(int x, int y, int s, int frame, uint8_t dir)
 {
-	BlitSprite(x, y, s, frame, dir, 0, 0, sprites[s].w, sprites[s].h);
+	Sprites_BlitSprite(x, y, s, frame, dir, 0, 0, sprites[s].w, sprites[s].h);
 }
 
 // draw sprite "s", place it's draw point at [x,y] instead of it's upper-left corner.
@@ -126,24 +126,24 @@ void Sprites::draw_sprite_at_dp(int x, int y, int s, int frame, uint8_t dir)
 {
 	x -= sprites[s].frame[frame].dir[dir].drawpoint.x;
 	y -= sprites[s].frame[frame].dir[dir].drawpoint.y;
-	BlitSprite(x, y, s, frame, dir, 0, 0, sprites[s].w, sprites[s].h);
+	Sprites_BlitSprite(x, y, s, frame, dir, 0, 0, sprites[s].w, sprites[s].h);
 }
 
 
 // draw a portion of a sprite, such as a sprite in the middle of "teleporting".
 // only the area between clipy1 (inclusive) and clipy2 (exclusive) are visible.
 void Sprites::draw_sprite_clipped(int x, int y, int s, int frame, uint8_t dir, \
-						int clipx1, int clipx2, int clipy1, int clipy2)
+		int clipx1, int clipx2, int clipy1, int clipy2)
 {
-	BlitSprite(x + clipx1, y + clipy1, s, frame, dir, clipx1, clipy1, \
-				(clipx2 - clipx1), (clipy2 - clipy1));
+	Sprites_BlitSprite(x + clipx1, y + clipy1, s, frame, dir, clipx1, clipy1, 
+			(clipx2 - clipx1), (clipy2 - clipy1));
 }
 
 // draw a clipped sprite while clipping only the width.
 // used for drawing percentage bars, etc.
 void Sprites::draw_sprite_clip_width(int x, int y, int s, int frame, int wd)
 {
-	BlitSprite(x, y, s, frame, 0, 0, 0, wd, sprites[s].h);
+	Sprites_BlitSprite(x, y, s, frame, 0, 0, 0, wd, sprites[s].h);
 }
 
 // draws a sprite at less than it's actual width by chopping it into two chunks.
@@ -161,14 +161,14 @@ int xoff;
 	}
 	
 	// draw the left part
-	BlitSprite(x, y, s, frame, 0, 0, 0, repeat_at, sprites[s].h);
+	Sprites_BlitSprite(x, y, s, frame, 0, 0, 0, repeat_at, sprites[s].h);
 	x += repeat_at;
 	wd -= repeat_at;
 	
 	// draw the rest of it
 	xoff = (sprites[s].w - wd);
 	
-	BlitSprite(x, y, s, frame, 0, xoff, 0, wd, sprites[s].h);
+	Sprites_BlitSprite(x, y, s, frame, 0, xoff, 0, wd, sprites[s].h);
 }
 
 // draws a sprite to any arbitrary width by repeating it over the given distance.
@@ -181,7 +181,7 @@ void Sprites::draw_sprite_repeating_x(int x, int y, int s, int frame, int wd)
 		int blitwd = wdleft;
 		if (blitwd > sprites[s].w) blitwd = sprites[s].w;
 		
-		BlitSprite(x, y, s, frame, 0, 0, 0, blitwd, sprites[s].h);
+		Sprites_BlitSprite(x, y, s, frame, 0, 0, 0, blitwd, sprites[s].h);
 		x += blitwd;
 		wdleft -= blitwd;
 	}
@@ -194,7 +194,7 @@ void c------------------------------() {}
 // return the NXSurface for a given spritesheet #
 NXSurface *Sprites::get_spritesheet(int sheetno)
 {
-	LoadSheetIfNeeded(sheetno);
+	Sprites_LoadSheetIfNeeded(sheetno);
 	return spritesheet[sheetno];
 }
 
