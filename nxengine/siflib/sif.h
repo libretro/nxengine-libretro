@@ -2,8 +2,6 @@
 #ifndef _SIF_H
 #define _SIF_H
 
-#include "../common/misc.fdh"	// stprintf
-
 // a sprite has certain settings global to the whole sprite.
 // each sprite also contains a certain number of frames.
 // each frame contains one or more directions, for example for when that
@@ -40,11 +38,6 @@ struct SIFPoint
 		return (this->x == x && this->y == y);
 	}
 	
-	const char *ToString()
-	{
-		return stprintf("[%d, %d]", this->x, this->y);
-	}
-	
 	bool operator== (const SIFPoint &other) const
 	{
 		return (this->x == other.x && this->y == other.y);
@@ -78,11 +71,6 @@ struct SIFRect
 	{
 		return (this->x1 == x1 && this->y1 == y1 && \
 				this->x2 == x2 && this->y2 == y2);
-	}
-	
-	const char *ToString()
-	{
-		return stprintf("[%d, %d] - [%d, %d]", this->x1, this->y1, this->x2, this->y2);
 	}
 	
 	bool operator== (const SIFRect &other) const

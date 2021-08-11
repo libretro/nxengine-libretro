@@ -56,6 +56,5 @@ void music_set_enabled(int newstate);
 /* located in common/misc.cpp */
 
 //-----------------[referenced from pause/options.cpp]---------------//
-int count_string_list(const char *list[]);
 void maxcpy(char *dst, const char *src, int maxlen);
 

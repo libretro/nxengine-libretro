@@ -59,6 +59,3 @@ void fputi(uint16_t word, FILE *fp);
 void fputl(uint32_t word, FILE *fp);
 uint16_t fgeti(FILE *fp);
 uint32_t fgetl(FILE *fp);
-int fgeticsv(FILE *fp);
-double fgetfcsv(FILE *fp);
-

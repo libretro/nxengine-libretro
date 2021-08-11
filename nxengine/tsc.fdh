@@ -66,7 +66,6 @@ void StopScript(ScriptInstance *s);
 bool JumpScript(int newscriptno, int pageno);
 void ExecScript(ScriptInstance *s);
 int CVTDir(int csdir);
-const char *DescribeCSDir(int csdir);
 void SetCSDir(Object *o, int csdir);
 void SetPDir(int d);
 void NPCDo(int id2, int p1, int p2, void (*action_function)(Object *o, int p1, int p2));
@@ -126,10 +125,3 @@ void org_fade(void);
 //----------------------[referenced from tsc.cpp]--------------------//
 void staterr(const char *fmt, ...);
 void stat(const char *fmt, ...);
-
-
-/* located in common/misc.cpp */
-
-//----------------------[referenced from tsc.cpp]--------------------//
-char *stprintf(const char *fmt, ...);
-

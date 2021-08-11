@@ -1160,20 +1160,6 @@ const int cdir_to_nxdir[4] = { LEFT, UP, RIGHT, DOWN };
 	return LEFT;
 }
 
-const char *DescribeCSDir(int csdir)
-{
-	switch(csdir)
-	{
-		case 0: return "LEFT";
-		case 1: return "UP";
-		case 2: return "RIGHT";
-		case 3: return "DOWN";
-		case 4: return "FACE_PLAYER";
-		case 5: return "NO_CHANGE";
-		default: return stprintf("Invalid CS Dir %d", csdir);
-	}
-}
-
 // converts from a CS direction (0123 = left,up,right,down)
 // into a NXEngine direction (0123 = right,left,up,down),
 // and applies the converted direction to the object.

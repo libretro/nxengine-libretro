@@ -124,31 +124,6 @@ void fputfloat(double q, FILE *fp)
 }
 #endif
 
-// read a string from a file until a null is encountered
-void freadstring(FILE *fp, char *buf, int max)
-{
-   int i;
-
-   --max;
-   for(i=0;i<max;i++)
-   {
-      buf[i] = fgetc(fp);
-      if (!buf[i])
-      {
-         return;
-      }
-   }
-
-   buf[i] = 0;
-}
-
-// write a string to a file and null-terminate it
-void fputstring(const char *buf, FILE *fp)
-{
-   if (buf[0]) fprintf(fp, "%s", buf);
-   fputc(0, fp);
-}
-
 // write a string to a file-- does NOT null-terminate it
 void fputstringnonull(const char *buf, FILE *fp)
 {
@@ -172,47 +147,6 @@ bool fverifystring(FILE *fp, const char *str)
    return result;
 }
 
-// read data from a file until ',' or CR
-void fgetcsv(FILE *fp, char *str, int maxlen)
-{
-   int i, j;
-   char ch;
-
-   maxlen--;
-   for(i=j=0;i<maxlen;i++)
-   {
-      ch = fgetc(fp);
-
-      if (ch==13 || ch==',' || ch=='}' || ch==-1)
-      {
-         break;
-      }
-
-      if (ch != 10)
-      {
-         str[j++] = ch;
-      }
-   }
-
-   str[j] = 0;
-}
-
-// read a number from a CSV'd list in a file
-int fgeticsv(FILE *fp)
-{
-   char buffer[80];
-   fgetcsv(fp, buffer, sizeof(buffer));
-   return atoi(buffer);
-}
-
-double fgetfcsv(FILE *fp)
-{
-   char buffer[80];
-   fgetcsv(fp, buffer, sizeof(buffer));
-   return atof(buffer);
-}
-
-
 // read data from a file until CR
 void fgetline(FILE *fp, char *str, int maxlen)
 {
@@ -228,18 +162,6 @@ void fgetline(FILE *fp, char *str, int maxlen)
    }
 }
 
-int filesize(FILE *fp)
-{
-   int cp, sz;
-
-   cp = ftell(fp);
-   fseek(fp, 0, SEEK_END);
-   sz = ftell(fp);
-   fseek(fp, cp, SEEK_SET);
-
-   return sz;
-}
-
 bool file_exists(const char *fname)
 {
    FILE *fp;
@@ -248,22 +170,6 @@ bool file_exists(const char *fname)
    if (!fp) return 0;
    fclose(fp);
    return 1;
-}
-
-char *stprintf(const char *fmt, ...)
-{
-#if defined(_MSC_VER) && _MSC_VER <= 1310
-   return "";
-#else
-   va_list ar;
-   char *str = GetStaticStr();
-
-   va_start(ar, fmt);
-   vsnprintf(str, 255, fmt, ar);
-   va_end(ar);
-
-   return str;
-#endif
 }
 
 /*
@@ -321,38 +227,6 @@ bool strbegin(const char *bigstr, const char *smallstr)
       if (bigstr[i] != smallstr[i]) return false;
 
    return true;
-}
-
-bool strcasebegin(const char *bigstr, const char *smallstr)
-{
-   int i;
-
-   for(i=0;smallstr[i];i++)
-      if (toupper(bigstr[i]) != toupper(smallstr[i])) return false;
-
-   return true;
-}
-
-
-// returns how many strings are in a null-terminated array of C strings
-int count_string_list(const char *list[])
-{
-   int i;
-   for(i=0;list[i];i++) ;
-   return i;
-}
-
-
-char *GetStaticStr(void)
-{
-   static int counter = 0;
-   static struct
-   {
-      char str[1024];
-   } bufs[24];
-
-   if (++counter >= 24) counter = 0;
-   return bufs[counter].str;
 }
 
 // a strncpy that works as you might expect
