@@ -522,7 +522,6 @@ int cmd;
 int val, parm[6];
 int i;
 Object *o;
-char *mnemonic;
 char *str;
 int cmdip;
 
@@ -624,7 +623,6 @@ int cmdip;
 	{
 		cmdip = s->ip++;
 		cmd = s->program[cmdip];
-		mnemonic = (char *)cmd_table[cmd].mnemonic;
 		
 		if (cmd != OP_TEXT)
 		{
