@@ -86,16 +86,16 @@ void ms_tick(void)
 	{
 		
 		// draw map
-		DrawRect(ms.x - 1, ms.y - 1, ms.x + ms.w, ms.y + ms.h, DK_BLUE);
+		Graphics::DrawRect(ms.x - 1, ms.y - 1, ms.x + ms.w, ms.y + ms.h, DK_BLUE);
 
-      FillRect(ms.x - 1, ms.y - 1, ms.x + ms.w, ms.y + ms.h, DK_BLUE);
+      Graphics::FillRect(ms.x - 1, ms.y - 1, ms.x + ms.w, ms.y + ms.h, DK_BLUE);
       for (int y=0;y<ms.current_row;y++)
       {
          for(int x=0;x<map.xsize;x++)
          {
             int tc = tilecode[map.tiles[x][y]];
 
-            draw_sprite(ms.x+x, ms.y+y, SPR_MAP_PIXELS, get_color(tc));
+            Sprites::draw_sprite(ms.x+x, ms.y+y, SPR_MAP_PIXELS, get_color(tc));
          }
       }
 
@@ -106,7 +106,7 @@ void ms_tick(void)
 		
 		// you-are-here dot
 		if (++ms.timer & 8)
-			draw_sprite(ms.px, ms.py, SPR_MAP_PIXELS, 4);
+			Sprites::draw_sprite(ms.px, ms.py, SPR_MAP_PIXELS, 4);
 		
 		// dismissal
 		if (ms.lastbuttondown)
@@ -150,13 +150,13 @@ int x1, y1, x2, y2;
 	x2 = (SCREEN_WIDTH / 2)  + (wd / 2);
 	y2 = (SCREEN_HEIGHT / 2) + (ht / 2);
 	
-	FillRect(x1, y1, x2, y2, DK_BLUE);
+	Graphics::FillRect(x1, y1, x2, y2, DK_BLUE);
 }
 
 
 static void draw_banner(void)
 {
-	FillRect(0, BANNER_TOP, SCREEN_WIDTH, BANNER_BTM, NXColor(0, 0, 0));
+	Graphics::FillRect(0, BANNER_TOP, SCREEN_WIDTH, BANNER_BTM, NXColor(0, 0, 0));
 	font_draw(ms.textx, ms.texty, ms.bannertext, 0);
 }
 

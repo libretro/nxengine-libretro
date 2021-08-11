@@ -184,7 +184,7 @@ bool Credits::DrawLine(CredLine *line)
 	
 	if (line->image)
 	{
-		draw_sprite(x - 24, y - 8, SPR_CASTS, line->image);
+		Sprites::draw_sprite(x - 24, y - 8, SPR_CASTS, line->image);
 		//DrawBox(x, y, x+GetFontWidth(line->text, TEXT_SPACING), y+8,  56, 0, 0);
 	}
 	
@@ -357,10 +357,10 @@ void BigImage::Draw()
 	
 	// take up any unused space with blue
 	if (state != BI_HOLD)
-		FillRect(0, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT, DK_BLUE);
+		Graphics::FillRect(0, 0, SCREEN_WIDTH/2, SCREEN_HEIGHT, DK_BLUE);
 	
 	if (state != BI_CLEAR)
-		DrawSurface(images[imgno], imagex, 0);
+		Graphics::DrawSurface(images[imgno], imagex, 0);
 }
 
 

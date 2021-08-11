@@ -147,7 +147,7 @@ int x, y, i;
 		int y = ((ft->objY - (map.displayed_yscroll >> CSF)) + FT_Y_HOLD);
 		int h = (SCREEN_HEIGHT - y);
 		
-		set_clip_rect(0, y, SCREEN_WIDTH, h);
+		Graphics::set_clip_rect(0, y, SCREEN_WIDTH, h);
 	}
 	
 	// render the damage amount into a string
@@ -165,12 +165,12 @@ int x, y, i;
 	// draw the text char by char
 	for(i=0;i<textlen;i++)
 	{
-		draw_sprite(x, y, ft->sprite, text[i], 0);
+		Sprites::draw_sprite(x, y, ft->sprite, text[i], 0);
 		x += 8;
 	}
 	
 	if (ft->state == FT_SCROLL_AWAY)
-		clear_clip_rect();
+		Graphics::clear_clip_rect();
 }
 
 bool FloatText::IsScrollingAway()

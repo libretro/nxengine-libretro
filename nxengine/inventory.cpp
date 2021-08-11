@@ -140,7 +140,7 @@ int x, y, w, i, c;
 	// - draw the weapons ----
 	x = inv.x + ARMS_X;
 	y = inv.y + ARMS_Y;
-	draw_sprite(x, y, SPR_TEXT_ARMS, 0, 0);
+	Sprites::draw_sprite(x, y, SPR_TEXT_ARMS, 0, 0);
 	y += sprites[SPR_TEXT_ARMS].h;
 	
 	DrawSelector(&inv.armssel, x, y);
@@ -150,7 +150,7 @@ int x, y, w, i, c;
 	{
 		if (!player->weapons[w].hasWeapon) continue;
 		
-		draw_sprite(x+1, y+1, SPR_ARMSICONS, w, 0);
+		Sprites::draw_sprite(x+1, y+1, SPR_ARMSICONS, w, 0);
 		DrawWeaponLevel(x+1, y+16, w);
 		DrawWeaponAmmo(x+1, y+16+8, w);
 		
@@ -160,7 +160,7 @@ int x, y, w, i, c;
 	// - draw the items ----
 	x = inv.x + ITEMS_X;
 	y = inv.y + ITEMS_Y;
-	draw_sprite(x, y, SPR_TEXT_ITEMS, 0, 0);
+	Sprites::draw_sprite(x, y, SPR_TEXT_ITEMS, 0, 0);
 	y += sprites[SPR_TEXT_ITEMS].h;
 	
 	DrawSelector(&inv.itemsel, x, y);
@@ -168,7 +168,7 @@ int x, y, w, i, c;
 	c = 0;
 	for(i=0;i<inv.itemsel.nitems;i++)
 	{
-		draw_sprite(x, y, SPR_ITEMIMAGE, inv.itemsel.items[i], 0);
+		Sprites::draw_sprite(x, y, SPR_ITEMIMAGE, inv.itemsel.items[i], 0);
 		
 		x += inv.itemsel.spacing_x;
 		
@@ -347,6 +347,6 @@ int xsel, ysel;
 	
 	selx = x + (xsel * selector->spacing_x);
 	sely = y + (ysel * selector->spacing_y);
-	draw_sprite(selx, sely, selector->sprite, selector->flashstate, 0);
+	Sprites::draw_sprite(selx, sely, selector->sprite, selector->flashstate, 0);
 }
 

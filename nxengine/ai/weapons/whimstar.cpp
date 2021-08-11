@@ -93,7 +93,7 @@ int i;
 		int scr_x = (stars[i].x >> CSF) - (map.displayed_xscroll >> CSF);
 		int scr_y = (stars[i].y >> CSF) - (map.displayed_yscroll >> CSF);
 		
-		draw_sprite_at_dp(scr_x, scr_y, SPR_WHIMSICAL_STAR, i);
+		Sprites::draw_sprite_at_dp(scr_x, scr_y, SPR_WHIMSICAL_STAR, i);
 	}
 }
 

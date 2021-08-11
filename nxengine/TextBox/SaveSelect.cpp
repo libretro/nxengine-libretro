@@ -131,9 +131,9 @@ const int w = fCoords.w - 33;
 	int repeatwd = w - (sidewd * 2);
 	int frame = (index == fCurSel) ? 0 : 1;
 	
-	draw_sprite(x, y, SPR_SAVESELECTOR_SIDES, frame, LEFT);
-	draw_sprite_repeating_x(x+sidewd, y, SPR_SAVESELECTOR_MIDDLE, frame, repeatwd);
-	draw_sprite(x+sidewd+repeatwd, y, SPR_SAVESELECTOR_SIDES, frame, RIGHT);
+	Sprites::draw_sprite(x, y, SPR_SAVESELECTOR_SIDES, frame, LEFT);
+	Sprites::draw_sprite_repeating_x(x+sidewd, y, SPR_SAVESELECTOR_MIDDLE, frame, repeatwd);
+	Sprites::draw_sprite(x+sidewd+repeatwd, y, SPR_SAVESELECTOR_SIDES, frame, RIGHT);
 	
 	y += 4;
 	const int FONT_SPACING = 5;
@@ -163,17 +163,17 @@ int x, y, s;
 	if (fPicXOffset < 0)
 	{
 		fPicXOffset += 8;
-		set_clip_rect(MSG_X+4, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		Graphics::set_clip_rect(MSG_X+4, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	}
 	
 	// player pic
-	draw_sprite((MSG_X+8) + fPicXOffset, MSG_NORMAL_Y+8, SPR_SELECTOR_ARMS);
+	Sprites::draw_sprite((MSG_X+8) + fPicXOffset, MSG_NORMAL_Y+8, SPR_SELECTOR_ARMS);
 	
 	x = (MSG_X + 12) + fPicXOffset;
 	y = MSG_NORMAL_Y + 12;
 	s = (p->equipmask & EQUIP_MIMIGA_MASK) ? SPR_MYCHAR_MIMIGA : SPR_MYCHAR;
 	
-	draw_sprite(x, y, s, 0, RIGHT);
+	Sprites::draw_sprite(x, y, s, 0, RIGHT);
 	
 	// player gun
 	if (p->curWeapon != WPN_NONE && p->curWeapon != WPN_BLADE)
@@ -181,12 +181,12 @@ int x, y, s;
 		int spr, frame;
 		GetSpriteForGun(p->curWeapon, 0, &spr, &frame);
 		
-		draw_sprite_at_dp(x + sprites[s].frame[0].dir[RIGHT].actionpoint.x, \
+		Sprites::draw_sprite_at_dp(x + sprites[s].frame[0].dir[RIGHT].actionpoint.x, \
 						  y + sprites[s].frame[0].dir[RIGHT].actionpoint.y, \
 						  spr, frame, RIGHT);
 	}
 	
-	clear_clip_rect();
+	Graphics::clear_clip_rect();
 	
 	// whimsical stars
 	if (p->equipmask & EQUIP_WHIMSTAR)
@@ -196,7 +196,7 @@ int x, y, s;
 		for(int i=0;i<3;i++)
 		{
 			static int frames[] = { 1, 0, 2 };
-			draw_sprite(x, y+20, SPR_WHIMSICAL_STAR, frames[i]);
+			Sprites::draw_sprite(x, y+20, SPR_WHIMSICAL_STAR, frames[i]);
 			x += 10;
 		}
 	}
@@ -210,7 +210,7 @@ int x, y, s;
 	{
 		if (p->weapons[i].hasWeapon)
 		{
-			draw_sprite(x, y, SPR_ARMSICONS, i);
+			Sprites::draw_sprite(x, y, SPR_ARMSICONS, i);
 			x += 20;
 		}
 	}
@@ -225,12 +225,12 @@ int x, y, s;
 		int curxp = p->weapons[p->curWeapon].xp;
 		int maxxp = player->weapons[p->curWeapon].max_xp[level];
 		
-		draw_sprite(xb, yb, SPR_XPLEVELICON); xb += 16;
-		draw_sprite(xb, yb, SPR_WHITENUMBERS, level+1); xb += 8;
-		draw_sprite(xb, yb, SPR_XPBAR);
+		Sprites::draw_sprite(xb, yb, SPR_XPLEVELICON); xb += 16;
+		Sprites::draw_sprite(xb, yb, SPR_WHITENUMBERS, level+1); xb += 8;
+		Sprites::draw_sprite(xb, yb, SPR_XPBAR);
 		
 		if ((curxp == maxxp) && level == 2)
-			draw_sprite(xb, yb, SPR_XPBAR, 3);		// MAX
+			Sprites::draw_sprite(xb, yb, SPR_XPBAR, 3);		// MAX
 		else
 			DrawPercentage(xb, yb, SPR_XPBAR, 1, curxp, maxxp, sprites[SPR_XPBAR].w);
 	}
@@ -261,7 +261,7 @@ int x, y, s;
 	{
 		if (CheckInventoryList(items[i], p->inventory, p->ninventory) != -1)
 		{
-			draw_sprite(x, y, SPR_ITEMIMAGE, items[i]);
+			Sprites::draw_sprite(x, y, SPR_ITEMIMAGE, items[i]);
 			x += 28;
 			
 			if (x + sprites[SPR_ITEMIMAGE].w > (MSG_X + MSG_W) - 8)
@@ -284,12 +284,12 @@ int hx, len;
 	hx = xright - 28 - 24;
 	if (p->maxhp > 99) { hx -= 8; }
 	len = (p->hp > 99) ? 8 : 0;
-	draw_sprite(hx-len, y-1, SPR_SS_HEALTH_ICON, 0, 0);
+	Sprites::draw_sprite(hx-len, y-1, SPR_SS_HEALTH_ICON, 0, 0);
 	DrawNumberRAlign(hx+24, y, SPR_WHITENUMBERS, p->hp);
 	
 	hx = xright - 4;
 	len = (p->maxhp > 99) ? 32 : 24;
-	draw_sprite(hx-len, y, SPR_WHITENUMBERS, 11);		// '/' character
+	Sprites::draw_sprite(hx-len, y, SPR_WHITENUMBERS, 11);		// '/' character
 	DrawNumberRAlign(hx, y, SPR_WHITENUMBERS, p->maxhp);
 }
 

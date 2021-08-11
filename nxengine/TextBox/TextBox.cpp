@@ -242,14 +242,14 @@ void TextBox::DrawTextBox()
 	
 	// set clipping region to inside of frame, so that text cannot
 	// overflow during scrolling, etc.
-	set_clip_rect(CONTENT_X, text_top, SCREEN_WIDTH, 48);
+	Graphics::set_clip_rect(CONTENT_X, text_top, SCREEN_WIDTH, 48);
 	
 	//SDL_FillRect(screen, &cliprect, SDL_MapRGB(screen->format,0,0,255));
 	
 	// draw face
 	if (fFace != 0)
 	{
-		draw_sprite(CONTENT_X+fFaceXOffset, fCoords.y+CONTENT_Y-3, SPR_FACES, fFace);
+		Sprites::draw_sprite(CONTENT_X+fFaceXOffset, fCoords.y+CONTENT_Y-3, SPR_FACES, fFace);
 		text_x += (FACE_W + 8);		// move text over by width of face
 		
 		// face slide-in animation
@@ -284,14 +284,14 @@ void TextBox::DrawTextBox()
 		if (i == fCurLine && fCursorTimer < 7)
 		{
 			int x = (text_x + lineWidth);
-			FillRect(x, y, x+4, y+10,  255,255,255);
+			Graphics::FillRect(x, y, x+4, y+10,  255,255,255);
 		}
 		
 		y += MSG_LINE_SPACING;
 	}
 	
 	// release the clipping region clipping our drawing to the text box
-	clear_clip_rect();
+	Graphics::clear_clip_rect();
 }
 
 // adds the next char to the box, or, in TB_LINE_AT_ONCE mode,
@@ -368,16 +368,16 @@ void c------------------------------() {}
 // the specified coordinates.
 void TextBox::DrawFrame(int x, int y, int w, int h)
 {
-	draw_sprite_chopped(x, y, SPR_TEXTBOX, 0, w, 8);		// draw top
+	Sprites::draw_sprite_chopped(x, y, SPR_TEXTBOX, 0, w, 8);		// draw top
 	y += 8;
 	
 	for(int draw=0;draw<h-16;draw+=8)
 	{
-		draw_sprite_chopped(x, y, SPR_TEXTBOX, 1, w, 8);	// draw middle
+		Sprites::draw_sprite_chopped(x, y, SPR_TEXTBOX, 1, w, 8);	// draw middle
 		y += 8;
 	}
 	
-	draw_sprite_chopped(x, y, SPR_TEXTBOX, 2, w, 8);		// draw bottom
+	Sprites::draw_sprite_chopped(x, y, SPR_TEXTBOX, 2, w, 8);		// draw bottom
 }
 
 

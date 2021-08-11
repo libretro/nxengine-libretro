@@ -59,7 +59,7 @@ void (*ai_routine[])(Object *) = {
 			o->x += o->xinertia;
 			o->y += o->yinertia;
 			
-			draw_sprite(o->x >> CSF, o->y >> CSF, o->sprite, o->frame, o->dir);
+			Sprites::draw_sprite(o->x >> CSF, o->y >> CSF, o->sprite, o->frame, o->dir);
 		}
 		
 		o = next;

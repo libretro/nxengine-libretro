@@ -56,7 +56,7 @@ void TB_ItemImage::Draw(void)
 	int x = ITEMBOX_X + ((ITEMBOX_W / 2) - (sprites[fSprite].w / 2));
 	if (sprites[fSprite].w == 14) x--;		// hack for ArmsIcons
 	
-	draw_sprite(x, ITEMBOX_Y + fYOffset, fSprite, fFrame);
+	Sprites::draw_sprite(x, ITEMBOX_Y + fYOffset, fSprite, fFrame);
 }
 
 

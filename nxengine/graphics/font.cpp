@@ -60,13 +60,13 @@ bool font_init(void)
 	if (error) return 1;
 
 	fontheight = 0;
-	for (char c = 'A'; c <= 'Z'; c++)
+	for (uint8_t c = 'A'; c <= 'Z'; c++)
 	{
 		if (whitefont.letters[c]->h > fontheight)
 			fontheight = whitefont.letters[c]->h;
 	}
 
-	for (char c = 'a'; c <= 'z'; c++)
+	for (uint8_t c = 'a'; c <= 'z'; c++)
 	{
 		if (whitefont.letters[c]->h > fontheight)
 			fontheight = whitefont.letters[c]->h;
@@ -119,10 +119,10 @@ void NXFont::free()
 
 static void set_color(SDL_Surface *font, uint16_t color, uint16_t key)
 {
-	for (unsigned h = 0; h < font->h; h++)
+	for (unsigned h = 0; h < (unsigned)font->h; h++)
 	{
 		uint16_t *pixels = (uint16_t*)font->pixels + h * (font->pitch / 2);
-		for (unsigned w = 0; w < font->w; w++)
+		for (unsigned w = 0; w < (unsigned)font->w; w++)
 		{
 			if (pixels[w] != key)
 				pixels[w] = color;
@@ -139,15 +139,11 @@ bool NXFont::InitChars(SDL_Surface *font, uint32_t color)
 	fgcolor.g = (uint8_t)(color >> 8);
 	fgcolor.b = (uint8_t)(color);
 
-	char str[2];
-	str[1] = 0;
 	uint16_t blue = 0x1f;
 
 	for(int i=1;i<NUM_LETTERS_RENDERED;i++)
 	{
-		str[0] = i;
-
-      letter = (SDL_Surface*)AllocNewSurface(0, 6, 10);
+		letter = (SDL_Surface*)AllocNewSurface(0, 6, 10);
 
 		SDL_Rect src = {0};
 
@@ -193,14 +189,8 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 	bgcolor.g = (uint8_t)(shadowcolor >> 8);
 	bgcolor.b = (uint8_t)(shadowcolor);
 
-	char str[2];
-	str[1] = 0;
-
-
 	for(int i=1;i<NUM_LETTERS_RENDERED;i++)
 	{
-		str[0] = i;
-
 		uint16_t blue = 0x1f;
 
 		top = (SDL_Surface*)AllocNewSurface(0, 6, 10);
@@ -264,13 +254,13 @@ static int text_draw(int x, int y, const char *text, int spacing, NXFont *font)
 
 	for(i=0;text[i];i++)
 	{
-		char ch = text[i];
+		uint8_t ch = text[i];
 		SDL_Surface *letter = font->letters[ch];
 
 		if (ch == '=' && game.mode != GM_CREDITS)
 		{
 			if (rendering)
-				draw_sprite((x), (y)+2, SPR_TEXTBULLET);
+				Sprites::draw_sprite((x), (y)+2, SPR_TEXTBULLET);
 		}
 		else if (rendering && ch != ' ' && letter)
 		{

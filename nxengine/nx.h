@@ -13,7 +13,6 @@
 #include "config.h"
 #include "common/basics.h"
 #include "common/BList.h"
-#include "common/StringList.h"
 #include "common/DBuffer.h"
 #include "common/DString.h"
 #include "common/InitList.h"
@@ -22,15 +21,6 @@
 #include "graphics/tileset.h"
 #include "graphics/sprites.h"
 typedef SIFPoint	Point;
-using namespace Graphics;
-using Sprites::draw_sprite;
-using Sprites::draw_sprite_at_dp;
-using Sprites::draw_sprite_clipped;
-using Sprites::draw_sprite_clip_width;
-using Sprites::draw_sprite_chopped;
-using Sprites::draw_sprite_repeating_x;
-using Sprites::create_spritesheet;
-using Sprites::get_spritesheet;
 using Tileset::draw_tile;
 
 #define CSF				9
@@ -60,7 +50,5 @@ class Object;
 #include "p_arms.h"
 
 #include "sound/sound.h"
-
-const char *strhex(int value);
 
 #endif

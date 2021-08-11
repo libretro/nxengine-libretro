@@ -308,15 +308,16 @@ void megaquake(int quaketime, int snd)
 
 void DrawScene(void)
 {
-int scr_x, scr_y;
+   int scr_x, scr_y;
 	
-   ClearScreen(BLACK);
-	// sporidically-used animated tile feature,
-	// e.g. water currents in Waterway
-	if (map.nmotiontiles)
-		AnimateMotionTiles();
+   Graphics::ClearScreen(BLACK);
+
+   // sporidically-used animated tile feature,
+   // e.g. water currents in Waterway
+   if (map.nmotiontiles)
+      AnimateMotionTiles();
 	
-	// draw background map tiles
+   // draw background map tiles
 		map_draw_backdrop();
 		map_draw(false);
 	
@@ -373,11 +374,11 @@ int scr_x, scr_y;
 				
 				if (o->clip_enable)
 				{
-					draw_sprite_clipped(scr_x, scr_y, o->sprite, o->frame, o->dir, o->clipx1, o->clipx2, o->clipy1, o->clipy2);
+					Sprites::draw_sprite_clipped(scr_x, scr_y, o->sprite, o->frame, o->dir, o->clipx1, o->clipx2, o->clipy1, o->clipy2);
 				}
 				else
 				{
-					draw_sprite(scr_x, scr_y, o->sprite, o->frame, o->dir);
+					Sprites::draw_sprite(scr_x, scr_y, o->sprite, o->frame, o->dir);
 				}
 			}
 		}

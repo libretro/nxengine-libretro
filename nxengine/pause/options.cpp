@@ -65,7 +65,7 @@ FocusHolder *fh;
 		return;
 	}
 	
-	ClearScreen(BLACK);
+	Graphics::ClearScreen(BLACK);
 	Options::run_and_draw_objects();
 	
 	fh = optionstack.ItemAt(optionstack.CountItems() - 1);

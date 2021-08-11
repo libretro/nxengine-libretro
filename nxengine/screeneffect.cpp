@@ -37,7 +37,7 @@ void SE_FlashScreen::Draw(void)
 	}
 	
 	if (flashstate)
-		ClearScreen(0xff, 0xff, 0xff);
+		Graphics::ClearScreen(0xff, 0xff, 0xff);
 }
 
 /*
@@ -86,14 +86,14 @@ int rel_x, rel_y;
 	// draw a horizontal bar
 	scr_y1 = (rel_y - star->size) >> CSF;
 	scr_y2 = (rel_y + star->size) >> CSF;
-	FillRect(0, scr_y1, SCREEN_WIDTH, scr_y2, 255, 255, 255);
+	Graphics::FillRect(0, scr_y1, SCREEN_WIDTH, scr_y2, 255, 255, 255);
 	
 	if (star->state == 0)
 	{
 		// draw a vertical bar
 		scr_x1 = (rel_x - starflash.size) >> CSF;
 		scr_x2 = (rel_x + starflash.size) >> CSF;
-		FillRect(scr_x1, 0, scr_x2, SCREEN_HEIGHT, 255, 255, 255);
+		Graphics::FillRect(scr_x1, 0, scr_x2, SCREEN_HEIGHT, 255, 255, 255);
 		
 		// once it's big enough, switch to making it smaller
 		if (star->size > (1280<<CSF))
@@ -160,7 +160,7 @@ int x, y;
 			if (frame > FADE_LAST_FRAME) frame = FADE_LAST_FRAME;	\
 			\
 			for(y=0;y<SCREEN_HEIGHT;y+=16)							\
-				draw_sprite(x, y, fade.sprite, frame);		\
+				Sprites::draw_sprite(x, y, fade.sprite, frame);		\
 		}		\
 	}
 	
@@ -171,17 +171,15 @@ int x, y;
 			if (frame > FADE_LAST_FRAME) frame = FADE_LAST_FRAME;	\
 			\
 			for(x=0;x<SCREEN_WIDTH;x+=16)							\
-				draw_sprite(x, y, fade.sprite, frame);		\
+				Sprites::draw_sprite(x, y, fade.sprite, frame);		\
 		}		\
 	}
 	
 	if (state == FS_NO_FADE)
-	{
 		return;
-	}
 	else if (state == FS_FADED_OUT)
 	{
-		ClearScreen(DK_BLUE);
+		Graphics::ClearScreen(DK_BLUE);
 		return;
 	}
 	
@@ -209,10 +207,10 @@ int x, y;
 					{
 						if (frame > FADE_LAST_FRAME) frame = FADE_LAST_FRAME;
 						
-						draw_sprite(centerx+x, centery+y, fade.sprite, frame);
-						draw_sprite(centerx-x, centery+y, fade.sprite, frame);
-						draw_sprite(centerx+x, centery-y, fade.sprite, frame);
-						draw_sprite(centerx-x, centery-y, fade.sprite, frame);
+						Sprites::draw_sprite(centerx+x, centery+y, fade.sprite, frame);
+						Sprites::draw_sprite(centerx-x, centery+y, fade.sprite, frame);
+						Sprites::draw_sprite(centerx+x, centery-y, fade.sprite, frame);
+						Sprites::draw_sprite(centerx-x, centery-y, fade.sprite, frame);
 					}
 					
 					frame++;

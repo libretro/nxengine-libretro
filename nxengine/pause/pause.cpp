@@ -10,11 +10,11 @@ bool pause_init(int param)
 
 void pause_tick()
 {
-	ClearScreen(BLACK);
+	Graphics::ClearScreen(BLACK);
 	
 	int cx = (SCREEN_WIDTH / 2) - (sprites[SPR_RESETPROMPT].w / 2);
 	int cy = (SCREEN_HEIGHT / 2) - (sprites[SPR_RESETPROMPT].h / 2);
-	draw_sprite(cx, cy, SPR_RESETPROMPT);
+	Sprites::draw_sprite(cx, cy, SPR_RESETPROMPT);
 	
 	const char *str = "F3:Options";
 	cx = (SCREEN_WIDTH / 2) - (GetFontWidth(str, 0) / 2) - 4;

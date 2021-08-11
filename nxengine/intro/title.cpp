@@ -76,7 +76,7 @@ void title_tick()
 	{
 		if (title.seldelay > 0)
 		{
-			ClearScreen(BLACK);
+			Graphics::ClearScreen(BLACK);
 			
 			title.seldelay--;
 			if (!title.seldelay)
@@ -90,7 +90,7 @@ void title_tick()
 	}
 	else
 	{
-		ClearScreen(BLACK);
+		Graphics::ClearScreen(BLACK);
 		
 		if (!textbox.SaveSelect.IsVisible())
 		{	// selection was made, and settings.last_save_slot is now set appropriately
@@ -212,23 +212,21 @@ static void handle_input()
 static void draw_title()
 {
 	// background is dk grey, not pure black
-	ClearScreen(0x20, 0x20, 0x20);
-   map_draw_backdrop();
+	Graphics::ClearScreen(0x20, 0x20, 0x20);
+	map_draw_backdrop();
 	
 	// top logo
 	int tx = (SCREEN_WIDTH / 2) - (sprites[SPR_TITLE].w / 2) - 2;
-	draw_sprite(tx, 40, SPR_TITLE);
+	Sprites::draw_sprite(tx, 40, SPR_TITLE);
 	
 	// draw menu
 	int cx = (SCREEN_WIDTH / 2) - (sprites[SPR_MENU].w / 2) - 8;
 	int cy = (SCREEN_HEIGHT / 2) + 8;
 	for(int i=0;i<sprites[SPR_MENU].nframes;i++)
 	{
-		draw_sprite(cx, cy, SPR_MENU, i);
+		Sprites::draw_sprite(cx, cy, SPR_MENU, i);
 		if (i == title.cursel)
-		{
-			draw_sprite(cx - 16, cy - 1, title.sprite, title.selframe);
-		}
+			Sprites::draw_sprite(cx - 16, cy - 1, title.sprite, title.selframe);
 		
 		cy += (sprites[SPR_MENU].h + 4);
 	}
@@ -244,7 +242,7 @@ static void draw_title()
 	// accreditation
 	cx = (SCREEN_WIDTH / 2) - (sprites[SPR_PIXEL_FOREVER].w / 2);
 	int acc_y = SCREEN_HEIGHT - 48;
-	draw_sprite(cx, acc_y, SPR_PIXEL_FOREVER);
+	Sprites::draw_sprite(cx, acc_y, SPR_PIXEL_FOREVER);
 	
 	// version
 	static const char *VERSION = "NXEngine v. 1.0.0.6";

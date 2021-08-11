@@ -63,17 +63,17 @@ void island_tick()
 	island.timer++;
 	
 	// draw the scene
-	ClearScreen(BLACK);
+	Graphics::ClearScreen(BLACK);
 	
-	set_clip_rect(island.scene_x, island.scene_y, \
-				sprites[SPR_ISLAND_SCENE].w, sprites[SPR_ISLAND_SCENE].h);
+	Graphics::set_clip_rect(island.scene_x, island.scene_y,
+			sprites[SPR_ISLAND_SCENE].w, sprites[SPR_ISLAND_SCENE].h);
 	
-	draw_sprite(island.scene_x, island.scene_y, SPR_ISLAND_SCENE);
-	draw_sprite(island.x, (island.y>>CSF), SPR_ISLAND);
+	Sprites::draw_sprite(island.scene_x, island.scene_y, SPR_ISLAND_SCENE);
+	Sprites::draw_sprite(island.x, (island.y>>CSF), SPR_ISLAND);
 	
-	draw_sprite(island.trees_x, island.trees_y, SPR_ISLAND_TREES);
+	Sprites::draw_sprite(island.trees_x, island.trees_y, SPR_ISLAND_TREES);
 	
-	clear_clip_rect();
+	Graphics::clear_clip_rect();
 	
 	if (player->equipmask & EQUIP_NIKUMARU)
 		niku_draw(game.counter);

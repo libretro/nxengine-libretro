@@ -1622,7 +1622,7 @@ int scr_x, scr_y;
 		
 		// draw the gun at the player's Action Point. Since guns have their Draw Point set
 		// to point at their handle, this places the handle in the player's hand.
-		draw_sprite_at_dp(scr_x + sprites[player->sprite].frame[player->frame].dir[player->dir].actionpoint.x, \
+		Sprites::draw_sprite_at_dp(scr_x + sprites[player->sprite].frame[player->frame].dir[player->dir].actionpoint.x, \
 						  scr_y + sprites[player->sprite].frame[player->frame].dir[player->dir].actionpoint.y, \
 						  spr, frame, player->dir);
 	}
@@ -1630,13 +1630,13 @@ int scr_x, scr_y;
 	// draw the player sprite
 	if (!player->hurt_flash_state)
 	{
-		draw_sprite(scr_x, scr_y, player->sprite, player->frame, player->dir);
+		Sprites::draw_sprite(scr_x, scr_y, player->sprite, player->frame, player->dir);
 		
 		// draw the air bubble shield if we have it on
 		if (((player->touchattr & TA_WATER) && (player->equipmask & EQUIP_AIRTANK)) || \
 			player->movementmode == MOVEMODE_ZEROG)
 		{
-			draw_sprite_at_dp(scr_x, scr_y, SPR_WATER_SHIELD, \
+			Sprites::draw_sprite_at_dp(scr_x, scr_y, SPR_WATER_SHIELD, \
 							  player->water_shield_frame, player->dir);
 			
 			if (++player->water_shield_timer > 1)

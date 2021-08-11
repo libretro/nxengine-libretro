@@ -109,7 +109,7 @@ int scr_x, scr_y;
 				scr_x -= sprites[c->sprite].frame[c->frame].dir[0].drawpoint.x;
 				scr_y -= sprites[c->sprite].frame[c->frame].dir[0].drawpoint.y;
 				
-				draw_sprite(scr_x, scr_y, c->sprite, c->frame, RIGHT);
+				Sprites::draw_sprite(scr_x, scr_y, c->sprite, c->frame, RIGHT);
 			}
 		}
 		

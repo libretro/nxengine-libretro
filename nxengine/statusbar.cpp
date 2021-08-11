@@ -82,9 +82,9 @@ bool maxed_out;
 		// BOSS_X = 32 at normal resolution
 		#define BOSS_X		((SCREEN_WIDTH / 2) - (BOSSBAR_W / 2) - 29)
 		#define BOSS_Y		(SCREEN_HEIGHT-20)
-		draw_sprite(BOSS_X, BOSS_Y, SPR_TEXTBOX, 0, 0);
-		draw_sprite(BOSS_X, BOSS_Y+8, SPR_TEXTBOX, 2, 0);
-		draw_sprite(BOSS_X+8, BOSS_Y+4, SPR_BOSSHPICON, 0, 0);
+		Sprites::draw_sprite(BOSS_X, BOSS_Y, SPR_TEXTBOX, 0, 0);
+		Sprites::draw_sprite(BOSS_X, BOSS_Y+8, SPR_TEXTBOX, 2, 0);
+		Sprites::draw_sprite(BOSS_X+8, BOSS_Y+4, SPR_BOSSHPICON, 0, 0);
 		
 		// e.g. bosses w/ multiple forms (Ballos)
 		if (game.bossbar.object->hp > game.bossbar.starting_hp)
@@ -102,7 +102,7 @@ bool maxed_out;
 		if (!player->hurt_flash_state)
       {
          // -- draw the health bar -----------------------------
-         draw_sprite(HEALTH_X, HEALTH_Y, SPR_HEALTHBAR, 0, 0);
+         Sprites::draw_sprite(HEALTH_X, HEALTH_Y, SPR_HEALTHBAR, 0, 0);
 
          DrawPercentBar(&PHealthBar, HEALTHFILL_X, HEALTHFILL_Y, player->hp, player->maxHealth, HEALTHFILL_MAXLEN);
 
@@ -121,7 +121,7 @@ bool maxed_out;
          }
 
          // draw XP bar and fill it
-         draw_sprite(XPBAR_X+slide.lv_offset, XPBAR_Y, SPR_XPBAR, FRAME_XP_BAR, 0);
+         Sprites::draw_sprite(XPBAR_X+slide.lv_offset, XPBAR_Y, SPR_XPBAR, FRAME_XP_BAR, 0);
 
          maxed_out = ((curxp == maxxp) && level == 2);
          if (!maxed_out)
@@ -134,7 +134,7 @@ bool maxed_out;
          {
             if (++statusbar.xpflashstate & 2)
             {
-               draw_sprite(XPBAR_X+slide.lv_offset, XPBAR_Y, SPR_XPBAR, FRAME_XP_FLASH, 0);
+               Sprites::draw_sprite(XPBAR_X+slide.lv_offset, XPBAR_Y, SPR_XPBAR, FRAME_XP_FLASH, 0);
             }
 
             statusbar.xpflashcount--;
@@ -143,7 +143,7 @@ bool maxed_out;
 
          // draw "MAX"
          if (maxed_out)
-            draw_sprite(XPBAR_X+slide.lv_offset, XPBAR_Y, SPR_XPBAR, FRAME_XP_MAX, 0);
+            Sprites::draw_sprite(XPBAR_X+slide.lv_offset, XPBAR_Y, SPR_XPBAR, FRAME_XP_MAX, 0);
 
          // Level Number
          DrawWeaponLevel(HEALTH_X + slide.lv_offset, XPBAR_Y, player->curWeapon);
@@ -152,7 +152,7 @@ bool maxed_out;
 		// -- draw the weapon bar -----------------------------
 		// draw current weapon
 		if (player->curWeapon != WPN_NONE)
-			draw_sprite(CURWEAPON_X + slide.wpn_offset, WEAPONBAR_Y, SPR_ARMSICONS, slide.firstWeapon, 0);
+			Sprites::draw_sprite(CURWEAPON_X + slide.wpn_offset, WEAPONBAR_Y, SPR_ARMSICONS, slide.firstWeapon, 0);
 		
 		// draw ammo, note we draw ammo of firstweapon NOT current weapon, for slide effect
 		DrawWeaponAmmo((AMMO_X + slide.wpn_offset + slide.ammo_offset), AMMO_Y, slide.firstWeapon);
@@ -167,7 +167,7 @@ bool maxed_out;
 			
 			if (player->weapons[w].hasWeapon)
 			{
-				draw_sprite(x, WEAPONBAR_Y, SPR_ARMSICONS, w, RIGHT);
+				Sprites::draw_sprite(x, WEAPONBAR_Y, SPR_ARMSICONS, w, RIGHT);
 				x += 16;
 			}
 		}
@@ -180,7 +180,7 @@ void DrawAirLeft(int x, int y)
 {
 	if (player->airshowtimer)
 	{
-		draw_sprite(x, y, SPR_AIR, (player->airleft%30 > 10) ? 0:1, RIGHT);
+		Sprites::draw_sprite(x, y, SPR_AIR, (player->airleft%30 > 10) ? 0:1, RIGHT);
 		
 		if (player->airshowtimer%6 < 4)
 			DrawNumber(x+32, y, player->airleft/10);
@@ -192,14 +192,14 @@ void DrawWeaponAmmo(int x, int y, int wpn)
 	// draw slash
 	if (!player->hurt_flash_state || game.mode != GM_NORMAL)
 	{
-		draw_sprite(x, y+8, SPR_WHITENUMBERS, 11, 0);
+		Sprites::draw_sprite(x, y+8, SPR_WHITENUMBERS, 11, 0);
 	}
 	
 	if (!player->weapons[wpn].maxammo)
 	{	// ammo is "not applicable"
 		x += 16;
-		draw_sprite(x, y, SPR_NAAMMO, 0, 0);
-		draw_sprite(x, y+8, SPR_NAAMMO, 0, 0);
+		Sprites::draw_sprite(x, y, SPR_NAAMMO, 0, 0);
+		Sprites::draw_sprite(x, y+8, SPR_NAAMMO, 0, 0);
 	}
 	else
 	{
@@ -213,8 +213,8 @@ void DrawWeaponLevel(int x, int y, int wpn)
 	int level = (player->weapons[wpn].level + 1);
 	if (wpn == WPN_NONE) level = 0;
 	
-	draw_sprite(x, y, SPR_XPLEVELICON, 0, 0);
-	draw_sprite(x+16, y, SPR_WHITENUMBERS, level, 0);
+	Sprites::draw_sprite(x, y, SPR_XPLEVELICON, 0, 0);
+	Sprites::draw_sprite(x+16, y, SPR_WHITENUMBERS, level, 0);
 }
 
 
@@ -384,12 +384,12 @@ int place, digit, total;
 		total += digit;
 		
 		if (total)
-			draw_sprite(x+(place*8), y, SPR_WHITENUMBERS, digit);
+			Sprites::draw_sprite(x+(place*8), y, SPR_WHITENUMBERS, digit);
 		
 		place++;
 	}
 	
-	draw_sprite(x+(3*8), y, SPR_WHITENUMBERS, num);
+	Sprites::draw_sprite(x+(3*8), y, SPR_WHITENUMBERS, num);
 }
 
 
@@ -410,7 +410,7 @@ void DrawPercentage(int x, int y, int fill_sprite, int fsframe, int curvalue, in
 			if (!fillwidth) return;
 		}
 		
-		draw_sprite_clip_width(x, y, fill_sprite, fsframe, fillwidth);
+		Sprites::draw_sprite_clip_width(x, y, fill_sprite, fsframe, fillwidth);
 	}
 }
 
@@ -428,7 +428,7 @@ void DrawNumberRAlign(int x, int y, int s, int num)
 	len = strlen(str);
 	for(i=0;i<len;i++)
 	{
-		draw_sprite(x, y, s, str[i] - '0');
+		Sprites::draw_sprite(x, y, s, str[i] - '0');
 		x += fontwidth;
 	}
 }
@@ -441,7 +441,7 @@ void DrawTwoDigitNumber(int x, int y, int num)
 
 void DrawDigit(int x, int y, int digit)
 {
-	draw_sprite(x, y, SPR_WHITENUMBERS, digit);
+	Sprites::draw_sprite(x, y, SPR_WHITENUMBERS, digit);
 }
 
 /*
@@ -470,7 +470,7 @@ void niku_draw(int value, bool force_white)
 	int clkframe = (game.counter % 30) <= 10;
 	if (game.frozen || player->inputs_locked || force_white) clkframe = 0;
 	
-	draw_sprite(NIKU_X, NIKU_Y, SPR_NIKU_CLOCK, clkframe);
+	Sprites::draw_sprite(NIKU_X, NIKU_Y, SPR_NIKU_CLOCK, clkframe);
 	
 	int mins = (value / 3000);		// the game runs at 50 fps
 	int secs = (value / 50) % 60;
@@ -480,7 +480,7 @@ void niku_draw(int value, bool force_white)
 	DrawTwoDigitNumber(NIKU_X+36, NIKU_Y, secs);
 	DrawDigit(NIKU_X+56, NIKU_Y, tens);
 	
-	draw_sprite(NIKU_X+30, NIKU_Y, SPR_NIKU_PUNC);
+	Sprites::draw_sprite(NIKU_X+30, NIKU_Y, SPR_NIKU_PUNC);
 }
 
 

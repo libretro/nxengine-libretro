@@ -24,7 +24,7 @@ void intro_tick()
 {
 	if (blanktimer > 0)
 	{
-		ClearScreen(BLACK);
+		Graphics::ClearScreen(BLACK);
 		
 		if (--blanktimer == 0)
 			game.setmode(GM_TITLE);

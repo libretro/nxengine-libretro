@@ -34,10 +34,10 @@ Dialog::Dialog()
 Dialog::~Dialog()
 {
    ODItem *item;
-	for(int i=0; item = ItemAt(i);i++)
-		delete item;
+   for(int i=0; (item = ItemAt(i));i++)
+      delete item;
 	
-	optionstack.RemoveItem(this);
+   optionstack.RemoveItem(this);
 }
 
 void Dialog::SetSize(int w, int h)
@@ -113,7 +113,7 @@ void Dialog::Draw()
 			DrawItem(x, y, item);
 		
 		if (i == fCurSel)
-			draw_sprite(x - 16, y, SPR_WHIMSICAL_STAR, 1);
+			Sprites::draw_sprite(x - 16, y, SPR_WHIMSICAL_STAR, 1);
 		
 		y += GetFontHeight();
 	}
@@ -220,25 +220,25 @@ void Dialog::Dismiss()
 void Dialog::Refresh()
 {
    ODItem *item;
-	for(int i=0; item = ItemAt(i);i++)
-	{
-		if (item->update)
-			(*item->update)(item);
-	}
+   for(int i=0; (item = ItemAt(i));i++)
+   {
+      if (item->update)
+         (*item->update)(item);
+   }
 }
 
 void Dialog::Clear()
 {
-	if (onclear)
-		(*onclear)();
+   if (onclear)
+      (*onclear)();
 	
    ODItem *item;
-	for(int i=0; item = ItemAt(i);i++)
-		delete item;
+   for(int i=0; (item = ItemAt(i));i++)
+      delete item;
 	
-	fItems.MakeEmpty();
-	fNumShown = 0;
-	fCurSel = 0;
+   fItems.MakeEmpty();
+   fNumShown = 0;
+   fCurSel = 0;
 }
 
 

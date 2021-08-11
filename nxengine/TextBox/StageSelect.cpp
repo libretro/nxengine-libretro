@@ -73,7 +73,7 @@ void TB_StageSelect::Draw(void)
 	fWarpY -= WARP_Y_SPEED;
 	if (fWarpY < WARP_Y) fWarpY = WARP_Y;
 	
-	draw_sprite(WARP_X, fWarpY, SPR_TEXT_WARP, 0);
+	Sprites::draw_sprite(WARP_X, fWarpY, SPR_TEXT_WARP, 0);
 	
 	// draw teleporter locations
 	int nslots = CountActiveSlots();
@@ -86,12 +86,12 @@ void TB_StageSelect::Draw(void)
 		int sprite;
 		GetSlotByIndex(i, &sprite, NULL);
 		
-		draw_sprite(x, LOCS_Y, SPR_STAGEIMAGE, sprite);
+		Sprites::draw_sprite(x, LOCS_Y, SPR_STAGEIMAGE, sprite);
 		
 		if (i == fSelectionIndex)
 		{
 			fSelectionFrame ^= 1;
-			draw_sprite(x, LOCS_Y, SPR_SELECTOR_ITEMS, fSelectionFrame);
+			Sprites::draw_sprite(x, LOCS_Y, SPR_SELECTOR_ITEMS, fSelectionFrame);
 		}
 		
 		x += (sprites[SPR_STAGEIMAGE].w + LOCS_SPACING);

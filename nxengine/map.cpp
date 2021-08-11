@@ -245,7 +245,7 @@ unsigned char tc;
 		//FIXME: Destroyable star tiles not showing up right now
 		if (tc == 0x43)	// destroyable block - have to replace graphics
 		{
-			CopySpriteToTile(SPR_DESTROYABLE, i, 0, 0);
+			Graphics::CopySpriteToTile(SPR_DESTROYABLE, i, 0, 0);
 		}
 		
 		// add water currents to animation list
@@ -359,9 +359,9 @@ int x, y;
 		case BK_HIDE3:
 		{
 			if (game.curmap == STAGE_KINGS)		// intro cutscene
-				ClearScreen(BLACK);
+				Graphics::ClearScreen(BLACK);
 			else
-				ClearScreen(DK_BLUE);
+				Graphics::ClearScreen(DK_BLUE);
 		}
 		return;
 		
@@ -380,7 +380,7 @@ int x, y;
 	{
 		for(x=0;x<SCREEN_WIDTH+map.parscroll_x; x+=w)
 		{
-			DrawSurface(backdrop[map.backdrop], x - map.parscroll_x, y - map.parscroll_y);
+			Graphics::DrawSurface(backdrop[map.backdrop], x - map.parscroll_x, y - map.parscroll_y);
 		}
 	}
 }
@@ -410,7 +410,7 @@ int i, x;
 			x %= W;
 		}
 		
-		BlitPatternAcross(backdrop[map.backdrop], x, y1, y1, (y2-y1)+1);
+		Graphics::BlitPatternAcross(backdrop[map.backdrop], x, y1, y1, (y2-y1)+1);
 		y1 = (y2 + 1);
 	}
 }
@@ -460,7 +460,7 @@ int i;
 	{
 		if (tilecode[i] == 0x43)
 		{
-			CopySpriteToTile(SPR_DESTROYABLE, i, 0, 0);
+			Graphics::CopySpriteToTile(SPR_DESTROYABLE, i, 0, 0);
 		}
 	}
 }
@@ -487,16 +487,16 @@ int water_x, water_y;
 	water_y = (map.waterlevelobject->y >> CSF) - (map.displayed_yscroll >> CSF);
 	
 	// draw the surface and just under the surface
-	BlitPatternAcross(backdrop[map.backdrop], water_x, water_y, 0, 16);
+	Graphics::BlitPatternAcross(backdrop[map.backdrop], water_x, water_y, 0, 16);
 	water_y += 16;
 	
-	BlitPatternAcross(backdrop[map.backdrop], water_x, water_y, 32, 16);
+	Graphics::BlitPatternAcross(backdrop[map.backdrop], water_x, water_y, 32, 16);
 	water_y += 16;
 	
 	// draw the rest of the pattern all the way down
 	while(water_y < (SCREEN_HEIGHT-1))
 	{
-		BlitPatternAcross(backdrop[map.backdrop], water_x, water_y, 16, 32);
+		Graphics::BlitPatternAcross(backdrop[map.backdrop], water_x, water_y, 16, 32);
 		water_y += 32;
 	}
 }
@@ -862,7 +862,7 @@ int x_off, y_off;
 			default: x_off = y_off = 0; break;
 		}
 		
-		CopySpriteToTile(map.motiontiles[i].sprite, map.motiontiles[i].tileno, x_off, y_off);
+		Graphics::CopySpriteToTile(map.motiontiles[i].sprite, map.motiontiles[i].tileno, x_off, y_off);
 	}
 	
 	map.motionpos += 2;
