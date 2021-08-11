@@ -62,7 +62,6 @@ static void Blit1to1(SDL_BlitInfo *info)
 
 static void Blit1to2(SDL_BlitInfo *info)
 {
-   int c;
    int width     = info->d_width;
    int height    = info->d_height;
    int srcskip   = info->s_skip;
@@ -96,6 +95,7 @@ static void Blit1to2(SDL_BlitInfo *info)
 
       while ( height-- )
       {
+         int c;
 
          /* Perform copy alignment */
          *(uint16_t*)dst = map[*src++];
@@ -139,6 +139,7 @@ static void Blit1to2(SDL_BlitInfo *info)
    { 
       while ( height-- )
       {
+         int c;
          /* Copy in 4 pixel chunks */
          for ( c=width/4; c; --c )
          {
