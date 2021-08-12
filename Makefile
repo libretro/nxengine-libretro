@@ -301,6 +301,16 @@ else ifeq ($(platform), switch)
         TARGET := $(TARGET_NAME)_libretro_$(platform).$(EXT)
         include $(LIBTRANSISTOR_HOME)/libtransistor.mk
         STATIC_LINKING=1
+#RETROFW
+else ifeq ($(platform), retrofw)
+   TARGET := $(TARGET_NAME)_libretro.so
+   CC = /opt/retrofw-toolchain/usr/bin/mipsel-linux-gcc
+   CXX = /opt/retrofw-toolchain/usr/bin/mipsel-linux-g++
+   AR = /opt/retrofw-toolchain/usr/bin/mipsel-linux-ar
+   fpic := -fPIC
+   SHARED := -shared -Wl,--version-script=$(CORE_DIR)/libretro/link.T -Wl,-no-undefined
+   CFLAGS += -D_GNU_SOURCE=1
+   CFLAGS += -ffast-math -march=mips32 -mtune=mips32 -mhard-float 
 
 else ifeq ($(platform),emscripten)
    TARGET := $(TARGET_NAME)_libretro_$(platform).bc

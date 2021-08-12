@@ -99,6 +99,10 @@ include:
   - project: 'libretro-infrastructure/ci-templates'
     file: '/tvos-arm64.yml'
 
+  # OpenDingux
+  - project: 'libretro-infrastructure/ci-templates'
+    file: '/dingux-mips32.yml'
+    
   #################################### MISC ##################################
   # Emscripten
   - project: 'libretro-infrastructure/ci-templates'
@@ -261,6 +265,12 @@ libretro-build-vita:
     - .libretro-vita-static-retroarch-master
     - .core-defs
 
+# RetroFW
+libretro-build-retrofw-mips32:
+  extends:
+    - .libretro-retrofw-mips32-make-default
+    - .core-defs
+    
 #################################### MISC ##################################
 # Emscripten
 libretro-build-emscripten:
