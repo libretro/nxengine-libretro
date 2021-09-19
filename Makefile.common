@@ -96,7 +96,6 @@ SOURCES_CXX += $(CORE_DIR)/common/BList.cpp \
 					$(CORE_DIR)/common/bufio.cpp \
 					$(CORE_DIR)/common/DBuffer.cpp \
 					$(CORE_DIR)/common/DString.cpp \
-					$(CORE_DIR)/common/FileBuffer.cpp \
 					$(CORE_DIR)/common/InitList.cpp \
 					$(CORE_DIR)/common/misc.cpp \
 					$(CORE_DIR)/common/StringList.cpp
