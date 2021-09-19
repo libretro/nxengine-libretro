@@ -258,48 +258,17 @@ void retro_reset(void)
 
 void mixaudio(int16_t *stream, size_t len_samples);
 
-#if 0
-#include <time.h>
-static int64_t get_usec(void)
-{
-   struct timespec tv;
-   clock_gettime(CLOCK_MONOTONIC, &tv);
-   return (int64_t)tv.tv_sec * 1000000 + (int64_t)tv.tv_nsec / 1000;
-}
-#endif
-
 void retro_run(void)
 {
    poll_cb();
    static unsigned frame_cnt = 0;
 
-#if 0
-   if (log_cb)
-      log_cb(RETRO_LOG_INFO, "[NX]: Start frame.\n");
-   int64_t start_time = get_usec();
-   
-	platform_sync_to_vblank();
-#endif
-	screen->Flip();
+   screen->Flip();
 
    if (retro_60hz)
    {
-      //int64_t start_time_frame = get_usec();
       while (!run_main());
-#if 0
-      int64_t total_time_frame = get_usec() - start_time_frame;
-      if (log_cb)
-         log_cb(RETRO_LOG_INFO, "[NX]: total_time_frame took %lld usec.\n", (long long)total_time_frame);
-#endif
-
-      //int64_t start_time_frame_cb = get_usec();
       video_cb(retro_frame_buffer, retro_frame_buffer_width, retro_frame_buffer_height, retro_frame_buffer_pitch);
-#if 0
-      int64_t total_time_frame_cb = get_usec() - start_time_frame_cb;
-      if (log_cb)
-         log_cb(RETRO_LOG_INFO, "[NX]: total_time_frame_cb took %lld usec.\n", (long long)total_time_frame_cb);
-#endif
-
       frame_cnt++;
    }
    else
@@ -324,12 +293,6 @@ void retro_run(void)
    audio_batch_cb(samples, frames);
 
    g_frame_cnt++;
-
-#if 0
-   int64_t total_time = get_usec() - start_time;
-   if (log_cb)
-      log_cb(RETRO_LOG_INFO, "[NX]: Frame took %lld usec.\n", (long long)total_time);
-#endif
 
    if (!game.running) environ_cb(RETRO_ENVIRONMENT_SHUTDOWN, NULL);
 }
@@ -396,14 +359,13 @@ void retro_create_path_string(char *fname, size_t fname_size, const char * dir, 
 /**
  * Retrieve the desired save directory.
  */
-const char* retro_get_save_dir()
+const char* retro_get_save_dir(void)
 {
    const char* dir = NULL;
 
    // Attempt to get the save directory from the frontend.
-   if (environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &dir) && dir && *dir) {
+   if (environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &dir) && dir && *dir)
       return dir;
-   }
 
    // If the save directory isn't available, use the game path.
    return g_dir;
@@ -412,7 +374,7 @@ const char* retro_get_save_dir()
 /**
  * Copy any missing profiles from the content directory to the save directory.
  */
-void retro_init_saves()
+void retro_init_saves(void)
 {
    // Copy any profiles into the save directory.
    const char* save_dir = retro_get_save_dir();
@@ -461,13 +423,13 @@ bool retro_copy_file(const char* from, const char* to)
 {
    // Open the file for reading.
    FILE *fd1 = fopen(from, "r");
-   if (!fd1) {
+   if (!fd1)
       return false;
-   }
 
    // Prepare the destination.
    FILE *fd2 = fopen(to, "w");
-   if(!fd2) {
+   if(!fd2)
+   {
       fclose(fd1);
       return false;
    }
