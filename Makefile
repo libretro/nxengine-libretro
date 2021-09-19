@@ -195,7 +195,8 @@ else ifeq ($(platform), ctr)
    CFLAGS += -march=armv6k -mtune=mpcore -mfloat-abi=hard
    CFLAGS += -mword-relocations
    CFLAGS += -fomit-frame-pointer -fstrict-aliasing -ffast-math
-   CFLAGS += -fno-rtti -fno-exceptions -std=gnu++11
+   CFLAGS += -fno-exceptions
+   CXXFLAGS += -fno-rtti
    STATIC_LINKING = 1
    SINGLE_PRECISION_FLOATS = 1
    MIN_AUDIO_PROCESSING_PER_FRAME = 1
@@ -206,7 +207,8 @@ else ifeq ($(platform), rpi1)
    CFLAGS += -DARM -DGNU_SOURCE=1
    CFLAGS += -marm -march=armv6j -mfpu=vfp -mfloat-abi=hard
    CFLAGS += -fomit-frame-pointer -fstrict-aliasing
-   CFLAGS += -fno-rtti -fno-exceptions -std=gnu++11
+   CFLAGS += -fno-exceptions
+   CXXFLAGS += -fno-rtti
    SINGLE_PRECISION_FLOATS = 1
    MIN_AUDIO_PROCESSING_PER_FRAME = 1
    HAVE_NEON = 1
@@ -217,7 +219,8 @@ else ifeq ($(platform), rpi2)
    CFLAGS += -DARM -DGNU_SOURCE=1
    CFLAGS += -marm -mcpu=cortex-a7 -mfpu=neon-vfpv4 -mfloat-abi=hard
    CFLAGS += -fomit-frame-pointer -fstrict-aliasing
-   CFLAGS += -fno-rtti -fno-exceptions -std=gnu++11
+   CFLAGS += -fno-exceptions
+   CXXFLAGS += -fno-rtti
    SINGLE_PRECISION_FLOATS = 1
    MIN_AUDIO_PROCESSING_PER_FRAME = 1
    HAVE_NEON = 1
@@ -228,7 +231,8 @@ else ifeq ($(platform), rpi3)
    CFLAGS += -DARM -DGNU_SOURCE=1
    CFLAGS += -marm -mcpu=cortex-a53 -mfpu=neon-fp-armv8 -mfloat-abi=hard
    CFLAGS += -fomit-frame-pointer -fstrict-aliasing
-   CFLAGS += -fno-rtti -fno-exceptions -std=gnu++11
+   CFLAGS += -fno-exceptions
+   CXXFLAGS += -fno-rtti
    SINGLE_PRECISION_FLOATS = 1
    MIN_AUDIO_PROCESSING_PER_FRAME = 1
    HAVE_NEON = 1
@@ -239,7 +243,8 @@ else ifeq ($(platform), rpi3_64)
    CFLAGS += -DARM -DGNU_SOURCE=1
    CFLAGS += -march=armv8-a+crc -mtune=cortex-a53
    CFLAGS += -fomit-frame-pointer -fstrict-aliasing
-   CFLAGS += -fno-rtti -fno-exceptions -std=gnu++11
+   CFLAGS += -fno-exceptions
+   CXXFLAGS += -fno-rtti
    SINGLE_PRECISION_FLOATS = 1
    MIN_AUDIO_PROCESSING_PER_FRAME = 1
    HAVE_NEON = 1
@@ -250,7 +255,8 @@ else ifeq ($(platform), rpi4_64)
    CFLAGS += -DARM -DGNU_SOURCE=1
    CFLAGS += -march=armv8-a+crc+simd -mtune=cortex-a72
    CFLAGS += -fomit-frame-pointer -fstrict-aliasing
-   CFLAGS += -fno-rtti -fno-exceptions -std=gnu++11
+   CFLAGS += -fno-exceptions
+   CXXFLAGS += -fno-rtti
    SINGLE_PRECISION_FLOATS = 1
    MIN_AUDIO_PROCESSING_PER_FRAME = 1
    HAVE_NEON = 1
@@ -329,7 +335,7 @@ include $(DEVKITPRO)/libnx/switch_rules
             -fPIE -I$(LIBNX)/include/ -ffunction-sections -fdata-sections -ftls-model=local-exec -Wl,--allow-multiple-definition -specs=$(LIBNX)/switch.specs
     CFLAGS += $(INCDIRS)
     CFLAGS  += $(INCLUDE)  -D__SWITCH__ -DHAVE_LIBNX
-    CXXFLAGS := $(ASFLAGS) $(CFLAGS) -fno-rtti -fno-exceptions -std=gnu++11
+    CXXFLAGS := $(ASFLAGS) $(CFLAGS) -fno-rtti -fno-exceptions
     CFLAGS += -std=gnu11
     STATIC_LINKING = 1
 
