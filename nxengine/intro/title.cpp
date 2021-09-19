@@ -12,9 +12,9 @@ static struct
 } titlescreens[] =
 {
 	(3*3000),	SPR_CS_SUE,    2,		// 3 mins	- Sue & Safety
-	(4*3000),	SPR_CS_KING,   41,		// 4 mins	- King & White
-	(5*3000),	SPR_CS_TOROKO, 40,		// 5 mins	- Toroko & Toroko's Theme
-	(6*3000),	SPR_CS_CURLY,  36,		// 6 mins	- Curly & Running Hell
+	(4*3000),	SPR_CS_KING,   41,	// 4 mins	- King & White
+	(5*3000),	SPR_CS_TOROKO, 40,	// 5 mins	- Toroko & Toroko's Theme
+	(6*3000),	SPR_CS_CURLY,  36,	// 6 mins	- Curly & Running Hell
 	0xFFFFFFFF, SPR_CS_MYCHAR, 24		// default
 };
 
@@ -54,9 +54,7 @@ bool title_init(int param)
 	{
 		if (title.besttime < titlescreens[t].timetobeat || \
 			titlescreens[t].timetobeat == 0xffffffff)
-		{
 			break;
-		}
 	}
 	
 	title.sprite = titlescreens[t].sprite;
@@ -103,9 +101,7 @@ void title_tick()
 			title.in_multiload = false;
 		}
 		else
-		{
 			textbox.Draw();
-		}
 	}
 }
 
@@ -117,33 +113,27 @@ void c------------------------------() {}
 static void selectoption(int index)
 {
 	switch(index)
-	{
-		case 0:		// New
-		{
-			music(0);
-			
-			game.switchstage.mapno = NEW_GAME_FROM_MENU;
-			game.setmode(GM_NORMAL);
-		}
-		break;
-		
-		case 1:		// Load
-		{
-			music(0);
-			
-			game.switchstage.mapno = LOAD_GAME_FROM_MENU;
-			game.setmode(GM_NORMAL);
-		}
-		break;
-		
-		case 2:		// Load Menu (multisave)
-		{
-			textbox.SetVisible(true);
-			textbox.SaveSelect.SetVisible(true, SS_LOADING);
-			title.in_multiload = true;
-		}
-		break;
-	}
+   {
+      case 0:		// New
+         music(0);
+
+         game.switchstage.mapno = NEW_GAME_FROM_MENU;
+         game.setmode(GM_NORMAL);
+         break;
+
+      case 1:		// Load
+         music(0);
+
+         game.switchstage.mapno = LOAD_GAME_FROM_MENU;
+         game.setmode(GM_NORMAL);
+         break;
+
+      case 2:		// Load Menu (multisave)
+         textbox.SetVisible(true);
+         textbox.SaveSelect.SetVisible(true, SS_LOADING);
+         title.in_multiload = true;
+         break;
+   }
 }
 
 
@@ -262,25 +252,25 @@ static void draw_title()
 static int kc_table[] = { UPKEY, UPKEY, DOWNKEY, DOWNKEY,
 						  LEFTKEY, RIGHTKEY, LEFTKEY, RIGHTKEY, -1 };
 
-void run_konami_code()
+void run_konami_code(void)
 {
-	if (justpushed(UPKEY) || justpushed(DOWNKEY) || \
-		justpushed(LEFTKEY) || justpushed(RIGHTKEY))
-	{
-		if (justpushed(kc_table[title.kc_pos]))
-		{
-			title.kc_pos++;
-			if (kc_table[title.kc_pos] == -1)
-			{
-				sound(SND_MENU_SELECT);
-				title.kc_pos = 0;
-			}
-		}
-		else
-		{
-			title.kc_pos = 0;
-		}
-	}
+   if (justpushed(UPKEY) || justpushed(DOWNKEY) || \
+         justpushed(LEFTKEY) || justpushed(RIGHTKEY))
+   {
+      if (justpushed(kc_table[title.kc_pos]))
+      {
+         title.kc_pos++;
+         if (kc_table[title.kc_pos] == -1)
+         {
+            sound(SND_MENU_SELECT);
+            title.kc_pos = 0;
+         }
+      }
+      else
+      {
+         title.kc_pos = 0;
+      }
+   }
 }
 
 

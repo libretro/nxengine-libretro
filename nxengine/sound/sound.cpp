@@ -29,15 +29,15 @@ static int cursong = 0;
 
 const char *org_names[] =
 {
-	NULL,
-	"egg",
+   NULL,
+   "egg",
    "safety",
    "gameover",
    "gravity",
    "grasstown",
    "meltdown2",
    "eyesofflame",
-	"gestation",
+   "gestation",
    "town",
    "fanfale1",
    "balrog",
@@ -45,7 +45,7 @@ const char *org_names[] =
    "plant",
    "pulse",
    "fanfale2",
-	"fanfale3",
+   "fanfale3",
    "tyrant",
    "run",
    "jenka1",
@@ -53,7 +53,7 @@ const char *org_names[] =
    "access",
    "oppression",
    "geothermal",
-	"theme",
+   "theme",
    "oside",
    "heroend",
    "scorching",
@@ -61,7 +61,7 @@ const char *org_names[] =
    "lastcave",
    "balcony",
    "charge",
-	"lastbattle",
+   "lastbattle",
    "credits",
    "zombie",
    "breakdown",
@@ -69,7 +69,7 @@ const char *org_names[] =
    "jenka2",
    "waterway",
    "seal",
-	"toroko",
+   "toroko",
    "white",
    "azarashi",
    NULL
@@ -79,19 +79,21 @@ static const char bossmusic[] = { 4, 7, 10, 11, 15, 16, 17, 18, 21, 22, 31, 33, 
 
 bool sound_init(FILE *fp)
 {
-	if (SSInit()) return 1;
-	if (pxt_init()) return 1;
-
-	if (pxt_LoadSoundFX(fp, NUM_SOUNDS))
+   if (SSInit())
+      return 1;
+   if (pxt_init())
       return 1;
 
-	if (org_init(fp, ORG_VOLUME))
-	{
-		NX_ERR("Music failed to initialize\n");
-		return 1;
-	}
-	
-	return 0;
+   if (pxt_LoadSoundFX(fp, NUM_SOUNDS))
+      return 1;
+
+   if (org_init(fp, ORG_VOLUME))
+   {
+      NX_ERR("Music failed to initialize\n");
+      return 1;
+   }
+
+   return 0;
 }
 
 void sound_close(void)
@@ -134,8 +136,6 @@ bool sound_is_playing(int snd)
 
 void StartStreamSound(int freq)
 {
-	// pxt_ChangePitch(SND_STREAM1, some_formula);
-	// pxt_ChangePitch(SND_STREAM2, some_other_formula);
 	sound_loop(SND_STREAM1);
 	sound_loop(SND_STREAM2);
 }
@@ -152,17 +152,13 @@ void StopLoopSounds(void)
 	sound_stop(SND_PROPELLOR);
 }
 
-/*
-void c------------------------------() {}
-*/
-
 void music(int songno)
 {
 	if (songno == cursong)
 		return;
 	
 	lastsong = cursong;
-	cursong = songno;
+	cursong  = songno;
 	
 	NX_LOG(" >> music(%d)\n", songno);
 	
@@ -197,8 +193,7 @@ bool music_is_boss(int songno)
 {
 	if (strchr(bossmusic, songno))
 		return true;
-	else
-		return false;
+   return false;
 }
 
 void music_set_enabled(int newstate)
@@ -234,7 +229,14 @@ static void start_track(int songno)
 		org_start(0);
 }
 
-int music_cursong()		{ return cursong; }
-int music_lastsong() 	{ return lastsong; }
+int music_cursong(void)
+{
+   return cursong;
+}
+
+int music_lastsong(void)
+{
+   return lastsong;
+}
 
 

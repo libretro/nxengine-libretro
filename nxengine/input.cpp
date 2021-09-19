@@ -96,40 +96,33 @@ void input_close(void)
 
 }
 
-/*
-void c------------------------------() {}
-*/
-
 static const int buttons[] = { JUMPKEY, FIREKEY, 0 };
 
 bool buttondown(void)
 {
-	for(int i=0;buttons[i];i++)
-	{
-		if (inputs[buttons[i]])
-			return 1;
-	}
-	
-	return 0;
+   int i;
+   for(i=0;buttons[i];i++)
+   {
+      if (inputs[buttons[i]])
+         return 1;
+   }
+
+   return 0;
 }
 
 bool buttonjustpushed(void)
 {
-	for(int i=0;buttons[i];i++)
-	{
-		if (inputs[buttons[i]] && !lastinputs[buttons[i]])
-			return 1;
-	}
-	
-	return 0;
+   int i;
+   for(i=0;buttons[i];i++)
+   {
+      if (inputs[buttons[i]] && !lastinputs[buttons[i]])
+         return 1;
+   }
+
+   return 0;
 }
 
 bool justpushed(int k)
 {
-	return (inputs[k] && !lastinputs[k]);
+   return (inputs[k] && !lastinputs[k]);
 }
-
-
-
-
-

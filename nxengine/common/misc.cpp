@@ -54,10 +54,8 @@ double fgetfloat(FILE *fp)
 
 void fputfloat(double q, FILE *fp)
 {
-   char *float_ptr;
    int i;
-
-   float_ptr = (char *)&q;
+   char *float_ptr = (char *)&q;
 
    for(i=0;i<4;i++) fputc(0, fp);
    for(i=0;i<8;i++) fputc(float_ptr[i], fp);
@@ -67,19 +65,17 @@ void fputfloat(double q, FILE *fp)
 #else
 uint16_t fgeti(FILE *fp)
 {
-   uint16_t a, b;
-   a = fgetc(fp);
-   b = fgetc(fp);
+   uint16_t a = fgetc(fp);
+   uint16_t b = fgetc(fp);
    return (b << 8) | a;
 }
 
 uint32_t fgetl(FILE *fp)
 {
-   uint32_t a, b, c, d;
-   a = fgetc(fp);
-   b = fgetc(fp);
-   c = fgetc(fp);
-   d = fgetc(fp);
+   uint32_t a = fgetc(fp);
+   uint32_t b = fgetc(fp);
+   uint32_t c = fgetc(fp);
+   uint32_t d = fgetc(fp);
    return (d<<24)|(c<<16)|(b<<8)|(a);
 }
 
@@ -112,10 +108,8 @@ double fgetfloat(FILE *fp)
 
 void fputfloat(double q, FILE *fp)
 {
-   char *float_ptr;
    int i;
-
-   float_ptr = (char *)&q;
+   char *float_ptr = (char *)&q;
 
    for(i=0;i<4;i++) fputc(0, fp);
    for(i=0;i<8;i++) fputc(float_ptr[7 - i], fp);
@@ -130,7 +124,6 @@ void fputstringnonull(const char *buf, FILE *fp)
    if (buf[0])
       fprintf(fp, "%s", buf);
 }
-
 
 // reads strlen(str) bytes from file fp, and returns true if they match "str"
 bool fverifystring(FILE *fp, const char *str)
@@ -164,9 +157,7 @@ void fgetline(FILE *fp, char *str, int maxlen)
 
 bool file_exists(const char *fname)
 {
-   FILE *fp;
-
-   fp = fopen(fname, "rb");
+   FILE *fp = fopen(fname, "rb");
    if (!fp) return 0;
    fclose(fp);
    return 1;
@@ -214,11 +205,6 @@ void seedrand(uint32_t newseed)
    seed = newseed;
 }
 
-/*
-   void c------------------------------() {}
-   */
-
-
 bool strbegin(const char *bigstr, const char *smallstr)
 {
    int i;
@@ -240,14 +226,8 @@ void maxcpy(char *dst, const char *src, int maxlen)
       if (maxlen >= 1) dst[maxlen - 1] = 0;
    }
    else
-   {
       memcpy(dst, src, len + 1);
-   }
 }
-
-/*
-   void c------------------------------() {}
-   */
 
 static int boolbyte, boolmask_r, boolmask_w;
 
@@ -285,9 +265,7 @@ void fbooleanwrite(char bit, FILE *fp)
    }
 
    if (bit)
-   {
       boolbyte |= boolmask_w;
-   }
 
    boolmask_w <<= 1;
 }
@@ -297,6 +275,3 @@ void fbooleanflush(FILE *fp)
    fputc(boolbyte, fp);
    boolmask_w = 1;
 }
-
-
-

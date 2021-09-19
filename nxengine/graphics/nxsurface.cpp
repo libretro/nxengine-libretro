@@ -47,16 +47,15 @@ NXSurface::NXSurface()
 // allocate for an empty surface of the given size
 void *AllocNewSurface(uint32_t colorkey, int wd, int ht)
 {
-   SDL_Surface *surf = NULL;
-	surf = LRSDL_CreateRGBSurface(colorkey, wd, ht, SCREEN_BPP, RED_MASK << RED_SHIFT, GREEN_MASK << GREEN_SHIFT, BLUE_MASK << BLUE_SHIFT, 0);
-	
-	if (!surf)
-	{
-		NX_ERR("AllocNewSurface: failed to allocate RGB surface\n");
-		return NULL;
-	}
-	
-	return surf;
+   SDL_Surface *surf = LRSDL_CreateRGBSurface(colorkey, wd, ht, SCREEN_BPP, RED_MASK << RED_SHIFT, GREEN_MASK << GREEN_SHIFT, BLUE_MASK << BLUE_SHIFT, 0);
+
+   if (!surf)
+   {
+      NX_ERR("AllocNewSurface: failed to allocate RGB surface\n");
+      return NULL;
+   }
+
+   return surf;
 }
 
 void FreeSurface(SDL_Surface *surface)
@@ -117,9 +116,9 @@ bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey)
       LRSDL_RWops *m = LRSDL_RWFromMem(cfile_pointer(cf), cfile_size(cf));
       cclose(cf);
       fSurface = LRSDL_LoadBMP_RW(m, 1);
-   } else {
-      fSurface = LRSDL_LoadBMP(pbm_name);
    }
+   else
+      fSurface = LRSDL_LoadBMP(pbm_name);
 
 	if (!fSurface)
 	{
@@ -149,24 +148,19 @@ NXSurface *NXSurface::FromFile(const char *pbm_name, bool use_colorkey)
 	return sfc;
 }
 
-
-/*
-void c------------------------------() {}
-*/
-
 // draw some or all of another surface onto this surface.
 void NXSurface::DrawSurface(NXSurface *src, int dstx, int dsty, int srcx, int srcy, int wd, int ht)
 {
-SDL_Rect srcrect, dstrect;
+   SDL_Rect srcrect, dstrect;
 
-	srcrect.x = srcx;
-	srcrect.y = srcy;
-	srcrect.w = wd;
-	srcrect.h = ht;
-	
-	dstrect.x = dstx;
-	dstrect.y = dsty;
-	
+   srcrect.x = srcx;
+   srcrect.y = srcy;
+   srcrect.w = wd;
+   srcrect.h = ht;
+
+   dstrect.x = dstx;
+   dstrect.y = dsty;
+
    DrawBlit(src->fSurface, &srcrect, fSurface, &dstrect);
 }
 
@@ -183,30 +177,24 @@ void NXSurface::DrawSurface(NXSurface *src, int dstx, int dsty)
 void NXSurface::BlitPatternAcross(NXSurface *src,
 						   int x_dst, int y_dst, int y_src, int height)
 {
-SDL_Rect srcrect, dstrect;
+   SDL_Rect srcrect, dstrect;
 
-	srcrect.x = 0;
-	srcrect.w = src->fSurface->w;
-	srcrect.y = y_src;
-	srcrect.h = height;
-	
-	int destwd = fSurface->w;
-	
-	do
-	{
-		dstrect.x = x_dst;
-		dstrect.y = y_dst;
-		
+   srcrect.x = 0;
+   srcrect.w = src->fSurface->w;
+   srcrect.y = y_src;
+   srcrect.h = height;
+
+   int destwd = fSurface->w;
+
+   do
+   {
+      dstrect.x = x_dst;
+      dstrect.y = y_dst;
+
       DrawBlit(src->fSurface, &srcrect, fSurface, &dstrect);
-		x_dst += src->fSurface->w;
-	}while(x_dst < destwd);
+      x_dst += src->fSurface->w;
+   }while(x_dst < destwd);
 }
-
-
-/*
-void c------------------------------() {}
-*/
-
 
 void NXSurface::DrawRect(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b)
 {
@@ -248,10 +236,6 @@ void NXSurface::DrawPixel(int x, int y, uint8_t r, uint8_t g, uint8_t b)
 	DrawRect(x, y, x, y, r, g, b);
 }
 
-/*
-void c------------------------------() {}
-*/
-
 int NXSurface::Width()
 {
 	return fSurface->w;
@@ -280,11 +264,6 @@ void NXSurface::Flip()
    retro_frame_buffer_pitch = fSurface->pitch;
 }
 
-/*
-void c------------------------------() {}
-*/
-
-
 void NXSurface::set_clip_rect(int x, int y, int w, int h)
 {
 	NXRect rect(x, y, w, h);
@@ -301,10 +280,6 @@ void NXSurface::clear_clip_rect()
 	SetClipRectangle(fSurface, NULL);
 }
 
-/*
-void c------------------------------() {}
-*/
-
 void NXSurface::Free()
 {
 	if (fSurface)
@@ -315,6 +290,3 @@ void NXSurface::Free()
 		fSurface = NULL;
 	}
 }
-
-
-

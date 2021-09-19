@@ -318,10 +318,6 @@ int GetFontHeight()
 	return fontheight;
 }
 
-/*
-void c------------------------------() {}
-*/
-
 // create the shadesfc, used by font_draw_shaded. It's just a big long black surface
 // with 50% per-surface alpha applied, that we can use to darken the background.
 static bool create_shade_sfc(void)
@@ -376,8 +372,3 @@ int font_draw_shaded(int x, int y, const char *text, int spacing, NXFont *font)
 	shrink_spaces = true;
 	return (wd);
 }
-
-
-
-
-

@@ -25,20 +25,20 @@ static struct
 
 bool options_init(int retmode)
 {
-	memset(&opt, 0, sizeof(opt));
-	Options::init_objects();
-	opt.dlg = new Dialog;
-	
-	opt.xoffset = SLIDE_DIST;
-	opt.dlg->offset(-SLIDE_DIST, 0);
-	
-	EnterMainMenu();
-	opt.dlg->ondismiss = DialogDismissed;
-	opt.dlg->ShowFull();
-	
-	inputs[F3KEY] = 0;
-	sound(SND_MENU_MOVE);
-	return 0;
+   memset(&opt, 0, sizeof(opt));
+   Options::init_objects();
+   opt.dlg = new Dialog;
+
+   opt.xoffset = SLIDE_DIST;
+   opt.dlg->offset(-SLIDE_DIST, 0);
+
+   EnterMainMenu();
+   opt.dlg->ondismiss = DialogDismissed;
+   opt.dlg->ShowFull();
+
+   inputs[F3KEY] = 0;
+   sound(SND_MENU_MOVE);
+   return 0;
 }
 
 void options_close()
@@ -50,57 +50,48 @@ void options_close()
 	settings_save();
 }
 
-/*
-void c------------------------------() {}
-*/
-
 void options_tick()
 {
-int i;
-FocusHolder *fh;
+   int i;
+   FocusHolder *fh;
 
-	if (justpushed(F3KEY))
-	{
-		game.pause(0);
-		return;
-	}
-	
-	Graphics::ClearScreen(BLACK);
-	Options::run_and_draw_objects();
-	
-	fh = optionstack.ItemAt(optionstack.CountItems() - 1);
-	if (fh)
-	{
-		fh->RunInput();
-		if (game.paused != GP_OPTIONS) return;
-		
-		fh = optionstack.ItemAt(optionstack.CountItems() - 1);
-		if (fh == opt.dismiss_on_focus && fh)
-		{
-			opt.dismiss_on_focus = NULL;
-			delete fh;
-		}
-	}
-	
-	for(i=0;;i++)
-	{
-		fh = optionstack.ItemAt(i);
-		if (!fh) break;
-		
-		fh->Draw();
-	}
-	
-	if (opt.xoffset > 0)
-	{
-		opt.dlg->offset(SLIDE_SPEED, 0);
-		opt.xoffset -= SLIDE_SPEED;
-	}
+   if (justpushed(F3KEY))
+   {
+      game.pause(0);
+      return;
+   }
+
+   Graphics::ClearScreen(BLACK);
+   Options::run_and_draw_objects();
+
+   fh = optionstack.ItemAt(optionstack.CountItems() - 1);
+   if (fh)
+   {
+      fh->RunInput();
+      if (game.paused != GP_OPTIONS) return;
+
+      fh = optionstack.ItemAt(optionstack.CountItems() - 1);
+      if (fh == opt.dismiss_on_focus && fh)
+      {
+         opt.dismiss_on_focus = NULL;
+         delete fh;
+      }
+   }
+
+   for(i=0;;i++)
+   {
+      fh = optionstack.ItemAt(i);
+      if (!fh) break;
+
+      fh->Draw();
+   }
+
+   if (opt.xoffset > 0)
+   {
+      opt.dlg->offset(SLIDE_SPEED, 0);
+      opt.xoffset -= SLIDE_SPEED;
+   }
 }
-
-
-/*
-void c------------------------------() {}
-*/
 
 void DialogDismissed()
 {
@@ -110,9 +101,7 @@ void DialogDismissed()
 		game.pause(false);
 	}
 	else
-	{
 		EnterMainMenu();
-	}
 }
 
 void _60hz_change(ODItem *item, int dir)
@@ -134,28 +123,28 @@ void c------------------------------() {}
 
 static void EnterMainMenu()
 {
-Dialog *dlg = opt.dlg;
+   Dialog *dlg = opt.dlg;
 
-	dlg->Clear();
-	
-	dlg->AddItem("Framerate: ", _60hz_change, _60hz_get);
-	
-	dlg->AddSeparator();
-	
-	//dlg->AddItem("Enable Debug Keys", _debug_change, _debug_get);
-	//dlg->AddItem("Save Slots: ", _save_change, _save_get);
-	
-	dlg->AddSeparator();
-	
-	dlg->AddItem("Music: ", _music_change, _music_get);
-	dlg->AddItem("Sound: ", _sound_change, _sound_get);
-	
-	dlg->AddSeparator();
-	dlg->AddDismissalItem();
-	
-	dlg->SetSelection(opt.mm_cursel);
-	dlg->onclear = LeavingMainMenu;
-	opt.InMainMenu = true;
+   dlg->Clear();
+
+   dlg->AddItem("Framerate: ", _60hz_change, _60hz_get);
+
+   dlg->AddSeparator();
+
+   //dlg->AddItem("Enable Debug Keys", _debug_change, _debug_get);
+   //dlg->AddItem("Save Slots: ", _save_change, _save_get);
+
+   dlg->AddSeparator();
+
+   dlg->AddItem("Music: ", _music_change, _music_get);
+   dlg->AddItem("Sound: ", _sound_change, _sound_get);
+
+   dlg->AddSeparator();
+   dlg->AddDismissalItem();
+
+   dlg->SetSelection(opt.mm_cursel);
+   dlg->onclear = LeavingMainMenu;
+   opt.InMainMenu = true;
 }
 
 void LeavingMainMenu()
@@ -164,33 +153,6 @@ void LeavingMainMenu()
 	opt.dlg->onclear = NULL;
 	opt.InMainMenu = false;
 }
-
-#if 0
-void _debug_change(ODItem *item, int dir)
-{
-	settings->enable_debug_keys ^= 1;
-	sound(SND_MENU_SELECT);
-}
-
-void _debug_get(ODItem *item)
-{
-	static const char *strs[] = { "", " =" };
-	strcpy(item->suffix, strs[settings->enable_debug_keys]);
-}
-
-void _save_change(ODItem *item, int dir)
-{
-	settings->multisave ^= 1;
-	sound(SND_MENU_MOVE);
-}
-
-void _save_get(ODItem *item)
-{
-	static const char *strs[] = { "1", "5" };
-	strcpy(item->suffix, strs[settings->multisave]);
-}
-#endif
-
 
 void _sound_change(ODItem *item, int dir)
 {
@@ -204,8 +166,6 @@ void _sound_get(ODItem *item)
 	strcpy(item->suffix, strs[settings->sound_enabled]);
 }
 
-
-
 void _music_change(ODItem *item, int dir)
 {
 	music_set_enabled((settings->music_enabled + 1) % 3);
@@ -217,7 +177,3 @@ void _music_get(ODItem *item)
 	static const char *strs[] = { "Off", "On", "Boss Only" };
 	strcpy(item->suffix, strs[settings->music_enabled]);
 }
-
-/*
-void c------------------------------() {}
-*/

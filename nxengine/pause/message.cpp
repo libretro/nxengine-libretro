@@ -13,29 +13,29 @@ extern int last_sdl_key;	// from inputs.cpp
 
 Message::Message(const char *msg, const char *msg2)
 {
-	rawKeyReturn = NULL;
-	on_dismiss = NULL;
-	last_sdl_key = -1;
-	
-	fMsg = strdup(msg);
-	fMsg2 = strdup(msg2 ? msg2 : "");
-	
-	fMsgX = MESSAGE_X + ((MESSAGE_W / 2) - (GetFontWidth(fMsg, 0) / 2));
-	
-	if (fMsg2[0])
-	{
-		fMsgY = MESSAGE_Y + 10;
-		fMsg2X = MESSAGE_X + ((MESSAGE_W / 2) - (GetFontWidth(fMsg2, 0) / 2));
-		fMsg2Y = fMsgY + GetFontHeight() + 4;
-		fShowDelay = 0;
-	}
-	else
-	{
-		fMsgY = (MESSAGE_Y + ((MESSAGE_H / 2) - (GetFontHeight() / 2))) - 1;
-		fShowDelay = 4;
-	}
-	
-	optionstack.AddItem(this);
+   rawKeyReturn = NULL;
+   on_dismiss = NULL;
+   last_sdl_key = -1;
+
+   fMsg = strdup(msg);
+   fMsg2 = strdup(msg2 ? msg2 : "");
+
+   fMsgX = MESSAGE_X + ((MESSAGE_W / 2) - (GetFontWidth(fMsg, 0) / 2));
+
+   if (fMsg2[0])
+   {
+      fMsgY = MESSAGE_Y + 10;
+      fMsg2X = MESSAGE_X + ((MESSAGE_W / 2) - (GetFontWidth(fMsg2, 0) / 2));
+      fMsg2Y = fMsgY + GetFontHeight() + 4;
+      fShowDelay = 0;
+   }
+   else
+   {
+      fMsgY = (MESSAGE_Y + ((MESSAGE_H / 2) - (GetFontHeight() / 2))) - 1;
+      fShowDelay = 4;
+   }
+
+   optionstack.AddItem(this);
 }
 
 Message::~Message()
@@ -76,7 +76,3 @@ void Message::RunInput()
 		delete this;
 	}
 }
-
-
-
-

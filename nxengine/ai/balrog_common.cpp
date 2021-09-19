@@ -5,8 +5,6 @@
 // some routines used by multiple Balrog boss fights or Balrog NPC's
 // ---------------------------------------
 
-
-
 // grab the player in preparation for running the toss_player_away animation.
 void balrog_grab_player(Object *o)
 {

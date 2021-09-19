@@ -8,13 +8,13 @@
 
 uint8_t read_U8(const uint8_t **data, const uint8_t *data_end)
 {
-	if (*data > data_end)
-	{
-		NX_ERR("read_U8: read past end of buffer: *data > data_end\n");
-		return 0xfe;
-	}
-	
-	return *(*data)++;
+   if (*data > data_end)
+   {
+      NX_ERR("read_U8: read past end of buffer: *data > data_end\n");
+      return 0xfe;
+   }
+
+   return *(*data)++;
 }
 
 uint16_t read_U16(const uint8_t **data, const uint8_t *data_end)
@@ -35,10 +35,8 @@ uint16_t read_U16(const uint8_t **data, const uint8_t *data_end)
 
 uint32_t read_U24(const uint8_t **data, const uint8_t *data_end)
 {
-   uint32_t a, b;
-
-   a = read_U16(data, data_end);
-   b = read_U8(data, data_end);
+   uint32_t a = read_U16(data, data_end);
+   uint32_t b = read_U8(data, data_end);
 
    return a | (b << 16);
 }

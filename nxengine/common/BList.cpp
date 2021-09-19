@@ -49,24 +49,26 @@ move_items(void** items, int32 offset, int32 count)
 
 // constructor
 BList::BList(int32 count)
-	  :		 fObjectList(NULL),
-			 fPhysicalSize(0),
-			 fItemCount(0),
-			 fBlockSize(count),
-			 fResizeThreshold(0)
+	  :		 
+        fObjectList(NULL),
+        fPhysicalSize(0),
+        fItemCount(0),
+        fBlockSize(count),
+        fResizeThreshold(0)
 {
-	if (fBlockSize <= 0)
-		fBlockSize = 1;
-	_ResizeArray(fItemCount);
+   if (fBlockSize <= 0)
+      fBlockSize = 1;
+   _ResizeArray(fItemCount);
 }
 
 
 // copy constructor
 BList::BList(const BList& anotherList)
-	  :		 fObjectList(NULL),
-			 fPhysicalSize(0),
-			 fItemCount(0),
-			 fBlockSize(anotherList.fBlockSize)
+	  :		 
+        fObjectList(NULL),
+        fPhysicalSize(0),
+        fItemCount(0),
+        fBlockSize(anotherList.fBlockSize)
 {
 	*this = anotherList;
 }
@@ -80,22 +82,20 @@ BList::~BList()
 
 
 // =
-BList&
-BList::operator =(const BList &list)
+BList& BList::operator =(const BList &list)
 {
 	fBlockSize = list.fBlockSize;
-	if (_ResizeArray(list.fItemCount)) {
-		fItemCount = list.fItemCount;
-		memcpy(fObjectList, list.fObjectList, fItemCount * sizeof(void*));
-	}
+	if (_ResizeArray(list.fItemCount))
+   {
+      fItemCount = list.fItemCount;
+      memcpy(fObjectList, list.fObjectList, fItemCount * sizeof(void*));
+   }
 	
 	return *this;
 }
 
-
 // AddItem
-bool
-BList::AddItem(const void *item, int32 index)
+bool BList::AddItem(const void *item, int32 index)
 {
 	if (index < 0 || index > fItemCount)
 		return false;
@@ -104,18 +104,18 @@ BList::AddItem(const void *item, int32 index)
 	
 	if (fItemCount + 1 > fPhysicalSize)
 		result = _ResizeArray(fItemCount + 1);
-	if (result) {
-		++fItemCount;
-		move_items(fObjectList + index, 1, fItemCount - index - 1);
-		fObjectList[index] = (void *)item;
-	}
+	if (result)
+   {
+      ++fItemCount;
+      move_items(fObjectList + index, 1, fItemCount - index - 1);
+      fObjectList[index] = (void *)item;
+   }
 	return result;
 }
 
 
 // AddItem
-bool
-BList::AddItem(const void *item)
+bool BList::AddItem(const void *item)
 {
 	bool result = true;
 	if (fPhysicalSize > fItemCount) {
@@ -132,8 +132,7 @@ BList::AddItem(const void *item)
 
 
 // AddList
-bool
-BList::AddList(const BList *list, int32 index)
+bool BList::AddList(const BList *list, int32 index)
 {
 	bool result = (list && index >= 0 && index <= fItemCount);
 	if (result && list->fItemCount > 0) {
@@ -152,8 +151,7 @@ BList::AddList(const BList *list, int32 index)
 
 
 // AddList
-bool
-BList::AddList(const BList *list)
+bool BList::AddList(const BList *list)
 {
 	bool result = (list != NULL);
 	if (result && list->fItemCount > 0) {
@@ -172,8 +170,7 @@ BList::AddList(const BList *list)
 
 
 // RemoveItem
-bool
-BList::RemoveItem(void *item)
+bool BList::RemoveItem(void *item)
 {
 	int32 index = IndexOf(item);
 	bool result = (index >= 0);
@@ -184,8 +181,7 @@ BList::RemoveItem(void *item)
 
 
 // RemoveItem
-void *
-BList::RemoveItem(int32 index)
+void *BList::RemoveItem(int32 index)
 {
 	void *item = NULL;
 	if (index >= 0 && index < fItemCount) {
@@ -200,8 +196,7 @@ BList::RemoveItem(int32 index)
 
 
 // RemoveItems
-bool
-BList::RemoveItems(int32 index, int32 count)
+bool BList::RemoveItems(int32 index, int32 count)
 {
 	bool result = (index >= 0 && index <= fItemCount);
 	if (result) {
@@ -221,8 +216,7 @@ BList::RemoveItems(int32 index, int32 count)
 
 
 //ReplaceItem
-bool
-BList::ReplaceItem(int32 index, void *newItem)
+bool BList::ReplaceItem(int32 index, void *newItem)
 {
 	bool result = false;
 	
@@ -235,8 +229,7 @@ BList::ReplaceItem(int32 index, void *newItem)
 
 
 // MakeEmpty
-void
-BList::MakeEmpty()
+void BList::MakeEmpty()
 {
 	fItemCount = 0;
 	_ResizeArray(0);
@@ -245,8 +238,7 @@ BList::MakeEmpty()
 
 /* Reordering items. */
 // SortItems
-void
-BList::SortItems(int (*compareFunc)(const void *, const void *))
+void BList::SortItems(int (*compareFunc)(const void *, const void *))
 {
 	if (compareFunc)
 		qsort(fObjectList, fItemCount, sizeof(void *), compareFunc);
@@ -254,8 +246,7 @@ BList::SortItems(int (*compareFunc)(const void *, const void *))
 
 
 //SwapItems
-bool
-BList::SwapItems(int32 indexA, int32 indexB)
+bool BList::SwapItems(int32 indexA, int32 indexB)
 {
 	bool result = false;
 	
@@ -279,8 +270,7 @@ BList::SwapItems(int32 indexA, int32 indexB)
 //	A B C D E F G H I J
 //		Moveing 1(B)->6(G) would result in this:
 // A C D E F G B H I J
-bool
-BList::MoveItem(int32 fromIndex, int32 toIndex)
+bool BList::MoveItem(int32 fromIndex, int32 toIndex)
 {
 	if ((fromIndex >= fItemCount) || (toIndex >= fItemCount) || (fromIndex < 0)
 		|| (toIndex < 0))
@@ -302,8 +292,7 @@ BList::MoveItem(int32 fromIndex, int32 toIndex)
 
 /* Retrieving items. */
 // ItemAt
-void *
-BList::ItemAt(int32 index) const
+void *BList::ItemAt(int32 index) const
 {
 	void *item = NULL;
 	if (index >= 0 && index < fItemCount)
@@ -313,8 +302,7 @@ BList::ItemAt(int32 index) const
 
 
 // FirstItem
-void *
-BList::FirstItem() const
+void *BList::FirstItem() const
 {
 	void *item = NULL;
 	if (fItemCount > 0)
@@ -324,24 +312,21 @@ BList::FirstItem() const
 
 
 // ItemAtFast
-void *
-BList::ItemAtFast(int32 index) const
+void *BList::ItemAtFast(int32 index) const
 {
 	return fObjectList[index];
 }
 
 
 // Items
-void *
-BList::Items() const
+void *BList::Items() const
 {
 	return fObjectList;
 }
 
 
 // LastItem
-void *
-BList::LastItem() const
+void *BList::LastItem() const
 {
 	void *item = NULL;
 	if (fItemCount > 0)
@@ -352,16 +337,14 @@ BList::LastItem() const
 
 /* Querying the list. */
 // HasItem
-bool
-BList::HasItem(void *item) const
+bool BList::HasItem(void *item) const
 {
 	return (IndexOf(item) >= 0);
 }
 
 
 // IndexOf
-int32
-BList::IndexOf(void *item) const
+int32 BList::IndexOf(void *item) const
 {
 	for (int32 i = 0; i < fItemCount; i++) {
 		if (fObjectList[i] == item)
@@ -372,16 +355,14 @@ BList::IndexOf(void *item) const
 
 
 // CountItems
-int32
-BList::CountItems() const
+int32 BList::CountItems() const
 {
 	return fItemCount;
 }
 
 
 // IsEmpty
-bool
-BList::IsEmpty() const
+bool BList::IsEmpty() const
 {
 	return (fItemCount == 0);
 }
@@ -390,9 +371,7 @@ BList::IsEmpty() const
 /* Iterating over the list. */
 //iterate a function over the whole list.  If the function outputs a true
 //value, then the process is terminated.
-
-void
-BList::DoForEach(bool (*func)(void *))
+void BList::DoForEach(bool (*func)(void *))
 {
 	bool terminate = false; int32 index = 0;		//set terminate condition variables to go.
 	if (func != NULL)
@@ -401,15 +380,13 @@ BList::DoForEach(bool (*func)(void *))
 		{
 			terminate = func(fObjectList[index]);			//reset immediate terminator
 			index++;									//advance along the list.
-		};
+		}
 	}
-
 }
 
 
 //same as above, except this function takes an argument.
-void
-BList::DoForEach(bool (*func)(void *, void*), void * arg)
+void BList::DoForEach(bool (*func)(void *, void*), void * arg)
 {
 	bool terminate = false; int32 index = 0;
 	if (func != NULL)
@@ -423,7 +400,6 @@ BList::DoForEach(bool (*func)(void *, void*), void * arg)
 }
 
 #if (__GNUC__ == 2)
-
 // This is somewhat of a hack for backwards compatibility -
 // the reason these functions are defined this way rather than simply
 // being made private members is that if they are included, then whenever
@@ -432,15 +408,13 @@ BList::DoForEach(bool (*func)(void *, void*), void * arg)
 
 // obsolete AddList(BList* list, int32 index) and AddList(BList* list)
 // AddList
-extern "C" bool
-AddList__5BListP5BListl(BList* self, BList* list, int32 index)
+extern "C" bool AddList__5BListP5BListl(BList* self, BList* list, int32 index)
 {
 	return self->AddList((const BList*)list, index);
 }
 
 // AddList
-extern "C" bool
-AddList__5BListP5BList(BList* self, BList* list)
+extern "C" bool AddList__5BListP5BList(BList* self, BList* list)
 {
 	return self->AddList((const BList *)list);
 }
@@ -449,8 +423,7 @@ AddList__5BListP5BList(BList* self, BList* list)
 // Resize
 //
 // Resizes fObjectList to be large enough to contain count items.
-bool
-BList::_ResizeArray(int32 count)
+bool BList::_ResizeArray(int32 count)
 {
 	bool result = true;
 	// calculate the new physical size
@@ -483,4 +456,3 @@ BList::_ResizeArray(int32 count)
 	}
 	return result;
 }
-

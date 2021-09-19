@@ -21,10 +21,6 @@ DBuffer::~DBuffer()
 		free(fData);
 }
 
-/*
-void c------------------------------() {}
-*/
-
 // append data to the end of the buffer
 void DBuffer::AppendData(const uint8_t *data, int length)
 {

@@ -5,7 +5,6 @@
 
 InitList AIRoutines;
 
-
 bool ai_init(void)
 {
 	// setup function pointers to AI routines
@@ -24,10 +23,7 @@ bool ai_init(void)
 	// call all the INITFUNC() routines you find at the beginning
 	// of every AI-related module which assign AI logic to objects.
 	if (AIRoutines.CallFunctions())
-	{
-		NX_ERR("ai_init: failed to initialize AIRoutines function pointers\n");
 		return 1;
-	}
 	
 	return 0;
 }
@@ -35,74 +31,52 @@ bool ai_init(void)
 
 bool load_npc_tbl(void)
 {
-char fname[1024];
-const int smoke_amounts[] = { 0, 3, 7, 12 };
-const int nEntries = 361;
-int i;
-char slash;
+   char fname[1024];
+   const int smoke_amounts[] = { 0, 3, 7, 12 };
+   const int nEntries = 361;
+   int i;
 #ifdef _WIN32
-slash = '\\';
+   char slash = '\\';
 #else
-slash = '/';
+   char slash = '/';
 #endif
-char tmp_str[256];
-snprintf(tmp_str, sizeof(tmp_str), "data%cnpc.tbl", slash);
-	retro_create_path_string(fname, sizeof(fname), g_dir, tmp_str);
+   char tmp_str[256];
+   snprintf(tmp_str, sizeof(tmp_str), "data%cnpc.tbl", slash);
+   retro_create_path_string(fname, sizeof(fname), g_dir, tmp_str);
 
-	FILE *fp = fopen(fname, "rb");
-	if (!fp) {
+   FILE *fp = fopen(fname, "rb");
+   if (!fp) {
       NX_ERR("load_npc_tbl: %s is missing\n", fname);
       return 1;
    }
-	
-	NX_LOG("Reading %s...\n", fname);
-	
-	for(i=0;i<nEntries;i++) objprop[i].defaultflags = fgeti(fp);
-	for(i=0;i<nEntries;i++) objprop[i].initial_hp = fgeti(fp);
-	
-	// next is a spritesheet # of something--but we don't use it, so skip
-	//for(i=0;i<nEntries;i++) fgetc(fp);		// spritesheet # or something--but we don't use it
-	fseek(fp, (nEntries * 2 * 2) + nEntries, SEEK_SET);
-	
-	for(i=0;i<nEntries;i++) objprop[i].death_sound = fgetc(fp);
-	for(i=0;i<nEntries;i++) objprop[i].hurt_sound = fgetc(fp);
-	for(i=0;i<nEntries;i++) objprop[i].death_smoke_amt = smoke_amounts[fgetc(fp)];
-	for(i=0;i<nEntries;i++) objprop[i].xponkill = fgetl(fp);
-	for(i=0;i<nEntries;i++) objprop[i].damage = fgetl(fp);
-	
-	/*for(i=0;i<nEntries;i++)
-	{
-		int left = fgetc(fp);
-		int top = fgetc(fp);
-		int right = fgetc(fp);
-		int bottom = fgetc(fp);
-		
-		if (i == 59)
-		{
-			NX_LOG("%d %d %d %d\n", left, top, right, bottom);
-			NX_LOG("sprite %d\n", objprop[i].sprite);
-		}
-	}*/
-	
-	fclose(fp);
-	return 0;//1;
-}
 
-/*
-void c------------------------------() {}
-*/
+   NX_LOG("Reading %s...\n", fname);
+
+   for(i=0;i<nEntries;i++) objprop[i].defaultflags = fgeti(fp);
+   for(i=0;i<nEntries;i++) objprop[i].initial_hp = fgeti(fp);
+
+   // next is a spritesheet # of something--but we don't use it, so skip
+   //for(i=0;i<nEntries;i++) fgetc(fp);		// spritesheet # or something--but we don't use it
+   fseek(fp, (nEntries * 2 * 2) + nEntries, SEEK_SET);
+
+   for(i=0;i<nEntries;i++) objprop[i].death_sound = fgetc(fp);
+   for(i=0;i<nEntries;i++) objprop[i].hurt_sound = fgetc(fp);
+   for(i=0;i<nEntries;i++) objprop[i].death_smoke_amt = smoke_amounts[fgetc(fp)];
+   for(i=0;i<nEntries;i++) objprop[i].xponkill = fgetl(fp);
+   for(i=0;i<nEntries;i++) objprop[i].damage = fgetl(fp);
+
+   fclose(fp);
+   return 0;//1;
+}
 
 // spawn an object at an enemies action point
 Object *SpawnObjectAtActionPoint(Object *o, int otype)
 {
-int x, y;
-Object *newObject;
-
-	x = o->x + (sprites[o->sprite].frame[o->frame].dir[o->dir].actionpoint.x << CSF);
-	y = o->y + (sprites[o->sprite].frame[o->frame].dir[o->dir].actionpoint.y << CSF);
-	newObject = CreateObject(x, y, otype);
-	newObject->dir = o->dir;
-	return newObject;
+   int x             = o->x + (sprites[o->sprite].frame[o->frame].dir[o->dir].actionpoint.x << CSF);
+   int y             = o->y + (sprites[o->sprite].frame[o->frame].dir[o->dir].actionpoint.y << CSF);
+   Object *newObject = CreateObject(x, y, otype);
+   newObject->dir    = o->dir;
+   return newObject;
 }
 
 
@@ -132,18 +106,11 @@ void DeleteObjectsOfType(int type)
 	while(o)
 	{
 		if (o->type == type)
-		{
 			o->Delete();
-		}
 		
 		o = o->next;
 	}
 }
-
-/*
-void c------------------------------() {}
-*/
-
 
 // handles object blinking: at random intervals forces object o's frame to blinkframe
 // for blinktime frames.
@@ -168,34 +135,34 @@ void randblink(Object *o, int blinkframe, int blinktime, int prob)
 // off_y: vertical offset from p's action point
 void StickToPlayer(Object *o, int x_left, int x_right, int off_y)
 {
-int x, y, frame;
+   int x, y, frame;
 
-	// needed for puppy in chest
-	o->flags &= ~FLAG_SCRIPTONACTIVATE;
-	
-	// by offsetting from the player's action point, where he holds his gun, we
-	// already have set up for us a nice up-and-down 1 pixel as he walks
-	frame = player->frame;
-	// the p's "up" frames have unusually placed action points so we have to cancel those out
-	if (frame >= 3 && frame <= 5) frame -= 3;
-	
-	x = (player->x >> CSF) + sprites[player->sprite].frame[frame].dir[player->dir].actionpoint.x;
-	y = (player->y >> CSF) + sprites[player->sprite].frame[frame].dir[player->dir].actionpoint.y;
-	y += off_y;
-	
-	if (player->dir == RIGHT)
-	{
-		x += x_right;
-		o->dir = RIGHT;
-	}
-	else
-	{
-		x += x_left;
-		o->dir = LEFT;
-	}
-	
-	o->x = (x << CSF);
-	o->y = (y << CSF);
+   // needed for puppy in chest
+   o->flags &= ~FLAG_SCRIPTONACTIVATE;
+
+   // by offsetting from the player's action point, where he holds his gun, we
+   // already have set up for us a nice up-and-down 1 pixel as he walks
+   frame = player->frame;
+   // the p's "up" frames have unusually placed action points so we have to cancel those out
+   if (frame >= 3 && frame <= 5) frame -= 3;
+
+   x = (player->x >> CSF) + sprites[player->sprite].frame[frame].dir[player->dir].actionpoint.x;
+   y = (player->y >> CSF) + sprites[player->sprite].frame[frame].dir[player->dir].actionpoint.y;
+   y += off_y;
+
+   if (player->dir == RIGHT)
+   {
+      x += x_right;
+      o->dir = RIGHT;
+   }
+   else
+   {
+      x += x_left;
+      o->dir = LEFT;
+   }
+
+   o->x = (x << CSF);
+   o->y = (y << CSF);
 }
 
 
@@ -206,18 +173,10 @@ void transfer_damage(Object *o, Object *target)
 	{
 		// if you forget to set hp to 1000 when creating the puppet object,
 		// it can immediately destroy the main object, possibly leading to crashes.
-		#ifdef DEBUG
-			ASSERT(o->hp != 0);
-		#endif
-		
 		target->DealDamage(1000 - o->hp);
 		o->hp = 1000;
 	}
 }
-
-/*
-void c------------------------------() {}
-*/
 
 // do the "teleport in" effect for object o.
 // when complete, returns true.
@@ -292,28 +251,22 @@ static void simpleanim(Object *o, int spd)
 	}
 }
 
-/*
-void c------------------------------() {}
-*/
-
 // aftermove routine which sticks the object to the action point of the NPC that's carrying it
 void aftermove_StickToLinkedActionPoint(Object *o)
 {
-Object *link = o->linkedobject;
-int dir;
+   Object *link = o->linkedobject;
+   int dir;
 
-	if (link)
-	{
-		dir = (link->dir ^ o->carry.flip);
-		
-		o->x = ((link->x >> CSF) + sprites[link->sprite].frame[link->frame].dir[dir].actionpoint.x) << CSF;
-		o->y = ((link->y >> CSF) + sprites[link->sprite].frame[link->frame].dir[dir].actionpoint.y) << CSF;
-		o->dir = dir;
-	}
-	else
-	{
-		o->Delete();
-	}
+   if (link)
+   {
+      dir = (link->dir ^ o->carry.flip);
+
+      o->x = ((link->x >> CSF) + sprites[link->sprite].frame[link->frame].dir[dir].actionpoint.x) << CSF;
+      o->y = ((link->y >> CSF) + sprites[link->sprite].frame[link->frame].dir[dir].actionpoint.y) << CSF;
+      o->dir = dir;
+   }
+   else
+      o->Delete();
 }
 
 void onspawn_snap_to_ground(Object *o)
@@ -325,8 +278,3 @@ void onspawn_set_frame_from_id2(Object *o)
 {
 	o->frame = o->id2;
 }
-
-/*
-void c------------------------------() {}
-*/
-

@@ -5,27 +5,26 @@
 
 bool IrregularBBox::init(Object *associatedObject, int max_rectangles)
 {
-	memset(&bbox, 0, sizeof(bbox));
-	this->num_bboxes = max_rectangles;
-	this->assoc_object = associatedObject;
-	
-	if (num_bboxes >= IB_MAX_BBOXES)
-	{
-		num_bboxes = IB_MAX_BBOXES;
-		NX_ERR("IrregularBBox::Init(): too many rectangles (%d given): max is %d\n", max_rectangles, IB_MAX_BBOXES);
-		return 1;
-	}
-	
-	for(int i=0;i<num_bboxes;i++)
-	{
-		bbox[i] = CreateObject(0, 0, OBJ_BBOX_PUPPET);
-		bbox[i]->sprite = SPR_BBOX_PUPPET_1 + i;
-		bbox[i]->hp = 1000;
-		bbox[i]->damage = 0;
-		bbox[i]->invisible = true;
-	}
-	
-	return 0;
+   memset(&bbox, 0, sizeof(bbox));
+   this->num_bboxes = max_rectangles;
+   this->assoc_object = associatedObject;
+
+   if (num_bboxes >= IB_MAX_BBOXES)
+   {
+      num_bboxes = IB_MAX_BBOXES;
+      return 1;
+   }
+
+   for(int i=0;i<num_bboxes;i++)
+   {
+      bbox[i] = CreateObject(0, 0, OBJ_BBOX_PUPPET);
+      bbox[i]->sprite = SPR_BBOX_PUPPET_1 + i;
+      bbox[i]->hp = 1000;
+      bbox[i]->damage = 0;
+      bbox[i]->invisible = true;
+   }
+
+   return 0;
 }
 
 void IrregularBBox::destroy()
@@ -113,8 +112,3 @@ void IrregularBBox::set_bbox(int index, int x, int y, int w, int h, uint32_t fla
 	box->x += assoc_object->xinertia;
 	box->y += assoc_object->yinertia;
 }
-
-
-
-
-

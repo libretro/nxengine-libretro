@@ -15,17 +15,17 @@ extern FocusStack optionstack;
 
 Dialog::Dialog()
 {
-	onclear = NULL;
-	ondismiss = NULL;
+	onclear      = NULL;
+	ondismiss    = NULL;
 	
-	fCoords.x = DLG_X;
-	fCoords.y = DLG_Y;
-	fCoords.w = DLG_W;
-	fCoords.h = DLG_H;
-	fTextX = (fCoords.x + 48);
+	fCoords.x    = DLG_X;
+	fCoords.y    = DLG_Y;
+	fCoords.w    = DLG_W;
+	fCoords.h    = DLG_H;
+	fTextX       = (fCoords.x + 48);
 	
-	fCurSel = 0;
-	fNumShown = 0;
+	fCurSel      = 0;
+	fNumShown    = 0;
 	fRepeatTimer = 0;
 	
 	optionstack.AddItem(this);
@@ -46,51 +46,48 @@ void Dialog::SetSize(int w, int h)
 	fCoords.h = h;
 	fCoords.x = ((DLG_W / 2) - (w / 2)) + DLG_X;
 	fCoords.y = ((DLG_H / 2) - (h / 2)) + DLG_Y;
-	fTextX = (fCoords.x + 34);
+	fTextX    = (fCoords.x + 34);
 }
 
 void Dialog::offset(int xd, int yd)
 {
 	fCoords.x += xd;
 	fCoords.y += yd;
-	fTextX += xd;
+	fTextX    += xd;
 }
 
-/*
-void c------------------------------() {}
-*/
-
-ODItem *Dialog::AddItem(const char *text, \
-						void (*activate)(ODItem *, int), \
-						void (*update)(ODItem *),\
-						int id, int type)
+ODItem *Dialog::AddItem(const char *text,
+      void (*activate)(ODItem *, int),
+      void (*update)(ODItem *),
+      int id, int type)
 {
-	ODItem *item = new ODItem;
-	memset(item, 0, sizeof(ODItem));
-	
-	strcpy(item->text, text);
-	
-	item->activate = activate;
-	item->update = update;
-	item->id = id;
-	item->type = type;
-	
-	fItems.AddItem(item);
-	
-	if (update)
-		(*update)(item);
-	
-	return item;
+   ODItem *item = new ODItem;
+   memset(item, 0, sizeof(ODItem));
+
+   strcpy(item->text, text);
+
+   item->activate = activate;
+   item->update   = update;
+   item->id       = id;
+   item->type     = type;
+
+   fItems.AddItem(item);
+
+   if (update)
+      (*update)(item);
+
+   return item;
 }
 
 ODItem *Dialog::AddSeparator()
 {
-	return AddItem("", NULL, NULL, -1, OD_SEPARATOR);
+   return AddItem("", NULL, NULL, -1, OD_SEPARATOR);
 }
 
 ODItem *Dialog::AddDismissalItem(const char *text)
 {
-	if (!text) text = "Return";
+	if (!text)
+      text = "Return";
 	return AddItem(text, NULL, NULL, -1, OD_DISMISS);
 }
 
@@ -195,12 +192,6 @@ void Dialog::RunInput()
 			}
 		}
 	}
-	
-	/*if (justpushed(ESCKEY))
-	{
-		Dismiss();
-		return;
-	}*/
 }
 
 void Dialog::SetSelection(int sel)
@@ -240,7 +231,3 @@ void Dialog::Clear()
    fNumShown = 0;
    fCurSel = 0;
 }
-
-
-
-

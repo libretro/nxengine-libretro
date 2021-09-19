@@ -51,10 +51,6 @@ void intro_tick()
 	}
 }
 
-/*
-void c------------------------------() {}
-*/
-
 INITFUNC(AIRoutines)
 {
 	ONTICK(OBJ_INTRO_KINGS, ai_intro_kings);
@@ -70,141 +66,104 @@ void c------------------------------() {}
 void ai_intro_kings(Object *o)
 {
 	switch(o->state)
-	{
-		case 0:
-		{
-			o->state = 1;
-			
-			if (o->dir == LEFT)
-			{
-				o->timer = 25;
-				o->y -= 0x640;
-			}
-		}
-		case 1:
-		{
-			if (++o->timer >= 50)
-			{
-				o->timer = 0;
-				o->timer2 ^= 1;
-			}
-			
-			if (o->timer2)
-			{
-				o->y += 0x40;
-			}
-			else
-			{
-				o->y -= 0x40;
-			}
-		}
-		break;
-	}
+   {
+      case 0:
+         o->state = 1;
+
+         if (o->dir == LEFT)
+         {
+            o->timer = 25;
+            o->y -= 0x640;
+         }
+      case 1:
+         if (++o->timer >= 50)
+         {
+            o->timer = 0;
+            o->timer2 ^= 1;
+         }
+
+         if (o->timer2)
+            o->y += 0x40;
+         else
+            o->y -= 0x40;
+         break;
+   }
 }
 
 // demon crown on throne
 void ai_intro_crown(Object *o)
 {
 	switch(o->state)
-	{
-		case 0:
-		{
-			o->x += (8 << CSF);
-			o->y += (14 << CSF);
-			o->state = 1;
-		}
-		case 1:
-		{
-			if ((++o->timer % 8) == 1)
-			{
-				effect(o->x + random(-8<<CSF, 8<<CSF),
-						o->y + (8<<CSF),
-						   EFFECT_GHOST_SPARKLE);
-			}
-		}
-		break;
-	}
+   {
+      case 0:
+         o->x += (8 << CSF);
+         o->y += (14 << CSF);
+         o->state = 1;
+      case 1:
+         if ((++o->timer % 8) == 1)
+         {
+            effect(o->x + random(-8<<CSF, 8<<CSF),
+                  o->y + (8<<CSF),
+                  EFFECT_GHOST_SPARKLE);
+         }
+         break;
+   }
 }
 
 
 void ai_intro_doctor(Object *o)
 {
-
 	switch(o->state)
-	{
-		case 0:
-		{
-			o->y -= (8 << CSF);
-			o->state = 1;
-		}
-		case 1:
-		{
-			o->frame = 0;
-		}
-		break;
-		
-		case 10:	// chuckle; facing screen
-		{
-			o->state = 11;
-			o->frame = 0;
-			o->animtimer = 0;
-			o->timer2 = 0;
-		}
-		case 11:
-		{
-			ANIMATE_FWD(6);
-			if (o->frame > 1)
-			{
-				o->frame = 0;
-				if (++o->timer2 > 7)
-					o->state = 1;
-			}
-		}
-		break;
-		
-		case 20:	// walk
-		{
-			o->state = 21;
-			o->frame = 2;
-			o->animtimer = 0;
-		}
-		case 21:
-		{
-			ANIMATE(10, 2, 5);
-			o->x += 0x100;
-		}
-		break;
-		
-		case 30:	// face away
-		{
-			o->frame = 6;
-			o->state = 31;
-		}
-		break;
-		
-		case 40:	// chuckle; facing away
-		{
-			o->state = 41;
-			o->frame = 6;
-			o->animtimer = 0;
-			o->timer2 = 0;
-		}
-		case 41:
-		{
-			ANIMATE_FWD(6);
-			if (o->frame > 7)
-			{
-				o->frame = 6;
-				if (++o->timer2 > 7)
-					o->state = 30;
-			}
-		}
-		break;
-	}
+   {
+      case 0:
+         o->y -= (8 << CSF);
+         o->state = 1;
+      case 1:
+         o->frame = 0;
+         break;
+
+      case 10:	// chuckle; facing screen
+         o->state = 11;
+         o->frame = 0;
+         o->animtimer = 0;
+         o->timer2 = 0;
+      case 11:
+         ANIMATE_FWD(6);
+         if (o->frame > 1)
+         {
+            o->frame = 0;
+            if (++o->timer2 > 7)
+               o->state = 1;
+         }
+         break;
+
+      case 20:	// walk
+         o->state = 21;
+         o->frame = 2;
+         o->animtimer = 0;
+      case 21:
+         ANIMATE(10, 2, 5);
+         o->x += 0x100;
+         break;
+
+      case 30:	// face away
+         o->frame = 6;
+         o->state = 31;
+         break;
+
+      case 40:	// chuckle; facing away
+         o->state = 41;
+         o->frame = 6;
+         o->animtimer = 0;
+         o->timer2 = 0;
+      case 41:
+         ANIMATE_FWD(6);
+         if (o->frame > 7)
+         {
+            o->frame = 6;
+            if (++o->timer2 > 7)
+               o->state = 30;
+         }
+         break;
+   }
 }
-
-
-
-
-
-

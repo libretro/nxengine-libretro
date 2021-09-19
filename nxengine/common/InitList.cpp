@@ -22,40 +22,24 @@ void InitList::AddFunction(bool (*func)(void))
 
 void InitList::AddFunction(void *func)
 {
-	//NX_LOG("AddFunction (void)%08x [%d]\n", func, fCount);
 	if (fCount >= MAX_INIT_RECORDS)
 		return;
 	
 	fFunctions[fCount++] = (void *)func;
 }
 
-/*
-void c------------------------------() {}
-*/
-
 bool InitList::CallFunctions()
 {
-int i;
+   int i;
 
-	if (fCount >= MAX_INIT_RECORDS)
-	{
-		NX_ERR("InitList::CallFunctions(%08x): too many initializers\n", this);
-		return 1;
-	}
-	
-	NX_LOG("InitList::CallFunctions(%08x): executing %d functions...\n", this, fCount);
-	
-	for(i=0;i<fCount;i++)
-	{
-		void (*func)(void) = (void (*)())fFunctions[i];
-		(*func)();
-	}
-	
-	return 0;
+   if (fCount >= MAX_INIT_RECORDS)
+      return 1;
+
+   for(i=0;i<fCount;i++)
+   {
+      void (*func)(void) = (void (*)())fFunctions[i];
+      (*func)();
+   }
+
+   return 0;
 }
-
-
-
-
-
-

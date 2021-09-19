@@ -207,102 +207,81 @@ extern char *org_data[42];
 
 char org_load(int songno)
 {
-static const char *magic = "Org-02";
-char buf[8];
-char *f;
-char **fp;
-int i, j;
-
-	f = org_data[songno];
-   fp = &f;
-	if (!fp) {
+   static const char *magic = "Org-02";
+   char buf[8];
+   int i, j;
+   char *f = org_data[songno];
+   char **fp = &f;
+   if (!fp)
+   {
       NX_WARN("org_load: no such file: '%d'\n", songno);
       return 1;
    }
-	
-	for(i=0;i<6;i++) { buf[i] = mgetc(fp); } buf[i] = 0;
-	if (strcmp(buf, magic)) {
+
+   for(i=0;i<6;i++)
+   {
+      buf[i] = mgetc(fp);
+   }
+   buf[i] = 0;
+   if (strcmp(buf, magic))
+   {
       NX_WARN("org-load: not an org file (got '%s')\n", buf);
-      //fclose(fp);
       return 1;
    }
-	NX_LOG("%d: %s detected\n", songno, magic);
-	
-	//fseek(fp, 0x06, SEEK_SET);
-	
-	song.ms_per_beat = mgeti(fp);
-	song.steps_per_bar = mgetc(fp);
-	song.beats_per_step = mgetc(fp);
-	song.loop_start = mgetl(fp);
-	song.loop_end = mgetl(fp);
-	
-	//song.ms_per_beat = 500;
-	//song.loop_start = 64;
-	
-	if (song.loop_end < song.loop_start)
-	{
-		visible_warning("org_load: loop end is before loop start");
-		//fclose(fp);
-		return 1;
-	}
-	
-	// compute how long the last beat of a note should be (it should not use up the whole beat)
+   NX_LOG("%d: %s detected\n", songno, magic);
+
+
+   song.ms_per_beat    = mgeti(fp);
+   song.steps_per_bar  = mgetc(fp);
+   song.beats_per_step = mgetc(fp);
+   song.loop_start     = mgetl(fp);
+   song.loop_end       = mgetl(fp);
+
+   //song.ms_per_beat = 500;
+   //song.loop_start = 64;
+
+   if (song.loop_end < song.loop_start)
+      return 1;
+
+   // compute how long the last beat of a note should be (it should not use up the whole beat)
    song.ms_of_last_beat_of_note = song.ms_per_beat - (int)((float_type)song.ms_per_beat * 0.1);
-	
-	// not actually used in this module, but the larger program might want to know this
-	song.beats_per_bar = (song.beats_per_step * song.steps_per_bar);
-	
-	/*lprintf("tempo: %d ms/beat\n", song.ms_per_beat);
-	lprintf("beats_per_step: %d\n", song.beats_per_step);
-	lprintf("steps_per_bar: %d\n", song.steps_per_bar);
-	lprintf("loop begins on beat %d\n", song.loop_start);
-	lprintf("loop ends on beat %d\n", song.loop_end);*/
-	
-	for(i=0;i<16;i++)
-	{
-		song.instrument[i].pitch = mgeti(fp);
-		song.instrument[i].wave = mgetc(fp);
-		song.instrument[i].pi = mgetc(fp);
-		song.instrument[i].nnotes = mgeti(fp);
-		
-		if (song.instrument[i].nnotes >= MAX_SONG_LENGTH)
-		{
-			visible_warning(" * org_load: instrument %d has too many notes! (has %d, max %d)", i, song.instrument[i].nnotes, MAX_SONG_LENGTH);
-			//fclose(fp);
-			return 1;
-		}
-		
-		/*if (song.instrument[i].nnotes)
-		{
-			lprintf("Instrument %d: ", i);
-			lprintf(" Pitch: %d, ", song.instrument[i].pitch);
-			lprintf(" Wave: %d, ", song.instrument[i].wave);
-			lprintf(" Pi: %d, ", song.instrument[i].pi);
-			lprintf(" Nnotes: %d\n", song.instrument[i].nnotes);
-		}*/
-		
-		// substitute unavailable drums
-		// credits track for one, has Per02 set which CS didn't actually have, I don't think
-		if (i >= 8)
-		{
-			switch(song.instrument[i].wave)
-			{
-				case 9: song.instrument[i].wave = 8; break;
-			}
-		}
-	}
-	
-	for(i=0;i<16;i++)
-	{
-		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].beat = mgetl(fp);
-		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].note = mgetc(fp);
-		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].length = mgetc(fp);
-		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].volume = mgetc(fp);
-		for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].panning = mgetc(fp);
-	}
-	
-	//fclose(fp);
-	return init_buffers();
+
+   // not actually used in this module, but the larger program might want to know this
+   song.beats_per_bar = (song.beats_per_step * song.steps_per_bar);
+
+   for(i=0;i<16;i++)
+   {
+      song.instrument[i].pitch = mgeti(fp);
+      song.instrument[i].wave = mgetc(fp);
+      song.instrument[i].pi = mgetc(fp);
+      song.instrument[i].nnotes = mgeti(fp);
+
+      if (song.instrument[i].nnotes >= MAX_SONG_LENGTH)
+         return 1;
+
+      // substitute unavailable drums
+      // credits track for one, has Per02 set which CS didn't actually have, I don't think
+      if (i >= 8)
+      {
+         switch(song.instrument[i].wave)
+         {
+            case 9:
+               song.instrument[i].wave = 8;
+               break;
+         }
+      }
+   }
+
+   for(i=0;i<16;i++)
+   {
+      for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].beat = mgetl(fp);
+      for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].note = mgetc(fp);
+      for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].length = mgetc(fp);
+      for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].volume = mgetc(fp);
+      for(j=0;j<song.instrument[i].nnotes;j++) song.instrument[i].note[j].panning = mgetc(fp);
+   }
+
+   return init_buffers();
 }
 
 /*
@@ -312,45 +291,43 @@ void c------------------------------() {}
 
 static bool init_buffers(void)
 {
-int i;
+   int i;
 
-	// free the old buffers, as we're probably going to change their size here in a sec
-	free_buffers();
-	
-	/* figure some stuff out real quick about buffer lengths --- */
-	
-	// convert the ms-per-beat stuff into samples
-	song.samples_per_beat = MSToSamples(song.ms_per_beat);
-	song.note_closing_samples = MSToSamples(song.ms_of_last_beat_of_note);
-	// take the suggestion on cache ahead time (which is in ms) and figure out how many beats that is
-	buffer_beats = (cache_ahead_time / song.ms_per_beat) + 1;
+   // free the old buffers, as we're probably going to change their size here in a sec
+   free_buffers();
+
+   /* figure some stuff out real quick about buffer lengths --- */
+
+   // convert the ms-per-beat stuff into samples
+   song.samples_per_beat = MSToSamples(song.ms_per_beat);
+   song.note_closing_samples = MSToSamples(song.ms_of_last_beat_of_note);
+   // take the suggestion on cache ahead time (which is in ms) and figure out how many beats that is
+   buffer_beats = (cache_ahead_time / song.ms_per_beat) + 1;
 
 #ifndef MIN_AUDIO_PROCESSING_PER_FRAME
    if (buffer_beats < 3) buffer_beats = 3;
 #endif
 
-	// now figure out how many samples that is.
-	buffer_samples = (buffer_beats * song.samples_per_beat);
-	// now figure out how many bytes THAT is.
-	outbuffer_size_bytes = buffer_samples * 2 * 2;		// @ 16-bits, and stereo sound
-	
-	
-	// initialize the per-channel output buffers
-	for(i=0;i<16;i++)
-	{
-		note_channel[i].outbuffer = (signed short *)malloc(outbuffer_size_bytes);
-		note_channel[i].number = i;
-		//memset(note_channel[i].outbuffer, 0, outbuffer_size_bytes);
-	}
-	
-	// initialize the final (mixed) output buffers
-	for(i=0;i<2;i++)
-	{
-		final_buffer[i].samples = (signed short *)malloc(outbuffer_size_bytes);
-		//memset(final_buffer[i].samples, 0, outbuffer_size_bytes);
-	}
-	
-	return 0;
+   // now figure out how many samples that is.
+   buffer_samples = (buffer_beats * song.samples_per_beat);
+   // now figure out how many bytes THAT is.
+   outbuffer_size_bytes = buffer_samples * 2 * 2;		// @ 16-bits, and stereo sound
+
+
+   // initialize the per-channel output buffers
+   for(i=0;i<16;i++)
+   {
+      note_channel[i].outbuffer = (signed short *)malloc(outbuffer_size_bytes);
+      note_channel[i].number = i;
+   }
+
+   // initialize the final (mixed) output buffers
+   for(i=0;i<2;i++)
+   {
+      final_buffer[i].samples = (signed short *)malloc(outbuffer_size_bytes);
+   }
+
+   return 0;
 }
 
 static void free_buffers(void)
@@ -424,9 +401,8 @@ bool org_is_playing(void)
 
 void org_fade(void)
 {
-	NX_LOG("org_fade\n");
-	song.fading = true;
-	song.last_fade_time = 0;
+   song.fading         = true;
+   song.last_fade_time = 0;
 }
 
 void org_set_volume(int newvolume)
@@ -467,25 +443,22 @@ void c------------------------------() {}
 // combines all of the individual channel output buffers into a single, final, buffer.
 static void mix_buffers(void)
 {
-	int i, cursample, len;
-	int mixed_sample;
-	signed short *final;
-
+	int i, cursample;
 	// go up to samples*2 because we're mixing the stereo audio output from calls to WAV_Synth
-	len = buffer_samples * 2;
-	final = final_buffer[current_buffer].samples;
+	int len           = buffer_samples * 2;
+	signed short *fin = final_buffer[current_buffer].samples;
 	
 	//NX_LOG("mixing %d samples\n", len);
 	for(cursample=0;cursample<len;cursample++)
 	{
 		// first mix instruments
-		mixed_sample = note_channel[0].outbuffer[cursample];
+		int mixed_sample = note_channel[0].outbuffer[cursample];
 		for(i=1;i<16;i++)
          mixed_sample += note_channel[i].outbuffer[cursample];
 		
       CLAMP16(mixed_sample);
 		
-		final[cursample] = mixed_sample;
+		fin[cursample] = mixed_sample;
 	}
 }
 
@@ -493,8 +466,9 @@ static void mix_buffers(void)
 // to be filled
 static void queue_final_buffer(void)
 {
-	SSEnqueueChunk(ORG_CHANNEL, final_buffer[current_buffer].samples, buffer_samples,
-						current_buffer, OrgBufferFinished);
+	SSEnqueueChunk(ORG_CHANNEL,
+         final_buffer[current_buffer].samples, buffer_samples,
+         current_buffer, OrgBufferFinished);
 	
 	current_buffer ^= 1;
 }
@@ -506,37 +480,33 @@ static void OrgBufferFinished(int channel, int buffer_no)
 	buffers_full = false;
 }
 
-/*
-void c------------------------------() {}
-*/
-
-
 /* given a volume and a panning value, it returns three values
  between 0 and 1.00 which are how much to scale:
 the whole sound (volume_ratio)
 just the left channel (volume_left_ratio)
 just the right channel (volume_right_ratio) */
-static void ComputeVolumeRatios(int volume, int panning, float_type *volume_ratio, \
-                        float_type *volume_left_ratio, float_type *volume_right_ratio)
+static void ComputeVolumeRatios(int volume, int panning,
+      float_type *volume_ratio,
+      float_type *volume_left_ratio, float_type *volume_right_ratio)
 {
    *volume_ratio = ((float_type)volume / ORG_MAX_VOLUME);
-	
-	// get volume ratios for left and right channels (panning)
-	if (panning < ORG_PAN_CENTERED)
-	{	// panning left (make right channel quieter)
+
+   // get volume ratios for left and right channels (panning)
+   if (panning < ORG_PAN_CENTERED)
+   {	// panning left (make right channel quieter)
       *volume_right_ratio = ((float_type)panning / ORG_PAN_CENTERED);
-		*volume_left_ratio = 1.00f;
-	}
-	else if (panning > ORG_PAN_CENTERED)
-	{	// panning right (make left channel quieter)
+      *volume_left_ratio = 1.00f;
+   }
+   else if (panning > ORG_PAN_CENTERED)
+   {	// panning right (make left channel quieter)
       *volume_left_ratio = ((float_type)(ORG_PAN_FULL_RIGHT - panning) / ORG_PAN_CENTERED);
-		*volume_right_ratio = 1.00f;
-	}
-	else
-	{	// perfectly centered (both channels get the full volume)
-		*volume_left_ratio = 1.00f;
-		*volume_right_ratio = 1.00f;
-	}
+      *volume_right_ratio = 1.00f;
+   }
+   else
+   {	// perfectly centered (both channels get the full volume)
+      *volume_left_ratio = 1.00f;
+      *volume_right_ratio = 1.00f;
+   }
 }
 
 
@@ -546,10 +516,9 @@ static void ComputeVolumeRatios(int volume, int panning, float_type *volume_rati
 // and if ratio is something like 0.5, it will mix the samples together.
 static float_type Interpolate(int sample1, int sample2, float_type ratio)
 {
-float_type s1, s2;
-   s1 = ((float_type)sample1 * (1.00f - ratio));
-   s2 = ((float_type)sample2 * ratio);
-	return (s1 + s2);
+   float_type s1 = ((float_type)sample1 * (1.00f - ratio));
+   float_type s2 = ((float_type)sample2 * ratio);
+   return (s1 + s2);
 }
 
 
@@ -558,19 +527,19 @@ float_type s1, s2;
 // if there are more, the extra audio is truncated.
 static void ForceSamplePos(int m, int desired_samples)
 {
-	if (note_channel[m].samples_so_far != desired_samples)
-	{
-		if (desired_samples > note_channel[m].samples_so_far)
-		{
-			silence_gen(&note_channel[m], (desired_samples - note_channel[m].samples_so_far));
-		}
-		else
-		{	// this should NEVER actually happen!!
-			NX_WARN("ForceSamplePos: WARNING: !!! truncated channel %d from %d to %d samples !!!\n", m, note_channel[m].samples_so_far, desired_samples);
-			note_channel[m].samples_so_far = desired_samples;
-			note_channel[m].outpos = desired_samples * 2;
-		}
-	}
+   if (note_channel[m].samples_so_far != desired_samples)
+   {
+      if (desired_samples > note_channel[m].samples_so_far)
+      {
+         silence_gen(&note_channel[m], (desired_samples - note_channel[m].samples_so_far));
+      }
+      else
+      {	// this should NEVER actually happen!!
+         NX_WARN("ForceSamplePos: WARNING: !!! truncated channel %d from %d to %d samples !!!\n", m, note_channel[m].samples_so_far, desired_samples);
+         note_channel[m].samples_so_far = desired_samples;
+         note_channel[m].outpos = desired_samples * 2;
+      }
+   }
 }
 
 
@@ -597,19 +566,16 @@ int clear_bytes;
 // pitch: the pitch variation of the instrument as set in the org
 // note: the note # we'll be playing
 // total_ms: the maximum length the note will play for (controls buffer allocation length)
-static void note_open(stNoteChannel *chan, int wave, int pitch, int note)
-{
-float_type new_sample_rate;
 #define	samplK	 	 11025		// constant is original sampling rate of the samples in the wavetable
 
-	// compute how quickly, or slowly, to play back the wavetable sample
-	new_sample_rate = GetNoteSampleRate(note, pitch);
-   chan->sample_inc = (new_sample_rate / (float_type)samplK);
-	
-	chan->wave = wave;
-	chan->phaseacc = 0;
-	
-	//lprintf("note_open: new note opened for channel %08x at sample_inc %.2f, using wave %d\n", chan, chan->sample_inc, chan->wave);
+static void note_open(stNoteChannel *chan, int wave, int pitch, int note)
+{
+   // compute how quickly, or slowly, to play back the wavetable sample
+   float_type new_sample_rate = GetNoteSampleRate(note, pitch);
+   chan->sample_inc           = (new_sample_rate / (float_type)samplK);
+
+   chan->wave                 = wave;
+   chan->phaseacc             = 0;
 }
 
 // -------------------
@@ -619,43 +585,41 @@ float_type new_sample_rate;
 // panning, and pitch settings, and at the note & wave spec'd in note_open.
 static void note_gen(stNoteChannel *chan, int num_samples)
 {
-int i;
-float_type audioval;
-float_type master_volume_ratio, volume_left_ratio, volume_right_ratio;
-int wave;
-unsigned char pos1, pos2;
-float_type iratio;
+   int i;
+   float_type audioval;
+   float_type master_volume_ratio, volume_left_ratio, volume_right_ratio;
+   unsigned char pos1, pos2;
+   float_type iratio;
+   int wave = chan->wave;
 
-	wave = chan->wave;
-	
-	// compute volume ratios; unlike drums we have to do this every time
-	// since they can change in the middle of the note.
-	ComputeVolumeRatios(chan->volume, chan->panning,
-				&master_volume_ratio, &volume_left_ratio, &volume_right_ratio);
-	
-	//statbuild("Entering note_gen with phaseacc=%.2f and sample_inc=%.2f", chan->phaseacc, chan->sample_inc);
-	//statbuild(", using buffer %08x\n", chan->outbuffer);
-	
-	//NX_LOG("note_gen(%d, %d)\n", chan->number, num_samples);
-	
-	// generate however many output samples we were asked for
-	for(i=0;i<num_samples;i++)
-	{
-		// interpolate a sample that's at the fractional "phaseacc" sample position in the wavetable form
-		pos1 = (int)chan->phaseacc;
-		pos2 = pos1 + 1;		// since pos1&2 are chars, this wraps at 255
-		iratio = chan->phaseacc - (int)chan->phaseacc;
-		
-		audioval = Interpolate(wavetable[wave][pos1], wavetable[wave][pos2], iratio);
-		audioval *= master_volume_ratio;
-		
-		chan->outbuffer[chan->outpos++] = (int)(audioval * volume_left_ratio);
-		chan->outbuffer[chan->outpos++] = (int)(audioval * volume_right_ratio);
-		chan->samples_so_far++;
-		
-		chan->phaseacc += chan->sample_inc;
-		if ((int)chan->phaseacc >= 256) chan->phaseacc -= 256;
-	}
+   // compute volume ratios; unlike drums we have to do this every time
+   // since they can change in the middle of the note.
+   ComputeVolumeRatios(chan->volume, chan->panning,
+         &master_volume_ratio, &volume_left_ratio, &volume_right_ratio);
+
+   //statbuild("Entering note_gen with phaseacc=%.2f and sample_inc=%.2f", chan->phaseacc, chan->sample_inc);
+   //statbuild(", using buffer %08x\n", chan->outbuffer);
+
+   //NX_LOG("note_gen(%d, %d)\n", chan->number, num_samples);
+
+   // generate however many output samples we were asked for
+   for(i=0;i<num_samples;i++)
+   {
+      // interpolate a sample that's at the fractional "phaseacc" sample position in the wavetable form
+      pos1 = (int)chan->phaseacc;
+      pos2 = pos1 + 1;		// since pos1&2 are chars, this wraps at 255
+      iratio = chan->phaseacc - (int)chan->phaseacc;
+
+      audioval = Interpolate(wavetable[wave][pos1], wavetable[wave][pos2], iratio);
+      audioval *= master_volume_ratio;
+
+      chan->outbuffer[chan->outpos++] = (int)(audioval * volume_left_ratio);
+      chan->outbuffer[chan->outpos++] = (int)(audioval * volume_right_ratio);
+      chan->samples_so_far++;
+
+      chan->phaseacc += chan->sample_inc;
+      if ((int)chan->phaseacc >= 256) chan->phaseacc -= 256;
+   }
 }
 
 
@@ -668,24 +632,25 @@ float_type iratio;
 // returns the # of extra samples generated.
 static int note_close(stNoteChannel *chan)
 {
-	if (chan->outpos == 0)
-		return 0;
-	
-	int samples_made = 0;
-	while(chan->samples_so_far < buffer_samples)	// avoid potential buffer overflow
-	{
-		// get the value of the last sample in the buffer and check
-		// if it's close enough to silence yet. if not, let the note
-		// run on a teeny bit longer than it's supposed to until it's wave
-		// hits the zero-crossing point, to avoid a click.
-		int last_sample = chan->outbuffer[chan->outpos - 1];
-		if (abs(last_sample) < 1000) break;
-		
-		note_gen(chan, 1);
-		samples_made++;
-	}
-	
-	return samples_made;
+   int samples_made = 0;
+   if (chan->outpos == 0)
+      return 0;
+
+   while(chan->samples_so_far < buffer_samples)	// avoid potential buffer overflow
+   {
+      // get the value of the last sample in the buffer and check
+      // if it's close enough to silence yet. if not, let the note
+      // run on a teeny bit longer than it's supposed to until it's wave
+      // hits the zero-crossing point, to avoid a click.
+      int last_sample = chan->outbuffer[chan->outpos - 1];
+      if (abs(last_sample) < 1000)
+         break;
+
+      note_gen(chan, 1);
+      samples_made++;
+   }
+
+   return samples_made;
 }
 
 
@@ -693,24 +658,21 @@ static int note_close(stNoteChannel *chan)
 // the total number of samples the drum will last is returned.
 static int drum_open(int m_channel, int wave, int note)
 {
-stNoteChannel *chan = &note_channel[m_channel];
-float_type new_sample_rate;
-int gen_samples;
+   int gen_samples;
+   stNoteChannel        *chan = &note_channel[m_channel];
+   float_type new_sample_rate = GetNoteSampleRate(note, song.instrument[m_channel].pitch);
+   chan->sample_inc           = (new_sample_rate / (float_type)drumK);
 
-	//lprintf("drum_hit: playing drum %d[%s] on channel %d, note %02x volume %d panning %d\n", wave, drum_names[wave], m_channel, note, chan->volume, chan->panning);
-	
-	new_sample_rate = GetNoteSampleRate(note, song.instrument[m_channel].pitch);
-   chan->sample_inc = (new_sample_rate / (float_type)drumK);
-	
-	// get the new number of samples for the sound
-   gen_samples = (int)((float_type)drumtable[wave].nsamples / chan->sample_inc);
-	
-	// precompute volume and panning values since they're the same over the length of the drum
-	ComputeVolumeRatios(chan->volume, chan->panning, &chan->master_volume_ratio, &chan->volume_left_ratio, &chan->volume_right_ratio);
-	
-	chan->wave = wave;
-	chan->phaseacc = 0;
-	return gen_samples;
+   // get the new number of samples for the sound
+   gen_samples                = (int)((float_type)
+         drumtable[wave].nsamples / chan->sample_inc);
+
+   // precompute volume and panning values since they're the same over the length of the drum
+   ComputeVolumeRatios(chan->volume, chan->panning, &chan->master_volume_ratio, &chan->volume_left_ratio, &chan->volume_right_ratio);
+
+   chan->wave     = wave;
+   chan->phaseacc = 0;
+   return gen_samples;
 }
 
 
@@ -718,120 +680,115 @@ int gen_samples;
 // buffer of the channel.
 static void drum_gen(int m_channel, int num_samples)
 {
-stNoteChannel *chan = &note_channel[m_channel];
-float_type volume_ratio, volume_left_ratio, volume_right_ratio;
-int wave;
-int pos1, pos2;
-float_type iratio;
-float_type audioval;
-int i;
+   stNoteChannel *chan = &note_channel[m_channel];
+   int pos1, pos2;
+   float_type iratio;
+   float_type audioval;
+   int i;
+   float_type volume_ratio       = chan->master_volume_ratio;
+   float_type volume_left_ratio  = chan->volume_left_ratio;
+   float_type volume_right_ratio = chan->volume_right_ratio;
+   int wave                      = chan->wave;
 
-	volume_ratio = chan->master_volume_ratio;
-	volume_left_ratio = chan->volume_left_ratio;
-	volume_right_ratio = chan->volume_right_ratio;
-	wave = chan->wave;
-	
-	//NX_LOG("drum_gen(%d, %d)\n", m_channel, num_samples);
-	
-	// generate the drum sound
-	for(i=0;i<num_samples;i++)
-	{
-		pos1 = (int)chan->phaseacc;
-		pos2 = pos1 + 1;
-		if (pos2 >= drumtable[wave].nsamples) pos2 = pos1;
-		
-		iratio = chan->phaseacc - (int)chan->phaseacc;
-		
-		audioval = Interpolate(drumtable[wave].samples[pos1], drumtable[wave].samples[pos2], iratio);
-		audioval *= volume_ratio;
-		
-		chan->outbuffer[chan->outpos++] = (signed short)(audioval * volume_left_ratio);
-		chan->outbuffer[chan->outpos++] = (signed short)(audioval * volume_right_ratio);
-		chan->samples_so_far++;
-		
-		chan->phaseacc += chan->sample_inc;
-		if ((int)chan->phaseacc > drumtable[wave].nsamples)
-		{
-			NX_ERR(" **ERROR-phaseacc ran over end of drumsample %.2f %d\n", chan->phaseacc, drumtable[wave].nsamples);
-			break;
-		}
-	}
+   // generate the drum sound
+   for(i=0;i<num_samples;i++)
+   {
+      pos1 = (int)chan->phaseacc;
+      pos2 = pos1 + 1;
+      if (pos2 >= drumtable[wave].nsamples) pos2 = pos1;
+
+      iratio = chan->phaseacc - (int)chan->phaseacc;
+
+      audioval = Interpolate(drumtable[wave].samples[pos1], drumtable[wave].samples[pos2], iratio);
+      audioval *= volume_ratio;
+
+      chan->outbuffer[chan->outpos++] = (signed short)(audioval * volume_left_ratio);
+      chan->outbuffer[chan->outpos++] = (signed short)(audioval * volume_right_ratio);
+      chan->samples_so_far++;
+
+      chan->phaseacc += chan->sample_inc;
+      if ((int)chan->phaseacc > drumtable[wave].nsamples)
+      {
+         NX_ERR(" **ERROR-phaseacc ran over end of drumsample %.2f %d\n", chan->phaseacc, drumtable[wave].nsamples);
+         break;
+      }
+   }
 }
 
 
 void org_run(void)
 {
-	if (!song.playing)
-		return;
-	
-	// keep both buffers queued. if one of them isn't queued, then it's time to
-	// generate more music for it and queue it back on.
-	if (!buffers_full)
-	{
-		generate_music();				// generate more music into current_buffer
-		
-		queue_final_buffer();			// enqueue current_buffer and switch buffers
-		buffers_full = true;			// both buffers full again until OrgBufferFinished called
-	}
-	
-	if (song.fading) runfade();
+   if (!song.playing)
+      return;
+
+   // keep both buffers queued. if one of them isn't queued, then it's time to
+   // generate more music for it and queue it back on.
+   if (!buffers_full)
+   {
+      generate_music();				// generate more music into current_buffer
+
+      queue_final_buffer();			// enqueue current_buffer and switch buffers
+      buffers_full = true;			// both buffers full again until OrgBufferFinished called
+   }
+
+   if (song.fading) runfade();
 }
 
 
 // generate a buffer's worth of music and place it in the current final buffer.
 static void generate_music(void)
 {
-int m;
-int beats_left;
-int out_position;
+   int m;
+   int beats_left;
+   int out_position;
 
-	//NX_LOG("generate_music: cb=%d buffer_beats=%d\n", current_buffer, buffer_beats);
-	
-	// save beat # of the first beat in buffer for calculating current beat for TrackFuncs
-	final_buffer[current_buffer].firstbeat = song.beat;
-	
-	// clear all the channel buffers
-	for(m=0;m<16;m++)
-	{
-		note_channel[m].samples_so_far = 0;
-		note_channel[m].outpos = 0;
-	}
-	
-	//NX_LOG("generate_music: generating %d beats of music\n", buffer_beats);
-	beats_left = buffer_beats;
-	out_position = 0;
-	
-	while(beats_left)
-	{
-		out_position += song.samples_per_beat;
-		
-		// for each channel...
-		for(m=0;m<16;m++)
-		{
-			// generate any music that's supposed to go into the current beat
-			NextBeat(m);
-			// ensure that exactly one beat of samples was added to the channel by inserting silence
-			// if needed. sometimes NextBeat may not actually generate a full beats worth, for
-			// example if there was no note playing on the track, of if it was the last beat of a note.
-			ForceSamplePos(m, out_position);
-		}
-		
-		if (++song.beat >= song.loop_end)
-		{
-			song.beat = song.loop_start;
-			song.haslooped = true;
-			
-			for(m=0;m<16;m++)
-			{
-				song.instrument[m].curnote = song.instrument[m].loop_note;
-				note_channel[m].length = 0;
-			}
-		}
-		
-		beats_left--;
-	}
-	
-	mix_buffers();
+   //NX_LOG("generate_music: cb=%d buffer_beats=%d\n", current_buffer, buffer_beats);
+
+   // save beat # of the first beat in buffer for calculating current beat for TrackFuncs
+   final_buffer[current_buffer].firstbeat = song.beat;
+
+   // clear all the channel buffers
+   for(m=0;m<16;m++)
+   {
+      note_channel[m].samples_so_far = 0;
+      note_channel[m].outpos = 0;
+   }
+
+   //NX_LOG("generate_music: generating %d beats of music\n", buffer_beats);
+   beats_left = buffer_beats;
+   out_position = 0;
+
+   while(beats_left)
+   {
+      out_position += song.samples_per_beat;
+
+      // for each channel...
+      for(m=0;m<16;m++)
+      {
+         // generate any music that's supposed to go into the current beat
+         NextBeat(m);
+         // ensure that exactly one beat of samples was added to the channel by inserting silence
+         // if needed. sometimes NextBeat may not actually generate a full beats worth, for
+         // example if there was no note playing on the track, of if it was the last beat of a note.
+         ForceSamplePos(m, out_position);
+      }
+
+      if (++song.beat >= song.loop_end)
+      {
+         song.beat = song.loop_start;
+         song.haslooped = true;
+
+         for(m=0;m<16;m++)
+         {
+            song.instrument[m].curnote = song.instrument[m].loop_note;
+            note_channel[m].length = 0;
+         }
+      }
+
+      beats_left--;
+   }
+
+   mix_buffers();
 }
 
 
@@ -839,103 +796,102 @@ int out_position;
 // it may generate less.
 static void NextBeat(int m)
 {
-stNoteChannel *chan = &note_channel[m];
-stInstrument *track = &song.instrument[m];
-//int volume, panning;
-stNote *note;
-int len;
+   stNoteChannel *chan = &note_channel[m];
+   stInstrument *track = &song.instrument[m];
+   //int volume, panning;
+   stNote *note;
+   int len;
 
-	// add notes as long as instrument has notes left to add
-	if (track->curnote < track->nnotes)
-	{
-		for(;;)
-		{
-			// when we hit the loop start point, record the note we were on for later
-			if (song.beat == song.loop_start)
-			{
-				track->loop_note = track->curnote;
-			}
-			
-			// get a pointer to the note at current position in the song
-			note = &track->note[track->curnote];
-			
-			// skip ahead if the song got ahead of us somehow
-			if (song.beat > note->beat)
-			{
-				if (++track->curnote >= track->nnotes)
-					return;
-			}
-			else break;
-		}
-		
-		// 1st- start notes as we arrive at their beat
-		if (song.beat == note->beat)
-		{
-			//NX_LOG(" Beat/Note: %d/%d   Chan: %d   Note: %d  length=%d vol=%d pan=%d wave=%d\n", song.beat, curnote, m, note->note, note->length, note->volume, note->panning, song.instrument[m].wave);
-			
-			if (note->volume != 0xff) chan->volume = note->volume;
-			if (note->panning != 0xff) chan->panning = note->panning;
-			
-			if (note->note != 0xff)
-			{
-				if (m < 8)
-				{
-					note_open(chan, track->wave, track->pitch, note->note);
-					chan->length = note->length;
-				}
-				else
-				{	// on percussion tracks the length works differently---drum_open returns the
-					// number of samples the drum will take to finish playing.
-					chan->length = drum_open(m, track->wave, note->note);
-				}
-			}
-			
-			track->curnote++;
-		}
-	}
-	
-	// 2nd- generate any notes which are running
-	if (chan->length)
-	{
-		if (m < 8)
-		{	// melody tracks
-			if (track->pi)
-			{	// pi tracks always generate only 1024 samples for ANY note
-				note_gen(chan, 1024);
-				chan->length = 0;
-			}
-			else
-			{
-				if (chan->length > 1)
-				{	// generate a full beat of music
-					note_gen(chan, song.samples_per_beat);
-				}
-				else	// generate only most of the beat--if there's a note immediately after
-				{		// this one they should not run together
-					note_gen(chan, song.note_closing_samples);
-				}
-				
-				if (!--chan->length)
-				{
-					note_close(chan);
-				}
-			}
-		}
-		else
-		{	// percussion tracks
-			// if less than a whole beats worth of samples is left to play on the drum, finish
-			// whatever's left. Else generate only one beats worth right now.
-			if (chan->length > song.samples_per_beat)
-				len = song.samples_per_beat;
-			else
-				len = chan->length;
-			
-			drum_gen(m, len);
-			
-			chan->length -= len;
-		}
-	}
+   // add notes as long as instrument has notes left to add
+   if (track->curnote < track->nnotes)
+   {
+      for(;;)
+      {
+         // when we hit the loop start point, record the note we were on for later
+         if (song.beat == song.loop_start)
+         {
+            track->loop_note = track->curnote;
+         }
 
+         // get a pointer to the note at current position in the song
+         note = &track->note[track->curnote];
+
+         // skip ahead if the song got ahead of us somehow
+         if (song.beat > note->beat)
+         {
+            if (++track->curnote >= track->nnotes)
+               return;
+         }
+         else break;
+      }
+
+      // 1st- start notes as we arrive at their beat
+      if (song.beat == note->beat)
+      {
+         //NX_LOG(" Beat/Note: %d/%d   Chan: %d   Note: %d  length=%d vol=%d pan=%d wave=%d\n", song.beat, curnote, m, note->note, note->length, note->volume, note->panning, song.instrument[m].wave);
+
+         if (note->volume != 0xff) chan->volume = note->volume;
+         if (note->panning != 0xff) chan->panning = note->panning;
+
+         if (note->note != 0xff)
+         {
+            if (m < 8)
+            {
+               note_open(chan, track->wave, track->pitch, note->note);
+               chan->length = note->length;
+            }
+            else
+            {	// on percussion tracks the length works differently---drum_open returns the
+               // number of samples the drum will take to finish playing.
+               chan->length = drum_open(m, track->wave, note->note);
+            }
+         }
+
+         track->curnote++;
+      }
+   }
+
+   // 2nd- generate any notes which are running
+   if (chan->length)
+   {
+      if (m < 8)
+      {	// melody tracks
+         if (track->pi)
+         {	// pi tracks always generate only 1024 samples for ANY note
+            note_gen(chan, 1024);
+            chan->length = 0;
+         }
+         else
+         {
+            if (chan->length > 1)
+            {	// generate a full beat of music
+               note_gen(chan, song.samples_per_beat);
+            }
+            else	// generate only most of the beat--if there's a note immediately after
+            {		// this one they should not run together
+               note_gen(chan, song.note_closing_samples);
+            }
+
+            if (!--chan->length)
+            {
+               note_close(chan);
+            }
+         }
+      }
+      else
+      {	// percussion tracks
+         // if less than a whole beats worth of samples is left to play on the drum, finish
+         // whatever's left. Else generate only one beats worth right now.
+         if (chan->length > song.samples_per_beat)
+            len = song.samples_per_beat;
+         else
+            len = chan->length;
+
+         drum_gen(m, len);
+
+         chan->length -= len;
+      }
+   }
 }
 
 /*
@@ -946,18 +902,11 @@ int org_GetCurrentBeat(void)
 {
 	if (SSChannelPlaying(ORG_CHANNEL))
 	{
-		int curbuffer;
-		int elapsed;
-		int sample_pos;
-		int beat;
-		
-      curbuffer = SSGetCurUserData(ORG_CHANNEL);
-      sample_pos = SSGetSamplePos(ORG_CHANNEL);
-		
-		elapsed = SamplesToMS(sample_pos);
-		
-		beat = elapsed / song.ms_per_beat;
-		beat += final_buffer[curbuffer].firstbeat;
+      int curbuffer  = SSGetCurUserData(ORG_CHANNEL);
+      int sample_pos = SSGetSamplePos(ORG_CHANNEL);
+		int elapsed    = SamplesToMS(sample_pos);
+		int beat       = elapsed / song.ms_per_beat;
+		beat          += final_buffer[curbuffer].firstbeat;
 		// wrap at end of song
 		while(beat >= song.loop_end)
 			beat -= (song.loop_end - song.loop_start);
@@ -971,6 +920,7 @@ int org_GetCurrentBeat(void)
 // returns which org buffer is currently playing.
 int org_GetCurrentBuffer(void)
 {
-	if (!SSChannelPlaying(ORG_CHANNEL)) return -1;
-	return SSGetCurUserData(ORG_CHANNEL);
+   if (!SSChannelPlaying(ORG_CHANNEL))
+      return -1;
+   return SSGetCurUserData(ORG_CHANNEL);
 }

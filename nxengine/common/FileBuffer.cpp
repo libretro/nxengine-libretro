@@ -19,10 +19,6 @@ void FileBuffer::SetFile(FILE *fp)
 	fFP = fp;
 }
 
-/*
-void c------------------------------() {}
-*/
-
 void FileBuffer::Write8(uint8_t data)
 {
 	fBuffer.Append8(data);
@@ -41,25 +37,17 @@ void FileBuffer::Write32(uint32_t data)
 	CheckFlush(fMaxSize);
 }
 
-/*
-void c------------------------------() {}
-*/
-
 void FileBuffer::CheckFlush(int maxsize)
 {
-	if (fBuffer.Length() >= maxsize)
-	{
-		if (fFP)
-		{
-			//NX_LOG("CheckFlush wrote %d bytes", fBuffer.Length()\n);
-			fwrite(fBuffer.Data(), fBuffer.Length(), 1, fFP);
-			fBuffer.Clear();
-		}
-		else
-		{
-			NX_ERR("CheckFlush: no file\n");
-		}
-	}
+   if (fBuffer.Length() >= maxsize)
+   {
+      if (fFP)
+      {
+         //NX_LOG("CheckFlush wrote %d bytes", fBuffer.Length()\n);
+         fwrite(fBuffer.Data(), fBuffer.Length(), 1, fFP);
+         fBuffer.Clear();
+      }
+   }
 }
 
 void FileBuffer::Flush()
@@ -71,5 +59,3 @@ void FileBuffer::Dump()
 {
 	fBuffer.Clear();
 }
-
-

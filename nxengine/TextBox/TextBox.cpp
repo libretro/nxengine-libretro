@@ -173,125 +173,125 @@ void c------------------------------() {}
 
 void TextBox::Draw(void)
 {
-	if (fVisible)
-	{
-		DrawTextBox();
-		
-		// draw all the extra prompts, boxes, etc if needed
-		ItemImage.Draw();
-		YesNoPrompt.Draw();
-		StageSelect.Draw();
-		SaveSelect.Draw();
-	}
+   if (fVisible)
+   {
+      DrawTextBox();
+
+      // draw all the extra prompts, boxes, etc if needed
+      ItemImage.Draw();
+      YesNoPrompt.Draw();
+      StageSelect.Draw();
+      SaveSelect.Draw();
+   }
 }
 
 
 void TextBox::DrawTextBox()
 {
-	int text_top = (fCoords.y + 10);
-	int text_x = CONTENT_X;
-	
-	// allow player to speed up text by holding the button
-	if (buttondown())
-	{
-		if (fCanSpeedUp)
-			fTextTimer = 9999;
-	}
-	else
-	{
-		fCanSpeedUp = true;
-	}
-	
-	// in the middle of scrolling a line up?
-	if (fScrolling)
-	{
-		fTextYOffset -= (MSG_LINE_SPACING / 4);
-		if (fTextYOffset <= -MSG_LINE_SPACING)
-		{
-			fTextYOffset = 0;
-			fTextTimer = 0;
-			fScrolling = false;
-			
-			for(int i=0;i<MSG_NLINES-1;i++)
-			{
-				strcpy(fLines[i], fLines[i+1]);
-			}
-			
-			fLines[MSG_NLINES-1][0] = 0;
-			fCurLine = (MSG_NLINES - 2);
-			fCurLineLen = 1;
-		}
-	}
-	else
-	{	// add text into the box
-		if (fCWHead != fCWTail)
-		{
-			if (++fTextTimer >= 4)
-			{
-				fTextTimer = 0;
-				AddNextChar();
-			}
-		}
-	}
-	
-	// draw the frame
-	if (!(fFlags & TB_NO_BORDER))
-	{
-		DrawFrame(fCoords.x, fCoords.y, fCoords.w, fCoords.h);
-	}
-	
-	// set clipping region to inside of frame, so that text cannot
-	// overflow during scrolling, etc.
-	Graphics::set_clip_rect(CONTENT_X, text_top, SCREEN_WIDTH, 48);
-	
-	//SDL_FillRect(screen, &cliprect, SDL_MapRGB(screen->format,0,0,255));
-	
-	// draw face
-	if (fFace != 0)
-	{
-		Sprites::draw_sprite(CONTENT_X+fFaceXOffset, fCoords.y+CONTENT_Y-3, SPR_FACES, fFace);
-		text_x += (FACE_W + 8);		// move text over by width of face
-		
-		// face slide-in animation
-		if (fFaceXOffset < 0)
-		{
-			fFaceXOffset += (sprites[SPR_FACES].w / 6);
-			if (fFaceXOffset > 0) fFaceXOffset = 0;
-		}
-	}
-	
-	// blink the cursor (it is visible when < 7)
-	if (!fCursorVisible || (fFlags & TB_CURSOR_NEVER_SHOWN))
-	{
-		fCursorTimer = 9999;
-	}
-	else
-	{
-		if (++fCursorTimer >= 20)
-			fCursorTimer = 0;
-	}
-	
-	// draw text lines (the 4th line is for the first char shown on the new line during scrolling)
-	int char_spacing = (fFlags & TB_VARIABLE_WIDTH_CHARS) ? 0 : 6;
-	int y = (text_top + fTextYOffset);
-	
-	for(int i=0;i<MSG_NLINES;i++)
-	{
-		int lineWidth = \
-			font_draw(text_x, y, fLines[i], char_spacing);
-		
-		// draw the cursor
-		if (i == fCurLine && fCursorTimer < 7)
-		{
-			int x = (text_x + lineWidth);
-			Graphics::FillRect(x, y, x+4, y+10,  255,255,255);
-		}
-		
-		y += MSG_LINE_SPACING;
-	}
-	
-	// release the clipping region clipping our drawing to the text box
-	Graphics::clear_clip_rect();
+   int text_top = (fCoords.y + 10);
+   int text_x = CONTENT_X;
+
+   // allow player to speed up text by holding the button
+   if (buttondown())
+   {
+      if (fCanSpeedUp)
+         fTextTimer = 9999;
+   }
+   else
+   {
+      fCanSpeedUp = true;
+   }
+
+   // in the middle of scrolling a line up?
+   if (fScrolling)
+   {
+      fTextYOffset -= (MSG_LINE_SPACING / 4);
+      if (fTextYOffset <= -MSG_LINE_SPACING)
+      {
+         fTextYOffset = 0;
+         fTextTimer = 0;
+         fScrolling = false;
+
+         for(int i=0;i<MSG_NLINES-1;i++)
+         {
+            strcpy(fLines[i], fLines[i+1]);
+         }
+
+         fLines[MSG_NLINES-1][0] = 0;
+         fCurLine = (MSG_NLINES - 2);
+         fCurLineLen = 1;
+      }
+   }
+   else
+   {	// add text into the box
+      if (fCWHead != fCWTail)
+      {
+         if (++fTextTimer >= 4)
+         {
+            fTextTimer = 0;
+            AddNextChar();
+         }
+      }
+   }
+
+   // draw the frame
+   if (!(fFlags & TB_NO_BORDER))
+   {
+      DrawFrame(fCoords.x, fCoords.y, fCoords.w, fCoords.h);
+   }
+
+   // set clipping region to inside of frame, so that text cannot
+   // overflow during scrolling, etc.
+   Graphics::set_clip_rect(CONTENT_X, text_top, SCREEN_WIDTH, 48);
+
+   //SDL_FillRect(screen, &cliprect, SDL_MapRGB(screen->format,0,0,255));
+
+   // draw face
+   if (fFace != 0)
+   {
+      Sprites::draw_sprite(CONTENT_X+fFaceXOffset, fCoords.y+CONTENT_Y-3, SPR_FACES, fFace);
+      text_x += (FACE_W + 8);		// move text over by width of face
+
+      // face slide-in animation
+      if (fFaceXOffset < 0)
+      {
+         fFaceXOffset += (sprites[SPR_FACES].w / 6);
+         if (fFaceXOffset > 0) fFaceXOffset = 0;
+      }
+   }
+
+   // blink the cursor (it is visible when < 7)
+   if (!fCursorVisible || (fFlags & TB_CURSOR_NEVER_SHOWN))
+   {
+      fCursorTimer = 9999;
+   }
+   else
+   {
+      if (++fCursorTimer >= 20)
+         fCursorTimer = 0;
+   }
+
+   // draw text lines (the 4th line is for the first char shown on the new line during scrolling)
+   int char_spacing = (fFlags & TB_VARIABLE_WIDTH_CHARS) ? 0 : 6;
+   int y = (text_top + fTextYOffset);
+
+   for(int i=0;i<MSG_NLINES;i++)
+   {
+      int lineWidth = \
+                      font_draw(text_x, y, fLines[i], char_spacing);
+
+      // draw the cursor
+      if (i == fCurLine && fCursorTimer < 7)
+      {
+         int x = (text_x + lineWidth);
+         Graphics::FillRect(x, y, x+4, y+10,  255,255,255);
+      }
+
+      y += MSG_LINE_SPACING;
+   }
+
+   // release the clipping region clipping our drawing to the text box
+   Graphics::clear_clip_rect();
 }
 
 // adds the next char to the box, or, in TB_LINE_AT_ONCE mode,
@@ -368,16 +368,16 @@ void c------------------------------() {}
 // the specified coordinates.
 void TextBox::DrawFrame(int x, int y, int w, int h)
 {
-	Sprites::draw_sprite_chopped(x, y, SPR_TEXTBOX, 0, w, 8);		// draw top
-	y += 8;
-	
-	for(int draw=0;draw<h-16;draw+=8)
-	{
-		Sprites::draw_sprite_chopped(x, y, SPR_TEXTBOX, 1, w, 8);	// draw middle
-		y += 8;
-	}
-	
-	Sprites::draw_sprite_chopped(x, y, SPR_TEXTBOX, 2, w, 8);		// draw bottom
+   Sprites::draw_sprite_chopped(x, y, SPR_TEXTBOX, 0, w, 8);		// draw top
+   y += 8;
+
+   for(int draw=0;draw<h-16;draw+=8)
+   {
+      Sprites::draw_sprite_chopped(x, y, SPR_TEXTBOX, 1, w, 8);	// draw middle
+      y += 8;
+   }
+
+   Sprites::draw_sprite_chopped(x, y, SPR_TEXTBOX, 2, w, 8);		// draw bottom
 }
 
 

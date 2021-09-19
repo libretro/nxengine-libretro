@@ -43,7 +43,6 @@ void pause_tick()
 	{
 		lastinputs[ESCKEY] = true;
 		game.running = false;
-		return;
 	}
 }
 

@@ -16,10 +16,6 @@ StringList::~StringList()
 	MakeEmpty();
 }
 
-/*
-void c------------------------------() {}
-*/
-
 void StringList::Shuffle()
 {
    int i, count = CountItems();
@@ -59,10 +55,6 @@ bool StringList::ContainsCaseString(const char *term)
 
    return false;
 }
-
-/*
-void c------------------------------() {}
-*/
 
 void StringList::AddString(const char *str)
 {
@@ -137,10 +129,6 @@ void StringList::SwapItems(int index1, int index2)
 	BList::SwapItems(index1, index2);
 }
 
-/*
-void c------------------------------() {}
-*/
-
 char *StringList::StringAt(int index) const
 {
 	return (char *)BList::ItemAt(index);
@@ -154,10 +142,6 @@ void StringList::MakeEmpty()
 	
 	BList::MakeEmpty();
 }
-
-/*
-void c------------------------------() {}
-*/
 
 StringList &StringList::operator= (const StringList &other)
 {
@@ -197,5 +181,3 @@ bool StringList::operator!= (const StringList &other) const
 {
 	return !(*this == other);
 }
-
-

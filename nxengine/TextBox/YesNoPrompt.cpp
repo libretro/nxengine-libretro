@@ -27,16 +27,16 @@ void TB_YNJPrompt::ResetState()
 
 void TB_YNJPrompt::SetVisible(bool enable)
 {
-	fVisible = enable;
-	
-	if (fVisible)
-	{
-		fState = STATE_APPEAR;
-		fCoords.y = YESNO_Y + (YESNO_POP_SPEED * 2);
-		fAnswer = -1;
-		
-		sound(SND_MENU_PROMPT);
-	}
+   fVisible = enable;
+
+   if (fVisible)
+   {
+      fState = STATE_APPEAR;
+      fCoords.y = YESNO_Y + (YESNO_POP_SPEED * 2);
+      fAnswer = -1;
+
+      sound(SND_MENU_PROMPT);
+   }
 }
 
 /*
@@ -51,7 +51,7 @@ void TB_YNJPrompt::Draw()
 	Sprites::draw_sprite(YESNO_X, fCoords.y, SPR_YESNO, 0, 0);
 	
 	// draw hand selector
-	if (fState == STATE_YES_SELECTED || \
+	if (fState == STATE_YES_SELECTED ||
 		fState == STATE_NO_SELECTED)
 	{
 		int xoff = (fState == STATE_YES_SELECTED) ? -4 : 37;
@@ -109,10 +109,6 @@ void TB_YNJPrompt::Draw()
 	}
 }
 
-/*
-void c------------------------------() {}
-*/
-
 bool TB_YNJPrompt::ResultReady()
 {
 	return (fAnswer != -1);
@@ -122,4 +118,3 @@ int TB_YNJPrompt::GetResult()
 {
 	return fAnswer;
 }
-

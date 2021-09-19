@@ -163,23 +163,16 @@ void TB_StageSelect::MoveSelection(int dir)
 // from StageSelect.tsc
 void TB_StageSelect::UpdateText()
 {
-int scriptno;
+   int scriptno = 0;
 
-	if (GetSlotByIndex(fSelectionIndex, NULL, &scriptno))
-	{	// no permission to teleport
-		scriptno = 0;
-	}
-	else
-	{
-		scriptno %= 1000;
-	}
-	
-	JumpScript(scriptno + 1000, SP_STAGESELECT);
+   // no permission to teleport
+   if (GetSlotByIndex(fSelectionIndex, NULL, &scriptno))
+      scriptno = 0;
+   else
+      scriptno %= 1000;
+
+   JumpScript(scriptno + 1000, SP_STAGESELECT);
 }
-
-/*
-void c------------------------------() {}
-*/
 
 // set teleporter slot "slotno" to run script "scriptno" when selected.
 // this adds the slot to the menu if scriptno is nonzero and removes it if zero.
@@ -239,6 +232,3 @@ int TB_StageSelect::CountActiveSlots()
 	
 	return count;
 }
-
-
-

@@ -286,20 +286,3 @@ void InitNewGame(bool with_intro)
 	
 	fade.set_full(FADE_OUT);
 }
-
-/*
-void c------------------------------() {}
-*/
-
-void visible_warning(const char *fmt, ...)
-{
-#if defined(_MSC_VER) && _MSC_VER <= 1310
-#else
-   va_list ar;
-   char buffer[80];
-
-   va_start(ar, fmt);
-   vsnprintf(buffer, sizeof(buffer), fmt, ar);
-   va_end(ar);
-#endif
-}

@@ -8,10 +8,10 @@
 
 enum FloatTextStates
 {
-	FT_IDLE,
-	FT_RISE,
-	FT_HOLD,
-	FT_SCROLL_AWAY,
+   FT_IDLE,
+   FT_RISE,
+   FT_HOLD,
+   FT_SCROLL_AWAY
 };
 
 class FloatText
@@ -44,8 +44,6 @@ private:
 	
 	SDL_Rect cliprect;
 	int objX, objY;		// the center pixel of the associated object (de-CSFd)
-	
-	
 	FloatText *next, *prev;
 	static FloatText *first, *last;
 };
