@@ -43,29 +43,29 @@ ObjProp objprop[OBJ_LAST];
 // init Game object: only called once during startup
 bool Game::init()
 {
-   int i;
+	int i;
 
-	memset(&game, 0, sizeof(game));
-	
+	memset(static_cast<void*>(&game), 0, sizeof(game));
+
 	// set default properties
 	memset(objprop, 0, sizeof(objprop));
 	for(i=0;i<OBJ_LAST;i++)
 	{
 		objprop[i].shaketime = 16;
-      objprop[i].sprite = SPR_NULL;
+		objprop[i].sprite = SPR_NULL;
 	}
-	
+
 	AssignSprites();		// auto-generated function to assign sprites to objects
 	AssignExtraSprites();	// assign rest of sprites (to be replaced at some point)
-	
+
 	if (ai_init()) return 1;			// setup function pointers to AI routines
-	
+
 	if (initslopetable()) return 1;
 	if (initmapfirsttime()) return 1;
-	
+
 	// create the player object--note that the player is NOT destroyed on map change
 	if (game.createplayer()) return 1;
-	
+
 	return 0;
 }
 

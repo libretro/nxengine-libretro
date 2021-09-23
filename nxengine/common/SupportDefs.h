@@ -17,12 +17,6 @@ typedef unsigned int			uint;
 typedef unsigned short			ushort;
 #endif
 
-//#include <BeBuild.h>
-//#include <Errors.h>
-
-//#include <sys/types.h>
-
-
 /* Shorthand type formats */
 typedef	int8_t			int8;
 typedef uint8_t			uint8;
@@ -141,9 +135,6 @@ extern int64	atomic_add64(vint64 *value, int64 addValue);
 extern int64	atomic_and64(vint64 *value, int64 andValue);
 extern int64	atomic_or64(vint64 *value, int64 orValue);	
 extern int64	atomic_get64(vint64 *value);
-
-/* Other stuff */
-extern void*	get_stack_frame(void);
 
 #ifdef __cplusplus
 }

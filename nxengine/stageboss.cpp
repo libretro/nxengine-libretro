@@ -29,7 +29,7 @@ bool StageBossManager::SetType(int newtype)
 	
 	if (fBoss)
 	{
-		delete fBoss;
+		delete[] fBoss;
 		if (game.stageboss.object)
 		{
 			NX_ERR(" ** warning: game.stageboss.object not properly cleaned up in OnMapExit\n");
