@@ -686,7 +686,7 @@ char pxt_IsPlaying(int slot)
 // render all pxt files under "path" up to slot "top".
 // get them all ready to play in their sound slots.
 // if cache_name is specified the pcm audio data is cached under the given filename.
-char pxt_LoadSoundFX(FILE *fp, int top)
+char pxt_LoadSoundFX(RFILE *fp, int top)
 {
    int slot;
    stPXSound snd;
@@ -771,10 +771,10 @@ void FreePXTBuf(stPXSound *snd)
 }
 
 
-extern bool extract_pxt(FILE *fp, int s, stPXSound *outsnd);
+extern bool extract_pxt(RFILE *fp, int s, stPXSound *outsnd);
 
 // read a .pxt file into memory and return a stPXSound ready to be rendered.
-char pxt_load(FILE *fp, stPXSound *snd, int slot)
+char pxt_load(RFILE *fp, stPXSound *snd, int slot)
 {
    int i;
    memset(snd, 0, sizeof(stPXSound));

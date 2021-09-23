@@ -17,8 +17,25 @@
 #include "../libretro/msvc_compat.h"
 #endif
 
+#include <streams/file_stream.h>
+
 #define NMAPS			95
 #define DATA_OFFSET		0x937B0
+
+/* Forward declarations */
+extern "C" {
+	int64_t rftell(RFILE* stream);
+	int64_t rfseek(RFILE* stream, int64_t offset, int origin);
+	int64_t rfread(void* buffer,
+			size_t elem_size, size_t elem_count, RFILE* stream);
+	int rfputc(int character, RFILE * stream);
+	int rfgetc(RFILE* stream);
+	int rfclose(RFILE* stream);
+	RFILE* rfopen(const char *path, const char *mode);
+	int rfprintf(RFILE * stream, const char * format, ...);
+	int64_t rfwrite(void const* buffer,
+			size_t elem_size, size_t elem_count, RFILE* stream);
+}
 
 struct EXEMapRecord
 {
@@ -59,17 +76,17 @@ static int find_index(const char *fname, const char *list[])
 	return 0xff;
 }
 
-bool extract_stages(FILE *exefp)
+bool extract_stages(RFILE *exefp)
 {
-   int i;
+	int i;
 	// load raw data into struct
-	fseek(exefp, DATA_OFFSET, SEEK_SET);
-	fread(exemapdata, sizeof(EXEMapRecord), NMAPS, exefp);
-	
+	rfseek(exefp, DATA_OFFSET, SEEK_SET);
+	rfread(exemapdata, sizeof(EXEMapRecord), NMAPS, exefp);
+
 	// convert the data
 	memset(stages, 0, sizeof(stages));
 	const char *error = NULL;
-	
+
 	for(i=0;i<NMAPS;i++)
 	{
 		strcpy(stages[i].filename, exemapdata[i].filename);
@@ -82,16 +99,16 @@ bool extract_stages(FILE *exefp)
 #endif
 
 		stages[i].bossNo = exemapdata[i].bossNo;
-		
+
 		stages[i].tileset = find_index(exemapdata[i].tileset, tileset_names);
 		if (stages[i].tileset == 0xff) { error = "tileset"; break; }
-		
+
 		stages[i].bg_no   = find_index(exemapdata[i].background, backdrop_names);
 		if (stages[i].bg_no == 0xff) { error = "backdrop"; break; }
-		
+
 		stages[i].NPCset1 = find_index(exemapdata[i].NPCset1, npcsetnames);
 		if (stages[i].NPCset1 == 0xff) { error = "NPCset1"; break; }
-		
+
 		stages[i].NPCset2 = find_index(exemapdata[i].NPCset2, npcsetnames);
 		if (stages[i].NPCset2 == 0xff) { error = "NPCset2"; break; }
 	}
@@ -100,9 +117,9 @@ bool extract_stages(FILE *exefp)
 	{
 		NX_ERR("didn't recognize map %s name\n", error);
 		NX_ERR("on stage %d\n", i);
-		
+
 		return 1;
 	}
-	
+
 	return 0;
 }

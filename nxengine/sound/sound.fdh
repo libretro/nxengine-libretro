@@ -4,7 +4,7 @@
 /* located in sound/sound.cpp */
 
 //------------------[referenced from sound/sound.cpp]----------------//
-bool sound_init(FILE *fp);
+bool sound_init(RFILE *fp);
 void sound_close(void);
 void sound(int snd);
 void sound_loop(int snd);
@@ -32,7 +32,7 @@ void SSClose(void);
 /* located in sound/org.cpp */
 
 //------------------[referenced from sound/sound.cpp]----------------//
-int org_init(FILE *fp, int org_volume);
+int org_init(RFILE *fp, int org_volume);
 void org_stop(void);
 bool org_is_playing(void);
 char org_load(int songno);
@@ -43,7 +43,7 @@ bool org_start(int startbeat);
 
 //------------------[referenced from sound/sound.cpp]----------------//
 char pxt_init(void);
-char pxt_LoadSoundFX(FILE *fp, int top);
+char pxt_LoadSoundFX(RFILE *fp, int top);
 void pxt_freeSoundFX(void);
 void pxt_Stop(int slot);
 int pxt_Play(int chan, int slot, char loop);

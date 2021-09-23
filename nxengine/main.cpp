@@ -4,6 +4,8 @@
 #include "libretro_shared.h"
 #include "extract-auto/cachefiles.h"
 
+#include <streams/file_stream.h>
+
 #ifdef _WIN32
 #include "msvc_compat.h"
 #endif
@@ -24,7 +26,22 @@ bool freezeframe = false;
 static bool inhibit_loadfade = false;
 static bool freshstart;
 
-extern bool extract_stages(FILE *exefp);
+/* Forward declarations */
+extern "C" {
+	int64_t rftell(RFILE* stream);
+	int64_t rfseek(RFILE* stream, int64_t offset, int origin);
+	int64_t rfread(void* buffer,
+			size_t elem_size, size_t elem_count, RFILE* stream);
+	int rfputc(int character, RFILE * stream);
+	int rfgetc(RFILE* stream);
+	int rfclose(RFILE* stream);
+	RFILE* rfopen(const char *path, const char *mode);
+	int rfprintf(RFILE * stream, const char * format, ...);
+	int64_t rfwrite(void const* buffer,
+			size_t elem_size, size_t elem_count, RFILE* stream);
+}
+
+extern bool extract_stages(RFILE *exefp);
 
 static bool check_data_exists(void)
 {
@@ -48,7 +65,7 @@ static bool check_data_exists(void)
 bool pre_main(void)
 {
    char filename[1024];
-   FILE *fp;
+   RFILE *fp;
    // start up inputs first thing because settings_load may remap them
    input_init();
 
@@ -59,7 +76,7 @@ bool pre_main(void)
    NX_LOG("= Extracting Files =\n");
 
    retro_create_path_string(filename, sizeof(filename), g_dir, "Doukutsu.exe");
-   fp = fopen(filename, "rb");
+   fp = rfopen(filename, "rb");
 
    //extract_files(fp);
    if (!cachefiles_init(fp))
@@ -70,11 +87,11 @@ bool pre_main(void)
 
    if (extract_stages(fp))
    {
-      fclose(fp);
+      rfclose(fp);
       return 1;
    }
 
-   fclose(fp);
+   rfclose(fp);
 
    settings->files_extracted = true;
    settings_save();

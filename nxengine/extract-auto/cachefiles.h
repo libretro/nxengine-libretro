@@ -2,9 +2,11 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include <streams/file_stream.h>
+
 typedef struct file_data CFILE;
 
-bool cachefiles_init(FILE *exefp);
+bool cachefiles_init(RFILE *exefp);
 CFILE *copen(const char *fname, const char *mode);
 void cclose(CFILE *f);
 void cseek(CFILE *f, int offset, int origin);

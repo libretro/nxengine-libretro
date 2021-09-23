@@ -13,7 +13,29 @@
 
 #ifdef _WIN32
 #include <direct.h>
+#else
+#include <unistd.h>
 #endif
+
+#include <streams/file_stream.h>
+
+/* Forward declarations */
+extern "C" {
+	int64_t rftell(RFILE* stream);
+	int64_t rfseek(RFILE* stream, int64_t offset, int origin);
+	int64_t rfread(void* buffer,
+			size_t elem_size, size_t elem_count, RFILE* stream);
+	int rfputc(int character, RFILE * stream);
+	int rfgetc(RFILE* stream);
+	int rfclose(RFILE* stream);
+	RFILE* rfopen(const char *path, const char *mode);
+	int rfprintf(RFILE * stream, const char * format, ...);
+	int64_t rfwrite(void const* buffer,
+			size_t elem_size, size_t elem_count, RFILE* stream);
+}
+
+uint32_t rfgetl(RFILE *fp);
+double rfgetfloat(RFILE *fp);
 
 static struct
 {
@@ -146,92 +168,91 @@ snd[] =
 
 extern char pxt_SetModel(stPXWave *pxwave, int m);
 
-bool extract_pxt(FILE *fp, int s, stPXSound *outsnd)
+bool extract_pxt(RFILE *fp, int s, stPXSound *outsnd)
 {
-struct
-{
-	union
+	struct
 	{
-		int intvalue;
-		double fpvalue;
-	} values[21];
-} chan[4];
-int c, i;
-int found = 0;
-char slash;
-#ifdef _WIN32
-slash = '\\';
-#else
-slash = '/';
-#endif
-   for (i = 0; i < sizeof(snd) / sizeof(snd[0]); i++)
-   {
-      if (snd[i].id == s)
-      {
-         found = 1;
-         s = i;
-         break;
-      }
-   }
-   if (!found)
-      return 1;
-
-		fseek(fp, snd[s].offset, SEEK_SET);
-		memset(chan, 0, sizeof(chan));
-		
-		// load data
-		for(c=0;c<snd[s].nchanl;c++)
+		union
 		{
-			for(i=0;fields[i].name;i++)
+			int intvalue;
+			double fpvalue;
+		} values[21];
+	} chan[4];
+	int c, i;
+	int found = 0;
+	char slash;
+#ifdef _WIN32
+	slash = '\\';
+#else
+	slash = '/';
+#endif
+	for (i = 0; i < sizeof(snd) / sizeof(snd[0]); i++)
+	{
+		if (snd[i].id == s)
+		{
+			found = 1;
+			s = i;
+			break;
+		}
+	}
+	if (!found)
+		return 1;
+
+	rfseek(fp, snd[s].offset, SEEK_SET);
+	memset(chan, 0, sizeof(chan));
+
+	// load data
+	for(c=0;c<snd[s].nchanl;c++)
+	{
+		for(i=0;fields[i].name;i++)
+		{
+			if (fields[i].is_integer)
 			{
-				if (fields[i].is_integer)
-				{
-					chan[c].values[i].intvalue = fgetl(fp);
-				}
-				else
-				{
-					chan[c].values[i].fpvalue = fgetfloat(fp);
-				}
+				chan[c].values[i].intvalue = rfgetl(fp);
 			}
-			
-			// skip padding between sections
-			if (fgetl(fp) != 0)
+			else
 			{
-				NX_ERR("PXT out of sync\n");
-				return 1;
+				chan[c].values[i].fpvalue = rfgetfloat(fp);
 			}
 		}
-   
-      for (c = 0; c < 4; c++)
-      {
-         outsnd->chan[c].enabled = chan[c].values[0].intvalue;
-         outsnd->chan[c].size_blocks = chan[c].values[1].intvalue;
-         
-         pxt_SetModel(&outsnd->chan[c].main, chan[c].values[2].intvalue);
-         outsnd->chan[c].main.repeat = chan[c].values[3].fpvalue;
-         outsnd->chan[c].main.volume = chan[c].values[4].intvalue;
-         outsnd->chan[c].main.offset = chan[c].values[5].intvalue;
-         
-         pxt_SetModel(&outsnd->chan[c].pitch, chan[c].values[6].intvalue);
-         outsnd->chan[c].pitch.repeat = chan[c].values[7].fpvalue;
-         outsnd->chan[c].pitch.volume = chan[c].values[8].intvalue;
-         outsnd->chan[c].pitch.offset = chan[c].values[9].intvalue;
-         
-         pxt_SetModel(&outsnd->chan[c].volume, chan[c].values[10].intvalue);
-         outsnd->chan[c].volume.repeat = chan[c].values[11].fpvalue;
-         outsnd->chan[c].volume.volume = chan[c].values[12].intvalue;
-         outsnd->chan[c].volume.offset = chan[c].values[13].intvalue;
-         
-         outsnd->chan[c].envelope.initial = chan[c].values[14].intvalue;
 
-         outsnd->chan[c].envelope.time[0] = chan[c].values[15].intvalue;
-         outsnd->chan[c].envelope.val[0] = chan[c].values[16].intvalue;
-         outsnd->chan[c].envelope.time[1] = chan[c].values[17].intvalue;
-         outsnd->chan[c].envelope.val[1] = chan[c].values[18].intvalue;
-         outsnd->chan[c].envelope.time[2] = chan[c].values[19].intvalue;
-         outsnd->chan[c].envelope.val[2] = chan[c].values[20].intvalue;
-      }
-	
+		// skip padding between sections
+		if (rfgetl(fp) != 0)
+		{
+			NX_ERR("PXT out of sync\n");
+			return 1;
+		}
+	}
+
+	for (c = 0; c < 4; c++)
+	{
+		outsnd->chan[c].enabled = chan[c].values[0].intvalue;
+		outsnd->chan[c].size_blocks = chan[c].values[1].intvalue;
+
+		pxt_SetModel(&outsnd->chan[c].main, chan[c].values[2].intvalue);
+		outsnd->chan[c].main.repeat = chan[c].values[3].fpvalue;
+		outsnd->chan[c].main.volume = chan[c].values[4].intvalue;
+		outsnd->chan[c].main.offset = chan[c].values[5].intvalue;
+
+		pxt_SetModel(&outsnd->chan[c].pitch, chan[c].values[6].intvalue);
+		outsnd->chan[c].pitch.repeat = chan[c].values[7].fpvalue;
+		outsnd->chan[c].pitch.volume = chan[c].values[8].intvalue;
+		outsnd->chan[c].pitch.offset = chan[c].values[9].intvalue;
+
+		pxt_SetModel(&outsnd->chan[c].volume, chan[c].values[10].intvalue);
+		outsnd->chan[c].volume.repeat = chan[c].values[11].fpvalue;
+		outsnd->chan[c].volume.volume = chan[c].values[12].intvalue;
+		outsnd->chan[c].volume.offset = chan[c].values[13].intvalue;
+
+		outsnd->chan[c].envelope.initial = chan[c].values[14].intvalue;
+
+		outsnd->chan[c].envelope.time[0] = chan[c].values[15].intvalue;
+		outsnd->chan[c].envelope.val[0] = chan[c].values[16].intvalue;
+		outsnd->chan[c].envelope.time[1] = chan[c].values[17].intvalue;
+		outsnd->chan[c].envelope.val[1] = chan[c].values[18].intvalue;
+		outsnd->chan[c].envelope.time[2] = chan[c].values[19].intvalue;
+		outsnd->chan[c].envelope.val[2] = chan[c].values[20].intvalue;
+	}
+
 	return 0;
 }
-

@@ -91,7 +91,7 @@ int font_draw(int x, int y, const char *text, int spacing, NXFont *font);
 /* located in sound/sound.cpp */
 
 //---------------------[referenced from main.cpp]--------------------//
-bool sound_init(FILE *fp);
+bool sound_init(RFILE *fp);
 void StopLoopSounds(void);
 void sound_close(void);
 void music_set_enabled(int newstate);

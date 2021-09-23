@@ -77,7 +77,7 @@ const char *org_names[] =
 
 static const char bossmusic[] = { 4, 7, 10, 11, 15, 16, 17, 18, 21, 22, 31, 33, 35, 0 };
 
-bool sound_init(FILE *fp)
+bool sound_init(RFILE *fp)
 {
    if (SSInit())
       return 1;

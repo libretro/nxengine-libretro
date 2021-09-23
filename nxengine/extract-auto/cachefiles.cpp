@@ -7,12 +7,29 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <streams/file_stream.h>
+
 struct file_data
 {
    uint8_t *data;
    size_t size;
    size_t offset;
 };
+
+/* Forward declarations */
+extern "C" {
+	int64_t rftell(RFILE* stream);
+	int64_t rfseek(RFILE* stream, int64_t offset, int origin);
+	int64_t rfread(void* buffer,
+			size_t elem_size, size_t elem_count, RFILE* stream);
+	int rfputc(int character, RFILE * stream);
+	int rfgetc(RFILE* stream);
+	int rfclose(RFILE* stream);
+	RFILE* rfopen(const char *path, const char *mode);
+	int rfprintf(RFILE * stream, const char * format, ...);
+	int64_t rfwrite(void const* buffer,
+			size_t elem_size, size_t elem_count, RFILE* stream);
+}
 
 #ifdef _WIN32
 #define SLASH "\\"
@@ -479,7 +496,7 @@ static struct hash_struct *filemap = NULL;
 
 extern signed short wavetable[100][256];
 
-bool cachefiles_init(FILE *exefp)
+bool cachefiles_init(RFILE *exefp)
 {
    unsigned i;
    for (i = 0; i < sizeof(filenames) / sizeof(filenames[0]); i++)
@@ -496,7 +513,7 @@ bool cachefiles_init(FILE *exefp)
       char fname[1024];
       retro_create_path_string(fname, sizeof(fname), g_dir, filenames[i]);
       NX_DBG("%s\n", fname);
-      FILE *f = fopen(fname, "rb");
+      RFILE *f = rfopen(fname, "rb");
       if (!f)
       {
          if (!strcmp(filenames[i], "data" SLASH "sprites.sif"))
@@ -512,19 +529,19 @@ bool cachefiles_init(FILE *exefp)
          continue;
       }
 
-      fseek(f, 0, SEEK_END);
-      entry->fd.size = ftell(f);
-      fseek(f, 0, SEEK_SET);
+      rfseek(f, 0, SEEK_END);
+      entry->fd.size = rftell(f);
+      rfseek(f, 0, SEEK_SET);
 
       entry->fd.data = (uint8_t *) malloc(entry->fd.size);
       if (!entry->fd.data)
       {
-         fclose(f);
+         rfclose(f);
          continue;
       }
 
-      fread(entry->fd.data, entry->fd.size, 1, f);
-      fclose(f);
+      rfread(entry->fd.data, entry->fd.size, 1, f);
+      rfclose(f);
 
       strcpy(entry->filename, filenames[i]);
       HASH_ADD_STR(filemap, filename, entry);
@@ -551,8 +568,8 @@ bool cachefiles_init(FILE *exefp)
       if (bmp_files[i].header)
          memcpy(entry->fd.data, bmp_files[i].header, 25);
 
-      fseek(exefp, bmp_files[i].offset, SEEK_SET);
-      fread(entry->fd.data + hoff, bmp_files[i].length, 1, exefp);
+      rfseek(exefp, bmp_files[i].offset, SEEK_SET);
+      rfread(entry->fd.data + hoff, bmp_files[i].length, 1, exefp);
 
       if (strcmp(bmp_files[i].filename, "wavetable.dat") == 0)
       {
@@ -629,25 +646,22 @@ int cgetc(CFILE *f)
 {
    if (f->offset >= f->size)
       return EOF;
-   else
-      return f->data[f->offset++];
+   return f->data[f->offset++];
 }
 
 uint16_t cgeti(CFILE *f)
 {
-   uint16_t a, b;
-	a = cgetc(f);
-	b = cgetc(f);
+	uint16_t a = cgetc(f);
+	uint16_t b = cgetc(f);
 	return (b << 8) | (a);
 }
 
 uint32_t cgetl(CFILE *f)
 {
-   uint32_t a, b, c, d;
-	a = cgetc(f);
-	b = cgetc(f);
-	c = cgetc(f);
-	d = cgetc(f);
+	uint32_t a = cgetc(f);
+	uint32_t b = cgetc(f);
+	uint32_t c = cgetc(f);
+	uint32_t d = cgetc(f);
 	return (d << 24) | (c << 16) | (b << 8) | (a);
 }
 

@@ -88,7 +88,7 @@ static int SamplesToMS(int samples)
    return (int)(((float_type)samples * 1000) / SAMPLE_RATE);
 }
 
-static bool load_drum_pxt(FILE *fd, int s, int d)
+static bool load_drum_pxt(RFILE *fd, int s, int d)
 {
    int i;
    signed short sample;
@@ -115,7 +115,7 @@ static bool load_drum_pxt(FILE *fd, int s, int d)
    return 0;
 }
 
-static bool load_drumtable(FILE *fp)		// pxt_path = the path where drum pxt files can be found
+static bool load_drumtable(RFILE *fp)		// pxt_path = the path where drum pxt files can be found
 {
    NX_LOG("load_drumtable: cache gone; rebuilding drums...\n");
 
@@ -135,9 +135,9 @@ static bool load_drumtable(FILE *fp)		// pxt_path = the path where drum pxt file
 void c------------------------------() {}
 */
 
-extern bool extract_org(FILE *exefp);
+extern bool extract_org(RFILE *exefp);
 
-int org_init(FILE *fp, int org_volume)
+int org_init(RFILE *fp, int org_volume)
 {
    int i;
 	

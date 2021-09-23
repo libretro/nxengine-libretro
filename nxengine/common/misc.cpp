@@ -78,6 +78,19 @@ void fputl(uint32_t word, FILE *fp)
    fwrite(&word, 4, 1, fp);
 }
 
+double rfgetfloat(RFILE *fp)
+{
+   char buf[8];
+   double *float_ptr;
+   int i;
+
+   for(i=0;i<4;i++) rfgetc(fp);
+   for(i=0;i<8;i++) buf[i] = rfgetc(fp);
+
+   float_ptr = (double *)&buf[0];
+   return *float_ptr;
+}
+
 double fgetfloat(FILE *fp)
 {
    char buf[8];
@@ -160,6 +173,19 @@ void fputl(uint32_t word, FILE *fp)
    fputc(word >> 8, fp);
    fputc(word >> 16, fp);
    fputc(word >> 24, fp);
+}
+
+double rfgetfloat(RFILE *fp)
+{
+   char buf[8];
+   double *float_ptr;
+   int i;
+
+   for(i=0;i<4;i++) rfgetc(fp);
+   for(i=0;i<8;i++) buf[7 - i] = rfgetc(fp);
+
+   float_ptr = (double *)&buf[0];
+   return *float_ptr;
 }
 
 double fgetfloat(FILE *fp)

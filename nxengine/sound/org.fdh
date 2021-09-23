@@ -60,7 +60,7 @@ int org_GetCurrentBuffer(void);
 
 //-------------------[referenced from sound/org.cpp]-----------------//
 char pxt_initsynth(void);
-char pxt_load(FILE *fp, stPXSound *snd, int slot);
+char pxt_load(RFILE *fp, stPXSound *snd, int slot);
 char pxt_Render(stPXSound *snd);
 void FreePXTBuf(stPXSound *snd);
 
