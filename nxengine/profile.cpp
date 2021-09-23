@@ -4,6 +4,8 @@
 #include "profile.fdh"
 #include "libretro/libretro_shared.h"
 
+#include <streams/file_stream.h>
+
 #define PF_WEAPONS_OFFS		0x38
 #define PF_CURWEAPON_OFFS	0x24
 #define PF_INVENTORY_OFFS	0xD8
@@ -13,55 +15,74 @@
 #define MAX_WPN_SLOTS		8
 #define MAX_TELE_SLOTS		8
 
+extern "C" {
+	int64_t rfseek(RFILE* stream, int64_t offset, int origin);
+	int rfclose(RFILE* stream);
+	int rfgetc(RFILE* stream);
+	RFILE* rfopen(const char *path, const char *mode);
+	int rfprintf(RFILE * stream, const char * format, ...);
+}
+
+/* forward declarations */
+uint32_t rfgetl(RFILE *fp);
+uint16_t rfgeti(RFILE *fp);
+void rfputl(uint32_t word, RFILE *fp);
+void rfputi(uint16_t word, RFILE *fp);
+char rfbooleanread(RFILE *fp);
+void rfputstringnonull(const char *buf, RFILE *fp);
+void rfbooleanwrite(char bit, RFILE *fp);
+bool rfverifystring(RFILE *fp, const char *str);
+void rfbooleanflush(RFILE *fp);
+
 // load savefile #num into the given Profile structure.
 bool profile_load(const char *pfname, Profile *file)
 {
    int i, curweaponslot;
-   FILE *fp = fopen(pfname, "rb");
+   RFILE *fp = rfopen(pfname, "rb");
 
    memset(file, 0, sizeof(Profile));
 
    if (!fp)
       return 1;
 
-   if (!fverifystring(fp, "Do041220"))
+   if (!rfverifystring(fp, "Do041220"))
       goto error;
 
-   file->stage = fgetl(fp);
-   file->songno = fgetl(fp);
+   file->stage         = rfgetl(fp);
+   file->songno        = rfgetl(fp);
 
-   file->px = fgetl(fp);
-   file->py = fgetl(fp);
-   file->pdir = CVTDir(fgetl(fp));
+   file->px            = rfgetl(fp);
+   file->py            = rfgetl(fp);
+   file->pdir          = CVTDir(rfgetl(fp));
 
-   file->maxhp = fgeti(fp);
-   file->num_whimstars = fgeti(fp);
-   file->hp = fgeti(fp);
+   file->maxhp         = rfgeti(fp);
+   file->num_whimstars = rfgeti(fp);
+   file->hp            = rfgeti(fp);
 
-   fgeti(fp);						// unknown value
-   curweaponslot = fgetl(fp);		// current weapon (slot, not number, converted below)
-   fgetl(fp);						// unknown value
-   file->equipmask = fgetl(fp);	// equipped items
+   rfgeti(fp);						// unknown value
+   curweaponslot       = rfgetl(fp);		// current weapon (slot, not number, converted below)
+   rfgetl(fp);						// unknown value
+   file->equipmask     = rfgetl(fp);	// equipped items
 
    // load weapons
-   fseek(fp, PF_WEAPONS_OFFS, SEEK_SET);
+   rfseek(fp, PF_WEAPONS_OFFS, SEEK_SET);
    for(i=0;i<MAX_WPN_SLOTS;i++)
    {
       int level, xp, maxammo, ammo;
-      int type = fgetl(fp);
+      int type = rfgetl(fp);
       if (!type)
          break;
 
-      level   = fgetl(fp);
-      xp      = fgetl(fp);
-      maxammo = fgetl(fp);
-      ammo    = fgetl(fp);
+      level    = rfgetl(fp);
+      xp       = rfgetl(fp);
+      maxammo  = rfgetl(fp);
+      ammo     = rfgetl(fp);
 
       file->weapons[type].hasWeapon = true;
-      file->weapons[type].level = (level - 1);
-      file->weapons[type].xp = xp;
-      file->weapons[type].ammo = ammo;
-      file->weapons[type].maxammo = maxammo;
+      file->weapons[type].level     = (level - 1);
+      file->weapons[type].xp        = xp;
+      file->weapons[type].ammo      = ammo;
+      file->weapons[type].maxammo   = maxammo;
 
       if (i == curweaponslot)
          file->curWeapon = type;
@@ -69,10 +90,10 @@ bool profile_load(const char *pfname, Profile *file)
 
    /* load inventory */
    file->ninventory = 0;
-   fseek(fp, PF_INVENTORY_OFFS, SEEK_SET);
+   rfseek(fp, PF_INVENTORY_OFFS, SEEK_SET);
    for(i=0;i<MAX_INVENTORY;i++)
    {
-      int item = fgetl(fp);
+      int item = rfgetl(fp);
       if (!item)
          break;
 
@@ -81,12 +102,12 @@ bool profile_load(const char *pfname, Profile *file)
 
    /* load teleporter slots */
    file->num_teleslots = 0;
-   fseek(fp, PF_TELEPORTER_OFFS, SEEK_SET);
+   rfseek(fp, PF_TELEPORTER_OFFS, SEEK_SET);
 
    for(i=0;i<NUM_TELEPORTER_SLOTS;i++)
    {
-      int slotno   = fgetl(fp);
-      int scriptno = fgetl(fp);
+      int slotno   = rfgetl(fp);
+      int scriptno = rfgetl(fp);
       if (slotno == 0)
          break;
 
@@ -96,8 +117,8 @@ bool profile_load(const char *pfname, Profile *file)
    }
 
    /* load flags */
-   fseek(fp, PF_FLAGS_OFFS, SEEK_SET);
-   if (!fverifystring(fp, "FLAG"))
+   rfseek(fp, PF_FLAGS_OFFS, SEEK_SET);
+   if (!rfverifystring(fp, "FLAG"))
    {
       NX_ERR("profile_load: missing 'FLAG' marker\n");
       goto error;
@@ -105,13 +126,13 @@ bool profile_load(const char *pfname, Profile *file)
 
    fresetboolean();
    for(i=0;i<NUM_GAMEFLAGS;i++)
-      file->flags[i] = fbooleanread(fp);
+      file->flags[i] = rfbooleanread(fp);
 
-   fclose(fp);
+   rfclose(fp);
    return 0;
 
 error:
-   fclose(fp);
+   rfclose(fp);
    return 1;
 }
 
@@ -119,39 +140,39 @@ error:
 bool profile_save(const char *pfname, Profile *file)
 {
    int i, slotno = 0, curweaponslot = 0;
-   FILE *fp = fopen(pfname, "wb");
+   RFILE *fp = rfopen(pfname, "wb");
 
    if (!fp)
       return 1;
 
-   fputstringnonull("Do041220", fp);
+   rfputstringnonull("Do041220", fp);
 
-   fputl(file->stage, fp);
-   fputl(file->songno, fp);
+   rfputl(file->stage, fp);
+   rfputl(file->songno, fp);
 
-   fputl(file->px, fp);
-   fputl(file->py, fp);
-   fputl((file->pdir == RIGHT) ? 2:0, fp);
+   rfputl(file->px, fp);
+   rfputl(file->py, fp);
+   rfputl((file->pdir == RIGHT) ? 2:0, fp);
 
-   fputi(file->maxhp, fp);
-   fputi(file->num_whimstars, fp);
-   fputi(file->hp, fp);
+   rfputi(file->maxhp, fp);
+   rfputi(file->num_whimstars, fp);
+   rfputi(file->hp, fp);
 
-   fseek(fp, 0x2C, SEEK_SET);
-   fputi(file->equipmask, fp);
+   rfseek(fp, 0x2C, SEEK_SET);
+   rfputi(file->equipmask, fp);
 
    /* save weapons */
-   fseek(fp, PF_WEAPONS_OFFS, SEEK_SET);
+   rfseek(fp, PF_WEAPONS_OFFS, SEEK_SET);
 
    for(i = 0; i < WPN_COUNT; i++)
    {
       if (file->weapons[i].hasWeapon)
       {
-         fputl(i, fp);
-         fputl(file->weapons[i].level + 1, fp);
-         fputl(file->weapons[i].xp, fp);
-         fputl(file->weapons[i].maxammo, fp);
-         fputl(file->weapons[i].ammo, fp);
+         rfputl(i, fp);
+         rfputl(file->weapons[i].level + 1, fp);
+         rfputl(file->weapons[i].xp, fp);
+         rfputl(file->weapons[i].maxammo, fp);
+         rfputl(file->weapons[i].ammo, fp);
 
          if (i == file->curWeapon)
             curweaponslot = slotno;
@@ -163,46 +184,46 @@ bool profile_save(const char *pfname, Profile *file)
    }
 
    if (slotno < MAX_WPN_SLOTS)
-      fputl(0, fp);	// 0-type weapon: terminator
+      rfputl(0, fp);	// 0-type weapon: terminator
 
    /* go back and save slot no of current weapon */
-   fseek(fp, PF_CURWEAPON_OFFS, SEEK_SET);
-   fputl(curweaponslot, fp);
+   rfseek(fp, PF_CURWEAPON_OFFS, SEEK_SET);
+   rfputl(curweaponslot, fp);
 
    /* save inventory */
-   fseek(fp, PF_INVENTORY_OFFS, SEEK_SET);
+   rfseek(fp, PF_INVENTORY_OFFS, SEEK_SET);
    for(i=0;i<file->ninventory;i++)
-      fputl(file->inventory[i], fp);
+      rfputl(file->inventory[i], fp);
 
-   fputl(0, fp);
+   rfputl(0, fp);
 
    /* write teleporter slots */
-   fseek(fp, PF_TELEPORTER_OFFS, SEEK_SET);
+   rfseek(fp, PF_TELEPORTER_OFFS, SEEK_SET);
    for(i=0;i<MAX_TELE_SLOTS;i++)
    {
       if (i < file->num_teleslots)
       {
-         fputl(file->teleslots[i].slotno, fp);
-         fputl(file->teleslots[i].scriptno, fp);
+         rfputl(file->teleslots[i].slotno, fp);
+         rfputl(file->teleslots[i].scriptno, fp);
       }
       else
       {
-         fputl(0, fp);
-         fputl(0, fp);
+         rfputl(0, fp);
+         rfputl(0, fp);
       }
    }
 
    /* write flags */
-   fseek(fp, PF_FLAGS_OFFS, SEEK_SET);
-   fputstringnonull("FLAG", fp);
+   rfseek(fp, PF_FLAGS_OFFS, SEEK_SET);
+   rfputstringnonull("FLAG", fp);
 
    fresetboolean();
    for(i=0;i<NUM_GAMEFLAGS;i++)
-      fbooleanwrite(file->flags[i], fp);
+      rfbooleanwrite(file->flags[i], fp);
 
-   fbooleanflush(fp);
+   rfbooleanflush(fp);
 
-   fclose(fp);
+   rfclose(fp);
    return 0;
 }
 

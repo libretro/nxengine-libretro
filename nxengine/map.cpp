@@ -5,6 +5,15 @@
 #include "libretro_shared.h"
 #include "../extract-auto/cachefiles.h"
 
+#include <streams/file_stream.h>
+
+/* Forward declarations */
+extern "C" {
+	RFILE* rfopen(const char *path, const char *mode);
+	int rfclose(RFILE* stream);
+}
+uint32_t rfgetl(RFILE *fp);
+
 stMap map;
 
 extern MapRecord stages[MAX_STAGES];
@@ -274,24 +283,24 @@ bool load_stages(void)
 
 bool initmapfirsttime(void)
 {
-        char fname[1024];
-	FILE *fp;
+	char fname[1024];
+	RFILE *fp;
 	int i;
 
 	retro_create_path_string(fname, sizeof(fname), g_dir, "tilekey.dat");
 
 	NX_LOG("initmapfirsttime: loading %s.\n", fname);
-	if (!(fp = fopen(fname, "rb")))
+	if (!(fp = rfopen(fname, "rb")))
 	{
 		NX_LOG("%s is missing, using default\n", fname);
 	}
-   else
-   {
-      for(i=0;i<256;i++)
-         tilekey[i] = fgetl(fp);
-      
-      fclose(fp);
-   }
+	else
+	{
+		for(i=0;i<256;i++)
+			tilekey[i] = rfgetl(fp);
+
+		rfclose(fp);
+	}
 	return load_stages();
 }
 

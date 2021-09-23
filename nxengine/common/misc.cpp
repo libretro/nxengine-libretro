@@ -6,6 +6,8 @@
 #include <math.h>
 #include <ctype.h>
 
+#include <streams/file_stream.h>
+
 #include "basics.h"
 #include "misc.fdh"
 #include "../nx.h"
@@ -14,7 +16,27 @@
 #include "msvc_compat.h"
 #endif
 
+/* Forward declarations */
+extern "C" {
+	int64_t rfread(void* buffer,
+			size_t elem_size, size_t elem_count, RFILE* stream);
+	int rfputc(int character, RFILE * stream);
+	int rfgetc(RFILE* stream);
+	int rfclose(RFILE* stream);
+	RFILE* rfopen(const char *path, const char *mode);
+	int rfprintf(RFILE * stream, const char * format, ...);
+	int64_t rfwrite(void const* buffer,
+			size_t elem_size, size_t elem_count, RFILE* stream);
+}
+
 #ifndef MSB_FIRST
+uint16_t rfgeti(RFILE *fp)
+{
+   uint16_t value;
+   rfread(&value, 2, 1, fp);
+   return value;
+}
+
 uint16_t fgeti(FILE *fp)
 {
    uint16_t value;
@@ -29,9 +51,26 @@ uint32_t fgetl(FILE *fp)
    return value;
 }
 
+uint32_t rfgetl(RFILE *fp)
+{
+   uint32_t value;
+   rfread(&value, 4, 1, fp);
+   return value;
+}
+
+void rfputi(uint16_t word, RFILE *fp)
+{
+   rfwrite(&word, 2, 1, fp);
+}
+
 void fputi(uint16_t word, FILE *fp)
 {
    fwrite(&word, 2, 1, fp);
+}
+
+void rfputl(uint32_t word, RFILE *fp)
+{
+   rfwrite(&word, 4, 1, fp);
 }
 
 void fputl(uint32_t word, FILE *fp)
@@ -63,11 +102,27 @@ void fputfloat(double q, FILE *fp)
    return;
 }
 #else
+uint16_t fgeti(RFILE *fp)
+{
+   uint16_t a = rfgetc(fp);
+   uint16_t b = rfgetc(fp);
+   return (b << 8) | a;
+}
+
 uint16_t fgeti(FILE *fp)
 {
    uint16_t a = fgetc(fp);
    uint16_t b = fgetc(fp);
    return (b << 8) | a;
+}
+
+uint32_t rfgetl(RFILE *fp)
+{
+   uint32_t a = rfgetc(fp);
+   uint32_t b = rfgetc(fp);
+   uint32_t c = rfgetc(fp);
+   uint32_t d = rfgetc(fp);
+   return (d<<24)|(c<<16)|(b<<8)|(a);
 }
 
 uint32_t fgetl(FILE *fp)
@@ -119,10 +174,30 @@ void fputfloat(double q, FILE *fp)
 #endif
 
 // write a string to a file-- does NOT null-terminate it
+void rfputstringnonull(const char *buf, RFILE *fp)
+{
+   if (buf[0])
+      rfprintf(fp, "%s", buf);
+}
+
+// write a string to a file-- does NOT null-terminate it
 void fputstringnonull(const char *buf, FILE *fp)
 {
    if (buf[0])
       fprintf(fp, "%s", buf);
+}
+
+bool rfverifystring(RFILE *fp, const char *str)
+{
+   int i;
+   char result = 1;
+   int stringlength = strlen(str);
+
+   for(i=0;i<stringlength;i++)
+      if (rfgetc(fp) != str[i])
+	      result = 0;
+
+   return result;
 }
 
 // reads strlen(str) bytes from file fp, and returns true if they match "str"
@@ -133,9 +208,8 @@ bool fverifystring(FILE *fp, const char *str)
    int stringlength = strlen(str);
 
    for(i=0;i<stringlength;i++)
-   {
-      if (fgetc(fp) != str[i]) result = 0;
-   }
+      if (fgetc(fp) != str[i])
+	      result = 0;
 
    return result;
 }
@@ -240,19 +314,50 @@ void fresetboolean(void)
 }
 
 // read a boolean value (a single bit) from a file
+char rfbooleanread(RFILE *fp)
+{
+   char value;
+
+   if (boolmask_r == 256)
+   {
+      boolbyte   = rfgetc(fp);
+      boolmask_r = 1;
+   }
+
+   value        = (boolbyte & boolmask_r) ? 1:0;
+   boolmask_r <<= 1;
+   return value;
+}
+
+// read a boolean value (a single bit) from a file
 char fbooleanread(FILE *fp)
 {
    char value;
 
    if (boolmask_r == 256)
    {
-      boolbyte = fgetc(fp);
+      boolbyte   = fgetc(fp);
       boolmask_r = 1;
    }
 
-   value = (boolbyte & boolmask_r) ? 1:0;
+   value        = (boolbyte & boolmask_r) ? 1:0;
    boolmask_r <<= 1;
    return value;
+}
+
+void rfbooleanwrite(char bit, RFILE *fp)
+{
+   if (boolmask_w == 256)
+   {
+      rfputc(boolbyte, fp);
+      boolmask_w = 1;
+      boolbyte = 0;
+   }
+
+   if (bit)
+      boolbyte |= boolmask_w;
+
+   boolmask_w <<= 1;
 }
 
 void fbooleanwrite(char bit, FILE *fp)
@@ -268,6 +373,12 @@ void fbooleanwrite(char bit, FILE *fp)
       boolbyte |= boolmask_w;
 
    boolmask_w <<= 1;
+}
+
+void rfbooleanflush(RFILE *fp)
+{
+   rfputc(boolbyte, fp);
+   boolmask_w = 1;
 }
 
 void fbooleanflush(FILE *fp)

@@ -3,7 +3,20 @@
 #include "ai.fdh"
 #include "libretro_shared.h"
 
+#include <streams/file_stream.h>
+
 InitList AIRoutines;
+
+/* forward declarations */
+extern "C" {
+	RFILE* rfopen(const char *path, const char *mode);
+	int64_t rfseek(RFILE* stream, int64_t offset, int origin);
+	int rfgetc(RFILE* stream);
+	int rfclose(RFILE* stream);
+}
+
+uint16_t rfgeti(RFILE *fp);
+uint32_t rfgetl(RFILE *fp);
 
 bool ai_init(void)
 {
@@ -44,7 +57,7 @@ bool load_npc_tbl(void)
    snprintf(tmp_str, sizeof(tmp_str), "data%cnpc.tbl", slash);
    retro_create_path_string(fname, sizeof(fname), g_dir, tmp_str);
 
-   FILE *fp = fopen(fname, "rb");
+   RFILE *fp = rfopen(fname, "rb");
    if (!fp) {
       NX_ERR("load_npc_tbl: %s is missing\n", fname);
       return 1;
@@ -52,20 +65,20 @@ bool load_npc_tbl(void)
 
    NX_LOG("Reading %s...\n", fname);
 
-   for(i=0;i<nEntries;i++) objprop[i].defaultflags = fgeti(fp);
-   for(i=0;i<nEntries;i++) objprop[i].initial_hp = fgeti(fp);
+   for(i=0;i<nEntries;i++) objprop[i].defaultflags = rfgeti(fp);
+   for(i=0;i<nEntries;i++) objprop[i].initial_hp = rfgeti(fp);
 
    // next is a spritesheet # of something--but we don't use it, so skip
    //for(i=0;i<nEntries;i++) fgetc(fp);		// spritesheet # or something--but we don't use it
-   fseek(fp, (nEntries * 2 * 2) + nEntries, SEEK_SET);
+   rfseek(fp, (nEntries * 2 * 2) + nEntries, SEEK_SET);
 
-   for(i=0;i<nEntries;i++) objprop[i].death_sound = fgetc(fp);
-   for(i=0;i<nEntries;i++) objprop[i].hurt_sound = fgetc(fp);
-   for(i=0;i<nEntries;i++) objprop[i].death_smoke_amt = smoke_amounts[fgetc(fp)];
-   for(i=0;i<nEntries;i++) objprop[i].xponkill = fgetl(fp);
-   for(i=0;i<nEntries;i++) objprop[i].damage = fgetl(fp);
+   for(i=0;i<nEntries;i++) objprop[i].death_sound     = rfgetc(fp);
+   for(i=0;i<nEntries;i++) objprop[i].hurt_sound      = rfgetc(fp);
+   for(i=0;i<nEntries;i++) objprop[i].death_smoke_amt = smoke_amounts[rfgetc(fp)];
+   for(i=0;i<nEntries;i++) objprop[i].xponkill = rfgetl(fp);
+   for(i=0;i<nEntries;i++) objprop[i].damage   = rfgetl(fp);
 
-   fclose(fp);
+   rfclose(fp);
    return 0;//1;
 }
 
