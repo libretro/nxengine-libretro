@@ -31,6 +31,8 @@
 #include "LRSDL_stdinc.h"
 #include "LRSDL_error.h"
 
+#include <streams/file_stream.h>
+
 #include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus
@@ -77,7 +79,7 @@ typedef struct LRSDL_RWops {
 #ifdef HAVE_STDIO_H 
 	    struct {
 		int autoclose;
-	 	FILE *fp;
+	 	RFILE *fp;
 	    } stdio;
 #endif
 	    struct {
@@ -99,7 +101,7 @@ typedef struct LRSDL_RWops {
 extern DECLSPEC LRSDL_RWops * SDLCALL LRSDL_RWFromFile(const char *file, const char *mode);
 
 #ifdef HAVE_STDIO_H
-extern DECLSPEC LRSDL_RWops * SDLCALL LRSDL_RWFromFP(FILE *fp, int autoclose);
+extern DECLSPEC LRSDL_RWops * SDLCALL LRSDL_RWFromFP(RFILE *fp, int autoclose);
 #endif
 
 extern DECLSPEC LRSDL_RWops * SDLCALL LRSDL_RWFromMem(void *mem, int size);

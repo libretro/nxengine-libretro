@@ -28,43 +28,51 @@
 #include "LRSDL_endian.h"
 #include "LRSDL_rwops.h"
 
+#include <streams/file_stream.h>
+
+/* Forward declarations */
+int64_t rfseek(RFILE* stream, int64_t offset, int origin);
+int rfclose(RFILE* stream);
+int rfgetc(RFILE* stream);
+RFILE* rfopen(const char *path, const char *mode);
+int rfprintf(RFILE * stream, const char * format, ...);
+int rferror(RFILE* stream);
+int64_t rfread(void* buffer,
+   size_t elem_size, size_t elem_count, RFILE* stream);
+int64_t rfwrite(void const* buffer,
+   size_t elem_size, size_t elem_count, RFILE* stream);
+int64_t rftell(RFILE* stream);
+
 /* Functions to read/write stdio file pointers */
 
 static int SDLCALL stdio_seek(LRSDL_RWops *context, int offset, int whence)
 {
-	if ( fseek(context->hidden.stdio.fp, offset, whence) == 0 ) {
-		return(ftell(context->hidden.stdio.fp));
-	} else {
-		LRSDL_Error(SDL_EFSEEK);
-		return(-1);
-	}
+	if ( rfseek(context->hidden.stdio.fp, offset, whence) == 0 )
+		return(rftell(context->hidden.stdio.fp));
+	LRSDL_Error(SDL_EFSEEK);
+	return(-1);
 }
 static int SDLCALL stdio_read(LRSDL_RWops *context, void *ptr, int size, int maxnum)
 {
-	size_t nread;
-
-	nread = fread(ptr, size, maxnum, context->hidden.stdio.fp); 
-	if ( nread == 0 && ferror(context->hidden.stdio.fp) ) {
+	size_t nread = rfread(ptr, size, maxnum, context->hidden.stdio.fp); 
+	if ( nread == 0 && rferror(context->hidden.stdio.fp) ) {
 		LRSDL_Error(SDL_EFREAD);
 	}
-	return(nread);
+	return nread;
 }
 static int SDLCALL stdio_write(LRSDL_RWops *context, const void *ptr, int size, int num)
 {
-	size_t nwrote;
-
-	nwrote = fwrite(ptr, size, num, context->hidden.stdio.fp);
-	if ( nwrote == 0 && ferror(context->hidden.stdio.fp) ) {
+	size_t nwrote = rfwrite(ptr, size, num, context->hidden.stdio.fp);
+	if ( nwrote == 0 && rferror(context->hidden.stdio.fp) )
 		LRSDL_Error(SDL_EFWRITE);
-	}
-	return(nwrote);
+	return nwrote;
 }
 static int SDLCALL stdio_close(LRSDL_RWops *context)
 {
 	if ( context ) {
 		if ( context->hidden.stdio.autoclose ) {
 			/* WARNING:  Check the return value here! */
-			fclose(context->hidden.stdio.fp);
+			rfclose(context->hidden.stdio.fp);
 		}
 		LRSDL_FreeRW(context);
 	}
@@ -91,12 +99,10 @@ static int SDLCALL mem_seek(LRSDL_RWops *context, int offset, int whence)
 			LRSDL_SetError("Unknown value for 'whence'");
 			return(-1);
 	}
-	if ( newpos < context->hidden.mem.base ) {
+	if ( newpos < context->hidden.mem.base )
 		newpos = context->hidden.mem.base;
-	}
-	if ( newpos > context->hidden.mem.stop ) {
+	if ( newpos > context->hidden.mem.stop )
 		newpos = context->hidden.mem.stop;
-	}
 	context->hidden.mem.here = newpos;
 	return(context->hidden.mem.here-context->hidden.mem.base);
 }
@@ -106,14 +112,12 @@ static int SDLCALL mem_read(LRSDL_RWops *context, void *ptr, int size, int maxnu
 	size_t mem_available;
 
 	total_bytes = (maxnum * size);
-	if ( (maxnum <= 0) || (size <= 0) || ((total_bytes / maxnum) != (size_t) size) ) {
+	if ( (maxnum <= 0) || (size <= 0) || ((total_bytes / maxnum) != (size_t) size) )
 		return 0;
-	}
 
 	mem_available = (context->hidden.mem.stop - context->hidden.mem.here);
-	if (total_bytes > mem_available) {
+	if (total_bytes > mem_available)
 		total_bytes = mem_available;
-	}
 
 	memcpy(ptr, context->hidden.mem.here, total_bytes);
 	context->hidden.mem.here += total_bytes;
@@ -148,15 +152,15 @@ static int SDLCALL mem_close(LRSDL_RWops *context)
 LRSDL_RWops *LRSDL_RWFromFile(const char *file, const char *mode)
 {
 	LRSDL_RWops *rwops = NULL;
-	FILE *fp = NULL;
+	RFILE *fp = NULL;
 	(void) fp;
 	if ( !file || !*file || !mode || !*mode ) {
 		LRSDL_SetError("SDL_RWFromFile(): No file or no mode specified");
 		return NULL;
 	}
 
-	fp = fopen(file, mode);
-	if ( fp == NULL ) {
+	fp = rfopen(file, mode);
+	if ( !fp ) {
 		LRSDL_SetError("Couldn't open %s", file);
 	} else {
 		rwops = LRSDL_RWFromFP(fp, 1);
@@ -164,11 +168,9 @@ LRSDL_RWops *LRSDL_RWFromFile(const char *file, const char *mode)
 	return(rwops);
 }
 
-LRSDL_RWops *LRSDL_RWFromFP(FILE *fp, int autoclose)
+LRSDL_RWops *LRSDL_RWFromFP(RFILE *fp, int autoclose)
 {
-	LRSDL_RWops *rwops = NULL;
-
-	rwops = LRSDL_AllocRW();
+	LRSDL_RWops *rwops = LRSDL_AllocRW();
 	if ( rwops != NULL ) {
 		rwops->seek = stdio_seek;
 		rwops->read = stdio_read;
