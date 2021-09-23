@@ -102,7 +102,7 @@ void fputfloat(double q, FILE *fp)
    return;
 }
 #else
-uint16_t fgeti(RFILE *fp)
+uint16_t rfgeti(RFILE *fp)
 {
    uint16_t a = rfgetc(fp);
    uint16_t b = rfgetc(fp);
@@ -134,10 +134,24 @@ uint32_t fgetl(FILE *fp)
    return (d<<24)|(c<<16)|(b<<8)|(a);
 }
 
+void rfputi(uint16_t word, RFILE *fp)
+{
+   rfputc(word, fp);
+   rfputc(word >> 8, fp);
+}
+
 void fputi(uint16_t word, FILE *fp)
 {
    fputc(word, fp);
    fputc(word >> 8, fp);
+}
+
+void rfputl(uint32_t word, RFILE *fp)
+{
+   rfputc(word, fp);
+   rfputc(word >> 8, fp);
+   rfputc(word >> 16, fp);
+   rfputc(word >> 24, fp);
 }
 
 void fputl(uint32_t word, FILE *fp)
