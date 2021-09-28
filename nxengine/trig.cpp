@@ -139,7 +139,7 @@ void ThrowObject(Object *o, int destx, int desty, int rand_variance, int speed)
 	uint8_t angle = GetAngle(o->x, o->y, destx, desty);
 	
 	if (rand_variance)
-		angle += random(-rand_variance, rand_variance);
+		angle += nx_random(-rand_variance, rand_variance);
 	
 	ThrowObjectAtAngle(o, angle, speed);
 }

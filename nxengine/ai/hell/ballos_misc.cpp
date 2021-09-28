@@ -30,7 +30,7 @@ void ai_ballos_skull(Object *o)
 		case 0:
 		{
 			o->state = 100;
-			o->frame = random(0, 16) & 3;
+			o->frame = nx_random(0, 16) & 3;
 		}
 		case 100:
 		{
@@ -56,11 +56,11 @@ void ai_ballos_skull(Object *o)
 					
 					for(int i=0;i<4;i++)
 					{
-						Object *s = SmokePuff(o->x + random(-12<<CSF, 12<<CSF), \
+						Object *s = SmokePuff(o->x + nx_random(-12<<CSF, 12<<CSF), \
 											  o->y + 0x2000);
 						
-						s->xinertia = random(-0x155, 0x155);
-						s->yinertia = random(-0x600, 0);
+						s->xinertia = nx_random(-0x155, 0x155);
+						s->yinertia = nx_random(-0x600, 0);
 						s->PushBehind(o);
 					}
 				}
@@ -114,15 +114,15 @@ void ai_green_devil_spawner(Object *o)
 	{
 		case 0:
 		{
-			o->timer = random(0, 40);
+			o->timer = nx_random(0, 40);
 			o->state = 1;
 		}
 		case 1:
 		{
 			if (--o->timer < 0)
 			{
-				Object *dv = CreateObject(o->x, o->y, OBJ_GREEN_DEVIL, 0, 0, o->dir);
-				dv->xinertia = random(-16<<CSF, 16<<CSF);
+				Object   *dv = CreateObject(o->x, o->y, OBJ_GREEN_DEVIL, 0, 0, o->dir);
+				dv->xinertia = nx_random(-16<<CSF, 16<<CSF);
 				
 				o->state = 0;
 			}
@@ -138,11 +138,11 @@ void ai_green_devil(Object *o)
 	{
 		case 0:
 		{
-			o->flags |= FLAG_SHOOTABLE;
-			o->ymark = o->y;
-			o->yinertia = random(-5<<CSF, 5<<CSF);
-			o->damage = 3;
-			o->state = 1;
+			o->flags   |= FLAG_SHOOTABLE;
+			o->ymark    = o->y;
+			o->yinertia = nx_random(-5<<CSF, 5<<CSF);
+			o->damage   = 3;
+			o->state    = 1;
 		}
 		case 1:
 		{
@@ -257,8 +257,8 @@ void ai_bute_archer_red(Object *o)
 			else
 				o->xmark += (128<<CSF);
 			
-			o->xinertia = random(-0x400, 0x400);
-			o->yinertia = random(-0x400, 0x400);
+			o->xinertia       = nx_random(-0x400, 0x400);
+			o->yinertia       = nx_random(-0x400, 0x400);
 		}
 		case 1:		// come on screen
 		{
@@ -275,7 +275,7 @@ void ai_bute_archer_red(Object *o)
 		case 20:	// aiming
 		{
 			o->state = 21;
-			o->timer = random(0, 150);
+			o->timer = nx_random(0, 150);
 			
 			o->frame = 2;
 			o->animtimer = 0;

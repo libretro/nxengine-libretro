@@ -2,7 +2,7 @@
 extern "C" {
 #endif
 
-int random(int min, int max);
+int nx_random(int min, int max);
 
 #ifdef __cplusplus
 }

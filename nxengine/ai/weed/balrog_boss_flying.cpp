@@ -149,12 +149,12 @@ void ai_balrog_boss_flying(Object *o)
 				
 				for(int i=0;i<8;i++)
 				{
-					int x = random(o->Left(), o->Right());
-					int y = o->Bottom() - (8 << CSF);
-					Object *shot = CreateObject(x, y, OBJ_BALROG_SHOT_BOUNCE);
+					int x          = nx_random(o->Left(), o->Right());
+					int y          = o->Bottom() - (8 << CSF);
+					Object *shot   = CreateObject(x, y, OBJ_BALROG_SHOT_BOUNCE);
 					
-					shot->xinertia = random(-0x400, 0x400);
-					shot->yinertia = random(-0x400, 0);
+					shot->xinertia = nx_random(-0x400, 0x400);
+					shot->yinertia = nx_random(-0x400, 0);
 				}
 				
 				o->state = LANDED;

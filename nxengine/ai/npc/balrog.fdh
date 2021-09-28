@@ -65,7 +65,7 @@ extern "C" {
 #endif
 
 //-----------------[referenced from ai/npc/balrog.cpp]---------------//
-int random(int min, int max);
+int nx_random(int min, int max);
 
 #ifdef __cplusplus
 }

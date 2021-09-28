@@ -90,14 +90,14 @@ void ai_red_energy(Object *o)
 				o->state = 1;
 				o->flags |= FLAG_IGNORE_SOLID;
 				
-				o->xinertia = random(-0x600, 0x600);
-				o->yinertia = random(-0x600, 0x600);
+				o->xinertia = nx_random(-0x600, 0x600);
+				o->yinertia = nx_random(-0x600, 0x600);
 				
 				// accel speed
-				o->speed = (512 / random(16, 51));
+				o->speed = (512 / nx_random(16, 51));
 				
 				// x/y limit
-				int limit = random(0x80, 0x100);
+				int limit = nx_random(0x80, 0x100);
 				
 				o->timer2 = (limit * 2);	// x limit
 				o->timer3 = (limit * 3);	// y limit (form elongated sphere)
@@ -115,7 +115,7 @@ void ai_red_energy(Object *o)
 		}
 	}
 	
-	o->frame = random(0, 1);
+	o->frame = nx_random(0, 1);
 }
 
 

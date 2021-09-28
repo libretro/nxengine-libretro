@@ -56,16 +56,12 @@ void ai_gaudi(Object *o)
 			o->frame = 0;
 			randblink(o, 1, 20, 100);
 			
-			if (!random(0, 100))
+			if (!nx_random(0, 100))
 			{
-				if (random(0, 1))
-				{
+				if (nx_random(0, 1))
 					o->dir ^= 1;
-				}
 				else
-				{
 					o->state = 10;
-				}
 			}
 		}
 		break;
@@ -73,7 +69,7 @@ void ai_gaudi(Object *o)
 		case 10:		// walking
 		{
 			o->state = 11;
-			o->timer = random(25, 100);		// how long to walk for
+			o->timer = nx_random(25, 100);		// how long to walk for
 			
 			o->frame = 2;
 			o->animtimer = 0;
@@ -222,7 +218,7 @@ void ai_gaudi_flying(Object *o)
 	{
 		case 0:
 		{
-			vector_from_angle(random(0, 255), (1 << CSF), &o->xinertia, &o->yinertia);
+			vector_from_angle(nx_random(0, 255), (1 << CSF), &o->xinertia, &o->yinertia);
 			o->xmark = o->x + (o->xinertia * 8);
 			o->ymark = o->y + (o->yinertia * 8);
 			
@@ -230,7 +226,7 @@ void ai_gaudi_flying(Object *o)
 		}
 		case 1:
 		{
-			o->timer = random(70, 150);
+			o->timer = nx_random(70, 150);
 			o->state = 2;
 		}
 		case 2:

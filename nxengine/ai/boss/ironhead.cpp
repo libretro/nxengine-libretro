@@ -74,8 +74,8 @@ void IronheadBoss::Run(void)
 			
 			if ((o->timer & 3)==0)
 			{
-				CreateObject((random(15, 18) * TILE_W) << CSF, \
-						  	(random(ARENA_TOP, ARENA_BOTTOM) * TILE_H) << CSF, \
+				CreateObject((nx_random(15, 18) * TILE_W) << CSF, \
+						  	(nx_random(ARENA_TOP, ARENA_BOTTOM) * TILE_H) << CSF, \
 						  	OBJ_IRONH_FISHY);
 			}
 		}
@@ -93,14 +93,14 @@ void IronheadBoss::Run(void)
 			else
 			{	// returning from right side of screen
 				o->x = 0x5a000;
-				o->y = (random(ARENA_TOP, ARENA_BOTTOM) * TILE_H) << CSF;
+				o->y = (nx_random(ARENA_TOP, ARENA_BOTTOM) * TILE_H) << CSF;
 			}
 			
 			o->xmark = o->x;
 			o->ymark = o->y;
 			
-			o->yinertia = random(-0x200, 0x200);
-			o->xinertia = random(-0x200, 0x200);
+			o->yinertia = nx_random(-0x200, 0x200);
+			o->xinertia = nx_random(-0x200, 0x200);
 			
 			o->flags |= FLAG_SHOOTABLE;
 		}
@@ -152,8 +152,8 @@ void IronheadBoss::Run(void)
 					case 320:
 					{
 						Object *shot = SpawnObjectAtActionPoint(o, OBJ_IRONH_SHOT);
-						shot->xinertia = (random(-3, 0) << CSF);
-						shot->yinertia = (random(-3, 3) << CSF);
+						shot->xinertia = (nx_random(-3, 0) << CSF);
+						shot->yinertia = (nx_random(-3, 3) << CSF);
 						sound(SND_EM_FIRE);
 					}
 					break;
@@ -185,8 +185,8 @@ void IronheadBoss::Run(void)
 		{
 			o->xmark -= (1<<CSF);
 			
-			o->x = o->xmark + (random(-1, 1) << CSF);
-			o->y = o->ymark + (random(-1, 1) << CSF);
+			o->x = o->xmark + (nx_random(-1, 1) << CSF);
+			o->y = o->ymark + (nx_random(-1, 1) << CSF);
 			
 			o->timer++;
 			if ((o->timer & 3)==0) ironh_smokecloud(o);
@@ -214,12 +214,12 @@ static void ironh_smokecloud(Object *o)
 {
 Object *smoke;
 
-	smoke = CreateObject(o->CenterX() + (random(-128, 128)<<CSF), \
-						 o->CenterY() + (random(-64, 64)<<CSF),
+	smoke = CreateObject(o->CenterX() + (nx_random(-128, 128)<<CSF), \
+						 o->CenterY() + (nx_random(-64, 64)<<CSF),
 						 OBJ_SMOKE_CLOUD);
 	
-	smoke->xinertia = random(-128, 128);
-	smoke->yinertia = random(-128, 128);
+	smoke->xinertia = nx_random(-128, 128);
+	smoke->yinertia = nx_random(-128, 128);
 }
 
 void ondeath_ironhead(Object *o)
@@ -239,7 +239,7 @@ void ai_ironh_fishy(Object *o)
 		{
 			o->state = 10;
 			o->animtimer = 0;
-			o->yinertia = random(-0x200, 0x200);
+			o->yinertia = nx_random(-0x200, 0x200);
 			o->xinertia = 0x800;
 		}
 		case 10:			// harmless fishy
@@ -302,13 +302,13 @@ Object *brick;
 	if (!o->state)
 	{
 		o->state = 1;
-		o->timer = random(0, 200);
+		o->timer = nx_random(0, 200);
 	}
 	
 	if (!o->timer)
 	{	// time to spawn a block
 		o->state = 0;
-		brick = CreateObject(o->x, o->y + (random(-20, 20) << CSF), OBJ_IRONH_BRICK);
+		brick = CreateObject(o->x, o->y + (nx_random(-20, 20) << CSF), OBJ_IRONH_BRICK);
 		brick->dir = o->dir;
 	}
 	else o->timer--;
@@ -318,7 +318,7 @@ void ai_ironh_brick(Object *o)
 {
 	if (!o->state)
 	{
-		int r = random(0, 9);
+		int r = nx_random(0, 9);
 		if (r == 9)
 		{
 			o->sprite = SPR_IRONH_BIGBRICK;
@@ -329,10 +329,10 @@ void ai_ironh_brick(Object *o)
 			o->frame = r;
 		}
 		
-		o->xinertia = random(0x100, 0x200);
+		o->xinertia = nx_random(0x100, 0x200);
 		o->xinertia *= (o->dir == LEFT) ? -2 : 2;
 		
-		o->yinertia = random(-0x200, 0x200);
+		o->yinertia = nx_random(-0x200, 0x200);
 		o->state = 1;
 	}
 	
@@ -380,7 +380,7 @@ void ai_ikachan_spawner(Object *o)
 			o->timer++;
 			if ((o->timer & 3) == 1)
 			{
-				CreateObject(o->x, o->y + ((random(0, 13) * TILE_H) << CSF), OBJ_IKACHAN);
+				CreateObject(o->x, o->y + ((nx_random(0, 13) * TILE_H) << CSF), OBJ_IKACHAN);
 			}
 		}
 		break;
@@ -394,14 +394,14 @@ void ai_ikachan(Object *o)
 		case 0:
 		{
 			o->state = 1;
-			o->timer = random(3, 20);
+			o->timer = nx_random(3, 20);
 		}
 		case 1:		// he pushes ahead
 		{
 			if (--o->timer <= 0)
 			{
 				o->state = 2;
-				o->timer = random(10, 50);
+				o->timer = nx_random(10, 50);
 				o->frame = 1;
 				o->xinertia = 0x600;
 			}
@@ -413,9 +413,9 @@ void ai_ikachan(Object *o)
 			if (--o->timer <= 0)
 			{
 				o->state = 3;
-				o->timer = random(40, 50);
+				o->timer = nx_random(40, 50);
 				o->frame = 2;
-				o->yinertia = random(-0x100, 0x100);
+				o->yinertia = nx_random(-0x100, 0x100);
 			}
 		}
 		break;

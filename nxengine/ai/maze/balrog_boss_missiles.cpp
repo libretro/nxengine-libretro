@@ -206,10 +206,10 @@ void ai_balrog_missile(Object *o)
 	if (o->state == 0)
 	{
 		// recoil in oppisite direction
-		o->xinertia = random(-2, -1) << CSF;
+		o->xinertia = nx_random(-2, -1) << CSF;
 		if (o->dir == LEFT) o->xinertia = -o->xinertia;
 		
-		o->yinertia = random(-2, 0) << CSF;
+		o->yinertia = nx_random(-2, 0) << CSF;
 		
 		o->state = 1;
 	}

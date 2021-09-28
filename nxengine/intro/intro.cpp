@@ -94,20 +94,20 @@ void ai_intro_kings(Object *o)
 void ai_intro_crown(Object *o)
 {
 	switch(o->state)
-   {
-      case 0:
-         o->x += (8 << CSF);
-         o->y += (14 << CSF);
-         o->state = 1;
-      case 1:
-         if ((++o->timer % 8) == 1)
-         {
-            effect(o->x + random(-8<<CSF, 8<<CSF),
-                  o->y + (8<<CSF),
-                  EFFECT_GHOST_SPARKLE);
-         }
-         break;
-   }
+	{
+		case 0:
+			o->x += (8 << CSF);
+			o->y += (14 << CSF);
+			o->state = 1;
+		case 1:
+			if ((++o->timer % 8) == 1)
+			{
+				effect(o->x + nx_random(-8<<CSF, 8<<CSF),
+						o->y + (8<<CSF),
+						EFFECT_GHOST_SPARKLE);
+			}
+			break;
+	}
 }
 
 

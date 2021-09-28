@@ -335,8 +335,8 @@ static void run_mega_bats(Object *o)
 				Object *bat = CreateObject(o->x + (8<<CSF), \
 										   o->y - (4<<CSF), OBJ_DOCTOR_BAT);
 				
-				bat->xinertia = random(0x400, 0x800);
-				bat->yinertia = random(-0x200, 0x200);
+				bat->xinertia = nx_random(0x400, 0x800);
+				bat->yinertia = nx_random(-0x200, 0x200);
 				bat->dir = o->dir;
 				
 				if (o->dir == LEFT)
@@ -586,13 +586,13 @@ static void run_defeat(Object *o)
 			{
 				int x, y;
 				
-				x = o->x + (random(-16, 16) << CSF);
+				x = o->x + (nx_random(-16, 16) << CSF);
 				y = (o->y - o->DrawPointY()) + (o->clipy1 << CSF);
 				
 				Object *drip = CreateObject(x, y, OBJ_RED_ENERGY);
 				
-				drip->xinertia = random(-0x200, 0x200);
-				drip->yinertia = random(-0x400, 0);
+				drip->xinertia = nx_random(-0x200, 0x200);
+				drip->yinertia = nx_random(-0x400, 0);
 				drip->angle = DOWN;
 				// otherwise during the last few frames they'll get stuck in the floor
 				// (they still delete themselves once they hit the floor, just are
@@ -645,13 +645,13 @@ static void do_redsplode(Object *o)
 	// big shower of red energy
 	for(int i=0;i<100;i++)
 	{
-		int x = o->x + (random(-16, 16) << CSF);
-		int y = o->y + (random(-16, 16) << CSF);
+		int x = o->x + (nx_random(-16, 16) << CSF);
+		int y = o->y + (nx_random(-16, 16) << CSF);
 		
 		Object *spark = CreateObject(x, y, OBJ_RED_ENERGY);
 		
-		spark->xinertia = random(-0x600, 0x600);
-		spark->yinertia = random(-0x600, 0x600);
+		spark->xinertia = nx_random(-0x600, 0x600);
+		spark->yinertia = nx_random(-0x600, 0x600);
 		spark->angle = DOWN;
 	}
 }
@@ -663,10 +663,10 @@ void c------------------------------() {}
 // the red energy that oozes off of him during most of the battle
 static void run_red_drip(Object *o)
 {
-	if (random(0, 3) == 2)
+	if (nx_random(0, 3) == 2)
 	{
-		int x = o->x + (random(-16, 16) << CSF);
-		int y = o->y + (random(-8, 4) << CSF);
+		int x = o->x + (nx_random(-16, 16) << CSF);
+		int y = o->y + (nx_random(-8, 4) << CSF);
 		
 		Object *drip = CreateObject(x, y, OBJ_RED_ENERGY);
 		drip->xinertia = o->xinertia;

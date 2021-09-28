@@ -28,7 +28,7 @@ extern "C" {
 #endif
 
 //---------------------[referenced from trig.cpp]--------------------//
-int random(int min, int max);
+int nx_random(int min, int max);
 
 #ifdef __cplusplus
 }

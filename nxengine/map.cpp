@@ -678,13 +678,13 @@ void map_scroll_do(void)
 			if (game.megaquaketime)		// Ballos fight
 			{
 				game.megaquaketime--;
-				pushx = random(-5, 5) << CSF;
-				pushy = random(-3, 3) << CSF;
+				pushx = nx_random(-5, 5) << CSF;
+				pushy = nx_random(-3, 3) << CSF;
 			}
 			else
 			{
-				pushx = random(-1, 1) << CSF;
-				pushy = random(-1, 1) << CSF;
+				pushx = nx_random(-1, 1) << CSF;
+				pushy = nx_random(-1, 1) << CSF;
 			}
 			
 			map.real_xscroll += pushx;
@@ -696,7 +696,7 @@ void map_scroll_do(void)
 		{
 			// quake after IronH battle...special case cause we don't
 			// want to show the walls of the arena.
-			int pushy = random(-0x500, 0x500);
+			int pushy = nx_random(-0x500, 0x500);
 			
 			map.real_yscroll += pushy;
 			if (map.real_yscroll < 0) map.real_yscroll = 0;

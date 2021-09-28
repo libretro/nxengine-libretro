@@ -187,7 +187,7 @@ void fgetline(FILE *fp, char *str, int maxlen)
 static uint32_t seed = 0;
 
 // return a random number between min and max inclusive
-int random(int min, int max)
+int nx_random(int min, int max)
 {
 	int range, val;
 

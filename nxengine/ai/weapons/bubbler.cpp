@@ -20,10 +20,12 @@ int decel;
 
 	if (o->shot.level == 1 && o->state == 0)
 	{
-		o->nxflags |= NXFLAG_FOLLOW_SLOPE;
-		o->state = 1;
+                int variance;
+		o->nxflags  |= NXFLAG_FOLLOW_SLOPE;
+		o->state     = 1;
 		
-		int variance = random(-0x100, 0x100);
+		variance     = nx_random(-0x100, 0x100);
+
 		switch(o->shot.dir)
 		{
 			case LEFT:
@@ -96,8 +98,8 @@ void ai_bubbler_l3(Object *o)
 	
 	if (o->state == 0)
 	{
-		int bigspeed   = random(0x200, 0x400);
-		int smallspeed = (random(-4, 4) << CSF) / 2;
+		int bigspeed   = nx_random(0x200, 0x400);
+		int smallspeed = (nx_random(-4, 4) << CSF) / 2;
 		
 		switch(o->shot.dir)
 		{
@@ -157,9 +159,11 @@ void ai_bubbler_sharp(Object *o)
 	
 	if (o->state == 0)
 	{
-		o->state = 1;
-		
-		int speed = (random(10, 16) << CSF) / 2;
+                int speed;
+		o->state  = 1;
+
+		speed     = (nx_random(10, 16) << CSF) / 2;
+
 		switch(o->shot.dir)
 		{
 			case LEFT:  o->xinertia = -speed; break;

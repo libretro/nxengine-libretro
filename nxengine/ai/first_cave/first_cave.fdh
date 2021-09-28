@@ -24,5 +24,5 @@ void ai_zzzz_spawner(Object *o);
 /* located in common/misc.cpp */
 
 //-----------[referenced from ai/first_cave/first_cave.cpp]----------//
-int random(int min, int max);
+int nx_random(int min, int max);
 

@@ -214,14 +214,14 @@ Caret *effect(int x, int y, int effectno)
          break;
       case EFFECT_GHOST_SPARKLE:
          c = CreateCaret(x, y, SPR_GHOST_SPARKLE, caret_ghost_sparkle);
-         c->yinertia = random(-0x600, -0x200);
+         c->yinertia = nx_random(-0x600, -0x200);
          break;
          // "blood" spatters from shot hitting enemy
       case EFFECT_BLOODSPLATTER:
          for(i=0;i<3;i++)
          {
             c = CreateCaret(x, y, SPR_BLOODHIT, caret_animate3);
-            vector_from_angle(random(0, 255), (2<<CSF), &c->xinertia, &c->yinertia);
+            vector_from_angle(nx_random(0, 255), (2<<CSF), &c->xinertia, &c->yinertia);
          }
          break;
          // two little blinky stars when player bonks his head on the ceiling
@@ -230,8 +230,8 @@ Caret *effect(int x, int y, int effectno)
          {
             c = CreateCaret(x, y, SPR_BONKHEADPLUS, caret_bonkplus);
 
-            c->xinertia = random(-0x600, 0x600);
-            c->yinertia = random(-0x200, 0x200);
+            c->xinertia = nx_random(-0x600, 0x600);
+            c->yinertia = nx_random(-0x200, 0x200);
          }
          break;
       case EFFECT_QMARK:

@@ -155,9 +155,9 @@ void ai_midorin(Object *o)
 		}
 		case 1:
 		{
-			if (!random(0, 30))
+			if (!nx_random(0, 30))
 			{
-				o->state = 2 + random(0, 1);
+				o->state = 2 + nx_random(0, 1);
 				o->frame = 1;
 			}
 		}
@@ -180,8 +180,8 @@ void ai_midorin(Object *o)
 			o->frame = 0;	// this will be toggled into frame 2 just below
 			o->animtimer = 0;
 			
-			o->timer = random(48, 64);		// how long to run
-			o->dir = random(0, 1) ? LEFT : RIGHT;
+			o->timer = nx_random(48, 64);		// how long to run
+			o->dir = nx_random(0, 1) ? LEFT : RIGHT;
 		}
 		case 4:
 		{
@@ -225,8 +225,8 @@ void ai_orangebell(Object *o)
 			// create baby bats
 			for(int i=0;i<8;i++)
 			{
-				Object *bat = CreateObject(o->CenterX() + random(-0x1000, 0x1000), \
-										   o->CenterY() + random(-0x1000, 0x1000), \
+				Object *bat = CreateObject(o->CenterX() + nx_random(-0x1000, 0x1000), \
+										   o->CenterY() + nx_random(-0x1000, 0x1000), \
 										   OBJ_ORANGEBELL_BABY);
 				bat->linkedobject = o;
 			}
@@ -258,12 +258,12 @@ void ai_orangebell_baby(Object *o)
 	{
 		case 0:
 		{
-			o->xinertia = xinertia_from_angle(random(0, 255), 0x200);
-			o->yinertia = yinertia_from_angle(random(0, 255), 0x200);
+			o->xinertia = xinertia_from_angle(nx_random(0, 255), 0x200);
+			o->yinertia = yinertia_from_angle(nx_random(0, 255), 0x200);
 			o->flags |= FLAG_IGNORE_SOLID;
 			
 			o->timer = 0;							// time until can dive-bomb
-			o->ymark2 = random(-32<<CSF, 32<<CSF);	// unique target point on main bat
+			o->ymark2 = nx_random(-32<<CSF, 32<<CSF);	// unique target point on main bat
 			
 			o->state = 1;
 		}
@@ -278,7 +278,7 @@ void ai_orangebell_baby(Object *o)
 				o->dir = o->linkedobject->dir;
 			}
 			
-			//DebugCrosshair(o->xmark, o->ymark, random(0,255),random(128,255),random(128,255));
+			//DebugCrosshair(o->xmark, o->ymark, nx_random(0,255),nx_random(128,255),nx_random(128,255));
 			
 			o->xinertia += (o->x < o->xmark) ? 0x08 : -0x08;
 			o->yinertia += (o->y < o->ymark) ? 0x20 : -0x20;
@@ -347,7 +347,7 @@ void ai_gunfish(Object *o)
 			o->ymark = o->y;
 			
 			o->state = 1;
-			o->timer = random(1, 50);
+			o->timer = nx_random(1, 50);
 		}
 		case 1:		// desync
 		{
@@ -445,8 +445,8 @@ void ai_gunfish_shot(Object *o)
 		for(int i=0;i<5;i++)
 		{
 			Caret *c = effect(o->CenterX(), o->CenterY(), EFFECT_GUNFISH_BUBBLE);
-			c->xinertia = random(-0x400, 0x400);
-			c->yinertia = random(-0x400, 0);
+			c->xinertia = nx_random(-0x400, 0x400);
+			c->yinertia = nx_random(-0x400, 0);
 		}
 		
 		sound(SND_BUBBLE);
@@ -649,9 +649,9 @@ void ai_mimiga_farmer(Object *o)
 		}
 		case 1:
 		{
-			if (!random(0, 60))
+			if (!nx_random(0, 60))
 			{
-				if (o->type != OBJ_MIMIGA_FARMER_STANDING && random(0, 1))
+				if (o->type != OBJ_MIMIGA_FARMER_STANDING && nx_random(0, 1))
 				{	// walk
 					o->state = 10;
 				}
@@ -679,8 +679,8 @@ void ai_mimiga_farmer(Object *o)
 			o->frame = 2;
 			o->animtimer = 0;
 			
-			o->timer = random(16, 32);
-			o->dir = random(0, 1);
+			o->timer = nx_random(16, 32);
+			o->dir = nx_random(0, 1);
 		}
 		case 11:
 		{

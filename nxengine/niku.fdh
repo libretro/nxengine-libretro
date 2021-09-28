@@ -15,7 +15,7 @@ bool niku_save(uint32_t value);
 
 
 //---------------------[referenced from niku.cpp]--------------------//
-int random(int min, int max);
+int nx_random(int min, int max);
 
 #ifdef __cplusplus
 }

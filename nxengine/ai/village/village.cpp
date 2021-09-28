@@ -128,7 +128,7 @@ void ai_mushroom_enemy(Object *o)
 			o->state = STANDING;
 		case STANDING:		// stand around
 		{
-			if (!random(0, 100))
+			if (!nx_random(0, 100))
 			{	// blink
 				o->state = BLINKING;
 				o->frame = 1;
@@ -136,11 +136,11 @@ void ai_mushroom_enemy(Object *o)
 			}
 			else
 			{
-				if (!random(0, 150))
+				if (!nx_random(0, 150))
 					o->dir ^= 1;
 				
 				// start walking
-				if (!random(0, 150))
+				if (!nx_random(0, 150))
 				{
 					o->state = WALKING;
 					o->frame = 0;

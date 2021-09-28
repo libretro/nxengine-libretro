@@ -114,13 +114,13 @@ static void ai_oc_controller(Object *o)
          /*if (o->timer < 175)
            {
            if ((o->timer % 6) == 1)
-           create_object(-16<<CSF, random(-16, SCREEN_HEIGHT) << CSF, OC_CURRENT);
+           create_object(-16<<CSF, nx_random(-16, SCREEN_HEIGHT) << CSF, OC_CURRENT);
            }*/
 
          if (o->timer <= 150)
          {
             if ((o->timer % 10) == 1)
-               create_object(-16<<CSF, random(-16, SCREEN_HEIGHT) << CSF, OC_IKACHAN);
+               create_object(-16<<CSF, nx_random(-16, SCREEN_HEIGHT) << CSF, OC_IKACHAN);
          }
 
          if (o->timer > 300)
@@ -202,17 +202,17 @@ static void ai_oc_ikachan(Object *o)
 	{
 		case 0:
 		{
-			o->state = 1;
-			o->timer = random(3, 20);
+			o->state  = 1;
+			o->timer  = nx_random(3, 20);
 			o->sprite = SPR_IKACHAN;
 		}
 		case 1:		// he pushes ahead
 		{
 			if (--o->timer <= 0)
 			{
-				o->state = 2;
-				o->timer = random(10, 50);
-				o->frame = 1;
+				o->state    = 2;
+				o->timer    = nx_random(10, 50);
+				o->frame    = 1;
 				o->xinertia = 0x600;
 			}
 		}
@@ -222,10 +222,10 @@ static void ai_oc_ikachan(Object *o)
 		{
 			if (--o->timer <= 0)
 			{
-				o->state = 3;
-				o->timer = random(40, 50);
-				o->frame = 2;
-				o->yinertia = random(-0x100, 0x100);
+				o->state    = 3;
+				o->timer    = nx_random(40, 50);
+				o->frame    = 2;
+				o->yinertia = nx_random(-0x100, 0x100);
 			}
 		}
 		break;

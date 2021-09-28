@@ -88,8 +88,8 @@ void ai_night_spirit(Object *o)
 			if ((++o->timer % 5) == 1)
 			{
 				Object *shot = SpawnObjectAtActionPoint(o, OBJ_NIGHT_SPIRIT_SHOT);
-				shot->xinertia = random(0x100, 0x600);
-				shot->yinertia = random(-0x200, 0x200);
+				shot->xinertia = nx_random(0x100, 0x600);
+				shot->yinertia = nx_random(-0x200, 0x200);
 				
 				sound(SND_BUBBLE);
 			}
@@ -358,9 +358,9 @@ void ai_little_family(Object *o)
 		}
 		case 1:
 		{
-			if (!random(0, 60))
+			if (!nx_random(0, 60))
 			{
-				o->state = random(0, 1) ? 2 : 10;
+				o->state = nx_random(0, 1) ? 2 : 10;
 				o->timer = 0;
 				o->frame = 1;
 			}
@@ -382,8 +382,8 @@ void ai_little_family(Object *o)
 			o->state = 11;
 			o->frame = 0;
 			o->animtimer = 0;
-			o->dir = random(0, 1) ? LEFT : RIGHT;
-			o->timer = random(16, 32);
+			o->dir = nx_random(0, 1) ? LEFT : RIGHT;
+			o->timer = nx_random(16, 32);
 		}
 		case 11:
 		{

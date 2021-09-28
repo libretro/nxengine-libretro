@@ -210,9 +210,9 @@ void ai_lava_drip(Object *o)
 	{
 		for(int i=0;i<3;i++)
 		{
-			Caret *c = effect(o->CenterX(), o->Bottom(), EFFECT_LAVA_SPLASH);
-			c->xinertia = random(-0x400, 0x400);
-			c->yinertia = random(-0x400, 0);
+			Caret    *c = effect(o->CenterX(), o->Bottom(), EFFECT_LAVA_SPLASH);
+			c->xinertia = nx_random(-0x400, 0x400);
+			c->yinertia = nx_random(-0x400, 0);
 		}
 		
 		if (o->onscreen)
@@ -233,14 +233,14 @@ void ai_red_bat_spawner(Object *o)
 		case 0:
 		{
 			o->state = 1;
-			o->timer = random(0, 500);
+			o->timer = nx_random(0, 500);
 		}
 		case 1:
 		{
 			if (--o->timer < 0)
 			{
 				Object *bat = CreateObject(o->CenterX(), \
-										   o->CenterY() + random(-32<<CSF, 32<<CSF), \
+										   o->CenterY() + nx_random(-32<<CSF, 32<<CSF), \
 										   OBJ_RED_BAT);
 				bat->x -= (bat->Width() / 2);
 				bat->y -= (bat->Height() / 2);
@@ -261,7 +261,7 @@ void ai_red_bat(Object *o)
 		{
 			o->state = 1;
 			o->ymark = o->y;
-			o->timer = random(0, 50);
+			o->timer = nx_random(0, 50);
 		}
 		case 1:
 		{

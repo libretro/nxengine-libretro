@@ -420,9 +420,9 @@ int x, y;
 		shot->dir = dir;
 		
 		if (player->look)
-			shot->xinertia = random(-0xAA, 0xAA);
+			shot->xinertia = nx_random(-0xAA, 0xAA);
 		else
-			shot->yinertia = random(-0xAA, 0xAA);
+			shot->yinertia = nx_random(-0xAA, 0xAA);
 	}
 	else
 	{
@@ -442,19 +442,17 @@ int x, y;
 // Broken out here into a seperate sub so OBJ_CURLY_AI can use it also.
 void FireLevel23MGun(int x, int y, int level, int dir)
 {
-static const uchar no_layers[] = { 1, 3, 5 };
-static const int bultype_table[] = { 0, B_MGUN_L2, B_MGUN_L3 };
-Object *shot;
-
+	static const uchar no_layers[] = { 1, 3, 5 };
+	static const int bultype_table[] = { 0, B_MGUN_L2, B_MGUN_L3 };
 	// note: this relies on the player AI running before the entity AI...which it does...
 	// so leave it that way, else he wouldn't actually fire for 1 additional frame
-	shot = CreateObject(x, y, OBJ_MGUN_SPAWNER);
-	
-	shot->dir = dir;
-	shot->mgun.bultype = bultype_table[level];
-	shot->mgun.nlayers = no_layers[level];
-	shot->mgun.wave_amt = random(-0xAA, 0xAA);
-	shot->invisible = true;
+	Object *shot        = CreateObject(x, y, OBJ_MGUN_SPAWNER);
+
+	shot->dir           = dir;
+	shot->mgun.bultype  = bultype_table[level];
+	shot->mgun.nlayers  = no_layers[level];
+	shot->mgun.wave_amt = nx_random(-0xAA, 0xAA);
+	shot->invisible     = true;
 }
 
 

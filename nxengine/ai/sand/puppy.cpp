@@ -93,7 +93,7 @@ void ai_puppy_bark(Object *o)
 					{
 						o->frame = NOBARK;
 						
-						if (random(0, 8)==0 || ++o->timer2 > 5)
+						if (nx_random(0, 8)==0 || ++o->timer2 > 5)
 						{	// stop barking for a sec
 							o->state++;
 							o->timer = o->timer2 = 0;

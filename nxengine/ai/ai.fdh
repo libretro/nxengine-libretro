@@ -56,7 +56,7 @@ extern "C" {
 
 //---------------------[referenced from ai/ai.cpp]-------------------//
 uint32_t fgetl(FILE *fp);
-int random(int min, int max);
+int nx_random(int min, int max);
 
 #ifdef __cplusplus
 }

@@ -58,7 +58,7 @@ extern "C" {
 #endif
 
 //------------[referenced from ai/last_cave/last_cave.cpp]-----------//
-int random(int min, int max);
+int nx_random(int min, int max);
 
 #ifdef __cplusplus
 }

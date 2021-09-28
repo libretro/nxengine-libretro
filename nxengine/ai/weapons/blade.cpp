@@ -91,13 +91,13 @@ void ai_blade_l3_shot(Object *o)
 		
 		case STATE_AOE:
 		{
-			if (!random(0, 2))
+			if (!nx_random(0, 2))
 			{
-				Object *slash = CreateObject(o->x + random(-BLADE_AOE, BLADE_AOE),
-											 o->y + random(-BLADE_AOE, BLADE_AOE),
+				Object *slash = CreateObject(o->x + nx_random(-BLADE_AOE, BLADE_AOE),
+											 o->y + nx_random(-BLADE_AOE, BLADE_AOE),
 											 OBJ_BLADE_SLASH);
 				
-				slash->dir = random(0, 1) ? LEFT : RIGHT;
+				slash->dir = nx_random(0, 1) ? LEFT : RIGHT;
 				sound(SND_SLASH);
 			}
 			

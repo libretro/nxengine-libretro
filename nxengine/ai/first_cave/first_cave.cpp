@@ -22,7 +22,7 @@ void ai_bat_up_down(Object *o)
 	{
 		case 0:
 			o->ymark = o->y;
-			o->timer = random(0, 50);
+			o->timer = nx_random(0, 50);
 			o->state = 1;
 		case 1:
 			if (!o->timer--)

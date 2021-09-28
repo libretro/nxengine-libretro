@@ -273,7 +273,7 @@ void ai_boss_igor(Object *o)
 					Object *shot = SpawnObjectAtActionPoint(o, OBJ_IGOR_SHOT);
 					
 					int angle = (o->dir == LEFT) ? 136 : 248;
-					angle += random(-16, 16);
+					angle    += nx_random(-16, 16);
 					ThrowObjectAtAngle(shot, angle, 0x580);
 				}
 				
@@ -398,18 +398,18 @@ static void smoke_puff(Object *o, bool initial)
 {
 Object *smoke;
 
-	smoke = CreateObject(o->CenterX() + random(-16<<CSF, 16<<CSF),
-						 o->CenterY() + random(-16<<CSF, 16<<CSF),
+	smoke = CreateObject(o->CenterX() + nx_random(-16<<CSF, 16<<CSF),
+						 o->CenterY() + nx_random(-16<<CSF, 16<<CSF),
 						 OBJ_SMOKE_CLOUD);
 	
 	if (initial)
 	{
-		smoke->xinertia = random(-0x155, 0x155);
-		smoke->yinertia = random(-0x600, 0);
+		smoke->xinertia = nx_random(-0x155, 0x155);
+		smoke->yinertia = nx_random(-0x600, 0);
 	}
 	else
 	{
-		smoke->xinertia = random(-0x600, 0x600);
-		smoke->yinertia = random(-0x600, 0x600);
+		smoke->xinertia = nx_random(-0x600, 0x600);
+		smoke->yinertia = nx_random(-0x600, 0x600);
 	}
 }

@@ -34,7 +34,7 @@ void ai_nemesis_shot(Object *o)
 					x = o->Left();
 					y = o->CenterY();
 					xi = 0x200;
-					yi = random(-0x200, 0x200);
+					yi = nx_random(-0x200, 0x200);
 				}
 				break;
 				
@@ -43,7 +43,7 @@ void ai_nemesis_shot(Object *o)
 					x = o->Right();
 					y = o->CenterY();
 					xi = -0x200;
-					yi = random(-0x200, 0x200);
+					yi = nx_random(-0x200, 0x200);
 				}
 				break;
 				
@@ -51,7 +51,7 @@ void ai_nemesis_shot(Object *o)
 				{
 					x = o->CenterX();
 					y = o->Bottom();
-					xi = random(-0x200, 0x200);
+					xi = nx_random(-0x200, 0x200);
 					yi = -0x200;
 				}
 				break;
@@ -60,7 +60,7 @@ void ai_nemesis_shot(Object *o)
 				{
 					x = o->CenterX();
 					y = o->Top();
-					xi = random(-0x200, 0x200);
+					xi = nx_random(-0x200, 0x200);
 					yi = 0x200;
 				}
 				break;
@@ -79,7 +79,7 @@ void ai_nemesis_shot(Object *o)
 				smoke->frame = 3;
 				o->timer2 = 1;
 			}
-			else if (random(0, 1))
+			else if (nx_random(0, 1))
 			{
 				smoke->frame = 1;
 			}

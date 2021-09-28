@@ -111,7 +111,7 @@ extern "C" {
 #endif
 
 //--------------------[referenced from player.cpp]-------------------//
-int random(int min, int max);
+int nx_random(int min, int max);
 
 #ifdef __cplusplus
 }

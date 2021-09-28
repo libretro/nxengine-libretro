@@ -80,10 +80,10 @@ bool niku_save(uint32_t value)
    buf_dword[3] = value;
 
    /* generate keys */
-   buf_byte[16] = random(0, 255);
-   buf_byte[17] = random(0, 255);
-   buf_byte[18] = random(0, 255);
-   buf_byte[19] = random(0, 255);
+   buf_byte[16] = nx_random(0, 255);
+   buf_byte[17] = nx_random(0, 255);
+   buf_byte[18] = nx_random(0, 255);
+   buf_byte[19] = nx_random(0, 255);
 
    /* encode each copy */
    for(i = 0; i < 4; i++)

@@ -355,9 +355,9 @@ int tile;
 				
 				for(int i=0;i<8;i++)
 				{
-					Object *o = CreateObject(x + (random(-8, 8) << CSF), y, splashtype);
-					o->xinertia = random(-0x200, 0x200) + player->xinertia;
-					o->yinertia = random(-0x200, 0x80) - (player->yinertia >> 1);
+					Object *o   = CreateObject(x + (nx_random(-8, 8) << CSF), y, splashtype);
+					o->xinertia = nx_random(-0x200, 0x200) + player->xinertia;
+					o->yinertia = nx_random(-0x200, 0x80) - (player->yinertia >> 1);
 				}
 				
 				sound(SND_SPLASH);

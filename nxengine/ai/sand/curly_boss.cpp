@@ -28,7 +28,7 @@ void ai_curly_boss(Object *o)
 		{
 			//o->hp = 12;
 			o->state = CURLYB_WAIT;
-			o->timer = random(50, 100);
+			o->timer = nx_random(50, 100);
 			o->frame = 0;
 			if (o->x > player->x) o->dir = LEFT; else o->dir = RIGHT;
 			o->flags |= FLAG_SHOOTABLE;
@@ -46,7 +46,7 @@ void ai_curly_boss(Object *o)
 		case CURLYB_WALK_PLAYER:
 			o->state = CURLYB_WALKING_PLAYER;
 			o->frame = 3;
-			o->timer = random(50, 100);
+			o->timer = nx_random(50, 100);
 			if (o->x > player->x) o->dir = LEFT; else o->dir = RIGHT;
 		case CURLYB_WALKING_PLAYER:
 			if (++o->animtimer > 2)

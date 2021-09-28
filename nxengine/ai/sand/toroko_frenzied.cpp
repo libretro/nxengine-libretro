@@ -76,11 +76,11 @@ Object *block = o->linkedobject;
 		break;
 		
 		case 10:	// wait a moment then ATTACK!!
-			o->state = 11;
-			o->frame = 0;
+			o->state     = 11;
+			o->frame     = 0;
 			o->animtimer = 0;
-			o->timer = random(20, 130);
-			o->xinertia = 0;
+			o->timer     = nx_random(20, 130);
+			o->xinertia  = 0;
 		case 11:
 			FACEPLAYER;
 			ANIMATE(4, 0, 1);
@@ -92,7 +92,7 @@ Object *block = o->linkedobject;
 			
 			if (!o->timer)
 			{
-				o->state = (random(0, 1) ? 20 : 50);
+				o->state = (nx_random(0, 1) ? 20 : 50);
 			}
 			else o->timer--;
 		break;

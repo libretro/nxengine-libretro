@@ -62,7 +62,7 @@ extern "C" {
 #endif
 
 //--------[referenced from ai/final_battle/doctor_frenzied.cpp]------//
-int random(int min, int max);
+int nx_random(int min, int max);
 
 #ifdef __cplusplus
 }

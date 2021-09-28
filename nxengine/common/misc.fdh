@@ -15,7 +15,7 @@ uint32_t fgetl(FILE *fp);
 uint32_t fgetl(FILE *fp);
 double fgetfloat(FILE *fp);
 void fgetline(FILE *fp, char *str, int maxlen);
-int random(int min, int max);
+int nx_random(int min, int max);
 uint32_t getrand();
 void seedrand(uint32_t newseed);
 bool strbegin(const char *bigstr, const char *smallstr);

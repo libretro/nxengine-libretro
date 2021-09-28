@@ -31,7 +31,7 @@ Object *shot;
 	{
 		case 0:
 			o->state = 1;
-			o->timer = random(0, 50);
+			o->timer = nx_random(0, 50);
 			o->ymark = o->y;
 			//o->yinertia = -0x200;
 		case 1:
@@ -60,7 +60,7 @@ Object *shot;
 			if (o->timer2 > 20)
 			{
 				shot = SpawnObjectAtActionPoint(o, OBJ_FIREWHIRR_SHOT);
-				o->timer2 = -100 + random(0, 20);
+				o->timer2 = -100 + nx_random(0, 20);
 				// tell Curly to acquire us as a target
 				if (o->onscreen)
 				{
@@ -145,7 +145,7 @@ void ai_fuzz_core(Object *o)
 				angle += (256 / 5);
 			}
 			
-			o->timer = random(1, 50);
+			o->timer = nx_random(1, 50);
 			o->state = 1;
 		}
 		case 1:		// de-syncs the Y positions when multiple cores are present at once
@@ -183,8 +183,8 @@ void ai_fuzz(Object *o)
 			
 			if (!o->linkedobject)
 			{
-				o->xinertia = random(-0x200, 0x200);
-				o->yinertia = random(-0x200, 0x200);
+				o->xinertia = nx_random(-0x200, 0x200);
+				o->yinertia = nx_random(-0x200, 0x200);
 				o->state = 1;
 			}
 		}
@@ -344,8 +344,8 @@ void ai_buyobuyo(Object *o)
 				o->xmark = o->x;
 				o->ymark = o->y;
 				
-				o->xinertia = random(0, 1) ? 0x200 : -0x200;
-				o->yinertia = random(0, 1) ? 0x200 : -0x200;
+				o->xinertia = nx_random(0, 1) ? 0x200 : -0x200;
+				o->yinertia = nx_random(0, 1) ? 0x200 : -0x200;
 				
 				o->state = 3;
 			}

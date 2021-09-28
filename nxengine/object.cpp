@@ -719,7 +719,7 @@ void Object::SpawnPowerups()
    if (!objprop[o->type].xponkill)
       return;
 
-   bonusType = random(1, 5);
+   bonusType = nx_random(1, 5);
    if (bonusType >= 3)
    {
       SpawnXP(objprop[o->type].xponkill);
@@ -772,8 +772,8 @@ void Object::SpawnXP(int amt)
 
    while(amt > 0)
    {
-      Object *xp = CreateObject(x, y, OBJ_XP);
-      xp->xinertia = random(-0x200, 0x200);
+      Object *xp   = CreateObject(x, y, OBJ_XP);
+      xp->xinertia = nx_random(-0x200, 0x200);
 
       if (amt >= XP_LARGE_AMT)
       {
@@ -948,11 +948,11 @@ void Object::animate_seq(int speed, const int *framelist, int nframes)
 // used by objects in Maze M, this hints to curly's AI that the object is attacking.
 void Object::CurlyTargetHere(int mintime, int maxtime)
 {
-   Object * const &o = this;
+   Object * const &o         = this;
 
-   game.curlytarget.x = o->CenterX();
-   game.curlytarget.y = o->CenterY();
-   game.curlytarget.timeleft = random(mintime, maxtime);
+   game.curlytarget.x        = o->CenterX();
+   game.curlytarget.y        = o->CenterY();
+   game.curlytarget.timeleft = nx_random(mintime, maxtime);
 }
 
 // reset the objects clip-extent fields (tp effects etc) to their defaults.

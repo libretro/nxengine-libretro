@@ -16,7 +16,7 @@ extern "C" {
 #endif
 
 //-----------------[referenced from pause/objects.cpp]---------------//
-int random(int min, int max);
+int nx_random(int min, int max);
 
 #ifdef __cplusplus
 }

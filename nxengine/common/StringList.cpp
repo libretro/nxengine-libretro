@@ -22,7 +22,7 @@ void StringList::Shuffle()
 
    for(i=0;i<count;i++)
    {
-      int swap = random(0, count - 1);
+      int swap = nx_random(0, count - 1);
       if (swap != i)
          SwapItems(i, swap);
    }

@@ -154,7 +154,7 @@ if (inputs[DEBUGKEY7]) o->state=999;
 			o->ymark = game.curlytarget.y;
 			
 			game.curlytarget.timeleft--;
-			if (game.curlytarget.timeleft==60 && random(0, 2)==0) CaiJUMP(o);
+			if (game.curlytarget.timeleft==60 && nx_random(0, 2)==0) CaiJUMP(o);
 		}
 		else
 		{
@@ -252,7 +252,7 @@ if (inputs[DEBUGKEY7]) o->state=999;
 			if (++o->curly.tryjumptime > 20)
 			{
 				o->curly.tryjumptime = 0;
-				if (random(0, 1)) CaiJUMP(o);
+				if (nx_random(0, 1)) CaiJUMP(o);
 			}
 		}
 		else o->curly.tryjumptime = 0;
@@ -311,8 +311,8 @@ static void CaiJUMP(Object *o)
 {
 	if (o->blockd && !o->blocku)
 	{
-		o->yinertia = random(-0x600, -0x300);
-		o->frame = 3;
+		o->yinertia = nx_random(-0x600, -0x300);
+		o->frame    = 3;
 		sound(SND_PLAYER_JUMP);
 	}
 }
@@ -366,8 +366,8 @@ int x, y, dir;
 			{	// she has the Machine Gun
 				if (!o->timer)
 				{
-					o->timer2 = random(2, 6);		// no. shots to fire
-					o->timer = random(40, 50);
+					o->timer2    = nx_random(2, 6);		// no. shots to fire
+					o->timer     = nx_random(40, 50);
 					o->animtimer = 0;
 				}
 				
@@ -387,8 +387,8 @@ int x, y, dir;
 			{	// she has the Polar Star
 				if (!o->timer)
 				{
-					o->timer = random(4, 16);
-					if (random(0, 10)==0) o->timer += random(20, 30);
+					o->timer = nx_random(4, 16);
+					if (nx_random(0, 10)==0) o->timer += nx_random(20, 30);
 					
 					// create the shot
 					shot = CreateObject(x, y, OBJ_POLAR_SHOT);
