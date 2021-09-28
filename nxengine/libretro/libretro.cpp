@@ -230,6 +230,96 @@ static void extract_directory(char *buf, const char *path, size_t size)
    }
 }
 
+/**
+ * Copy a file to the given destination.
+ */
+static bool retro_copy_file(const char* from, const char* to)
+{
+   // Open the file for reading.
+   FILE *fd1 = fopen(from, "r");
+   if (!fd1)
+      return false;
+
+   // Prepare the destination.
+   FILE *fd2 = fopen(to, "w");
+   if(!fd2)
+   {
+      fclose(fd1);
+      return false;
+   }
+
+   // Prepare the buffer.
+   size_t l1;
+   unsigned char buffer[8192];
+
+   // Loop through the from file through the buffer.
+   while((l1 = fread(buffer, 1, sizeof buffer, fd1)) > 0) {
+      // Write the data to the destination file.
+      size_t l2 = fwrite(buffer, 1, l1, fd2);
+
+      // Check if there was an error writing.
+      if (l2 < l1) {
+         // Display an error message.
+         if (ferror(fd2)) {
+            NX_ERR("Error copying profile from %s to %s\n", from, to);
+         }
+         else {
+            NX_ERR("Error copying profile, media full from %s to %s\n", from, to);
+         }
+         return false;
+      }
+   }
+   fclose(fd1);
+   fclose(fd2);
+   return true;
+}
+
+
+/**
+ * Copy any missing profiles from the content directory to the save directory.
+ */
+static void retro_init_saves(void)
+{
+   // Copy any profiles into the save directory.
+   const char* save_dir = retro_get_save_dir();
+   char gamedirProfile[1024];
+   char savedirProfile[1024];
+   char profile_name[1024];
+
+   // Copy profiles only if te folders are different.
+   if (strcmp(save_dir, g_dir) != 0) {
+      // Parse through all the different profiles.
+      for (int i = 0; i < 5; i++) {
+         // Create the profile filename.
+         if (i == 0) {
+            snprintf(profile_name, sizeof(profile_name), "profile.dat");
+         }
+         else {
+            snprintf(profile_name, sizeof(profile_name), "profile%d.dat", i + 1);
+         }
+
+         // Get the profile's file path in the game directory.
+         retro_create_path_string(gamedirProfile, sizeof(gamedirProfile), g_dir, profile_name);
+
+         // Make sure the profile exists.
+         if (file_exists(gamedirProfile)) {
+            // Create the profile's file path in the save directory.
+            retro_create_path_string(savedirProfile, sizeof(savedirProfile), save_dir, profile_name);
+
+            // Copy the file to the save directory only if it doesn't exist.
+            if (!file_exists(savedirProfile)) {
+               if (retro_copy_file(gamedirProfile, savedirProfile)) {
+                  NX_LOG("Copied profile %s to save directory at %s\n", gamedirProfile, savedirProfile);
+               }
+               else {
+                  NX_ERR("Failed to copy profile %s to %s\n", gamedirProfile, savedirProfile);
+               }
+            }
+         }
+      }
+   }
+}
+
 bool retro_load_game(const struct retro_game_info *game)
 {
    if (!game)
@@ -371,91 +461,3 @@ const char* retro_get_save_dir(void)
    return g_dir;
 }
 
-/**
- * Copy any missing profiles from the content directory to the save directory.
- */
-void retro_init_saves(void)
-{
-   // Copy any profiles into the save directory.
-   const char* save_dir = retro_get_save_dir();
-   char gamedirProfile[1024];
-   char savedirProfile[1024];
-   char profile_name[1024];
-
-   // Copy profiles only if te folders are different.
-   if (strcmp(save_dir, g_dir) != 0) {
-      // Parse through all the different profiles.
-      for (int i = 0; i < 5; i++) {
-         // Create the profile filename.
-         if (i == 0) {
-            snprintf(profile_name, sizeof(profile_name), "profile.dat");
-         }
-         else {
-            snprintf(profile_name, sizeof(profile_name), "profile%d.dat", i + 1);
-         }
-
-         // Get the profile's file path in the game directory.
-         retro_create_path_string(gamedirProfile, sizeof(gamedirProfile), g_dir, profile_name);
-
-         // Make sure the profile exists.
-         if (file_exists(gamedirProfile)) {
-            // Create the profile's file path in the save directory.
-            retro_create_path_string(savedirProfile, sizeof(savedirProfile), save_dir, profile_name);
-
-            // Copy the file to the save directory only if it doesn't exist.
-            if (!file_exists(savedirProfile)) {
-               if (retro_copy_file(gamedirProfile, savedirProfile)) {
-                  NX_LOG("Copied profile %s to save directory at %s\n", gamedirProfile, savedirProfile);
-               }
-               else {
-                  NX_ERR("Failed to copy profile %s to %s\n", gamedirProfile, savedirProfile);
-               }
-            }
-         }
-      }
-   }
-}
-
-/**
- * Copy a file to the given destination.
- */
-bool retro_copy_file(const char* from, const char* to)
-{
-   // Open the file for reading.
-   FILE *fd1 = fopen(from, "r");
-   if (!fd1)
-      return false;
-
-   // Prepare the destination.
-   FILE *fd2 = fopen(to, "w");
-   if(!fd2)
-   {
-      fclose(fd1);
-      return false;
-   }
-
-   // Prepare the buffer.
-   size_t l1;
-   unsigned char buffer[8192];
-
-   // Loop through the from file through the buffer.
-   while((l1 = fread(buffer, 1, sizeof buffer, fd1)) > 0) {
-      // Write the data to the destination file.
-      size_t l2 = fwrite(buffer, 1, l1, fd2);
-
-      // Check if there was an error writing.
-      if (l2 < l1) {
-         // Display an error message.
-         if (ferror(fd2)) {
-            NX_ERR("Error copying profile from %s to %s\n", from, to);
-         }
-         else {
-            NX_ERR("Error copying profile, media full from %s to %s\n", from, to);
-         }
-         return false;
-      }
-   }
-   fclose(fd1);
-   fclose(fd2);
-   return true;
-}
