@@ -63,6 +63,9 @@ void mixaudio(int16_t *stream, size_t len_samples)
    // get data for all channels and add it to the mix
    for(c=0;c<SS_NUM_CHANNELS;c++)
    {
+      unsigned i;
+      const int16_t *mixbuf;
+
       if (channel[c].head==channel[c].tail) continue;
 
       bytestogo = len;
@@ -82,9 +85,9 @@ void mixaudio(int16_t *stream, size_t len_samples)
       }
 
       // tell any callbacks that had a chunk finish, that their chunk finished
-      const int16_t *mixbuf = (const int16_t*)mixbuffer;
+      mixbuf = (const int16_t*)mixbuffer;
 
-      for(unsigned i = 0; i < len_samples; i++)
+      for(i = 0; i < len_samples; i++)
       {
          int32_t current = stream[i];
          current += (int32_t)mixbuf[i] * channel[c].volume / (2 * SDL_MIX_MAXVOLUME);
@@ -111,15 +114,16 @@ void mixaudio(int16_t *stream, size_t len_samples)
 
 char SSInit(void)
 {
-   mixbuffer = (uint8_t *)malloc(4096 * 2 * 2);
+	unsigned i;
+	mixbuffer = (uint8_t *)malloc(4096 * 2 * 2);
 
-   // zero everything in all channels
-   memset(channel, 0, sizeof(channel));
-   for(int i=0;i<SS_NUM_CHANNELS;i++)
-      channel[i].volume = SDL_MIX_MAXVOLUME;
+	// zero everything in all channels
+	memset(channel, 0, sizeof(channel));
+	for(i=0;i<SS_NUM_CHANNELS;i++)
+		channel[i].volume = SDL_MIX_MAXVOLUME;
 
-   lockcount = 0;
-   return 0;
+	lockcount = 0;
+	return 0;
 }
 
 void SSClose(void)
@@ -143,13 +147,13 @@ void SSReserveChannel(int c)
 // if all chans are full, returns -1.
 int SSFindFreeChannel(void)
 {
-   int i;
-   for(i=0;i<SS_NUM_CHANNELS;i++)
-   {
-      if (channel[i].head==channel[i].tail && !channel[i].reserved)
-         return i;
-   }
-   return -1;
+	int i;
+	for(i=0;i<SS_NUM_CHANNELS;i++)
+	{
+		if (channel[i].head==channel[i].tail && !channel[i].reserved)
+			return i;
+	}
+	return -1;
 }
 
 // enqueue a chunk of sound to a channel.
@@ -165,38 +169,38 @@ int SSFindFreeChannel(void)
 int SSEnqueueChunk(int c, signed short *buffer, int len,
       int userdata, void(*FinishedCB)(int, int))
 {
-   struct SSChannel *chan;
-   struct SSChunk *chunk;
+	struct SSChannel *chan;
+	struct SSChunk *chunk;
 
-   if (c >= SS_NUM_CHANNELS)
-      return -1;
+	if (c >= SS_NUM_CHANNELS)
+		return -1;
 
-   if (c < 0)
-      c = SSFindFreeChannel();
-   if (c==-1)
-      return -1;
+	if (c < 0)
+		c = SSFindFreeChannel();
+	if (c==-1)
+		return -1;
 
-   chan = &channel[c];
+	chan = &channel[c];
 
-   chan->FinishedCB = FinishedCB;
+	chan->FinishedCB = FinishedCB;
 
-   chunk = &chan->chunks[chan->tail];
-   chunk->buffer = buffer;
-   chunk->length = len;							// in 16-bit stereo samples
-   chunk->userdata = userdata;
+	chunk = &chan->chunks[chan->tail];
+	chunk->buffer = buffer;
+	chunk->length = len;							// in 16-bit stereo samples
+	chunk->userdata = userdata;
 
-   chunk->bytebuffer = (signed char *)buffer;
-   chunk->bytelength = chunk->length * 2 * 2;		// in bytes
+	chunk->bytebuffer = (signed char *)buffer;
+	chunk->bytelength = chunk->length * 2 * 2;		// in bytes
 
-   chunk->bytepos = 0;
+	chunk->bytepos = 0;
 
-   // advance tail pointer
-   if (++chan->tail >= MAX_QUEUED_CHUNKS) chan->tail = 0;
+	// advance tail pointer
+	if (++chan->tail >= MAX_QUEUED_CHUNKS) chan->tail = 0;
 
-   if (chan->tail==chan->head)
-      return -1;
+	if (chan->tail==chan->head)
+		return -1;
 
-   return c;
+	return c;
 }
 
 // works like SSEnqueueChunk, only it does not enqueue. Instead, if a sound
@@ -206,7 +210,7 @@ int SSEnqueueChunk(int c, signed short *buffer, int len,
 int SSPlayChunk(int c, signed short *buffer, int len, int userdata, void(*FinishedCB)(int, int))
 {
 	if (c != -1)
-      SSAbortChannel(c);
+		SSAbortChannel(c);
 	return SSEnqueueChunk(c, buffer, len, userdata, FinishedCB);
 }
 
@@ -220,9 +224,9 @@ char SSChannelPlaying(int c)
 // if channel c is not playing, the results are undefined.
 int SSGetCurUserData(int c)
 {
-   if (channel[c].head != channel[c].tail)
-      return (channel[c].chunks[channel[c].head].userdata);
-   return -1;
+	if (channel[c].head != channel[c].tail)
+		return (channel[c].chunks[channel[c].head].userdata);
+	return -1;
 }
 
 // returns the currently playing sample within the currently playing chunk
@@ -231,9 +235,9 @@ int SSGetCurUserData(int c)
 // components of a stereo sample as a single sample.
 int SSGetSamplePos(int c)
 {
-   if (channel[c].head != channel[c].tail)
-      return (channel[c].chunks[channel[c].head].bytepos / 4);
-   return -1;
+	if (channel[c].head != channel[c].tail)
+		return (channel[c].chunks[channel[c].head].bytepos / 4);
+	return -1;
 }
 
 
@@ -247,7 +251,8 @@ void SSAbortChannel(int c)
 // aborts all sounds with a userdata value matching "ud".
 void SSAbortChannelByUserData(int ud)
 {
-	for(int c=0;c<SS_NUM_CHANNELS;c++)
+	unsigned c;
+	for(c=0;c<SS_NUM_CHANNELS;c++)
 		if (SSChannelPlaying(c) && SSGetCurUserData(c)==ud)
 			SSAbortChannel(c);
 }
