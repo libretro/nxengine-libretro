@@ -49,14 +49,6 @@ void SmokeClouds(Object *o, int nclouds, int rangex, int rangey, Object *push_be
 //--------------------[referenced from object.cpp]-------------------//
 void sound(int snd);
 
-
-/* located in common/stat.cpp */
-
-//--------------------[referenced from object.cpp]-------------------//
-void staterr(const char *fmt, ...);
-void stat(const char *fmt, ...);
-
-
 /* located in common/misc.cpp */
 
 //--------------------[referenced from object.cpp]-------------------//

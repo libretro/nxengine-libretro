@@ -27,10 +27,3 @@ void SmokeClouds(Object *o, int nclouds, int rangex, int rangey, Object *push_be
 
 //---------------[referenced from ai/almond/almond.cpp]--------------//
 void sound(int snd);
-
-
-/* located in common/stat.cpp */
-
-//---------------[referenced from ai/almond/almond.cpp]--------------//
-void stat(const char *fmt, ...);
-

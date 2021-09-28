@@ -7,7 +7,6 @@
 // of the initilization functions. This is used by the AI functions to initilize
 // all the function pointers etc for the various creatures.
 #include "InitList.h"
-#include "InitList.fdh"
 #include "../nx.h"
 
 void InitList::AddFunction(void (*func)(void))

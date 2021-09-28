@@ -64,14 +64,6 @@ char pxt_load(RFILE *fp, stPXSound *snd, int slot);
 char pxt_Render(stPXSound *snd);
 void FreePXTBuf(stPXSound *snd);
 
-
-/* located in common/stat.cpp */
-
-//-------------------[referenced from sound/org.cpp]-----------------//
-void stat(const char *fmt, ...);
-void staterr(const char *fmt, ...);
-
-
 /* located in common/misc.cpp */
 
 //-------------------[referenced from sound/org.cpp]-----------------//

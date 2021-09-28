@@ -19,10 +19,3 @@ bool buttondown(void);
 
 //--------------[referenced from TextBox/StageSelect.cpp]------------//
 void sound(int snd);
-
-
-/* located in common/stat.cpp */
-
-//--------------[referenced from TextBox/StageSelect.cpp]------------//
-void stat(const char *fmt, ...);
-

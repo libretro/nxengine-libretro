@@ -54,13 +54,6 @@ void ai_x_defeated(Object *o);
 //-------------------[referenced from ai/boss/x.cpp]-----------------//
 void sound(int snd);
 
-
-/* located in common/stat.cpp */
-
-//-------------------[referenced from ai/boss/x.cpp]-----------------//
-void stat(const char *fmt, ...);
-
-
 /* located in common/misc.cpp */
 
 //-------------------[referenced from ai/boss/x.cpp]-----------------//

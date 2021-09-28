@@ -6,11 +6,3 @@
 //--------------[referenced from siflib/sectSprites.cpp]-------------//
 uint16_t read_U16(const uint8_t **data, const uint8_t *data_end);
 uint8_t read_U8(const uint8_t **data, const uint8_t *data_end);
-
-
-/* located in common/stat.cpp */
-
-//--------------[referenced from siflib/sectSprites.cpp]-------------//
-void staterr(const char *fmt, ...);
-void stat(const char *fmt, ...);
-

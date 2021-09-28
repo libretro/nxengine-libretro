@@ -106,11 +106,3 @@ int music_cursong();
 
 //---------------------[referenced from game.cpp]--------------------//
 void AssignSprites(void);
-
-
-/* located in common/stat.cpp */
-
-//---------------------[referenced from game.cpp]--------------------//
-void stat(const char *fmt, ...);
-void staterr(const char *fmt, ...);
-

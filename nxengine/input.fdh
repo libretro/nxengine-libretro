@@ -20,10 +20,3 @@ bool justpushed(int k);
 
 //---------------------[referenced from input.cpp]-------------------//
 void sound(int snd);
-
-
-/* located in common/stat.cpp */
-
-//---------------------[referenced from input.cpp]-------------------//
-void stat(const char *fmt, ...);
-

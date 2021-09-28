@@ -40,8 +40,6 @@ void c------------------------------() {}
 // invisible.
 void TextBox::ResetState(void)
 {
-	//stat("TextBox::ResetState()");
-	
 	fVisible = false;
 	fFlags = TB_DEFAULTS;
 	fFace = 0;
@@ -67,8 +65,6 @@ void TextBox::ResetState(void)
 // of the flags TB_DRAW_AT_TOP and TB_NO_BORDER.
 void TextBox::SetVisible(bool enable, uint8_t flags)
 {
-	//stat("TextBox::SetVisible(%s)", enable?"true":"false");
-	
 	if (enable && fVisible)
 		ClearText();
 	
@@ -85,8 +81,6 @@ void TextBox::SetFlags(uint8_t flags)
 
 void TextBox::SetFlags(uint8_t flags, bool enable)
 {
-	//stat("TextBox::SetFlags(0x%x, %s)", flags, enable?"true":"false");
-	
 	if (enable)
 		SetFlags(fFlags | flags);
 	else
@@ -139,14 +133,12 @@ void c------------------------------() {}
 
 void TextBox::SetFace(int newface)
 {
-	//stat("TextBox::SetFace(%d)", newface);
 	fFace = newface;
 	fFaceXOffset = -FACE_W;
 }
 
 void TextBox::ShowCursor(bool enable)
 {
-	//stat("TextBox::ShowCursor(%s)", enable?"true":"false");
 	fCursorVisible = enable;
 	fCursorTimer = 8;
 }

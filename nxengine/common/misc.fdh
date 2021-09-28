@@ -3,13 +3,6 @@
 
 /* located in platform.cpp */
 
-/* located in common/stat.cpp */
-
-//------------------[referenced from common/misc.cpp]----------------//
-void stat(const char *fmt, ...);
-void staterr(const char *fmt, ...);
-
-
 /* located in common/misc.cpp */
 
 //------------------[referenced from common/misc.cpp]----------------//

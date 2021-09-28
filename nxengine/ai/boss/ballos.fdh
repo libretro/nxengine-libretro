@@ -65,13 +65,6 @@ void ai_ballos_platform(Object *o);
 //----------------[referenced from ai/boss/ballos.cpp]---------------//
 void sound(int snd);
 
-
-/* located in common/stat.cpp */
-
-//----------------[referenced from ai/boss/ballos.cpp]---------------//
-void stat(const char *fmt, ...);
-
-
 /* located in common/misc.cpp */
 
 //----------------[referenced from ai/boss/ballos.cpp]---------------//

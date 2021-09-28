@@ -118,10 +118,3 @@ void StopLoopSounds(void);
 
 //----------------------[referenced from tsc.cpp]--------------------//
 void org_fade(void);
-
-
-/* located in common/stat.cpp */
-
-//----------------------[referenced from tsc.cpp]--------------------//
-void staterr(const char *fmt, ...);
-void stat(const char *fmt, ...);

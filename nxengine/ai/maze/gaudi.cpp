@@ -392,7 +392,6 @@ void ai_gaudi_armored(Object *o)
 			
 			if (++o->timer >= 2)
 			{
-				//stat("dtt= %d", abs(o->xmark - o->x)>>CSF);
 				o->frame = 0;
 				o->xinertia = 0;
 				

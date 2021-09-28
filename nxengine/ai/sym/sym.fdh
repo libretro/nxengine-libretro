@@ -108,14 +108,6 @@ void SmokeXY(int x, int y, int nclouds, int rangex, int rangey, Object *push_beh
 //------------------[referenced from ai/sym/sym.cpp]-----------------//
 void sound(int snd);
 
-
-/* located in common/stat.cpp */
-
-//------------------[referenced from ai/sym/sym.cpp]-----------------//
-void stat(const char *fmt, ...);
-void staterr(const char *fmt, ...);
-
-
 /* located in common/misc.cpp */
 
 //------------------[referenced from ai/sym/sym.cpp]-----------------//

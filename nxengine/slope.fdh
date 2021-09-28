@@ -13,10 +13,3 @@ bool movehandleslope(Object *o, int xinertia);
 void DrawSlopeTablesOnTiles();
 void DrawSlopeTableOnTile(int table, int tile);
 void dumpslopetable(int t);
-
-
-/* located in common/stat.cpp */
-
-//---------------------[referenced from slope.cpp]-------------------//
-void stat(const char *fmt, ...);
-

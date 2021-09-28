@@ -54,15 +54,7 @@ void c------------------------------() {}
 
 void SistersBoss::OnMapEntry()
 {
-int i;
-
-/*stat("%d %d %d %d",
-	sprites[SPR_SISTERS_HEAD].bbox.x1,
-	sprites[SPR_SISTERS_HEAD].bbox.y1,
-	sprites[SPR_SISTERS_HEAD].bbox.x2,
-	sprites[SPR_SISTERS_HEAD].bbox.y2
-	); exit(1);*/
-	
+	int i;
 	main = CreateObject(((10*TILE_W))<<CSF, ((8*TILE_H)-4)<<CSF, OBJ_SISTERS_MAIN);
 	main->invisible = true;
 	

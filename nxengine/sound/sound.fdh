@@ -48,11 +48,3 @@ void pxt_freeSoundFX(void);
 void pxt_Stop(int slot);
 int pxt_Play(int chan, int slot, char loop);
 char pxt_IsPlaying(int slot);
-
-
-/* located in common/stat.cpp */
-
-//------------------[referenced from sound/sound.cpp]----------------//
-void staterr(const char *fmt, ...);
-void stat(const char *fmt, ...);
-

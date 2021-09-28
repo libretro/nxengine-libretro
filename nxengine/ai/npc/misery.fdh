@@ -40,14 +40,6 @@ void ai_misery_stand(Object *o);
 //-----------------[referenced from ai/npc/misery.cpp]---------------//
 void sound(int snd);
 
-
-/* located in common/stat.cpp */
-
-//-----------------[referenced from ai/npc/misery.cpp]---------------//
-void stat(const char *fmt, ...);
-void staterr(const char *fmt, ...);
-
-
 /* located in common/misc.cpp */
 
 //-----------------[referenced from ai/npc/misery.cpp]---------------//

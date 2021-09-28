@@ -108,11 +108,3 @@ void org_run(void);
 
 //---------------------[referenced from main.cpp]--------------------//
 int extract_main();
-
-
-/* located in common/stat.cpp */
-
-//---------------------[referenced from main.cpp]--------------------//
-void SetLogFilename(const char *fname);
-void staterr(const char *fmt, ...);
-void stat(const char *fmt, ...);

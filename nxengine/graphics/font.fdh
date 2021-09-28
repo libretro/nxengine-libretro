@@ -14,11 +14,3 @@ int GetFontHeight();
 static bool create_shade_sfc(void);
 int font_draw(int x, int y, const char *text, int spacing, NXFont *font);
 int font_draw_shaded(int x, int y, const char *text, int spacing, NXFont *font);
-
-
-/* located in common/stat.cpp */
-
-//-----------------[referenced from graphics/font.cpp]---------------//
-void stat(const char *fmt, ...);
-void staterr(const char *fmt, ...);
-

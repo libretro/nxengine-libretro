@@ -76,14 +76,6 @@ int font_draw(int x, int y, const char *text, int spacing, NXFont *font);
 //----------------------[referenced from map.cpp]--------------------//
 void palette_reset(void);
 
-
-/* located in common/stat.cpp */
-
-//----------------------[referenced from map.cpp]--------------------//
-void stat(const char *fmt, ...);
-void staterr(const char *fmt, ...);
-
-
 /* located in common/misc.cpp */
 
 //----------------------[referenced from map.cpp]--------------------//

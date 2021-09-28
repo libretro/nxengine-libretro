@@ -8,14 +8,6 @@ bool niku_load(uint32_t *value_out);
 bool niku_save(uint32_t value);
 static const char *getfname();
 
-
-/* located in common/stat.cpp */
-
-//---------------------[referenced from niku.cpp]--------------------//
-void stat(const char *fmt, ...);
-void staterr(const char *fmt, ...);
-
-
 /* located in common/misc.cpp */
 
 //---------------------[referenced from niku.cpp]--------------------//

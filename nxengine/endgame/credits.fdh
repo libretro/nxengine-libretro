@@ -41,14 +41,6 @@ void music(int songno);
 //----------------[referenced from endgame/credits.cpp]--------------//
 void org_fade(void);
 
-
-/* located in common/stat.cpp */
-
-//----------------[referenced from endgame/credits.cpp]--------------//
-void stat(const char *fmt, ...);
-void staterr(const char *fmt, ...);
-
-
 /* located in common/misc.cpp */
 
 //----------------[referenced from endgame/credits.cpp]--------------//

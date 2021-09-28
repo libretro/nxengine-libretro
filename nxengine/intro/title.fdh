@@ -50,10 +50,3 @@ int font_draw(int x, int y, const char *text, int spacing, NXFont *font);
 //------------------[referenced from intro/title.cpp]----------------//
 void music(int songno);
 void sound(int snd);
-
-
-/* located in common/stat.cpp */
-
-//------------------[referenced from intro/title.cpp]----------------//
-void stat(const char *fmt, ...);
-

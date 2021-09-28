@@ -15,14 +15,6 @@ bool AnyProfileExists();
 //--------------------[referenced from profile.cpp]------------------//
 int CVTDir(int csdir);
 
-
-/* located in common/stat.cpp */
-
-//--------------------[referenced from profile.cpp]------------------//
-void stat(const char *fmt, ...);
-void staterr(const char *fmt, ...);
-
-
 /* located in common/misc.cpp */
 
 //--------------------[referenced from profile.cpp]------------------//

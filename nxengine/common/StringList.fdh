@@ -1,4 +1,2 @@
-void stat(const char *fmt, ...);
-
 int random(int min, int max);
 

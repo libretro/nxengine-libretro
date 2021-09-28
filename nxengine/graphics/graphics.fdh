@@ -23,11 +23,3 @@ bool font_reload();
 
 //---------------[referenced from graphics/graphics.cpp]-------------//
 void palette_reset(void);
-
-
-/* located in common/stat.cpp */
-
-//---------------[referenced from graphics/graphics.cpp]-------------//
-void stat(const char *fmt, ...);
-void staterr(const char *fmt, ...);
-

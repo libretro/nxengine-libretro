@@ -77,15 +77,10 @@
 // debug function
 #define LL_DUMP_LIST(START, PREV, NEXT, NODETYPE)	\
 {	\
-	stat("LL_DUMP_LIST from %s using %s", #START, #NEXT);	\
-	\
 	NODETYPE *n = START;	\
 	int iter = 0;	\
 	while(n)	\
-	{	\
-		stat("%d: %08x   P:%08x  N:%08x", iter++, n, n->PREV, n->NEXT);	\
 		n = n->NEXT;	\
-	}	\
 }
 
 
