@@ -9,7 +9,14 @@ bool extract_pxt(FILE *fp);
 
 /* located in common/misc.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //--------------[referenced from extract/extractpxt.cpp]-------------//
 uint32_t fgetl(FILE *fp);
 double fgetfloat(FILE *fp);
 
+#ifdef __cplusplus
+}
+#endif

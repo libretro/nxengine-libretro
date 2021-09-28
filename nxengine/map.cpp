@@ -11,8 +11,8 @@
 extern "C" {
 	RFILE* rfopen(const char *path, const char *mode);
 	int rfclose(RFILE* stream);
+	uint32_t rfgetl(RFILE *fp);
 }
-uint32_t rfgetl(RFILE *fp);
 
 stMap map;
 

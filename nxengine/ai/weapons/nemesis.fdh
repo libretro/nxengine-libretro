@@ -21,6 +21,13 @@ void ai_nemesis_shot(Object *o);
 
 /* located in common/misc.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //--------------[referenced from ai/weapons/nemesis.cpp]-------------//
 int random(int min, int max);
 
+#ifdef __cplusplus
+}
+#endif

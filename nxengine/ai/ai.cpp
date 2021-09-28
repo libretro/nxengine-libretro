@@ -13,10 +13,9 @@ extern "C" {
 	int64_t rfseek(RFILE* stream, int64_t offset, int origin);
 	int rfgetc(RFILE* stream);
 	int rfclose(RFILE* stream);
+	uint16_t rfgeti(RFILE *fp);
+	uint32_t rfgetl(RFILE *fp);
 }
-
-uint16_t rfgeti(RFILE *fp);
-uint32_t rfgetl(RFILE *fp);
 
 bool ai_init(void)
 {

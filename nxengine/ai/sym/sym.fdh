@@ -110,6 +110,13 @@ void sound(int snd);
 
 /* located in common/misc.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //------------------[referenced from ai/sym/sym.cpp]-----------------//
 int random(int min, int max);
 
+#ifdef __cplusplus
+}
+#endif

@@ -6,6 +6,11 @@
 /* located in common/misc.cpp */
 
 //------------------[referenced from common/misc.cpp]----------------//
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 uint32_t fgetl(FILE *fp);
 uint32_t fgetl(FILE *fp);
 double fgetfloat(FILE *fp);
@@ -17,3 +22,6 @@ bool strbegin(const char *bigstr, const char *smallstr);
 void maxcpy(char *dst, const char *src, int maxlen);
 void fresetboolean(void);
 
+#ifdef __cplusplus
+}
+#endif

@@ -101,8 +101,9 @@ SOURCES_CXX += $(CORE_DIR)/common/BList.cpp \
 	       $(CORE_DIR)/common/DBuffer.cpp \
 	       $(CORE_DIR)/common/DString.cpp \
 	       $(CORE_DIR)/common/InitList.cpp \
-	       $(CORE_DIR)/common/misc.cpp \
 	       $(CORE_DIR)/common/StringList.cpp
+
+SOURCES_C   += $(CORE_DIR)/common/misc.c
 
 SOURCES_CXX += $(CORE_DIR)/endgame/credits.cpp \
 	       $(CORE_DIR)/endgame/CredReader.cpp \

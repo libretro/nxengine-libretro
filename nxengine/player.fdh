@@ -106,6 +106,13 @@ void StopLoopSounds(void);
 
 /* located in common/misc.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //--------------------[referenced from player.cpp]-------------------//
 int random(int min, int max);
 
+#ifdef __cplusplus
+}
+#endif

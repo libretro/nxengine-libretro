@@ -49,6 +49,13 @@ bool sound_is_playing(int snd);
 
 /* located in common/misc.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //--------------[referenced from ai/sand/curly_boss.cpp]-------------//
 int random(int min, int max);
 
+#ifdef __cplusplus
+}
+#endif

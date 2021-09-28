@@ -35,6 +35,13 @@ void staterr(const char *fmt, ...);
 
 /* located in common/misc.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //---------------------[referenced from caret.cpp]-------------------//
 int random(int min, int max);
 
+#ifdef __cplusplus
+}
+#endif

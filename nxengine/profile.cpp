@@ -22,18 +22,17 @@ extern "C" {
 	int rfgetc(RFILE* stream);
 	RFILE* rfopen(const char *path, const char *mode);
 	int rfprintf(RFILE * stream, const char * format, ...);
-}
 
-/* forward declarations */
-uint32_t rfgetl(RFILE *fp);
-uint16_t rfgeti(RFILE *fp);
-void rfputl(uint32_t word, RFILE *fp);
-void rfputi(uint16_t word, RFILE *fp);
-char rfbooleanread(RFILE *fp);
-void rfputstringnonull(const char *buf, RFILE *fp);
-void rfbooleanwrite(char bit, RFILE *fp);
-bool rfverifystring(RFILE *fp, const char *str);
-void rfbooleanflush(RFILE *fp);
+	uint32_t rfgetl(RFILE *fp);
+	uint16_t rfgeti(RFILE *fp);
+	void rfputl(uint32_t word, RFILE *fp);
+	void rfputi(uint16_t word, RFILE *fp);
+	char rfbooleanread(RFILE *fp);
+	void rfputstringnonull(const char *buf, RFILE *fp);
+	void rfbooleanwrite(char bit, RFILE *fp);
+	bool rfverifystring(RFILE *fp, const char *str);
+	void rfbooleanflush(RFILE *fp);
+}
 
 // load savefile #num into the given Profile structure.
 bool profile_load(const char *pfname, Profile *file)

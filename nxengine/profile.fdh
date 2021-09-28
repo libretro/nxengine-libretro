@@ -17,8 +17,15 @@ int CVTDir(int csdir);
 
 /* located in common/misc.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //--------------------[referenced from profile.cpp]------------------//
 uint32_t fgetl(FILE *fp);
 uint16_t fgeti(FILE *fp);
 void fresetboolean(void);
 
+#ifdef __cplusplus
+}
+#endif

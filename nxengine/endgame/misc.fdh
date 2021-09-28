@@ -31,6 +31,13 @@ void ai_the_cast(Object *o);
 
 /* located in common/misc.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //-----------------[referenced from endgame/misc.cpp]----------------//
 int random(int min, int max);
 
+#ifdef __cplusplus
+}
+#endif

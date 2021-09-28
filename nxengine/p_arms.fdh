@@ -80,6 +80,14 @@ void sound(int snd);
 
 /* located in common/misc.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 //--------------------[referenced from p_arms.cpp]-------------------//
 int random(int min, int max);
 
+#ifdef __cplusplus
+}
+#endif

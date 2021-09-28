@@ -44,6 +44,13 @@ void music(int songno);
 
 /* located in common/misc.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //------------------[referenced from intro/intro.cpp]----------------//
 int random(int min, int max);
 
+#ifdef __cplusplus
+}
+#endif

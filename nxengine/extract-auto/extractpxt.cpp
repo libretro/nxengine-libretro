@@ -32,10 +32,9 @@ extern "C" {
 	int rfprintf(RFILE * stream, const char * format, ...);
 	int64_t rfwrite(void const* buffer,
 			size_t elem_size, size_t elem_count, RFILE* stream);
+	uint32_t rfgetl(RFILE *fp);
+	double rfgetfloat(RFILE *fp);
 }
-
-uint32_t rfgetl(RFILE *fp);
-double rfgetfloat(RFILE *fp);
 
 static struct
 {

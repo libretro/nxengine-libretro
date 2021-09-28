@@ -52,7 +52,15 @@ char pxt_load(RFILE *fp, stPXSound *snd, int slot);
 
 /* located in common/misc.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //-------------------[referenced from sound/pxt.cpp]-----------------//
 void seedrand(uint32_t newseed);
 int random(int min, int max);
 uint32_t fgetl(FILE *fp);
+
+#ifdef __cplusplus
+}
+#endif

@@ -43,6 +43,13 @@ void org_fade(void);
 
 /* located in common/misc.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //----------------[referenced from endgame/credits.cpp]--------------//
 void maxcpy(char *dst, const char *src, int maxlen);
 
+#ifdef __cplusplus
+}
+#endif

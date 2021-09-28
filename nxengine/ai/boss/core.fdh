@@ -58,6 +58,13 @@ void StopLoopSounds(void);
 
 /* located in common/misc.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //-----------------[referenced from ai/boss/core.cpp]----------------//
 int random(int min, int max);
 
+#ifdef __cplusplus
+}
+#endif

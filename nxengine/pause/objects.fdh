@@ -11,6 +11,13 @@ static void ai_oc_ikachan(Object *o);
 
 /* located in common/misc.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //-----------------[referenced from pause/objects.cpp]---------------//
 int random(int min, int max);
 
+#ifdef __cplusplus
+}
+#endif

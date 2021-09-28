@@ -78,7 +78,14 @@ void palette_reset(void);
 
 /* located in common/misc.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //----------------------[referenced from map.cpp]--------------------//
 uint32_t fgetl(FILE *fp);
 int random(int min, int max);
 
+#ifdef __cplusplus
+}
+#endif
