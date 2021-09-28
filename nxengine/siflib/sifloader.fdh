@@ -12,5 +12,3 @@ void stat(const char *fmt, ...);
 
 //---------------[referenced from siflib/sifloader.cpp]--------------//
 uint32_t fgetl(FILE *fp);
-void fputl(uint32_t word, FILE *fp);
-

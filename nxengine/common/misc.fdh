@@ -14,14 +14,8 @@ void staterr(const char *fmt, ...);
 
 //------------------[referenced from common/misc.cpp]----------------//
 uint32_t fgetl(FILE *fp);
-void fputi(uint16_t word, FILE *fp);
-void fputl(uint32_t word, FILE *fp);
 uint32_t fgetl(FILE *fp);
-void fputi(uint16_t word, FILE *fp);
-void fputl(uint32_t word, FILE *fp);
 double fgetfloat(FILE *fp);
-void fputfloat(double q, FILE *fp);
-void fputstringnonull(const char *buf, FILE *fp);
 void fgetline(FILE *fp, char *str, int maxlen);
 int random(int min, int max);
 uint32_t getrand();
@@ -29,7 +23,4 @@ void seedrand(uint32_t newseed);
 bool strbegin(const char *bigstr, const char *smallstr);
 void maxcpy(char *dst, const char *src, int maxlen);
 void fresetboolean(void);
-char fbooleanread(FILE *fp);
-void fbooleanwrite(char bit, FILE *fp);
-void fbooleanflush(FILE *fp);
 

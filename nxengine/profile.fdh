@@ -29,10 +29,4 @@ void staterr(const char *fmt, ...);
 uint32_t fgetl(FILE *fp);
 uint16_t fgeti(FILE *fp);
 void fresetboolean(void);
-char fbooleanread(FILE *fp);
-void fputstringnonull(const char *buf, FILE *fp);
-void fputl(uint32_t word, FILE *fp);
-void fputi(uint16_t word, FILE *fp);
-void fbooleanwrite(char bit, FILE *fp);
-void fbooleanflush(FILE *fp);
 

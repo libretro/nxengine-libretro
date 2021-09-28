@@ -55,6 +55,4 @@ void stat(const char *fmt, ...);
 //-------------------[referenced from sound/pxt.cpp]-----------------//
 void seedrand(uint32_t newseed);
 int random(int min, int max);
-void fputi(uint16_t word, FILE *fp);
-void fputl(uint32_t word, FILE *fp);
 uint32_t fgetl(FILE *fp);

@@ -56,19 +56,9 @@ void rfputi(uint16_t word, RFILE *fp)
    rfwrite(&word, 2, 1, fp);
 }
 
-void fputi(uint16_t word, FILE *fp)
-{
-   fwrite(&word, 2, 1, fp);
-}
-
 void rfputl(uint32_t word, RFILE *fp)
 {
    rfwrite(&word, 4, 1, fp);
-}
-
-void fputl(uint32_t word, FILE *fp)
-{
-   fwrite(&word, 4, 1, fp);
 }
 
 double rfgetfloat(RFILE *fp)
@@ -95,17 +85,6 @@ double fgetfloat(FILE *fp)
 
    float_ptr = (double *)&buf[0];
    return *float_ptr;
-}
-
-void fputfloat(double q, FILE *fp)
-{
-   int i;
-   char *float_ptr = (char *)&q;
-
-   for(i=0;i<4;i++) fputc(0, fp);
-   for(i=0;i<8;i++) fputc(float_ptr[i], fp);
-
-   return;
 }
 #else
 uint16_t rfgeti(RFILE *fp)
@@ -139,26 +118,12 @@ void rfputi(uint16_t word, RFILE *fp)
    rfputc(word >> 8, fp);
 }
 
-void fputi(uint16_t word, FILE *fp)
-{
-   fputc(word, fp);
-   fputc(word >> 8, fp);
-}
-
 void rfputl(uint32_t word, RFILE *fp)
 {
    rfputc(word, fp);
    rfputc(word >> 8, fp);
    rfputc(word >> 16, fp);
    rfputc(word >> 24, fp);
-}
-
-void fputl(uint32_t word, FILE *fp)
-{
-   fputc(word, fp);
-   fputc(word >> 8, fp);
-   fputc(word >> 16, fp);
-   fputc(word >> 24, fp);
 }
 
 double rfgetfloat(RFILE *fp)
@@ -186,17 +151,6 @@ double fgetfloat(FILE *fp)
    float_ptr = (double *)&buf[0];
    return *float_ptr;
 }
-
-void fputfloat(double q, FILE *fp)
-{
-   int i;
-   char *float_ptr = (char *)&q;
-
-   for(i=0;i<4;i++) fputc(0, fp);
-   for(i=0;i<8;i++) fputc(float_ptr[7 - i], fp);
-
-   return;
-}
 #endif
 
 // write a string to a file-- does NOT null-terminate it
@@ -204,13 +158,6 @@ void rfputstringnonull(const char *buf, RFILE *fp)
 {
    if (buf[0])
       rfprintf(fp, "%s", buf);
-}
-
-// write a string to a file-- does NOT null-terminate it
-void fputstringnonull(const char *buf, FILE *fp)
-{
-   if (buf[0])
-      fprintf(fp, "%s", buf);
 }
 
 bool rfverifystring(RFILE *fp, const char *str)
@@ -268,7 +215,7 @@ int random(int min, int max)
    return val + min;
 }
 
-uint32_t getrand()
+uint32_t getrand(void)
 {
    seed = (seed * 0x343FD) + 0x269EC3;
    return seed;
@@ -329,22 +276,6 @@ char rfbooleanread(RFILE *fp)
    return value;
 }
 
-// read a boolean value (a single bit) from a file
-char fbooleanread(FILE *fp)
-{
-   char value;
-
-   if (boolmask_r == 256)
-   {
-      boolbyte   = fgetc(fp);
-      boolmask_r = 1;
-   }
-
-   value        = (boolbyte & boolmask_r) ? 1:0;
-   boolmask_r <<= 1;
-   return value;
-}
-
 void rfbooleanwrite(char bit, RFILE *fp)
 {
    if (boolmask_w == 256)
@@ -360,29 +291,8 @@ void rfbooleanwrite(char bit, RFILE *fp)
    boolmask_w <<= 1;
 }
 
-void fbooleanwrite(char bit, FILE *fp)
-{
-   if (boolmask_w == 256)
-   {
-      fputc(boolbyte, fp);
-      boolmask_w = 1;
-      boolbyte = 0;
-   }
-
-   if (bit)
-      boolbyte |= boolmask_w;
-
-   boolmask_w <<= 1;
-}
-
 void rfbooleanflush(RFILE *fp)
 {
    rfputc(boolbyte, fp);
-   boolmask_w = 1;
-}
-
-void fbooleanflush(FILE *fp)
-{
-   fputc(boolbyte, fp);
    boolmask_w = 1;
 }
