@@ -6,7 +6,7 @@
 #include "options.h"
 namespace Options {
 
-class ODItem;
+struct ODItem;
 
 enum OD_TYPES
 {
@@ -54,7 +54,6 @@ private:
 	
 	struct { int x, y, w, h; } fCoords;
 	int fTextX;
-	bool fDismissOnFocus;
 };
 
 

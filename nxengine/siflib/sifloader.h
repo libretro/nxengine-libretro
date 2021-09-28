@@ -70,8 +70,6 @@ private:
 	
 	BList fIndex;			// index table from header (list of SIFIndexEntry)
 	CFILE *fFP;				// open file handle
-	
-	uint32_t fTotalDataAdded;	// for saving
 };
 
 
