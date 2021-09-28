@@ -97,13 +97,14 @@ SOURCES_CXX := $(CORE_DIR)/ai/ai.cpp \
 	       $(CORE_DIR)/ai/weed/weed.cpp
 
 SOURCES_CXX += $(CORE_DIR)/common/BList.cpp \
-	       $(CORE_DIR)/common/bufio.cpp \
 	       $(CORE_DIR)/common/DBuffer.cpp \
 	       $(CORE_DIR)/common/DString.cpp \
 	       $(CORE_DIR)/common/InitList.cpp \
 	       $(CORE_DIR)/common/StringList.cpp
 
-SOURCES_C   += $(CORE_DIR)/common/misc.c
+SOURCES_C   += $(CORE_DIR)/common/misc.c \
+	       $(CORE_DIR)/common/bufio.c
+
 
 SOURCES_CXX += $(CORE_DIR)/endgame/credits.cpp \
 	       $(CORE_DIR)/endgame/CredReader.cpp \

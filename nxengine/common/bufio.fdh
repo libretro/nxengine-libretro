@@ -3,14 +3,16 @@
 
 /* located in common/bufio.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //-----------------[referenced from common/bufio.cpp]----------------//
 uint8_t read_U8(const uint8_t **data, const uint8_t *data_end);
 uint16_t read_U16(const uint8_t **data, const uint8_t *data_end);
 uint32_t read_U32(const uint8_t **data, const uint8_t *data_end);
 uint32_t read_U24(const uint8_t **data, const uint8_t *data_end);
 
-/* located in common/stat.cpp */
-
-//-----------------[referenced from common/bufio.cpp]----------------//
-void staterr(const char *fmt, ...);
-
+#ifdef __cplusplus
+}
+#endif
