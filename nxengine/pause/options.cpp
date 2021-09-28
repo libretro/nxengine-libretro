@@ -47,7 +47,7 @@ void options_close()
 	while(FocusHolder *fh = optionstack.ItemAt(0))
 		delete fh;
 	
-	settings_save();
+	settings_save(NULL);
 }
 
 void options_tick()

@@ -72,7 +72,7 @@ bool pre_main(void)
 
    // load settings, or at least get the defaults,
    // so we know the initial screen resolution.
-   settings_load();
+   settings_load(NULL);
 
    NX_LOG("= Extracting Files =\n");
 
@@ -95,7 +95,7 @@ bool pre_main(void)
    rfclose(fp);
 
    settings->files_extracted = true;
-   settings_save();
+   settings_save(NULL);
 
    if (Graphics::init(settings->resolution))
    {

@@ -29,12 +29,9 @@ struct Settings
 	int input_mappings[INPUT_COUNT];
 };
 
-bool settings_load(Settings *settings=NULL);
-bool settings_save(Settings *settings=NULL);
+bool settings_load(Settings *settings);
+bool settings_save(Settings *settings);
 
 extern Settings *settings;
-extern Settings normal_settings;
-extern Settings replay_settings;
-
 
 #endif

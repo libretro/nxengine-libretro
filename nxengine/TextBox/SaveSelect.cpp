@@ -105,7 +105,7 @@ void TB_SaveSelect::Run_Input()
          game_save(fCurSel);
 
       settings->last_save_slot = fCurSel;
-      settings_save();		// record new save/load slot
+      settings_save(NULL);		// record new save/load slot
 
       SetVisible(false);
 
