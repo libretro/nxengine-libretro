@@ -69,7 +69,6 @@ static void Sprites_LoadSheetIfNeeded(int sheetno)
    {
       char pbm_name[1024];
       retro_create_path_string(pbm_name, sizeof(pbm_name), data_dir, sheetfiles.StringAt(sheetno));
-      NX_LOG("LoadSheetIfNeeded: %s\n", pbm_name);
 
 #ifdef _WIN32
       for (unsigned i = 0; i < sizeof(pbm_name); i++)
@@ -229,16 +228,10 @@ static bool load_sif(const char *fname)
       return 1;
 
    if (!(sheetdata = sif.FindSection(SIF_SECTION_SHEETS, &sheetdatalength)))
-   {
-      NX_ERR("load_sif: file '%s' missing SIF_SECTION_SHEETS\n", fname);
       return 1;
-   }
 
    if (!(spritesdata = sif.FindSection(SIF_SECTION_SPRITES, &spritesdatalength)))
-   {
-      NX_ERR("load_sif: file '%s' missing SIF_SECTION_SPRITES\n", fname);
       return 1;
-   }
 
    // decode sheets
    sheetfiles.MakeEmpty();
@@ -246,12 +239,9 @@ static bool load_sif(const char *fname)
       return 1;
 
    // decode sprites
-   if (SIFSpritesSect::Decode(spritesdata, spritesdatalength, \
+   if (SIFSpritesSect::Decode(spritesdata, spritesdatalength,
             &sprites[0], &num_sprites, MAX_SPRITES))
-   {
-      NX_ERR("load_sif: SIFSpritesSect decoder failed\n");
       return 1;
-   }
 
    sif.CloseFile();
 

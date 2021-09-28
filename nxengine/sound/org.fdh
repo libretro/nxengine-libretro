@@ -10,6 +10,11 @@ void visible_warning(const char *fmt, ...);
 /* located in sound/sslib.cpp */
 
 //-------------------[referenced from sound/org.cpp]-----------------//
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void SSReserveChannel(int c);
 void SSSetVolume(int c, int newvol);
 void SSAbortChannel(int c);
@@ -18,6 +23,9 @@ char SSChannelPlaying(int c);
 int SSGetCurUserData(int c);
 int SSGetSamplePos(int c);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in sound/org.cpp */
 

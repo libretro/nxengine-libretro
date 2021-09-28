@@ -31,103 +31,103 @@ SOURCES_C   += $(LIBRETRO_COMM_DIR)/streams/file_stream.c \
 endif
 
 SOURCES_CXX := $(CORE_DIR)/ai/ai.cpp \
-					$(CORE_DIR)/ai/balrog_common.cpp \
-					$(CORE_DIR)/ai/IrregularBBox.cpp \
-					$(CORE_DIR)/ai/almond/almond.cpp \
-					$(CORE_DIR)/ai/boss/balfrog.cpp \
-					$(CORE_DIR)/ai/boss/ballos.cpp \
-					$(CORE_DIR)/ai/boss/core.cpp \
-					$(CORE_DIR)/ai/boss/heavypress.cpp \
-					$(CORE_DIR)/ai/boss/ironhead.cpp \
-					$(CORE_DIR)/ai/boss/omega.cpp \
-					$(CORE_DIR)/ai/boss/sisters.cpp \
-					$(CORE_DIR)/ai/boss/undead_core.cpp \
-					$(CORE_DIR)/ai/boss/x.cpp \
-					$(CORE_DIR)/ai/egg/egg.cpp \
-					$(CORE_DIR)/ai/egg/egg2.cpp \
-					$(CORE_DIR)/ai/egg/igor.cpp \
-					$(CORE_DIR)/ai/final_battle/balcony.cpp \
-					$(CORE_DIR)/ai/final_battle/doctor.cpp \
-					$(CORE_DIR)/ai/final_battle/doctor_common.cpp \
-					$(CORE_DIR)/ai/final_battle/doctor_frenzied.cpp \
-					$(CORE_DIR)/ai/final_battle/final_misc.cpp \
-					$(CORE_DIR)/ai/final_battle/misery_finalbattle.cpp \
-					$(CORE_DIR)/ai/final_battle/sidekicks.cpp \
-					$(CORE_DIR)/ai/first_cave/first_cave.cpp \
-					$(CORE_DIR)/ai/hell/ballos_misc.cpp \
-					$(CORE_DIR)/ai/hell/ballos_priest.cpp \
-					$(CORE_DIR)/ai/hell/hell.cpp \
-					$(CORE_DIR)/ai/last_cave/last_cave.cpp \
-					$(CORE_DIR)/ai/maze/balrog_boss_missiles.cpp  \
-					$(CORE_DIR)/ai/maze/critter_purple.cpp \
-					$(CORE_DIR)/ai/maze/gaudi.cpp \
-					$(CORE_DIR)/ai/maze/labyrinth_m.cpp \
-					$(CORE_DIR)/ai/maze/pooh_black.cpp \
-					$(CORE_DIR)/ai/maze/maze.cpp \
-					$(CORE_DIR)/ai/npc/balrog.cpp \
-					$(CORE_DIR)/ai/npc/curly.cpp \
-					$(CORE_DIR)/ai/npc/curly_ai.cpp \
-					$(CORE_DIR)/ai/npc/misery.cpp \
-					$(CORE_DIR)/ai/npc/npcguest.cpp \
-					$(CORE_DIR)/ai/npc/npcplayer.cpp \
-					$(CORE_DIR)/ai/npc/npcregu.cpp \
-					$(CORE_DIR)/ai/oside/oside.cpp \
-					$(CORE_DIR)/ai/plantation/plantation.cpp \
-					$(CORE_DIR)/ai/sand/curly_boss.cpp \
-					$(CORE_DIR)/ai/sand/puppy.cpp \
-					$(CORE_DIR)/ai/sand/sand.cpp \
-					$(CORE_DIR)/ai/sand/toroko_frenzied.cpp \
-					$(CORE_DIR)/ai/sym/smoke.cpp \
-					$(CORE_DIR)/ai/sym/sym.cpp \
-					$(CORE_DIR)/ai/village/balrog_boss_running.cpp \
-					$(CORE_DIR)/ai/village/ma_pignon.cpp \
-					$(CORE_DIR)/ai/village/village.cpp \
-					$(CORE_DIR)/ai/weapons/blade.cpp \
-					$(CORE_DIR)/ai/weapons/bubbler.cpp \
-					$(CORE_DIR)/ai/weapons/fireball.cpp \
-					$(CORE_DIR)/ai/weapons/missile.cpp \
-					$(CORE_DIR)/ai/weapons/nemesis.cpp \
-					$(CORE_DIR)/ai/weapons/polar_mgun.cpp \
-					$(CORE_DIR)/ai/weapons/snake.cpp \
-					$(CORE_DIR)/ai/weapons/spur.cpp \
-					$(CORE_DIR)/ai/weapons/weapons.cpp \
-					$(CORE_DIR)/ai/weapons/whimstar.cpp \
-					$(CORE_DIR)/ai/weed/balrog_boss_flying.cpp \
-					$(CORE_DIR)/ai/weed/frenzied_mimiga.cpp \
-					$(CORE_DIR)/ai/weed/weed.cpp
+	       $(CORE_DIR)/ai/balrog_common.cpp \
+	       $(CORE_DIR)/ai/IrregularBBox.cpp \
+	       $(CORE_DIR)/ai/almond/almond.cpp \
+	       $(CORE_DIR)/ai/boss/balfrog.cpp \
+	       $(CORE_DIR)/ai/boss/ballos.cpp \
+	       $(CORE_DIR)/ai/boss/core.cpp \
+	       $(CORE_DIR)/ai/boss/heavypress.cpp \
+	       $(CORE_DIR)/ai/boss/ironhead.cpp \
+	       $(CORE_DIR)/ai/boss/omega.cpp \
+	       $(CORE_DIR)/ai/boss/sisters.cpp \
+	       $(CORE_DIR)/ai/boss/undead_core.cpp \
+	       $(CORE_DIR)/ai/boss/x.cpp \
+	       $(CORE_DIR)/ai/egg/egg.cpp \
+	       $(CORE_DIR)/ai/egg/egg2.cpp \
+	       $(CORE_DIR)/ai/egg/igor.cpp \
+	       $(CORE_DIR)/ai/final_battle/balcony.cpp \
+	       $(CORE_DIR)/ai/final_battle/doctor.cpp \
+	       $(CORE_DIR)/ai/final_battle/doctor_common.cpp \
+	       $(CORE_DIR)/ai/final_battle/doctor_frenzied.cpp \
+	       $(CORE_DIR)/ai/final_battle/final_misc.cpp \
+	       $(CORE_DIR)/ai/final_battle/misery_finalbattle.cpp \
+	       $(CORE_DIR)/ai/final_battle/sidekicks.cpp \
+	       $(CORE_DIR)/ai/first_cave/first_cave.cpp \
+	       $(CORE_DIR)/ai/hell/ballos_misc.cpp \
+	       $(CORE_DIR)/ai/hell/ballos_priest.cpp \
+	       $(CORE_DIR)/ai/hell/hell.cpp \
+	       $(CORE_DIR)/ai/last_cave/last_cave.cpp \
+	       $(CORE_DIR)/ai/maze/balrog_boss_missiles.cpp  \
+	       $(CORE_DIR)/ai/maze/critter_purple.cpp \
+	       $(CORE_DIR)/ai/maze/gaudi.cpp \
+	       $(CORE_DIR)/ai/maze/labyrinth_m.cpp \
+	       $(CORE_DIR)/ai/maze/pooh_black.cpp \
+	       $(CORE_DIR)/ai/maze/maze.cpp \
+	       $(CORE_DIR)/ai/npc/balrog.cpp \
+	       $(CORE_DIR)/ai/npc/curly.cpp \
+	       $(CORE_DIR)/ai/npc/curly_ai.cpp \
+	       $(CORE_DIR)/ai/npc/misery.cpp \
+	       $(CORE_DIR)/ai/npc/npcguest.cpp \
+	       $(CORE_DIR)/ai/npc/npcplayer.cpp \
+	       $(CORE_DIR)/ai/npc/npcregu.cpp \
+	       $(CORE_DIR)/ai/oside/oside.cpp \
+	       $(CORE_DIR)/ai/plantation/plantation.cpp \
+	       $(CORE_DIR)/ai/sand/curly_boss.cpp \
+	       $(CORE_DIR)/ai/sand/puppy.cpp \
+	       $(CORE_DIR)/ai/sand/sand.cpp \
+	       $(CORE_DIR)/ai/sand/toroko_frenzied.cpp \
+	       $(CORE_DIR)/ai/sym/smoke.cpp \
+	       $(CORE_DIR)/ai/sym/sym.cpp \
+	       $(CORE_DIR)/ai/village/balrog_boss_running.cpp \
+	       $(CORE_DIR)/ai/village/ma_pignon.cpp \
+	       $(CORE_DIR)/ai/village/village.cpp \
+	       $(CORE_DIR)/ai/weapons/blade.cpp \
+	       $(CORE_DIR)/ai/weapons/bubbler.cpp \
+	       $(CORE_DIR)/ai/weapons/fireball.cpp \
+	       $(CORE_DIR)/ai/weapons/missile.cpp \
+	       $(CORE_DIR)/ai/weapons/nemesis.cpp \
+	       $(CORE_DIR)/ai/weapons/polar_mgun.cpp \
+	       $(CORE_DIR)/ai/weapons/snake.cpp \
+	       $(CORE_DIR)/ai/weapons/spur.cpp \
+	       $(CORE_DIR)/ai/weapons/weapons.cpp \
+	       $(CORE_DIR)/ai/weapons/whimstar.cpp \
+	       $(CORE_DIR)/ai/weed/balrog_boss_flying.cpp \
+	       $(CORE_DIR)/ai/weed/frenzied_mimiga.cpp \
+	       $(CORE_DIR)/ai/weed/weed.cpp
 
 SOURCES_CXX += $(CORE_DIR)/common/BList.cpp \
-					$(CORE_DIR)/common/bufio.cpp \
-					$(CORE_DIR)/common/DBuffer.cpp \
-					$(CORE_DIR)/common/DString.cpp \
-					$(CORE_DIR)/common/InitList.cpp \
-					$(CORE_DIR)/common/misc.cpp \
-					$(CORE_DIR)/common/StringList.cpp
+	       $(CORE_DIR)/common/bufio.cpp \
+	       $(CORE_DIR)/common/DBuffer.cpp \
+	       $(CORE_DIR)/common/DString.cpp \
+	       $(CORE_DIR)/common/InitList.cpp \
+	       $(CORE_DIR)/common/misc.cpp \
+	       $(CORE_DIR)/common/StringList.cpp
 
 SOURCES_CXX += $(CORE_DIR)/endgame/credits.cpp \
-					$(CORE_DIR)/endgame/CredReader.cpp \
-					$(CORE_DIR)/endgame/island.cpp \
-					$(CORE_DIR)/endgame/endgame_misc.cpp
+	       $(CORE_DIR)/endgame/CredReader.cpp \
+	       $(CORE_DIR)/endgame/island.cpp \
+	       $(CORE_DIR)/endgame/endgame_misc.cpp
 
 SOURCES_CXX += $(EXTRACTDIR)/extractpxt.cpp \
-					$(EXTRACTDIR)/extractorg.cpp \
-					$(EXTRACTDIR)/extractstages.cpp \
-					$(EXTRACTDIR)/cachefiles.cpp
+	       $(EXTRACTDIR)/extractorg.cpp \
+	       $(EXTRACTDIR)/extractstages.cpp \
+	       $(EXTRACTDIR)/cachefiles.cpp
 
 SOURCES_CXX += $(CORE_DIR)/graphics/graphics.cpp \
-					$(CORE_DIR)/graphics/nxsurface.cpp \
-					$(CORE_DIR)/graphics/font.cpp \
-					$(CORE_DIR)/graphics/sprites.cpp \
-					$(CORE_DIR)/graphics/tileset.cpp
+	       $(CORE_DIR)/graphics/nxsurface.cpp \
+	       $(CORE_DIR)/graphics/font.cpp \
+	       $(CORE_DIR)/graphics/sprites.cpp \
+	       $(CORE_DIR)/graphics/tileset.cpp
 
 SOURCES_CXX += $(CORE_DIR)/intro/intro.cpp \
-					$(CORE_DIR)/intro/title.cpp
+	       $(CORE_DIR)/intro/title.cpp
 
 SOURCES_CXX += $(CORE_DIR)/pause/dialog.cpp \
-					$(CORE_DIR)/pause/message.cpp \
-					$(CORE_DIR)/pause/objects.cpp \
-					$(CORE_DIR)/pause/options.cpp \
-					$(CORE_DIR)/pause/pause.cpp
+	       $(CORE_DIR)/pause/message.cpp \
+	       $(CORE_DIR)/pause/objects.cpp \
+	       $(CORE_DIR)/pause/options.cpp \
+	       $(CORE_DIR)/pause/pause.cpp
 
 SOURCES_CXX += $(CORE_DIR)/libretro/libretro.cpp
 
@@ -135,44 +135,45 @@ SOURCES_CXX += $(CORE_DIR)/libretro/libretro.cpp
 SOURCES_CXX += $(CORE_DIR)/main.cpp
 
 SOURCES_CXX += $(CORE_DIR)/siflib/sectSprites.cpp \
-					$(CORE_DIR)/siflib/sectStringArray.cpp \
-					$(CORE_DIR)/siflib/sif.cpp \
-					$(CORE_DIR)/siflib/sifloader.cpp
+	       $(CORE_DIR)/siflib/sectStringArray.cpp \
+	       $(CORE_DIR)/siflib/sif.cpp \
+	       $(CORE_DIR)/siflib/sifloader.cpp
 
 SOURCES_CXX += $(CORE_DIR)/sound/org.cpp \
-					$(CORE_DIR)/sound/pxt.cpp \
-					$(CORE_DIR)/sound/sound.cpp \
-					$(CORE_DIR)/sound/sslib.cpp
+	       $(CORE_DIR)/sound/pxt.cpp \
+	       $(CORE_DIR)/sound/sound.cpp
+
+SOURCES_C   += $(CORE_DIR)/sound/sslib.c
 
 SOURCES_CXX += $(CORE_DIR)/TextBox/ItemImage.cpp \
-					$(CORE_DIR)/TextBox/SaveSelect.cpp \
-					$(CORE_DIR)/TextBox/StageSelect.cpp \
-					$(CORE_DIR)/TextBox/TextBox.cpp \
-					$(CORE_DIR)/TextBox/YesNoPrompt.cpp
+	       $(CORE_DIR)/TextBox/SaveSelect.cpp \
+	       $(CORE_DIR)/TextBox/StageSelect.cpp \
+	       $(CORE_DIR)/TextBox/TextBox.cpp \
+	       $(CORE_DIR)/TextBox/YesNoPrompt.cpp
 
 
 SOURCES_CXX += $(CORE_DIR)/autogen/AssignSprites.cpp \
-					$(CORE_DIR)/autogen/objnames.cpp
+	       $(CORE_DIR)/autogen/objnames.cpp
 
 SOURCES_CXX += $(CORE_DIR)/caret.cpp \
-					$(CORE_DIR)/floattext.cpp \
-					$(CORE_DIR)/game.cpp \
-					$(CORE_DIR)/input.cpp \
-					$(CORE_DIR)/inventory.cpp \
-					$(CORE_DIR)/map.cpp \
-					$(CORE_DIR)/map_system.cpp \
-					$(CORE_DIR)/niku.cpp \
-					$(CORE_DIR)/object.cpp \
-					$(CORE_DIR)/ObjManager.cpp \
-					$(CORE_DIR)/p_arms.cpp \
-					$(CORE_DIR)/player.cpp \
-					$(CORE_DIR)/playerstats.cpp \
-					$(CORE_DIR)/profile.cpp \
-					$(CORE_DIR)/screeneffect.cpp \
-					$(CORE_DIR)/settings.cpp \
-					$(CORE_DIR)/slope.cpp \
-					$(CORE_DIR)/stageboss.cpp \
-					$(CORE_DIR)/stagedata.cpp \
-					$(CORE_DIR)/statusbar.cpp \
-					$(CORE_DIR)/trig.cpp \
-					$(CORE_DIR)/tsc.cpp
+	       $(CORE_DIR)/floattext.cpp \
+	       $(CORE_DIR)/game.cpp \
+	       $(CORE_DIR)/input.cpp \
+	       $(CORE_DIR)/inventory.cpp \
+	       $(CORE_DIR)/map.cpp \
+	       $(CORE_DIR)/map_system.cpp \
+	       $(CORE_DIR)/niku.cpp \
+	       $(CORE_DIR)/object.cpp \
+	       $(CORE_DIR)/ObjManager.cpp \
+	       $(CORE_DIR)/p_arms.cpp \
+	       $(CORE_DIR)/player.cpp \
+	       $(CORE_DIR)/playerstats.cpp \
+	       $(CORE_DIR)/profile.cpp \
+	       $(CORE_DIR)/screeneffect.cpp \
+	       $(CORE_DIR)/settings.cpp \
+	       $(CORE_DIR)/slope.cpp \
+	       $(CORE_DIR)/stageboss.cpp \
+	       $(CORE_DIR)/stagedata.cpp \
+	       $(CORE_DIR)/statusbar.cpp \
+	       $(CORE_DIR)/trig.cpp \
+	       $(CORE_DIR)/tsc.cpp

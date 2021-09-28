@@ -88,10 +88,7 @@ bool sound_init(RFILE *fp)
       return 1;
 
    if (org_init(fp, ORG_VOLUME))
-   {
-      NX_ERR("Music failed to initialize\n");
       return 1;
-   }
 
    return 0;
 }
@@ -160,11 +157,8 @@ void music(int songno)
 	lastsong = cursong;
 	cursong  = songno;
 	
-	NX_LOG(" >> music(%d)\n", songno);
-	
 	if (songno != 0 && !should_music_play(songno, settings->music_enabled))
 	{
-		NX_WARN("Not playing track %d because music_enabled is %d\n", songno, settings->music_enabled);
 		org_stop();
 		return;
 	}
@@ -200,8 +194,6 @@ void music_set_enabled(int newstate)
 {
 	if (newstate != settings->music_enabled)
 	{
-		NX_LOG("music_set_enabled(%d)\n", newstate);
-		
 		settings->music_enabled = newstate;
 		bool play = should_music_play(cursong, newstate);
 		
@@ -222,9 +214,8 @@ static void start_track(int songno)
 		org_stop();
 		return;
 	}
-	
-   NX_LOG("start_track: %d\n\n", songno);
-	
+
+
 	if (!org_load(songno))
 		org_start(0);
 }

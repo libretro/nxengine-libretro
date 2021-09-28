@@ -14,7 +14,7 @@
 
 #define SDL_MIX_MAXVOLUME 128
 
-SSChannel channel[SS_NUM_CHANNELS];
+struct SSChannel channel[SS_NUM_CHANNELS];
 
 uint8_t *mixbuffer = NULL;
 int mix_pos;
@@ -24,9 +24,9 @@ int lockcount = 0;
 // add the contents of the chunk at head to the mix_buffer.
 // don't add more than bytes.
 // return the number of bytes that were added.
-static int AddBuffer(SSChannel *chan, int bytes)
+static int AddBuffer(struct SSChannel *chan, int bytes)
 {
-   SSChunk *chunk = &chan->chunks[chan->head];
+   struct SSChunk *chunk = &chan->chunks[chan->head];
 
    if (bytes > chunk->bytelength)
       bytes = chunk->bytelength;
@@ -118,8 +118,6 @@ char SSInit(void)
    for(int i=0;i<SS_NUM_CHANNELS;i++)
       channel[i].volume = SDL_MIX_MAXVOLUME;
 
-   NX_LOG("sslib: initilization was successful.\n");
-
    lockcount = 0;
    return 0;
 }
@@ -127,8 +125,8 @@ char SSInit(void)
 void SSClose(void)
 {
 	if (mixbuffer)
-      free(mixbuffer);
-   mixbuffer = NULL;
+		free(mixbuffer);
+	mixbuffer = NULL;
 }
 
 // reserves a channel so that it will not be 
@@ -167,22 +165,16 @@ int SSFindFreeChannel(void)
 int SSEnqueueChunk(int c, signed short *buffer, int len,
       int userdata, void(*FinishedCB)(int, int))
 {
-   SSChannel *chan;
-   SSChunk *chunk;
+   struct SSChannel *chan;
+   struct SSChunk *chunk;
 
    if (c >= SS_NUM_CHANNELS)
-   {
-      NX_ERR("SSEnqueueChunk: channel %d is higher than SS_NUM_CHANNELS\n", c);
       return -1;
-   }
 
    if (c < 0)
       c = SSFindFreeChannel();
    if (c==-1)
-   {
-      NX_ERR("SSEnqueueChunk: no available sound channels!\n");
       return -1;
-   }
 
    chan = &channel[c];
 
@@ -202,10 +194,7 @@ int SSEnqueueChunk(int c, signed short *buffer, int len,
    if (++chan->tail >= MAX_QUEUED_CHUNKS) chan->tail = 0;
 
    if (chan->tail==chan->head)
-   {
-      NX_ERR("SS: overqueued channel %d; Bad Things about to happen\n", c);
       return -1;
-   }
 
    return c;
 }
@@ -233,8 +222,6 @@ int SSGetCurUserData(int c)
 {
    if (channel[c].head != channel[c].tail)
       return (channel[c].chunks[channel[c].head].userdata);
-
-   NX_ERR("SSGetUserData: channel %d is not playing!\n", c);
    return -1;
 }
 
@@ -246,7 +233,6 @@ int SSGetSamplePos(int c)
 {
    if (channel[c].head != channel[c].tail)
       return (channel[c].chunks[channel[c].head].bytepos / 4);
-   NX_ERR("SSGetSamplePos: channel %d is not playing!\n", c);
    return -1;
 }
 

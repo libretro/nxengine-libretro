@@ -1,10 +1,13 @@
-
 #ifndef _SSLIB_H
 #define _SSLIB_H
 
 #define SAMPLE_RATE			22050
 #define MAX_QUEUED_CHUNKS		(180 +1)
 #define SS_NUM_CHANNELS			16
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 struct SSChunk
 {
@@ -23,7 +26,7 @@ struct SSChunk
 
 struct SSChannel
 {
-	SSChunk chunks[MAX_QUEUED_CHUNKS];
+	struct SSChunk chunks[MAX_QUEUED_CHUNKS];
 	int head, tail;
 	
 	int volume;
@@ -34,5 +37,9 @@ struct SSChannel
 	
 	void (*FinishedCB)(int channel, int chunkid);
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -33,31 +33,28 @@ bool Tileset::Load(int new_tileset)
 
    if (new_tileset != current_tileset)
    {
-      //char fname_tmp[1024];
-      if (tileset)
-      {
-         delete tileset;
-         current_tileset = -1;
-      }
-
 #ifdef _WIN32
-      char slash = '\\';
+	   char slash = '\\';
 #else
-      char slash = '/';
+	   char slash = '/';
 #endif
-      snprintf(fname, sizeof(fname), "%s%cPrt%s.pbm", stage_dir, slash, tileset_names[new_tileset]);
+	   //char fname_tmp[1024];
+	   if (tileset)
+	   {
+		   delete tileset;
+		   current_tileset = -1;
+	   }
 
-      //retro_create_path_string(fname_tmp, sizeof(fname_tmp), g_dir, fname);
+	   snprintf(fname, sizeof(fname), "%s%cPrt%s.pbm", stage_dir, slash, tileset_names[new_tileset]);
 
-      NX_LOG("Tileset::Load: %s\n", fname);
+	   // always use SDL_DisplayFormat on tilesets; 
+	   // they need to come out of 8-bit
+	   // so that we can replace the destroyable 
+	   // star tiles without them palletizing.
+	   if (!(tileset = NXSurface::FromFile(fname, true)))
+		   return 1;
 
-      // always use SDL_DisplayFormat on tilesets; they need to come out of 8-bit
-      // so that we can replace the destroyable star tiles without them palletizing.
-      tileset = NXSurface::FromFile(fname, true);
-      if (!tileset)
-         return 1;
-
-      current_tileset = new_tileset;
+	   current_tileset = new_tileset;
    }
 
    return 0;

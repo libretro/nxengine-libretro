@@ -4,10 +4,17 @@
 /* located in sound/sslib.cpp */
 
 //-------------------[referenced from sound/pxt.cpp]-----------------//
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int SSPlayChunk(int c, signed short *buffer, int len, int userdata, void(*FinishedCB)(int, int));
 int SSEnqueueChunk(int c, signed short *buffer, int len, int userdata, void(*FinishedCB)(int, int));
 void SSAbortChannel(int c);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in sound/pxt.cpp */
 

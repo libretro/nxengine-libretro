@@ -47,15 +47,12 @@ NXSurface::NXSurface()
 // allocate for an empty surface of the given size
 void *AllocNewSurface(uint32_t colorkey, int wd, int ht)
 {
-   SDL_Surface *surf = LRSDL_CreateRGBSurface(colorkey, wd, ht, SCREEN_BPP, RED_MASK << RED_SHIFT, GREEN_MASK << GREEN_SHIFT, BLUE_MASK << BLUE_SHIFT, 0);
+	SDL_Surface *surf = LRSDL_CreateRGBSurface(colorkey, wd, ht, SCREEN_BPP, RED_MASK << RED_SHIFT, GREEN_MASK << GREEN_SHIFT, BLUE_MASK << BLUE_SHIFT, 0);
 
-   if (!surf)
-   {
-      NX_ERR("AllocNewSurface: failed to allocate RGB surface\n");
-      return NULL;
-   }
+	if (!surf)
+		return NULL;
 
-   return surf;
+	return surf;
 }
 
 void FreeSurface(SDL_Surface *surface)
@@ -110,22 +107,19 @@ bool NXSurface::LoadImage(const char *pbm_name, bool use_colorkey)
 {
 	Free();
 
-   CFILE *cf = copen(pbm_name, "rb");
-   if (cf)
-   {
-      LRSDL_RWops *m = LRSDL_RWFromMem(cfile_pointer(cf), cfile_size(cf));
-      cclose(cf);
-      fSurface = LRSDL_LoadBMP_RW(m, 1);
-   }
-   else
-      fSurface = LRSDL_LoadBMP(pbm_name);
+	CFILE *cf = copen(pbm_name, "rb");
+	if (cf)
+	{
+		LRSDL_RWops *m = LRSDL_RWFromMem(cfile_pointer(cf), cfile_size(cf));
+		cclose(cf);
+		fSurface = LRSDL_LoadBMP_RW(m, 1);
+	}
+	else
+		fSurface = LRSDL_LoadBMP(pbm_name);
 
 	if (!fSurface)
-	{
-		NX_ERR("NXSurface::LoadImage: load failed of '%s'!\n", pbm_name);
 		return 1;
-	}
-	
+
 	uint8_t color = LRSDL_MapRGB(fSurface->format, 0, 0, 0);
 
 	// set colorkey to black if requested

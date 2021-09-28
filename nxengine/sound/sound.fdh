@@ -25,9 +25,16 @@ int music_lastsong();
 /* located in sound/sslib.cpp */
 
 //------------------[referenced from sound/sound.cpp]----------------//
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 char SSInit(void);
 void SSClose(void);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in sound/org.cpp */
 

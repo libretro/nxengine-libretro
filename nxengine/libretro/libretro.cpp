@@ -16,6 +16,20 @@
 #include "../input.h"
 #include "../nx.h"
 
+/* Forward declarations */
+extern "C" {
+	int64_t rfread(void* buffer,
+			size_t elem_size, size_t elem_count, RFILE* stream);
+	int rfputc(int character, RFILE * stream);
+	int rfgetc(RFILE* stream);
+	int rfclose(RFILE* stream);
+	int rferror(RFILE* stream);
+	RFILE* rfopen(const char *path, const char *mode);
+	int rfprintf(RFILE * stream, const char * format, ...);
+	int64_t rfwrite(void const* buffer,
+			size_t elem_size, size_t elem_count, RFILE* stream);
+}
+
 void post_main();
 bool run_main();
 
@@ -236,43 +250,46 @@ static void extract_directory(char *buf, const char *path, size_t size)
  */
 static bool retro_copy_file(const char* from, const char* to)
 {
-   // Open the file for reading.
-   FILE *fd1 = fopen(from, "r");
-   if (!fd1)
-      return false;
+	size_t l1;
+	unsigned char buffer[8192];
+	RFILE *fd2 = NULL;
+	RFILE *fd1 = rfopen(from, "r");
+	if (!fd1)
+		return false;
 
-   // Prepare the destination.
-   FILE *fd2 = fopen(to, "w");
-   if(!fd2)
-   {
-      fclose(fd1);
-      return false;
-   }
+	// Prepare the destination.
+	if (!(fd2 = rfopen(to, "w")))
+	{
+		rfclose(fd1);
+		return false;
+	}
 
-   // Prepare the buffer.
-   size_t l1;
-   unsigned char buffer[8192];
+	// Prepare the buffer.
 
-   // Loop through the from file through the buffer.
-   while((l1 = fread(buffer, 1, sizeof buffer, fd1)) > 0) {
-      // Write the data to the destination file.
-      size_t l2 = fwrite(buffer, 1, l1, fd2);
+	// Loop through the from file through the buffer.
+	while((l1 = rfread(buffer, 1, sizeof buffer, fd1)) > 0)
+	{
+		// Write the data to the destination file.
+		size_t l2 = rfwrite(buffer, 1, l1, fd2);
 
-      // Check if there was an error writing.
-      if (l2 < l1) {
-         // Display an error message.
-         if (ferror(fd2)) {
-            NX_ERR("Error copying profile from %s to %s\n", from, to);
-         }
-         else {
-            NX_ERR("Error copying profile, media full from %s to %s\n", from, to);
-         }
-         return false;
-      }
-   }
-   fclose(fd1);
-   fclose(fd2);
-   return true;
+		// Check if there was an error writing.
+		if (l2 < l1)
+		{
+			// Display an error message.
+			if (rferror(fd2))
+			{
+				NX_ERR("Error copying profile from %s to %s\n", from, to);
+			}
+			else
+			{
+				NX_ERR("Error copying profile, media full from %s to %s\n", from, to);
+			}
+			return false;
+		}
+	}
+	rfclose(fd1);
+	rfclose(fd2);
+	return true;
 }
 
 
@@ -347,7 +364,7 @@ void retro_reset(void)
 	game.reset();
 }
 
-void mixaudio(int16_t *stream, size_t len_samples);
+extern "C" void mixaudio(int16_t *stream, size_t len_samples);
 
 void retro_run(void)
 {

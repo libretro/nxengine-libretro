@@ -57,10 +57,7 @@ bool Graphics::InitVideo()
    pitch = 320 << 1;
 
    if (!sdl_screen)
-   {
-      NX_ERR("Graphics::InitVideo: error setting video mode\n");
       return 1;
-   }
 
    screen = new NXSurface(sdl_screen, false);
    if (!drawtarget) drawtarget = screen;
@@ -86,13 +83,12 @@ void Graphics::SetFullscreen(bool enable)
 // 3 - Windowed scale x3 (960x720)
 bool Graphics::SetResolution(int r, bool restoreOnFailure)
 {
-	NX_LOG("Graphics::SetResolution(%d)\n", r);
 	if (r == current_res)
 		return 0;
-	
+
 	if (Graphics::InitVideo())
 		return 1;
-	
+
 	if (Graphics::FlushAll())
 		return 1;
 

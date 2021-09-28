@@ -187,12 +187,9 @@ char pxt_init(void)
    int i;
 
    if (inited)
-   {
-      NX_ERR("pxt_init: pxt module already initialized\n");
       return 0;
-   }
-   else
-      inited = 1;
+
+   inited = 1;
 
    memset(sound_fx, 0, sizeof(sound_fx));
    for (i=0;i<256;i++)
@@ -227,7 +224,6 @@ char pxt_SetModel(stPXWave *pxwave, int m)
       pxwave->model_no = m;
       return 0;
    }
-   NX_ERR("pxt_SetModel: invalid sound model '%d'\n", m);
    return 1;
 }
 
@@ -489,10 +485,7 @@ static char AllocBuffers(stPXSound *snd)
       {
          snd->chan[i].buffer = (signed char *)malloc(snd->chan[i].size_blocks);
          if (!snd->chan[i].buffer)
-         {
-            NX_ERR("AllocBuffers (pxt): out of memory (1)!\n");
             return -1;
-         }
 
          if (snd->chan[i].size_blocks > topbufsize)
             topbufsize = snd->chan[i].size_blocks;
@@ -502,10 +495,7 @@ static char AllocBuffers(stPXSound *snd)
    // allocate the final buffer
    snd->final_buffer = (signed char *)malloc(topbufsize);
    if (!snd->final_buffer)
-   {
-      NX_ERR("AllocBuffers (pxt): out of memory (2)!\n");
       return -1;
-   }
 
    snd->final_size = topbufsize;
 
@@ -635,16 +625,7 @@ int pxt_Play(int chan, int slot, char loop)
          chan = SSPlayChunk(chan, sound_fx[slot].buffer, sound_fx[slot].len, slot, pxtSoundDone);
 
       sound_fx[slot].channel = chan;
-
-      if (chan < 0)
-      {
-         NX_ERR("pxt_Play: SSPlayChunk returned error\n");
-      }
       return chan;
-   }
-   else
-   {
-      NX_ERR("pxt_Play: sound slot 0x%02x not rendered\n", slot);
    }
 
    return -1;
@@ -691,13 +672,10 @@ char pxt_LoadSoundFX(RFILE *fp, int top)
    int slot;
    stPXSound snd;
 
-   NX_LOG("Loading Sound FX...\n");
    load_top = top;
 
    // get ready to do synthesis
    pxt_initsynth();
-
-   NX_LOG("= Extracting Files =\n");
 
    for(slot=1;slot<=top;slot++)
    {
@@ -782,14 +760,12 @@ char pxt_load(RFILE *fp, stPXSound *snd, int slot)
    if (extract_pxt(fp, slot, snd))
       goto error;
 
-   //NX_WARN("No extended section found; setting compatibility values.\n");
    for(i=0;i<PXT_NO_CHANNELS;i++)
    {
       memset(&snd->chan[i].pitch2, 0, sizeof(stPXWave));
       pxt_SetModel(&snd->chan[i].pitch2, 0);
    }
 
-   //NX_LOG("pxt_load: '%s' parsed ok\n", fname);
    return 0;
 
 error:
