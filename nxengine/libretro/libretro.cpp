@@ -107,7 +107,7 @@ void retro_get_system_info(struct retro_system_info *info)
    info->block_extract = false;
 }
 
-char g_dir[1024];
+extern "C" char g_dir[1024];
 
 void retro_set_controller_port_device(unsigned port, unsigned device)
 {
@@ -467,7 +467,7 @@ extern "C" void retro_create_path_string(char *fname, size_t fname_size, const c
 /**
  * Retrieve the desired save directory.
  */
-const char* retro_get_save_dir(void)
+extern "C" const char* retro_get_save_dir(void)
 {
    const char* dir = NULL;
 
