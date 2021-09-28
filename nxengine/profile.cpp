@@ -1,3 +1,4 @@
+#include <stdint.h>
 
 #include "nx.h"
 #include "profile.h"
@@ -227,11 +228,6 @@ bool profile_save(const char *pfname, Profile *file)
    return 0;
 }
 
-
-/*
-void c------------------------------() {}
-*/
-
 // returns the filename for a save file given it's number
 const char *GetProfileName(int num)
 {
@@ -262,6 +258,3 @@ bool AnyProfileExists(void)
 
    return false;
 }
-
-
-

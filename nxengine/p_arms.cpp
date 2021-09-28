@@ -127,28 +127,23 @@ void c------------------------------() {}
 // i.e. the fire button is down.
 void FireWeapon(void)
 {
-Weapon *curweapon = &player->weapons[player->curWeapon];
-int level = curweapon->level;
+	Weapon *curweapon = &player->weapons[player->curWeapon];
+	int level = curweapon->level;
 
 	// check if we can fire
 	if (curweapon->firerate[level] != 0)
 	{	// rapid/fully-auto fire
 		// decremented in RunWeapon()
 		if (curweapon->firetimer)
-		{
 			return;
-		}
-		else
-		{
-			curweapon->firetimer = curweapon->firerate[level];
-		}
+		curweapon->firetimer = curweapon->firerate[level];
 	}
 	else
 	{	// else must push key for each shot
 		if (lastpinputs[FIREKEY])
 			return;
 	}
-	
+
 	// check if we have enough ammo
 	if (curweapon->maxammo > 0 && curweapon->ammo <= 0)
 	{
@@ -158,59 +153,59 @@ int level = curweapon->level;
 			effect(player->CenterX(), player->CenterY(), EFFECT_EMPTY);
 			empty_timer = 50;
 		}
-		
+
 		return;
 	}
-	
+
 	// subtract ammo
 	if (curweapon->ammo)
 		curweapon->ammo--;
-	
+
 	// fire!!
 	switch(player->curWeapon)
 	{
 		case WPN_NONE: break;
-		
+
 		case WPN_POLARSTAR:
-			PFirePolarStar(level);
-		break;
-		
+			       PFirePolarStar(level);
+			       break;
+
 		case WPN_FIREBALL:
-			PFireFireball(level);
-		break;
-		
+			       PFireFireball(level);
+			       break;
+
 		case WPN_MGUN:
-			PFireMachineGun(level);
-		break;
-		
+			       PFireMachineGun(level);
+			       break;
+
 		case WPN_MISSILE:
 		case WPN_SUPER_MISSILE:
-			PFireMissile(level, (player->curWeapon == WPN_SUPER_MISSILE));
-		break;
-		
+			       PFireMissile(level, (player->curWeapon == WPN_SUPER_MISSILE));
+			       break;
+
 		case WPN_BLADE:
-			PFireBlade(level);
-		break;
-		
+			       PFireBlade(level);
+			       break;
+
 		case WPN_SNAKE:
-			PFireSnake(level);
-		break;
-		
+			       PFireSnake(level);
+			       break;
+
 		case WPN_NEMESIS:
-			PFireNemesis(level);
-		break;
-		
+			       PFireNemesis(level);
+			       break;
+
 		case WPN_BUBBLER:
-			PFireBubbler(level);
-		break;
-		
+			       PFireBubbler(level);
+			       break;
+
 		case WPN_SPUR:
-			PFireSpur();
-		break;
-		
+			       PFireSpur();
+			       break;
+
 		default:
-			sound(SND_BONK_HEAD);
-		break;
+			       sound(SND_BONK_HEAD);
+			       break;
 	}
 }
 
@@ -219,18 +214,18 @@ int level = curweapon->level;
 // firing = 1 if fire key is currently down, and 0 if it is not.
 void RunWeapon(bool firing)
 {
-Weapon *curweapon = &player->weapons[player->curWeapon];
-int level = curweapon->level;
+	Weapon *curweapon = &player->weapons[player->curWeapon];
+	int level = curweapon->level;
 
 	// bubbler L1 has recharge but not rapid fire,
 	// so it recharges even if the key is held down.
 	if (firing && !curweapon->firerate[level] && lastpinputs[FIREKEY])
 		firing = false;
-	
+
 	// recharge machine gun when it's not firing or it's not selected
-	if ((curweapon->rechargerate[level]) && \
-		(curweapon->ammo < curweapon->maxammo) && \
-		!firing)
+	if ((curweapon->rechargerate[level]) &&
+			(curweapon->ammo < curweapon->maxammo) &&
+			!firing)
 	{
 		// start recharging ammo
 		int rate = curweapon->rechargerate[level];
@@ -238,7 +233,7 @@ int level = curweapon->level;
 		{
 			rate = 2;
 		}
-		
+
 		// it's greater than OR EQUAL TO, so that we can have rate=0 be no recharge.
 		// Otherwise there would be no value that recharges every frame.
 		if (++curweapon->rechargetimer >= rate)
@@ -247,18 +242,16 @@ int level = curweapon->level;
 			curweapon->ammo++;
 		}
 	}
-	
+
 	for(int i=0;i<WPN_COUNT;i++)
 	{
 		if (player->weapons[i].firetimer)
 			player->weapons[i].firetimer--;
-		
-		if ((i != player->curWeapon) || \
-			(player->weapons[i].ammo >= player->weapons[i].maxammo) || \
-			firing)
-		{
+
+		if ((i != player->curWeapon) || 
+				(player->weapons[i].ammo >= player->weapons[i].maxammo) || 
+				firing)
 			player->weapons[i].rechargetimer = 0;
-		}
 	}
 }
 
@@ -336,22 +329,22 @@ void SetupBullet(Object *shot, int x, int y, int btype, int dir)
 // fire a basic, single bullet
 static Object *FireSimpleBullet(int otype, int btype, int xoff, int yoff)
 {
-int x, y, dir;
+	int x, y, dir;
 
 	// get location to fire from
 	GetPlayerShootPoint(&x, &y);
 	x += xoff;
 	y += yoff;
-	
+
 	// create the shot
 	Object *shot = CreateObject(0, 0, otype);
-	
+
 	// set up the shot
 	if (player->look)
 		dir = player->look;
 	else
 		dir = player->dir;
-	
+
 	SetupBullet(shot, x, y, btype, dir);
 	return shot;
 }
@@ -363,13 +356,13 @@ int x, y, dir;
 // this function does not.
 static Object *FireSimpleBulletOffset(int otype, int btype, int xoff, int yoff)
 {
-int dir;
+	int dir;
 
 	if (player->look)
 		dir = player->look;
 	else
 		dir = player->dir;
-	
+
 	switch(dir)
 	{
 		case RIGHT: break;	// already in format for RIGHT frame
@@ -377,11 +370,11 @@ int dir;
 		case UP: SWAP(xoff, yoff); yoff = -yoff; break;
 		case DOWN: SWAP(xoff, yoff); break;
 	}
-	
+
 	Object *shot = FireSimpleBullet(otype, btype);
 	shot->x += xoff;
 	shot->y += yoff;
-	
+
 	return shot;
 }
 
@@ -397,7 +390,7 @@ static void PFirePolarStar(int level)
 	{
 		int xoff;
 		if (level == 2) xoff = -5<<CSF; else xoff = -4<<CSF;
-		
+
 		FireSimpleBulletOffset(OBJ_POLAR_SHOT, B_PSTAR_L1+level, xoff, 0);
 	}
 }
@@ -409,16 +402,16 @@ void c------------------------------() {}
 // handles firing the Machine Gun
 static void PFireMachineGun(int level)
 {
-Object *shot;
-int x, y;
+	Object *shot;
+	int x, y;
 
 	int dir = (player->look) ? player->look : player->dir;
-	
+
 	if (level == 0)
 	{	// level 1 is real easy! no frickin' layers!!
 		shot = FireSimpleBullet(OBJ_POLAR_SHOT, B_MGUN_L1, 0, 0);
 		shot->dir = dir;
-		
+
 		if (player->look)
 			shot->xinertia = nx_random(-0xAA, 0xAA);
 		else
@@ -430,7 +423,7 @@ int x, y;
 		GetPlayerShootPoint(&x, &y);
 		FireLevel23MGun(x, y, level, dir);
 	}
-	
+
 	// do machine-gun flying
 	if (player->look==DOWN && level==2)
 	{
@@ -460,10 +453,8 @@ void FireLevel23MGun(int x, int y, int level, int dir)
 void PMgunFly(void)
 {
 	if (player->yinertia > 0)
-	{
 		player->yinertia >>= 1;
-	}
-	
+
 	if (player->yinertia > -0x400)
 	{
 		player->yinertia -= 0x200;
@@ -480,11 +471,11 @@ void c------------------------------() {}
 // is_super: bool: true if the player is firing the Super Missile Launcher
 static void PFireMissile(int level, bool is_super)
 {
-Object *o;
-int xoff, yoff;
+	Object *o;
+	int xoff, yoff;
 
 	int object_type = (!is_super) ? OBJ_MISSILE_SHOT : OBJ_SUPERMISSILE_SHOT;
-	
+
 	// can only fire one missile at once on L1,
 	// two missiles on L2, and two sets of three missiles on L3.
 	static const uint8_t max_missiles_at_once[] = { 1, 2, 6 };
@@ -494,13 +485,13 @@ int xoff, yoff;
 		player->weapons[player->curWeapon].ammo++;
 		return;
 	}
-	
+
 	int bullet_type = (!is_super) ? B_MISSILE_L1 : B_SUPER_MISSILE_L1;
 	bullet_type += level;
-	
+
 	// level 1 & 2 fires just one missile
 	FireSimpleBulletOffset(object_type, bullet_type, -4<<CSF, 0);
-	
+
 	// level 3 fires three missiles, they wave, and are "offset",
 	// so if it's level 3 fire two more missiles.
 	if (level == 2)
@@ -508,17 +499,17 @@ int xoff, yoff;
 		//									 norm	 super
 		static const int recoil_upper[] = { 0x500,  0xd00 };
 		static const int recoil_lower[] = { 0x700,  0x600 };
-		
+
 		if (player->look==DOWN || player->look==UP) { xoff = (4<<CSF); yoff = 0; }
-											   else { yoff = (4<<CSF); xoff = 0; }
-		
+		else { yoff = (4<<CSF); xoff = 0; }
+
 		// this one is higher
 		o = FireSimpleBullet(object_type, bullet_type, -xoff, -yoff);
 		if (o->shot.dir==LEFT) 		 o->xinertia = recoil_upper[is_super];
 		else if (o->shot.dir==RIGHT) o->xinertia = -recoil_upper[is_super];
 		else if (o->shot.dir==UP) 	 o->yinertia = recoil_upper[is_super];
 		else 						 o->yinertia = -recoil_upper[is_super];
-		
+
 		// this one is lower
 		o = FireSimpleBullet(object_type, bullet_type, xoff, yoff);
 		if (o->shot.dir==LEFT) 		 o->xinertia = recoil_lower[is_super];
@@ -534,16 +525,16 @@ void c------------------------------() {}
 
 static void PFireFireball(int level)
 {
-static const int object_types[] = { OBJ_FIREBALL1, OBJ_FIREBALL23, OBJ_FIREBALL23 };
-static uchar max_fireballs[] = { 2, 3, 4 };
-int count;
+	static const int object_types[] = { OBJ_FIREBALL1, OBJ_FIREBALL23, OBJ_FIREBALL23 };
+	static uchar max_fireballs[] = { 2, 3, 4 };
+	int count;
 
 	count = (CountObjectsOfType(OBJ_FIREBALL1) + CountObjectsOfType(OBJ_FIREBALL23));
 	if (count >= max_fireballs[level])
 	{
 		return;
 	}
-	
+
 	// the 8px offset fires the shot just a tiny bit behind the player--
 	// you can't see the difference but it makes the shot correctly bounce if
 	// you shoot while flat up against a wall, instead of embedding the fireball
@@ -551,23 +542,23 @@ int count;
 	Object *fb = FireSimpleBulletOffset(object_types[level], B_FIREBALL1 + level, -8<<CSF, 0);
 	fb->dir = player->dir;
 	fb->nxflags &= ~NXFLAG_NO_RESET_YINERTIA;
-	
+
 	switch(fb->shot.dir)
 	{
 		case LEFT: fb->xinertia = -0x400; break;
 		case RIGHT: fb->xinertia = 0x400; break;
-		
+
 		case UP:
-			fb->xinertia = player->xinertia + ((player->dir==RIGHT) ? 128 : -128);
-			if (player->xinertia) fb->dir = (player->xinertia > 0) ? RIGHT:LEFT;
-			fb->yinertia = -0x5ff;
-		break;
-		
+			    fb->xinertia = player->xinertia + ((player->dir==RIGHT) ? 128 : -128);
+			    if (player->xinertia) fb->dir = (player->xinertia > 0) ? RIGHT:LEFT;
+			    fb->yinertia = -0x5ff;
+			    break;
+
 		case DOWN:
-			fb->xinertia = player->xinertia;
-			if (player->xinertia) fb->dir = (player->xinertia > 0) ? RIGHT:LEFT;
-			fb->yinertia = 0x5ff;
-		break;
+			    fb->xinertia = player->xinertia;
+			    if (player->xinertia) fb->dir = (player->xinertia > 0) ? RIGHT:LEFT;
+			    fb->yinertia = 0x5ff;
+			    break;
 	}
 
 }
@@ -576,12 +567,12 @@ static void PFireBlade(int level)
 {
 	int numblades = CountObjectsOfType(OBJ_BLADE12_SHOT) + CountObjectsOfType(OBJ_BLADE3_SHOT);
 	if (numblades >= 1) return;
-	
+
 	int dir = (player->look) ? player->look : player->dir;
-	
+
 	int x = player->CenterX();
 	int y = player->CenterY();
-	
+
 	if (level == 2)
 	{
 		if (dir == RIGHT || dir == LEFT)
@@ -600,7 +591,7 @@ static void PFireBlade(int level)
 			case DOWN:  y -= (6 << CSF); break;
 		}
 	}
-	
+
 	Object *shot = CreateObject(x, y, (level != 2) ? OBJ_BLADE12_SHOT : OBJ_BLADE3_SHOT);
 	SetupBullet(shot, x, y, B_BLADE_L1+level, dir);
 }
@@ -614,12 +605,12 @@ static void PFireSnake(int level)
 	if (level == 2)
 	{
 		int count = (CountObjectsOfType(OBJ_SNAKE1_SHOT) + \
-					 CountObjectsOfType(OBJ_SNAKE23_SHOT));
-		
+				CountObjectsOfType(OBJ_SNAKE23_SHOT));
+
 		if (count >= 4)
 			return;
 	}
-	
+
 	int object_type = (level == 0) ? OBJ_SNAKE1_SHOT : OBJ_SNAKE23_SHOT;
 	FireSimpleBulletOffset(object_type, B_SNAKE_L1+level, -5<<CSF, 0);
 }
@@ -629,21 +620,21 @@ static void PFireNemesis(int level)
 {
 	if (CountObjectsOfType(OBJ_NEMESIS_SHOT) >= 2)
 		return;
-	
+
 	FireSimpleBullet(OBJ_NEMESIS_SHOT, B_NEMESIS_L1+level);
 }
 
 
 static void PFireBubbler(int level)
 {
-static const int max_bubbles[] = { 4, 16, 16 };
+	static const int max_bubbles[] = { 4, 16, 16 };
 
-	int count = CountObjectsOfType(OBJ_BUBBLER12_SHOT) + \
-				CountObjectsOfType(OBJ_BUBBLER3_SHOT);
-	
+	int count = CountObjectsOfType(OBJ_BUBBLER12_SHOT) +
+		    CountObjectsOfType(OBJ_BUBBLER3_SHOT);
+
 	if (count >= max_bubbles[level])
 		return;
-	
+
 	int objtype = (level != 2) ? OBJ_BUBBLER12_SHOT : OBJ_BUBBLER3_SHOT;
 	FireSimpleBulletOffset(objtype, B_BUBBLER_L1+level, -4<<CSF, 0);
 }
@@ -672,8 +663,8 @@ static void PFireSpur(void)
 // fires and handles charged shots
 static void PHandleSpur(void)
 {
-static const int FLASH_TIME = 10;
-Weapon *spur = &player->weapons[WPN_SPUR];
+	static const int FLASH_TIME = 10;
+	Weapon *spur = &player->weapons[WPN_SPUR];
 
 	if (player->curWeapon != WPN_SPUR)
 	{
@@ -681,14 +672,14 @@ Weapon *spur = &player->weapons[WPN_SPUR];
 		spur->xp = 0;
 		return;
 	}
-	
+
 	if (pinputs[FIREKEY])
 	{
 		if (!IsWeaponMaxed())
 		{
 			int amt = (player->equipmask & EQUIP_TURBOCHARGE) ? 3 : 2;
 			AddXP(amt, true);
-			
+
 			if (IsWeaponMaxed())
 			{
 				sound(SND_SPUR_MAXED);
@@ -705,7 +696,7 @@ Weapon *spur = &player->weapons[WPN_SPUR];
 		else
 		{	// keep flashing even once at max
 			statusbar.xpflashcount = FLASH_TIME;
-			
+
 			if (player->equipmask & EQUIP_WHIMSTAR)
 				add_whimstar(&player->whimstar);
 		}
@@ -719,14 +710,14 @@ Weapon *spur = &player->weapons[WPN_SPUR];
 				int level = IsWeaponMaxed() ? 2 : (spur->level - 1);
 				FireSimpleBulletOffset(OBJ_SPUR_SHOT, B_SPUR_L1+level, -4<<CSF, 0);
 			}
-			
+
 			spur->chargetimer = 0;
 		}
-		
+
 		spur->level = 0;
 		spur->xp = 0;
 	}
-	
+
 	if (statusbar.xpflashcount > FLASH_TIME)
 		statusbar.xpflashcount = FLASH_TIME;
 
@@ -736,7 +727,7 @@ static bool can_fire_spur(void)
 {
 	if (CountObjectsOfType(OBJ_SPUR_SHOT))
 		return false;
-	
+
 	return true;
 }
 
@@ -746,18 +737,3 @@ static bool IsWeaponMaxed(void)
 	Weapon *wpn = &player->weapons[player->curWeapon];
 	return (wpn->level == 2) && (wpn->xp == wpn->max_xp[2]);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -10,7 +10,7 @@ static void InitWeapon(int wpn, int l1, int l2, int l3, int maxammo=0);
 bool pinputs[INPUT_COUNT];
 bool lastpinputs[INPUT_COUNT];
 
-void PInitFirstTime()
+void PInitFirstTime(void)
 {
 	player->dir = RIGHT;
 	player->hp = player->maxHealth = 3;
@@ -45,7 +45,6 @@ void PInitFirstTime()
 	// initialize player repel points
 	PInitRepel();
 }
-
 
 static void InitWeapon(int wpn, int l1, int l2, int l3, int maxammo)
 {

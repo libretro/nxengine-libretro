@@ -6,7 +6,6 @@
 #include <stdint.h>
 #include <string.h>
 #include "settings.h"
-#include "nx.h"
 #include "settings.fdh"
 
 #include "libretro_shared.h"
@@ -24,8 +23,6 @@ bool settings_load(Settings *setfile)
 	
 	if (tryload(settings))
 	{
-		NX_LOG("No saved settings; using defaults.\n");
-		
 		memset(setfile, 0, sizeof(Settings));
 		setfile->resolution = 2;		// 640x480 Windowed, should be safe value
 		setfile->last_save_slot = 0;
@@ -72,21 +69,13 @@ static bool tryload(Settings *setfile)
    fp = filestream_open(setfilename_tmp, RETRO_VFS_FILE_ACCESS_READ, 
          RETRO_VFS_FILE_ACCESS_HINT_NONE);
    if (!fp)
-   {
-      NX_ERR("Couldn't open file %s.\n", setfilename_tmp);
       return 1;
-   }
-
-   NX_LOG("Loading settings...\n");
 
    setfile->version = 0;
    filestream_read(fp, setfile, sizeof(Settings));
 
    if (setfile->version != SETTINGS_VERSION)
-   {
-      NX_ERR("Wrong settings version %04x.\n", setfile->version);
       return 1;
-   }
 
    filestream_close(fp);
    return 0;
@@ -106,12 +95,7 @@ bool settings_save(Settings *setfile)
    fp = filestream_open(setfilename_tmp, RETRO_VFS_FILE_ACCESS_WRITE, 
          RETRO_VFS_FILE_ACCESS_HINT_NONE);
    if (!fp)
-   {
-      NX_ERR("Couldn't open file %s.\n", setfilename_tmp);
       return 1;
-   }
-
-   NX_LOG("Writing settings...\n");
 
    setfile->version = SETTINGS_VERSION;
    filestream_write(fp, setfile, sizeof(Settings));
