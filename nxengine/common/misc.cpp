@@ -37,13 +37,6 @@ uint16_t rfgeti(RFILE *fp)
    return value;
 }
 
-uint16_t fgeti(FILE *fp)
-{
-   uint16_t value;
-   fread(&value, 2, 1, fp);
-   return value;
-}
-
 uint32_t fgetl(FILE *fp)
 {
    uint32_t value;
@@ -119,13 +112,6 @@ uint16_t rfgeti(RFILE *fp)
 {
    uint16_t a = rfgetc(fp);
    uint16_t b = rfgetc(fp);
-   return (b << 8) | a;
-}
-
-uint16_t fgeti(FILE *fp)
-{
-   uint16_t a = fgetc(fp);
-   uint16_t b = fgetc(fp);
    return (b << 8) | a;
 }
 
@@ -235,20 +221,6 @@ bool rfverifystring(RFILE *fp, const char *str)
 
    for(i=0;i<stringlength;i++)
       if (rfgetc(fp) != str[i])
-	      result = 0;
-
-   return result;
-}
-
-// reads strlen(str) bytes from file fp, and returns true if they match "str"
-bool fverifystring(FILE *fp, const char *str)
-{
-   int i;
-   char result = 1;
-   int stringlength = strlen(str);
-
-   for(i=0;i<stringlength;i++)
-      if (fgetc(fp) != str[i])
 	      result = 0;
 
    return result;

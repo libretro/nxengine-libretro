@@ -13,18 +13,15 @@ void staterr(const char *fmt, ...);
 /* located in common/misc.cpp */
 
 //------------------[referenced from common/misc.cpp]----------------//
-uint16_t fgeti(FILE *fp);
 uint32_t fgetl(FILE *fp);
 void fputi(uint16_t word, FILE *fp);
 void fputl(uint32_t word, FILE *fp);
-uint16_t fgeti(FILE *fp);
 uint32_t fgetl(FILE *fp);
 void fputi(uint16_t word, FILE *fp);
 void fputl(uint32_t word, FILE *fp);
 double fgetfloat(FILE *fp);
 void fputfloat(double q, FILE *fp);
 void fputstringnonull(const char *buf, FILE *fp);
-bool fverifystring(FILE *fp, const char *str);
 void fgetline(FILE *fp, char *str, int maxlen);
 int random(int min, int max);
 uint32_t getrand();

@@ -77,5 +77,4 @@ void staterr(const char *fmt, ...);
 //-------------------[referenced from sound/org.cpp]-----------------//
 uint32_t fgetl(FILE *fp);
 void fputl(uint32_t word, FILE *fp);
-uint16_t fgeti(FILE *fp);
 

@@ -59,7 +59,6 @@ void stat(const char *fmt, ...);
 /* located in common/misc.cpp */
 
 //---------------------[referenced from ai/ai.cpp]-------------------//
-uint16_t fgeti(FILE *fp);
 uint32_t fgetl(FILE *fp);
 int random(int min, int max);
 

@@ -26,7 +26,6 @@ void staterr(const char *fmt, ...);
 /* located in common/misc.cpp */
 
 //--------------------[referenced from profile.cpp]------------------//
-bool fverifystring(FILE *fp, const char *str);
 uint32_t fgetl(FILE *fp);
 uint16_t fgeti(FILE *fp);
 void fresetboolean(void);
