@@ -5,6 +5,7 @@
 #include "libretro/libretro_shared.h"
 
 #include <streams/file_stream.h>
+#include <file/file_path.h>
 
 #define PF_WEAPONS_OFFS		0x38
 #define PF_CURWEAPON_OFFS	0x24
@@ -251,7 +252,7 @@ const char *GetProfileName(int num)
 // returns whether the given save file slot exists
 bool ProfileExists(int num)
 {
-   return file_exists(GetProfileName(num));
+   return path_is_valid(GetProfileName(num));
 }
 
 bool AnyProfileExists(void)

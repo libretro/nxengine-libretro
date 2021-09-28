@@ -36,5 +36,4 @@ void fputl(uint32_t word, FILE *fp);
 void fputi(uint16_t word, FILE *fp);
 void fbooleanwrite(char bit, FILE *fp);
 void fbooleanflush(FILE *fp);
-bool file_exists(const char *fname);
 

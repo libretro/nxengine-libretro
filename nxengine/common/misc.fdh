@@ -26,7 +26,6 @@ void fputfloat(double q, FILE *fp);
 void fputstringnonull(const char *buf, FILE *fp);
 bool fverifystring(FILE *fp, const char *str);
 void fgetline(FILE *fp, char *str, int maxlen);
-bool file_exists(const char *fname);
 int random(int min, int max);
 uint32_t getrand();
 void seedrand(uint32_t newseed);

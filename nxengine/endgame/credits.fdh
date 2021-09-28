@@ -53,5 +53,4 @@ void staterr(const char *fmt, ...);
 
 //----------------[referenced from endgame/credits.cpp]--------------//
 void maxcpy(char *dst, const char *src, int maxlen);
-bool file_exists(const char *fname);
 

@@ -281,14 +281,11 @@ char fname[MAXPATHLEN];
 	for(int i=0;i<MAX_BIGIMAGES;i++)
 	{
 		snprintf(fname, sizeof(fname), "%s%ccredit%02d.bmp", pic_dir, slash, i);
-		if (1);//file_exists(fname))
-		{
-			images[i] = NXSurface::FromFile(fname, false);
-			if (!images[i])
-				NX_ERR("BigImage::Init: image '%s' exists but seems corrupt!\n", fname);
-			else
-				NX_LOG("BigImage: loaded %s ok\n", fname);
-		}
+		images[i] = NXSurface::FromFile(fname, false);
+		if (!images[i])
+			NX_ERR("BigImage::Init: image '%s' exists but seems corrupt!\n", fname);
+		else
+			NX_LOG("BigImage: loaded %s ok\n", fname);
 	}
 	
 	return 0;

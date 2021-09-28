@@ -7,6 +7,7 @@
 
 #include <libretro.h>
 #include <streams/file_stream.h>
+#include <file/file_path.h>
 
 #include "libretro_shared.h"
 #include "../common/misc.fdh"
@@ -302,12 +303,12 @@ static void retro_init_saves(void)
          retro_create_path_string(gamedirProfile, sizeof(gamedirProfile), g_dir, profile_name);
 
          // Make sure the profile exists.
-         if (file_exists(gamedirProfile)) {
+         if (path_is_valid(gamedirProfile)) {
             // Create the profile's file path in the save directory.
             retro_create_path_string(savedirProfile, sizeof(savedirProfile), save_dir, profile_name);
 
             // Copy the file to the save directory only if it doesn't exist.
-            if (!file_exists(savedirProfile)) {
+            if (!path_is_valid(savedirProfile)) {
                if (retro_copy_file(gamedirProfile, savedirProfile)) {
                   NX_LOG("Copied profile %s to save directory at %s\n", gamedirProfile, savedirProfile);
                }

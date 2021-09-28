@@ -5,6 +5,7 @@
 #include "extract-auto/cachefiles.h"
 
 #include <streams/file_stream.h>
+#include <file/file_path.h>
 
 #ifdef _WIN32
 #include "msvc_compat.h"
@@ -49,7 +50,7 @@ static bool check_data_exists(void)
    retro_create_subpath_string(fname, sizeof(fname), g_dir, data_dir, "npc.tbl");
    NX_LOG("check_data_exists: %s\n", fname);
 
-   if (!file_exists(fname))
+   if (!path_is_valid(fname))
    {
       NX_ERR("Fatal Error\n");
 
@@ -131,7 +132,7 @@ bool pre_main(void)
    //game.switchstage.mapno = LOAD_GAME;
    //game.pause(GP_OPTIONS);
 
-   if (settings->skip_intro && file_exists(GetProfileName(settings->last_save_slot)))
+   if (settings->skip_intro && path_is_valid(GetProfileName(settings->last_save_slot)))
       game.switchstage.mapno = LOAD_GAME;
    else
       game.setmode(GM_INTRO);

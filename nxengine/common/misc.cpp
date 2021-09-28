@@ -269,18 +269,6 @@ void fgetline(FILE *fp, char *str, int maxlen)
    }
 }
 
-bool file_exists(const char *fname)
-{
-   FILE *fp = fopen(fname, "rb");
-   if (!fp) return 0;
-   fclose(fp);
-   return 1;
-}
-
-/*
-   void c------------------------------() {}
-   */
-
 static uint32_t seed = 0;
 
 // return a random number between min and max inclusive
