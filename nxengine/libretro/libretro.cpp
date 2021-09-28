@@ -454,7 +454,7 @@ void retro_create_subpath_string(char *fname, size_t fname_size, const char * di
 	snprintf(fname, fname_size, "%s%c%s%c%s", dir, slash, subdir, slash, filename);
 }
 
-void retro_create_path_string(char *fname, size_t fname_size, const char * dir, const char * filename)
+extern "C" void retro_create_path_string(char *fname, size_t fname_size, const char * dir, const char * filename)
 {
 #ifdef _WIN32
 	char slash = '\\';

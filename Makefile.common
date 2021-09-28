@@ -163,7 +163,6 @@ SOURCES_CXX += $(CORE_DIR)/caret.cpp \
 	       $(CORE_DIR)/inventory.cpp \
 	       $(CORE_DIR)/map.cpp \
 	       $(CORE_DIR)/map_system.cpp \
-	       $(CORE_DIR)/niku.cpp \
 	       $(CORE_DIR)/object.cpp \
 	       $(CORE_DIR)/ObjManager.cpp \
 	       $(CORE_DIR)/p_arms.cpp \
@@ -178,3 +177,6 @@ SOURCES_CXX += $(CORE_DIR)/caret.cpp \
 	       $(CORE_DIR)/statusbar.cpp \
 	       $(CORE_DIR)/trig.cpp \
 	       $(CORE_DIR)/tsc.cpp
+
+SOURCES_C   += $(CORE_DIR)/niku.c
+	       

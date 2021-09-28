@@ -87,8 +87,15 @@ void UnlockInventoryInput(void);
 /* located in niku.cpp */
 
 //----------------------[referenced from tsc.cpp]--------------------//
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 bool niku_save(uint32_t value);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in ai/sym/smoke.cpp */
 

@@ -7,7 +7,15 @@
 
 void retro_create_subpath_string(char *fname, size_t fname_size, const char * dir, const char * subdir, const char * filename);
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void retro_create_path_string(char *fname, size_t fname_size, const char * dir, const char * filename);
+
+#ifdef __cplusplus
+}
+#endif
 
 const char* retro_get_save_dir(void);
 

@@ -23,19 +23,26 @@ bool buttonjustpushed(void);
 
 /* located in niku.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //------------------[referenced from intro/title.cpp]----------------//
 bool niku_load(uint32_t *value_out);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in intro/title.cpp */
 
 //------------------[referenced from intro/title.cpp]----------------//
 bool title_init(int param);
-void title_tick();
+void title_tick(void);
 static void selectoption(int index);
-static void handle_input();
-static void draw_title();
-void run_konami_code();
+static void handle_input(void);
+static void draw_title(void);
+void run_konami_code(void);
 
 
 /* located in graphics/font.cpp */
