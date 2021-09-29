@@ -16,7 +16,7 @@ extern "C" {
 
 stMap map;
 
-extern MapRecord stages[MAX_STAGES];
+extern "C" MapRecord stages[MAX_STAGES];
 int num_stages;
 
 #define MAX_BACKDROPS			32

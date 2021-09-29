@@ -90,6 +90,7 @@ files[] =
 };
 
 char *org_data[42];
+signed short wavetable[100][256];
 static int org_extracted;
 
 bool extract_org(RFILE *exefp)

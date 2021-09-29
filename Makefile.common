@@ -176,10 +176,9 @@ SOURCES_CXX += $(CORE_DIR)/caret.cpp \
 	       $(CORE_DIR)/settings.cpp \
 	       $(CORE_DIR)/slope.cpp \
 	       $(CORE_DIR)/stageboss.cpp \
-	       $(CORE_DIR)/stagedata.cpp \
 	       $(CORE_DIR)/statusbar.cpp \
 	       $(CORE_DIR)/trig.cpp \
 	       $(CORE_DIR)/tsc.cpp
 
-SOURCES_C   += $(CORE_DIR)/niku.c
-	       
+SOURCES_C   += $(CORE_DIR)/niku.c \
+	       $(CORE_DIR)/stagedata.c

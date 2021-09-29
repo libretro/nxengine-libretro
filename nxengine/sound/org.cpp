@@ -40,7 +40,7 @@ static bool buffers_full;
 
 static int OrgVolume;
 
-signed short wavetable[100][256];
+extern "C" signed short wavetable[100][256];
 
 // sound effect numbers which correspond to the drums
 static const unsigned char drum_pxt[] =
@@ -197,7 +197,7 @@ uint32_t a, b, c, d;
 	return (d<<24)|(c<<16)|(b<<8)|(a);
 }
 
-extern char *org_data[42];
+extern "C" char *org_data[42];
 
 char org_load(int songno)
 {

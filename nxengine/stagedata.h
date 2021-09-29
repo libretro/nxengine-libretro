@@ -7,10 +7,6 @@
 #define NUM_BACKDROPS		12
 #define NUM_TILESETS		22
 
-extern const char *backdrop_names[];
-extern const char *tileset_names[];
-
-
 #define NPCSET_GUEST		 0
 #define NPCSET_0		 1
 #define NPCSET_EGGS1		 2
@@ -46,5 +42,15 @@ extern const char *tileset_names[];
 #define NPCSET_BALLOS		 32
 #define NPCSET_ISLAND		 33
 
+#ifdef __cplusplus
+extern "C" {
 #endif
 
+extern const char *backdrop_names[];
+extern const char *tileset_names[];
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
