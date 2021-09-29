@@ -499,6 +499,8 @@ bool cachefiles_init(RFILE *exefp)
    unsigned i;
    for (i = 0; i < sizeof(filenames) / sizeof(filenames[0]); i++)
    {
+      RFILE *f;
+      char fname[1024];
       struct hash_struct *entry;
       // reentrancy test
       HASH_FIND_STR(filemap, filenames[i], entry);
@@ -508,9 +510,8 @@ bool cachefiles_init(RFILE *exefp)
       entry = (struct hash_struct *) calloc(sizeof(struct hash_struct), 1);
       if (!entry)
          continue;
-      char fname[1024];
       retro_create_path_string(fname, sizeof(fname), g_dir, filenames[i]);
-      RFILE *f = rfopen(fname, "rb");
+      f = rfopen(fname, "rb");
       if (!f)
       {
          if (!strcmp(filenames[i], "data" SLASH "sprites.sif"))
