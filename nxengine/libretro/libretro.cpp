@@ -28,11 +28,11 @@ unsigned retro_frame_buffer_pitch;
 retro_log_printf_t log_cb;
 static retro_video_refresh_t video_cb;
 static retro_input_poll_t poll_cb;
-retro_input_state_t input_cb;
+extern "C" retro_input_state_t input_cb;
 static retro_audio_sample_batch_t audio_batch_cb;
 static retro_environment_t environ_cb;
 
-bool libretro_supports_bitmasks = false;
+extern "C" bool libretro_supports_bitmasks = false;
 
 static unsigned g_frame_cnt;
 
