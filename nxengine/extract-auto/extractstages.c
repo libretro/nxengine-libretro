@@ -75,13 +75,14 @@ static int find_index(const char *fname, const char *list[])
 bool extract_stages(RFILE *exefp)
 {
 	int i;
+	const char *error = NULL;
+
 	// load raw data into struct
 	rfseek(exefp, DATA_OFFSET, SEEK_SET);
 	rfread(exemapdata, sizeof(struct EXEMapRecord), _NMAPS, exefp);
 
 	// convert the data
 	memset(stages, 0, sizeof(stages));
-	const char *error = NULL;
 
 	for(i=0;i<_NMAPS;i++)
 	{
