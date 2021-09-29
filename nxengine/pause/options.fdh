@@ -21,9 +21,17 @@ void Clear();
 
 /* located in input.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //-----------------[referenced from pause/options.cpp]---------------//
 bool justpushed(int k);
 const char *input_get_name(int index);
+
+#ifdef __cplusplus
+}
+#endif
 
 /* located in pause/options.cpp */
 

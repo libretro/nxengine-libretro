@@ -80,9 +80,16 @@ ScriptInstance *StartScript(int scriptno, int pageno);
 
 /* located in input.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //--------------------[referenced from player.cpp]-------------------//
 bool justpushed(int k);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in ai/weapons/whimstar.cpp */
 

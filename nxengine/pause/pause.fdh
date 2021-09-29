@@ -3,9 +3,16 @@
 
 /* located in input.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //------------------[referenced from pause/pause.cpp]----------------//
 bool justpushed(int k);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in pause/pause.cpp */
 

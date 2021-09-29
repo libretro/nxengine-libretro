@@ -31,8 +31,16 @@ bool load_stage(int stage_no);
 /* located in profile.cpp */
 
 //---------------------[referenced from main.cpp]--------------------//
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 const char *GetProfileName(int num);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in settings.cpp */
 
@@ -57,18 +65,19 @@ void tsc_close(void);
 
 /* located in input.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //---------------------[referenced from main.cpp]--------------------//
 bool input_init(void);
 void input_close(void);
 void input_poll(void);
 bool justpushed(int k);
 
-
-/* located in replay.cpp */
-
-//---------------------[referenced from main.cpp]--------------------//
-const char *GetReplayName(int slotno, char *buffer);
-
+#ifdef __cplusplus
+}
+#endif
 
 /* located in trig.cpp */
 

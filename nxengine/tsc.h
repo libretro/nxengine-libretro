@@ -150,6 +150,14 @@ bool JumpScript(int newscriptno, int pageno=-1);
 
 #define OP_TEXT		0xfa		// mine, denotes start of text
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int CVTDir(int csdir);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

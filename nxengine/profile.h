@@ -7,6 +7,10 @@
 // to write a savefile then tack their own data onto the end.
 #define PROFILE_LENGTH		0x604
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct Profile
 {
 	int stage;
@@ -16,25 +20,33 @@ struct Profile
 	uint32_t equipmask;
 	
 	int curWeapon;
+        // 14 is WPN_COUNT
 	struct
 	{
 		bool hasWeapon;
 		int level;
 		int xp;
 		int ammo, maxammo;
-	} weapons[WPN_COUNT];
+	} weapons[14];
 	
-	int inventory[MAX_INVENTORY];
+        // 42 is MAX_INVENTORY
+	int inventory[42];
 	int ninventory;
 	
-	bool flags[NUM_GAMEFLAGS];
+        // 8000 is NUM_GAMEFLAGS
+	bool flags[8000];
 	
+        // 8 is NUM_TELEPORTER_SLOTS
 	struct
 	{
 		int slotno;
 		int scriptno;
-	} teleslots[NUM_TELEPORTER_SLOTS];
+	} teleslots[8];
 	int num_teleslots;
 };
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

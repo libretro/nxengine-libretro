@@ -60,9 +60,16 @@ void stat_NextWeapon(bool quiet);
 
 /* located in input.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //--------------------[referenced from p_arms.cpp]-------------------//
 bool justpushed(int k);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in ai/weapons/whimstar.cpp */
 

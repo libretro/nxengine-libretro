@@ -3,16 +3,22 @@
 
 /* located in input.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //---------------------[referenced from input.cpp]-------------------//
 bool input_init(void);
 const char *input_get_name(int index);
-void input_set_mappings(int *array);
 void input_poll(void);
 void input_close(void);
 bool buttondown(void);
 bool buttonjustpushed(void);
 bool justpushed(int k);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in sound/sound.cpp */
 

@@ -66,8 +66,6 @@ bool settings_load(Settings *setfile)
 		return 1;
 	}
 
-	input_set_mappings(settings->input_mappings);
-
 	return 0;
 }
 

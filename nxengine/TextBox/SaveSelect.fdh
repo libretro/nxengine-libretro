@@ -21,10 +21,17 @@ static void DrawHealth(int xright, int y, Profile *p);
 
 /* located in profile.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //--------------[referenced from TextBox/SaveSelect.cpp]-------------//
 bool profile_load(const char *pfname, Profile *file);
 const char *GetProfileName(int num);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in settings.cpp */
 
@@ -59,10 +66,17 @@ ScriptInstance *GetCurrentScriptInstance();
 
 /* located in input.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //--------------[referenced from TextBox/SaveSelect.cpp]-------------//
 bool justpushed(int k);
 bool buttonjustpushed(void);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in graphics/font.cpp */
 

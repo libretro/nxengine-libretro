@@ -19,12 +19,18 @@ Caret *effect(int x, int y, int effectno);
 ScriptInstance *GetCurrentScriptInstance();
 void StopScripts(void);
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* located in input.cpp */
 
 //------------------[referenced from intro/intro.cpp]----------------//
 bool buttonjustpushed(void);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in intro/intro.cpp */
 

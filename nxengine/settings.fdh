@@ -7,8 +7,3 @@
 bool settings_load(Settings *setfile);
 static bool tryload(Settings *setfile);
 bool settings_save(Settings *setfile);
-
-/* located in input.cpp */
-
-//-------------------[referenced from settings.cpp]------------------//
-void input_set_mappings(int *array);

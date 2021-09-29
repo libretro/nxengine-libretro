@@ -10,10 +10,17 @@ void StopScripts(void);
 
 /* located in input.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //--------------[referenced from TextBox/StageSelect.cpp]------------//
 bool justpushed(int k);
 bool buttondown(void);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in sound/sound.cpp */
 

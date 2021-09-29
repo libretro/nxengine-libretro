@@ -7,25 +7,19 @@
 signed int sin_table[256];
 signed int tan_table[64];
 
+// converts from 0-256 scale to 0-360 scale, then from degrees to radians
+#define PIBT 	((360.00f / 256.00f) * (3.14159265f / 180.00f))
 
 char trig_init(void)
 {
-int degrees;
+	int degrees;
 
-// converts from 0-256 scale to 0-360 scale, then from degrees to radians
-	#define PIBT 	((360.00f / 256.00f) * (3.14159265f / 180.00f))
-	
 	for(degrees=0;degrees<256;degrees++)
-	{
 		sin_table[degrees] = (int)(sin((double)degrees * PIBT) * (1 << CSF));
-	}
-	
+
 	for(degrees=0;degrees<64;degrees++)
-	{
 		tan_table[degrees] = (int)(tan((double)degrees * PIBT) * (1 << 13));
-	}
-	
-	//SetFullscreen(1);
+
 	return 0;
 }
 
@@ -41,68 +35,73 @@ void vector_from_angle(uint8_t angle, int speed, int *xs, int *ys)
 	
 	if (xs)
 	{
-		angle += 64;			// wraps at 255 because it's a char
-		*xs = sin_table[angle];
+		// wraps at 255 because it's a char
+		angle += 64;			
+		*xs    = sin_table[angle];
 		
-		// what's going on here is that when we calculated sin_table, we could not hold the
-		// fractional (0-1.00f) values outputted from sin(), so we scaled them from 0-0x200.
-		// so now we basically are >>= CSFing the value back to it's original 0-1.00, then
-		// multiplying by speed. We're just doing it backwards so as the precision will stay.
-		// which is ok because multiplication and division are on the same level of OoO.
-		*xs *= speed; *xs >>= CSF;
+		// what's going on here is that when we 
+                // calculated sin_table, we could not hold the
+		// fractional (0-1.00f) values outputted from 
+                // sin(), so we scaled them from 0-0x200.
+		// so now we basically are >>= CSFing the 
+                // value back to it's original 0-1.00, then
+		// multiplying by speed. We're just doing it 
+                // backwards so as the precision will stay.
+		// which is OK because multiplication and 
+                // division are on the same level of OoO.
+		*xs  *= speed;
+		*xs >>= CSF;
 	}
 }
 
 int xinertia_from_angle(uint8_t angle, int speed)
 {
-	angle += 64;
-	int xs = sin_table[angle];
-	xs *= speed; xs >>= CSF;
+        int xs;
+	angle  += 64;
+	xs      = sin_table[angle];
+	xs     *= speed; xs >>= CSF;
 	
 	return xs;
 }
 
 int yinertia_from_angle(uint8_t angle, int speed)
 {
-	int ys = sin_table[angle];
-	ys *= speed; ys >>= CSF;
-	
+	int ys  = sin_table[angle];
+	ys     *= speed; ys >>= CSF;
 	return ys;
 }
 
 // give it your position and a target position, and it tells you what angle you should travel at.
 uint8_t GetAngle(int curx, int cury, int tgtx, int tgty)
 {
-int xdist, ydist;
-int ratio;
-int angle;
+	int ratio;
+	int angle;
+	int xdist = (tgtx - curx);
+	int ydist = (tgty - cury);
 
-	xdist = (tgtx - curx);
-	ydist = (tgty - cury);
-	
+	// fixup for undefined slope
 	if (xdist==0)
-	{	// fixup for undefined slope
-		if (tgty > cury) return 0x40;		// straight down
-		return 0xC0;						// straight up
+	{	
+		if (tgty > cury)
+			return 0x40; // straight down
+		return 0xC0; // straight up
 	}
-	
-	// (ydist / xdist) * 512	[scale it for integer floating point]
+
 	ratio = (abs(ydist) << 13) / abs(xdist);
-	
+
 	if (ratio > tan_table[63])
-	{
 		angle = 0x40;
-	}
 	else
 	{
 		for(angle=0;angle<64;angle++)
-		{
-			if (tan_table[angle] >= ratio) break;
-		}
+			if (tan_table[angle] >= ratio)
+				break;
 	}
-	
-	if (curx > tgtx) angle = 0x80 - angle;
-	if (cury > tgty) angle = 0x100 - angle;
+
+	if (curx > tgtx)
+		angle = 0x80 - angle;
+	if (cury > tgty)
+		angle = 0x100 - angle;
 	return angle;
 }
 
@@ -116,9 +115,7 @@ void c------------------------------() {}
 //  * introduce "rand_variance" random error/variation into the launch angle.
 void EmFireAngledShot(Object *o, int objtype, int rand_variance, int speed)
 {
-Object *shot;
-
-	shot = SpawnObjectAtActionPoint(o, objtype);
+	Object *shot = SpawnObjectAtActionPoint(o, objtype);
 	ThrowObjectAtPlayer(shot, rand_variance, speed);
 }
 
@@ -137,23 +134,17 @@ void ThrowObjectAtPlayer(Object *o, int rand_variance, int speed)
 void ThrowObject(Object *o, int destx, int desty, int rand_variance, int speed)
 {
 	uint8_t angle = GetAngle(o->x, o->y, destx, desty);
-	
+
 	if (rand_variance)
 		angle += nx_random(-rand_variance, rand_variance);
-	
+
 	ThrowObjectAtAngle(o, angle, speed);
 }
 
-// toss object o along angle angle at speed speed
+/* toss object o along angle angle at speed speed */
 void ThrowObjectAtAngle(Object *o, uint8_t angle, int speed)
 {
 	o->yinertia = (sin_table[angle] * speed) >> CSF;
 	angle += 64;
 	o->xinertia = (sin_table[angle] * speed) >> CSF;
 }
-
-
-
-
-
-

@@ -9,10 +9,17 @@ void Clear();
 
 /* located in input.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //-----------------[referenced from pause/dialog.cpp]----------------//
 bool buttonjustpushed(void);
 bool justpushed(int k);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in graphics/font.cpp */
 

@@ -1147,13 +1147,13 @@ int cmdip;
 void c------------------------------() {}
 */
 
-int CVTDir(int csdir)
+extern "C" int CVTDir(int csdir)
 {
-const int cdir_to_nxdir[4] = { LEFT, UP, RIGHT, DOWN };
+	const int cdir_to_nxdir[4] = { LEFT, UP, RIGHT, DOWN };
 
 	if (csdir >= 0 && csdir < 4)
 		return cdir_to_nxdir[csdir];
-	
+
 	NX_ERR("CVTDir: invalid direction %d, returning LEFT\n", csdir);
 	return LEFT;
 }

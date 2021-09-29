@@ -1,6 +1,11 @@
-
 #ifndef _INPUT_H
 #define _INPUT_H
+
+#include <boolean.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 enum INPUTS
 {
@@ -42,5 +47,9 @@ extern bool inputs[INPUT_COUNT];
 extern bool lastinputs[INPUT_COUNT];
 extern int last_sdl_key;
 extern unsigned controller_device;
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -25,10 +25,17 @@ void StopScripts(void);
 
 /* located in input.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //-------------------[referenced from inventory.cpp]-----------------//
 bool justpushed(int k);
 bool buttonjustpushed(void);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in inventory.cpp */
 

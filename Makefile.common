@@ -5,15 +5,15 @@ endif
 INCFLAGS := -I$(CORE_DIR) -I$(CORE_DIR)/graphics -I$(CORE_DIR)/libretro -I$(LIBRETRO_COMM_DIR)/include -I$(CORE_DIR)/sdl/include 
 
 SOURCES_C   := $(CORE_DIR)/sdl/SDL_error.c \
-					$(CORE_DIR)/sdl/file/SDL_rwops.c \
-					$(CORE_DIR)/sdl/video/SDL_blit.c \
-					$(CORE_DIR)/sdl/video/SDL_blit_0.c \
-					$(CORE_DIR)/sdl/video/SDL_blit_1.c \
-					$(CORE_DIR)/sdl/video/SDL_blit_A.c \
-					$(CORE_DIR)/sdl/video/SDL_blit_N.c \
-					$(CORE_DIR)/sdl/video/SDL_bmp.c \
-					$(CORE_DIR)/sdl/video/SDL_pixels.c \
-					$(CORE_DIR)/sdl/video/SDL_surface.c
+	       $(CORE_DIR)/sdl/file/SDL_rwops.c \
+	       $(CORE_DIR)/sdl/video/SDL_blit.c \
+	       $(CORE_DIR)/sdl/video/SDL_blit_0.c \
+	       $(CORE_DIR)/sdl/video/SDL_blit_1.c \
+	       $(CORE_DIR)/sdl/video/SDL_blit_A.c \
+	       $(CORE_DIR)/sdl/video/SDL_blit_N.c \
+	       $(CORE_DIR)/sdl/video/SDL_bmp.c \
+	       $(CORE_DIR)/sdl/video/SDL_pixels.c \
+	       $(CORE_DIR)/sdl/video/SDL_surface.c
 
 ifneq ($(STATIC_LINKING), 1)
 SOURCES_C   += $(LIBRETRO_COMM_DIR)/streams/file_stream.c \
@@ -162,7 +162,6 @@ SOURCES_CXX += $(CORE_DIR)/autogen/AssignSprites.cpp \
 SOURCES_CXX += $(CORE_DIR)/caret.cpp \
 	       $(CORE_DIR)/floattext.cpp \
 	       $(CORE_DIR)/game.cpp \
-	       $(CORE_DIR)/input.cpp \
 	       $(CORE_DIR)/inventory.cpp \
 	       $(CORE_DIR)/map.cpp \
 	       $(CORE_DIR)/map_system.cpp \
@@ -171,7 +170,6 @@ SOURCES_CXX += $(CORE_DIR)/caret.cpp \
 	       $(CORE_DIR)/p_arms.cpp \
 	       $(CORE_DIR)/player.cpp \
 	       $(CORE_DIR)/playerstats.cpp \
-	       $(CORE_DIR)/profile.cpp \
 	       $(CORE_DIR)/screeneffect.cpp \
 	       $(CORE_DIR)/settings.cpp \
 	       $(CORE_DIR)/slope.cpp \
@@ -181,4 +179,6 @@ SOURCES_CXX += $(CORE_DIR)/caret.cpp \
 	       $(CORE_DIR)/tsc.cpp
 
 SOURCES_C   += $(CORE_DIR)/niku.c \
-	       $(CORE_DIR)/stagedata.c
+	       $(CORE_DIR)/input.c \
+	       $(CORE_DIR)/stagedata.c \
+	       $(CORE_DIR)/profile.c

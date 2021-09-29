@@ -3,10 +3,17 @@
 
 /* located in profile.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //------------------[referenced from intro/title.cpp]----------------//
-bool AnyProfileExists();
+bool AnyProfileExists(void);
 bool ProfileExists(int num);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in statusbar.cpp */
 
@@ -16,16 +23,15 @@ void niku_draw(int value, bool force_white);
 
 /* located in input.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //------------------[referenced from intro/title.cpp]----------------//
 bool justpushed(int k);
 bool buttonjustpushed(void);
 
-
 /* located in niku.cpp */
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 //------------------[referenced from intro/title.cpp]----------------//
 bool niku_load(uint32_t *value_out);

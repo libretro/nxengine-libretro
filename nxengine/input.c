@@ -1,6 +1,5 @@
 
-#include "nx.h"
-#include "input.fdh"
+#include "input.h"
 #include "libretro.h"
 
 unsigned int mappings[INPUT_COUNT];
@@ -30,10 +29,6 @@ const char *input_get_name(int index)
       return "invalid";
 
    return input_names[index];
-}
-
-void input_set_mappings(int *array)
-{
 }
 
 /*

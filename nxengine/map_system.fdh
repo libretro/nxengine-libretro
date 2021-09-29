@@ -9,9 +9,16 @@ void DrawScene(void);
 
 /* located in input.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //------------------[referenced from map_system.cpp]-----------------//
 bool buttondown(void);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in map_system.cpp */
 

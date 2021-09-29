@@ -39,10 +39,18 @@ bool load_stage(int stage_no);
 /* located in profile.cpp */
 
 //---------------------[referenced from game.cpp]--------------------//
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 bool profile_load(const char *pfname, Profile *file);
 const char *GetProfileName(int num);
 bool profile_save(const char *pfname, Profile *file);
 
+#ifdef __cplusplus
+}
+#endif
 
 /* located in slope.cpp */
 

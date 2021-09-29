@@ -1,12 +1,12 @@
 #include <stdint.h>
-
-#include "nx.h"
-#include "profile.h"
-#include "profile.fdh"
-#include "libretro/libretro_shared.h"
+#include <string.h>
 
 #include <streams/file_stream.h>
 #include <file/file_path.h>
+
+#include "profile.h"
+#include "profile.fdh"
+#include "libretro/libretro_shared.h"
 
 #define PF_WEAPONS_OFFS		0x38
 #define PF_CURWEAPON_OFFS	0x24
@@ -17,31 +17,30 @@
 #define MAX_WPN_SLOTS		8
 #define MAX_TELE_SLOTS		8
 
-extern "C" {
-	int64_t rfseek(RFILE* stream, int64_t offset, int origin);
-	int rfclose(RFILE* stream);
-	int rfgetc(RFILE* stream);
-	RFILE* rfopen(const char *path, const char *mode);
-	int rfprintf(RFILE * stream, const char * format, ...);
+// forward declarations
+int64_t rfseek(RFILE* stream, int64_t offset, int origin);
+int rfclose(RFILE* stream);
+int rfgetc(RFILE* stream);
+RFILE* rfopen(const char *path, const char *mode);
+int rfprintf(RFILE * stream, const char * format, ...);
 
-	uint32_t rfgetl(RFILE *fp);
-	uint16_t rfgeti(RFILE *fp);
-	void rfputl(uint32_t word, RFILE *fp);
-	void rfputi(uint16_t word, RFILE *fp);
-	char rfbooleanread(RFILE *fp);
-	void rfputstringnonull(const char *buf, RFILE *fp);
-	void rfbooleanwrite(char bit, RFILE *fp);
-	bool rfverifystring(RFILE *fp, const char *str);
-	void rfbooleanflush(RFILE *fp);
-}
+uint32_t rfgetl(RFILE *fp);
+uint16_t rfgeti(RFILE *fp);
+void rfputl(uint32_t word, RFILE *fp);
+void rfputi(uint16_t word, RFILE *fp);
+char rfbooleanread(RFILE *fp);
+void rfputstringnonull(const char *buf, RFILE *fp);
+void rfbooleanwrite(char bit, RFILE *fp);
+bool rfverifystring(RFILE *fp, const char *str);
+void rfbooleanflush(RFILE *fp);
 
 // load savefile #num into the given Profile structure.
-bool profile_load(const char *pfname, Profile *file)
+bool profile_load(const char *pfname, struct Profile *file)
 {
    int i, curweaponslot;
    RFILE *fp = rfopen(pfname, "rb");
 
-   memset(file, 0, sizeof(Profile));
+   memset(file, 0, sizeof(struct Profile));
 
    if (!fp)
       return 1;
@@ -60,9 +59,9 @@ bool profile_load(const char *pfname, Profile *file)
    file->num_whimstars = rfgeti(fp);
    file->hp            = rfgeti(fp);
 
-   rfgeti(fp);						// unknown value
-   curweaponslot       = rfgetl(fp);		// current weapon (slot, not number, converted below)
-   rfgetl(fp);						// unknown value
+   rfgeti(fp);				// unknown value
+   curweaponslot       = rfgetl(fp);	// current weapon (slot, not number, converted below)
+   rfgetl(fp);				// unknown value
    file->equipmask     = rfgetl(fp);	// equipped items
 
    // load weapons
@@ -92,7 +91,9 @@ bool profile_load(const char *pfname, Profile *file)
    /* load inventory */
    file->ninventory = 0;
    rfseek(fp, PF_INVENTORY_OFFS, SEEK_SET);
-   for(i=0;i<MAX_INVENTORY;i++)
+
+   // 42 is MAX_INVENTORY
+   for(i = 0; i < 42; i++)
    {
       int item = rfgetl(fp);
       if (!item)
@@ -105,7 +106,8 @@ bool profile_load(const char *pfname, Profile *file)
    file->num_teleslots = 0;
    rfseek(fp, PF_TELEPORTER_OFFS, SEEK_SET);
 
-   for(i=0;i<NUM_TELEPORTER_SLOTS;i++)
+   // 8 is NUM_TELEPORTER_SLOTS
+   for(i = 0; i < 8; i++)
    {
       int slotno   = rfgetl(fp);
       int scriptno = rfgetl(fp);
@@ -120,13 +122,12 @@ bool profile_load(const char *pfname, Profile *file)
    /* load flags */
    rfseek(fp, PF_FLAGS_OFFS, SEEK_SET);
    if (!rfverifystring(fp, "FLAG"))
-   {
-      NX_ERR("profile_load: missing 'FLAG' marker\n");
       goto error;
-   }
 
    fresetboolean();
-   for(i=0;i<NUM_GAMEFLAGS;i++)
+ 
+   // 8000 is NUM_GAMEFLAGS
+   for(i = 0; i < 8000; i++)
       file->flags[i] = rfbooleanread(fp);
 
    rfclose(fp);
@@ -138,7 +139,7 @@ error:
 }
 
 
-bool profile_save(const char *pfname, Profile *file)
+bool profile_save(const char *pfname, struct Profile *file)
 {
    int i, slotno = 0, curweaponslot = 0;
    RFILE *fp = rfopen(pfname, "wb");
@@ -153,7 +154,8 @@ bool profile_save(const char *pfname, Profile *file)
 
    rfputl(file->px, fp);
    rfputl(file->py, fp);
-   rfputl((file->pdir == RIGHT) ? 2:0, fp);
+   // 0 is RIGHT 
+   rfputl((file->pdir == 0) ? 2:0, fp);
 
    rfputi(file->maxhp, fp);
    rfputi(file->num_whimstars, fp);
@@ -165,7 +167,8 @@ bool profile_save(const char *pfname, Profile *file)
    /* save weapons */
    rfseek(fp, PF_WEAPONS_OFFS, SEEK_SET);
 
-   for(i = 0; i < WPN_COUNT; i++)
+   // 14 is WPN_COUNT
+   for(i = 0; i < 14; i++)
    {
       if (file->weapons[i].hasWeapon)
       {
@@ -219,7 +222,9 @@ bool profile_save(const char *pfname, Profile *file)
    rfputstringnonull("FLAG", fp);
 
    fresetboolean();
-   for(i=0;i<NUM_GAMEFLAGS;i++)
+
+   // 8000 is NUM_GAMEFLAGS
+   for(i = 0; i < 8000; i++)
       rfbooleanwrite(file->flags[i], fp);
 
    rfbooleanflush(fp);
@@ -252,7 +257,9 @@ bool ProfileExists(int num)
 
 bool AnyProfileExists(void)
 {
-   for(int i=0;i<MAX_SAVE_SLOTS;i++)
+   int i;
+   // 5 is MAX_SAVE_SLOTS
+   for(i = 0; i < 5; i++)
       if (ProfileExists(i))
          return true;
 
