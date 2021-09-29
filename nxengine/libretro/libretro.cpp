@@ -354,5 +354,5 @@ extern "C" const char* retro_get_save_dir(void)
 extern "C" int16_t input_state_wrap(unsigned port, unsigned device,
       unsigned index, unsigned id)
 {
-	input_cb(port, device, index, id);
+	return input_cb(port, device, index, id);
 }
