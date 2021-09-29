@@ -8,7 +8,7 @@ bool lastinputs[INPUT_COUNT];
 int last_sdl_key;
 unsigned controller_device;
 
-int16_t input_state_wrap(unsigned port, unsigned device,
+int16_t input_state_wrapper(unsigned port, unsigned device,
       unsigned index, unsigned id);
 
 bool input_init(void)
@@ -45,7 +45,7 @@ void input_poll(void)
    if(libretro_supports_bitmasks && (mappings[LEFTKEY] == RETRO_DEVICE_ID_JOYPAD_LEFT))
    {
       unsigned ino;
-      int16_t joypad_bits = input_state_wrap(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_MASK);
+      int16_t joypad_bits = input_state_wrapper(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_MASK);
       for (ino = 0; ino < F4KEY; ino++)
       {
          int rcode = mappings[ino];
@@ -74,12 +74,12 @@ void input_poll(void)
          if (ino != F3KEY)
          {
             if (rcode != RETROK_DUMMY)
-               inputs[ino] = input_state_wrap(0, controller_device, 0, rcode);
+               inputs[ino] = input_state_wrapper(0, controller_device, 0, rcode);
          }
          else
          {
             static bool old;
-            bool input  = input_state_wrap(0, controller_device, 0, rcode);
+            bool input  = input_state_wrapper(0, controller_device, 0, rcode);
 
             inputs[ino] = input && !old;
             old         = input;
