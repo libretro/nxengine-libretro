@@ -62,7 +62,8 @@ const char *npcsetnames[] =
 
 static int find_index(const char *fname, const char *list[])
 {
-	for(int i=0;list[i];i++)
+        int i;
+	for(i=0;list[i];i++)
 	{
 		if (!strcasecmp(list[i], fname))
 			return i;
