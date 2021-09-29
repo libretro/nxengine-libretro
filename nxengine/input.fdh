@@ -5,8 +5,6 @@
 
 //---------------------[referenced from input.cpp]-------------------//
 bool input_init(void);
-void input_remap(int keyindex, int sdl_key);
-int input_get_mapping(int keyindex);
 const char *input_get_name(int index);
 void input_set_mappings(int *array);
 void input_poll(void);

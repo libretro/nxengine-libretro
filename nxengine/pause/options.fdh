@@ -24,8 +24,6 @@ void Clear();
 //-----------------[referenced from pause/options.cpp]---------------//
 bool justpushed(int k);
 const char *input_get_name(int index);
-void input_remap(int keyindex, int sdl_key);
-
 
 /* located in pause/options.cpp */
 

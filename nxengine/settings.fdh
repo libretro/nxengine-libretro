@@ -12,4 +12,3 @@ bool settings_save(Settings *setfile);
 
 //-------------------[referenced from settings.cpp]------------------//
 void input_set_mappings(int *array);
-int input_get_mapping(int keyindex);
