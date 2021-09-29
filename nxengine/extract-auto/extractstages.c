@@ -5,13 +5,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include "../common/StringList.h"
 #include "../common/basics.h"
 #include "../libretro/libretro_shared.h"
 #include "../stagedata.h"
 #include "../maprecord.h"
 #include "extractstages.fdh"
-#include "../nx_logger.h"
 
 #ifdef _WIN32
 #include "../libretro/msvc_compat.h"
@@ -19,23 +17,20 @@
 
 #include <streams/file_stream.h>
 
-#define NMAPS			95
+#define _NMAPS			95
 #define DATA_OFFSET		0x937B0
 
-/* Forward declarations */
-extern "C" {
-	int64_t rftell(RFILE* stream);
-	int64_t rfseek(RFILE* stream, int64_t offset, int origin);
-	int64_t rfread(void* buffer,
-			size_t elem_size, size_t elem_count, RFILE* stream);
-	int rfputc(int character, RFILE * stream);
-	int rfgetc(RFILE* stream);
-	int rfclose(RFILE* stream);
-	RFILE* rfopen(const char *path, const char *mode);
-	int rfprintf(RFILE * stream, const char * format, ...);
-	int64_t rfwrite(void const* buffer,
-			size_t elem_size, size_t elem_count, RFILE* stream);
-}
+int64_t rftell(RFILE* stream);
+int64_t rfseek(RFILE* stream, int64_t offset, int origin);
+int64_t rfread(void* buffer,
+		size_t elem_size, size_t elem_count, RFILE* stream);
+int rfputc(int character, RFILE * stream);
+int rfgetc(RFILE* stream);
+int rfclose(RFILE* stream);
+RFILE* rfopen(const char *path, const char *mode);
+int rfprintf(RFILE * stream, const char * format, ...);
+int64_t rfwrite(void const* buffer,
+		size_t elem_size, size_t elem_count, RFILE* stream);
 
 struct EXEMapRecord
 {
@@ -49,8 +44,8 @@ struct EXEMapRecord
 	char caption[35];
 };
 
-EXEMapRecord exemapdata[NMAPS];
-MapRecord stages[MAX_STAGES];
+struct EXEMapRecord exemapdata[_NMAPS];
+struct MapRecord stages[MAX_STAGES];
 
 // the NPC set system isn't used by NXEngine, but the information
 // is used in a few places to figure out which sprite to be drawn.
@@ -68,11 +63,11 @@ const char *npcsetnames[] =
 static int find_index(const char *fname, const char *list[])
 {
 	for(int i=0;list[i];i++)
-   {
-      if (!strcasecmp(list[i], fname))
-         return i;
-   }
-	
+	{
+		if (!strcasecmp(list[i], fname))
+			return i;
+	}
+
 	return 0xff;
 }
 
@@ -81,13 +76,13 @@ bool extract_stages(RFILE *exefp)
 	int i;
 	// load raw data into struct
 	rfseek(exefp, DATA_OFFSET, SEEK_SET);
-	rfread(exemapdata, sizeof(EXEMapRecord), NMAPS, exefp);
+	rfread(exemapdata, sizeof(struct EXEMapRecord), _NMAPS, exefp);
 
 	// convert the data
 	memset(stages, 0, sizeof(stages));
 	const char *error = NULL;
 
-	for(i=0;i<NMAPS;i++)
+	for(i=0;i<_NMAPS;i++)
 	{
 		strcpy(stages[i].filename, exemapdata[i].filename);
 		strcpy(stages[i].stagename, exemapdata[i].caption);
@@ -114,12 +109,7 @@ bool extract_stages(RFILE *exefp)
 	}
 
 	if (error)
-	{
-		NX_ERR("didn't recognize map %s name\n", error);
-		NX_ERR("on stage %d\n", i);
-
 		return 1;
-	}
 
 	return 0;
 }

@@ -15,7 +15,7 @@ struct MapRecord
 	uint8_t NPCset1;
 	uint8_t NPCset2;
 };
-extern MapRecord stages[MAX_STAGES];
+extern struct MapRecord stages[MAX_STAGES];
 extern int num_stages;
 
 #define STAGE_SAND					10

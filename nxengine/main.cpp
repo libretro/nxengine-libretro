@@ -42,7 +42,7 @@ extern "C" {
 			size_t elem_size, size_t elem_count, RFILE* stream);
 }
 
-extern bool extract_stages(RFILE *exefp);
+extern "C" bool extract_stages(RFILE *exefp);
 
 static bool check_data_exists(void)
 {

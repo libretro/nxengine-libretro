@@ -1,11 +1,11 @@
+#include <stdio.h>
+#include <string.h>
+
 #include "cachefiles.h"
 #include "../common/basics.h"
 #include "../libretro/libretro_shared.h"
-#include "../nx.h"
 #include "sprites_sif.h"
 #include "uthash.h"
-#include <stdio.h>
-#include <string.h>
 
 #include <streams/file_stream.h>
 
@@ -17,19 +17,17 @@ struct file_data
 };
 
 /* Forward declarations */
-extern "C" {
-	int64_t rftell(RFILE* stream);
-	int64_t rfseek(RFILE* stream, int64_t offset, int origin);
-	int64_t rfread(void* buffer,
-			size_t elem_size, size_t elem_count, RFILE* stream);
-	int rfputc(int character, RFILE * stream);
-	int rfgetc(RFILE* stream);
-	int rfclose(RFILE* stream);
-	RFILE* rfopen(const char *path, const char *mode);
-	int rfprintf(RFILE * stream, const char * format, ...);
-	int64_t rfwrite(void const* buffer,
-			size_t elem_size, size_t elem_count, RFILE* stream);
-}
+int64_t rftell(RFILE* stream);
+int64_t rfseek(RFILE* stream, int64_t offset, int origin);
+int64_t rfread(void* buffer,
+		size_t elem_size, size_t elem_count, RFILE* stream);
+int rfputc(int character, RFILE * stream);
+int rfgetc(RFILE* stream);
+int rfclose(RFILE* stream);
+RFILE* rfopen(const char *path, const char *mode);
+int rfprintf(RFILE * stream, const char * format, ...);
+int64_t rfwrite(void const* buffer,
+		size_t elem_size, size_t elem_count, RFILE* stream);
 
 #ifdef _WIN32
 #define SLASH "\\"
@@ -512,7 +510,6 @@ bool cachefiles_init(RFILE *exefp)
          continue;
       char fname[1024];
       retro_create_path_string(fname, sizeof(fname), g_dir, filenames[i]);
-      NX_DBG("%s\n", fname);
       RFILE *f = rfopen(fname, "rb");
       if (!f)
       {
@@ -550,16 +547,16 @@ bool cachefiles_init(RFILE *exefp)
    
    for (i = 0; i < sizeof(bmp_files) / sizeof(bmp_files[0]); i++)
    {
+      size_t hoff;
       struct hash_struct *entry;
       // reentrancy test
       HASH_FIND_STR(filemap, bmp_files[i].filename, entry);
       if (entry)
          continue;
-      NX_DBG("%s\n", bmp_files[i].filename);
       entry = (struct hash_struct *) calloc(sizeof(struct hash_struct), 1);
       if (!entry)
          continue;
-      size_t hoff = bmp_files[i].header ? 25 : 0;
+      hoff           = bmp_files[i].header ? 25 : 0;
       entry->fd.size = bmp_files[i].length + hoff;
       entry->fd.data = (uint8_t *) malloc(entry->fd.size);
       if (!entry->fd.data)
@@ -571,10 +568,9 @@ bool cachefiles_init(RFILE *exefp)
       rfseek(exefp, bmp_files[i].offset, SEEK_SET);
       rfread(entry->fd.data + hoff, bmp_files[i].length, 1, exefp);
 
+      // wavetable.dat
       if (strcmp(bmp_files[i].filename, "wavetable.dat") == 0)
       {
-         NX_DBG("found wavetable.dat\n");
-         // wavetable.dat
          signed char *ptr = (signed char*)&entry->fd.data[0];
          int wav, sampl;
 
@@ -595,14 +591,12 @@ bool cachefiles_init(RFILE *exefp)
 
 CFILE *copen(const char *fname, const char *mode)
 {
-   (void)mode;
-
+   struct hash_struct *entry;
    // create local copy in case we have the same file open multiple times
    CFILE *f = (CFILE *)malloc(sizeof(CFILE));
    if (!f)
       return NULL;
 
-   struct hash_struct *entry;
    HASH_FIND_STR(filemap, fname, entry);
    if (!entry)
    {

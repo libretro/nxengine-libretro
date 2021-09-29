@@ -1,6 +1,8 @@
 #ifndef _LIBRETRO_SHARED_H
 #define _LIBRETRO_SHARED_H
 
+#include <boolean.h>
+
 #ifdef _WIN32
 #define snprintf _snprintf
 #endif

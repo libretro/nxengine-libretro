@@ -5,8 +5,6 @@
 #include <sys/stat.h>
 #include "../common/basics.h"
 #include "../libretro/libretro_shared.h"
-//#include "extractfiles.fdh"
-#include "../nx_logger.h"
 
 #ifdef __MINGW32__
 	#include <direct.h>
@@ -22,19 +20,17 @@
 #include <streams/file_stream.h>
 
 /* Forward declarations */
-extern "C" {
-	int64_t rftell(RFILE* stream);
-	int64_t rfseek(RFILE* stream, int64_t offset, int origin);
-	int64_t rfread(void* buffer,
-			size_t elem_size, size_t elem_count, RFILE* stream);
-	int rfputc(int character, RFILE * stream);
-	int rfgetc(RFILE* stream);
-	int rfclose(RFILE* stream);
-	RFILE* rfopen(const char *path, const char *mode);
-	int rfprintf(RFILE * stream, const char * format, ...);
-	int64_t rfwrite(void const* buffer,
-			size_t elem_size, size_t elem_count, RFILE* stream);
-}
+int64_t rftell(RFILE* stream);
+int64_t rfseek(RFILE* stream, int64_t offset, int origin);
+int64_t rfread(void* buffer,
+		size_t elem_size, size_t elem_count, RFILE* stream);
+int rfputc(int character, RFILE * stream);
+int rfgetc(RFILE* stream);
+int rfclose(RFILE* stream);
+RFILE* rfopen(const char *path, const char *mode);
+int rfprintf(RFILE * stream, const char * format, ...);
+int64_t rfwrite(void const* buffer,
+		size_t elem_size, size_t elem_count, RFILE* stream);
 
 #define HEADER_LEN		25
 #define MAX_FILE_SIZE	32768
@@ -98,6 +94,7 @@ static int org_extracted;
 
 bool extract_org(RFILE *exefp)
 {
+   int i;
    uint8_t *buffer;
    uint8_t *file;
    
@@ -108,7 +105,7 @@ bool extract_org(RFILE *exefp)
 
    buffer = (uint8_t *)malloc(MAX_FILE_SIZE);
 
-   for(int i=1;;i++)
+   for(i=1;;i++)
    {
       if (!files[i].filename) break;
       file = buffer;

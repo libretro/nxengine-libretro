@@ -1,4 +1,3 @@
-
 #include "../sdl/include/LRSDL.h"
 #include <stdio.h>
 #include <stdint.h>
@@ -6,7 +5,6 @@
 #include <sys/stat.h>
 #include "../common/basics.h"
 #include "../libretro/libretro_shared.h"
-#include "../nx_logger.h"
 #include "../sound/pxt.h"
 
 #include "extractpxt.fdh"
@@ -20,21 +18,19 @@
 #include <streams/file_stream.h>
 
 /* Forward declarations */
-extern "C" {
-	int64_t rftell(RFILE* stream);
-	int64_t rfseek(RFILE* stream, int64_t offset, int origin);
-	int64_t rfread(void* buffer,
-			size_t elem_size, size_t elem_count, RFILE* stream);
-	int rfputc(int character, RFILE * stream);
-	int rfgetc(RFILE* stream);
-	int rfclose(RFILE* stream);
-	RFILE* rfopen(const char *path, const char *mode);
-	int rfprintf(RFILE * stream, const char * format, ...);
-	int64_t rfwrite(void const* buffer,
-			size_t elem_size, size_t elem_count, RFILE* stream);
-	uint32_t rfgetl(RFILE *fp);
-	double rfgetfloat(RFILE *fp);
-}
+int64_t rftell(RFILE* stream);
+int64_t rfseek(RFILE* stream, int64_t offset, int origin);
+int64_t rfread(void* buffer,
+		size_t elem_size, size_t elem_count, RFILE* stream);
+int rfputc(int character, RFILE * stream);
+int rfgetc(RFILE* stream);
+int rfclose(RFILE* stream);
+RFILE* rfopen(const char *path, const char *mode);
+int rfprintf(RFILE * stream, const char * format, ...);
+int64_t rfwrite(void const* buffer,
+		size_t elem_size, size_t elem_count, RFILE* stream);
+uint32_t rfgetl(RFILE *fp);
+double rfgetfloat(RFILE *fp);
 
 static struct
 {
@@ -206,21 +202,14 @@ bool extract_pxt(RFILE *fp, int s, stPXSound *outsnd)
 		for(i=0;fields[i].name;i++)
 		{
 			if (fields[i].is_integer)
-			{
 				chan[c].values[i].intvalue = rfgetl(fp);
-			}
 			else
-			{
 				chan[c].values[i].fpvalue = rfgetfloat(fp);
-			}
 		}
 
 		// skip padding between sections
 		if (rfgetl(fp) != 0)
-		{
-			NX_ERR("PXT out of sync\n");
 			return 1;
-		}
 	}
 
 	for (c = 0; c < 4; c++)

@@ -129,7 +129,7 @@ static bool load_drumtable(RFILE *fp)		// pxt_path = the path where drum pxt fil
 void c------------------------------() {}
 */
 
-extern bool extract_org(RFILE *exefp);
+extern "C" bool extract_org(RFILE *exefp);
 
 int org_init(RFILE *fp, int org_volume)
 {

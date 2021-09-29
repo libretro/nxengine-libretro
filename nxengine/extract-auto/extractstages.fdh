@@ -3,7 +3,14 @@
 
 /* located in extract/extractstages.cpp */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //-------------[referenced from extract/extractstages.cpp]-----------//
-bool extract_stages(FILE *exefp);
+bool extract_stages(RFILE *exefp);
 static int find_index(const char *fname, const char *list[]);
 
+#ifdef __cplusplus
+}
+#endif

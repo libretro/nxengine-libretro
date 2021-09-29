@@ -111,10 +111,10 @@ SOURCES_CXX += $(CORE_DIR)/endgame/credits.cpp \
 	       $(CORE_DIR)/endgame/island.cpp \
 	       $(CORE_DIR)/endgame/endgame_misc.cpp
 
-SOURCES_CXX += $(EXTRACTDIR)/extractpxt.cpp \
-	       $(EXTRACTDIR)/extractorg.cpp \
-	       $(EXTRACTDIR)/extractstages.cpp \
-	       $(EXTRACTDIR)/cachefiles.cpp
+SOURCES_C   += $(EXTRACTDIR)/cachefiles.c \
+	       $(EXTRACTDIR)/extractorg.c \
+	       $(EXTRACTDIR)/extractpxt.c \
+	       $(EXTRACTDIR)/extractstages.c
 
 SOURCES_CXX += $(CORE_DIR)/graphics/graphics.cpp \
 	       $(CORE_DIR)/graphics/nxsurface.cpp \

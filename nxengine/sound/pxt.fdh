@@ -30,7 +30,17 @@ void GenerateWhiteModel(void);
 static void GeneratePulseModel(unsigned char *table);
 char pxt_init(void);
 char pxt_initsynth(void);
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 char pxt_SetModel(stPXWave *pxwave, int m);
+
+#ifdef __cplusplus
+}
+#endif
+
 void pxt_SetDefaultEnvelope(stPXEnvelope *env);
 void GenerateEnvelope(stPXEnvelope *env, char *buffer);
 void pxt_RenderPXWave(stPXWave *pxwave, signed char *buffer, int size_blocks);
@@ -48,7 +58,13 @@ char pxt_LoadSoundFX(FILE *fp, int top);
 void pxt_freeSoundFX(void);
 void pxt_FreeSound(int slot);
 void FreePXTBuf(stPXSound *snd);
+#ifdef __cplusplus
+extern "C" {
+#endif
 char pxt_load(RFILE *fp, stPXSound *snd, int slot);
+#ifdef __cplusplus
+}
+#endif
 
 /* located in common/misc.cpp */
 

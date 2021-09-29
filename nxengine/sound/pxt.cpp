@@ -216,7 +216,7 @@ char pxt_initsynth(void)
    return 0;
 }
 
-char pxt_SetModel(stPXWave *pxwave, int m)
+extern "C" char pxt_SetModel(stPXWave *pxwave, int m)
 {
    if (m >= 0 && m < PXT_NO_MODELS)
    {
@@ -749,10 +749,10 @@ void FreePXTBuf(stPXSound *snd)
 }
 
 
-extern bool extract_pxt(RFILE *fp, int s, stPXSound *outsnd);
+extern "C" bool extract_pxt(RFILE *fp, int s, stPXSound *outsnd);
 
 // read a .pxt file into memory and return a stPXSound ready to be rendered.
-char pxt_load(RFILE *fp, stPXSound *snd, int slot)
+extern "C" char pxt_load(RFILE *fp, stPXSound *snd, int slot)
 {
    int i;
    memset(snd, 0, sizeof(stPXSound));
