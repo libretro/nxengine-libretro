@@ -28,7 +28,7 @@ unsigned retro_frame_buffer_pitch;
 retro_log_printf_t log_cb;
 static retro_video_refresh_t video_cb;
 static retro_input_poll_t poll_cb;
-extern "C" retro_input_state_t input_cb;
+retro_input_state_t input_cb;
 static retro_audio_sample_batch_t audio_batch_cb;
 static retro_environment_t environ_cb;
 
@@ -349,4 +349,10 @@ extern "C" const char* retro_get_save_dir(void)
 
    // If the save directory isn't available, use the game path.
    return g_dir;
+}
+
+extern "C" int16_t input_state_wrap(unsigned port, unsigned device,
+      unsigned index, unsigned id)
+{
+	input_cb(port, device, index, id);
 }
