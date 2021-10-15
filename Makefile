@@ -318,6 +318,17 @@ else ifeq ($(platform), retrofw)
    CFLAGS += -D_GNU_SOURCE=1
    CFLAGS += -ffast-math -march=mips32 -mtune=mips32 -mhard-float 
 
+#MIYOO
+else ifeq ($(platform), miyoo)
+   TARGET := $(TARGET_NAME)_libretro.so
+   CC = /opt/miyoo/usr/bin/arm-linux-gcc
+   CXX = /opt/miyoo/usr/bin/arm-linux-g++
+   AR = /opt/miyoo/usr/bin/arm-linux-ar
+   fpic := -fPIC
+   SHARED := -shared -Wl,--version-script=$(CORE_DIR)/libretro/link.T -Wl,-no-undefined
+   CFLAGS += -D_GNU_SOURCE=1
+   CFLAGS += -ffast-math -march=armv5te -mtune=arm926ej-s 
+
 else ifeq ($(platform),emscripten)
    TARGET := $(TARGET_NAME)_libretro_$(platform).bc
 	STATIC_LINKING = 1
