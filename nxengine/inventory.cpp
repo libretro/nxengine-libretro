@@ -310,7 +310,7 @@ static void ExitInventory(void)
 {
    StopScripts();
    game.setmode(GM_NORMAL);
-   memset(inputs, 0, sizeof(inputs));
+   player->inputs_locked = false;
 }
 
 static void DrawSelector(stSelector *selector, int x, int y)
