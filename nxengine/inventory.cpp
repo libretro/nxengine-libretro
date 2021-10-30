@@ -286,7 +286,7 @@ static void RunSelector(stSelector *selector)
 
    if (selector == &inv.armssel)		// selecting a weapon
    {
-      if (buttonjustpushed())
+      if (buttonjustpushed() || justpushed(INVENTORYKEY))
       {	// select the new weapon
          weapon_slide(LEFT, selector->items[selector->cursel]);
          ExitInventory();
