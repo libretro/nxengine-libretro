@@ -21,6 +21,7 @@ static stInventory inv;
 // param is passed as 1 when returning from Map System.
 bool inventory_init(int param)
 {
+   int oldarms = inv.armssel.cursel;
    memset(&inv, 0, sizeof(inv));
 
    inv.curselector = &inv.armssel;
@@ -31,6 +32,7 @@ bool inventory_init(int param)
    if (param == 1)
    {
       inv.curselector = &inv.itemsel;
+      inv.armssel.cursel = oldarms;
 
       // highlight Map System
       for(int i=0;i<inv.itemsel.nitems;i++)
@@ -298,19 +300,19 @@ static void RunSelector(stSelector *selector)
          inv.lockinput = 1;
       }
 
-      if (justpushed(FIREKEY))
+      if (justpushed(INVENTORYKEY) || justpushed(FIREKEY))
+      {
+         weapon_slide(LEFT, inv.armssel.items[inv.armssel.cursel]);
          ExitInventory();
+      }
    }
-
-   if (justpushed(INVENTORYKEY))
-      ExitInventory();
 }
 
 static void ExitInventory(void)
 {
    StopScripts();
    game.setmode(GM_NORMAL);
-   memset(inputs, 0, sizeof(inputs));
+   player->inputs_locked = false;
 }
 
 static void DrawSelector(stSelector *selector, int x, int y)

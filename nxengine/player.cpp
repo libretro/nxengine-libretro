@@ -299,6 +299,7 @@ static unsigned inventory_delay = 0;
          {
             if (!game.frozen && !player->dead && GetCurrentScript() == -1)
             {
+               player->inputs_locked = true;
                game.setmode(GM_INVENTORY);
                inventory_delay = 15;
             }
