@@ -3,6 +3,7 @@
 #include "nx.h"
 #include "map_system.h"
 #include "map_system.fdh"
+#include "input.fdh"
 
 #define MS_EXPANDING		0
 #define MS_DISPLAYED		1
@@ -30,8 +31,6 @@ static struct
 	
 	const char *bannertext;
 	int textx, texty;
-	
-	bool lastbuttondown;
 } ms;
 
 
@@ -39,7 +38,6 @@ bool ms_init(int return_to_mode)
 {
 	memset(&ms, 0, sizeof(ms));
 	ms.return_gm = return_to_mode;
-	ms.lastbuttondown = true;
 	ms.w = map.xsize;
 	ms.h = map.ysize;
 	
@@ -109,12 +107,7 @@ void ms_tick(void)
 			Sprites::draw_sprite(ms.px, ms.py, SPR_MAP_PIXELS, 4);
 		
 		// dismissal
-		if (ms.lastbuttondown)
-		{
-			if (!buttondown())
-				ms.lastbuttondown = false;
-		}
-		else if (buttondown())
+		if (justpushed(FIREKEY) || justpushed(JUMPKEY) || justpushed(MAPSYSTEMKEY))
 		{
 			ms.state = MS_CONTRACTING;
 		}
