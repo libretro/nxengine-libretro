@@ -13,8 +13,6 @@
 #include "msvc_compat.h"
 #endif
 
-//#define TRACE_SCRIPT
-
 // which textbox options are enabled by the "<TUR" script command.
 #define TUR_PARAMS		(TB_LINE_AT_ONCE | TB_VARIABLE_WIDTH_CHARS | TB_CURSOR_NEVER_SHOWN)
 
@@ -54,36 +52,31 @@ unsigned char codealphabet[] = { "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123+-" };
 unsigned char letter_to_code[256];
 unsigned char mnemonic_lookup[32*32*32];
 
-
 static void GenLTC(void)
 {
-int i;
-uchar ch;
+   int i;
+   uchar ch;
 
-	memset(letter_to_code, 0xff, sizeof(letter_to_code));
-	for(i=0;;i++)
-	{
-		if (!(ch = codealphabet[i])) break;
-		letter_to_code[ch] = i;
-	}
-	
-	memset(mnemonic_lookup, 0xff, sizeof(mnemonic_lookup));
-	for(i=0;i<OP_COUNT;i++)
-	{
-		mnemonic_lookup[MnemonicToIndex(cmd_table[i].mnemonic)] = i;
-	}
+   memset(letter_to_code, 0xff, sizeof(letter_to_code));
+   for(i=0;;i++)
+   {
+      if (!(ch = codealphabet[i])) break;
+      letter_to_code[ch] = i;
+   }
+
+   memset(mnemonic_lookup, 0xff, sizeof(mnemonic_lookup));
+   for(i=0;i<OP_COUNT;i++)
+      mnemonic_lookup[MnemonicToIndex(cmd_table[i].mnemonic)] = i;
 }
 
 static int MnemonicToIndex(const char *str)
 {
-int l1, l2, l3;
+   int l1 = letter_to_code[(uint8_t)str[0]];
+   int l2 = letter_to_code[(uint8_t)str[1]];
+   int l3 = letter_to_code[(uint8_t)str[2]];
+   if (l1==0xff || l2==0xff || l3==0xff) return -1;
 
-	l1 = letter_to_code[(uint8_t)str[0]];
-	l2 = letter_to_code[(uint8_t)str[1]];
-	l3 = letter_to_code[(uint8_t)str[2]];
-	if (l1==0xff || l2==0xff || l3==0xff) return -1;
-	
-	return (l1 << 10) | (l2 << 5) | l3;
+   return (l1 << 10) | (l2 << 5) | l3;
 }
 
 static int MnemonicToOpcode(char *str)
@@ -169,166 +162,160 @@ bool tsc_load(const char *fname, int pageno)
 	return result;
 }
 
-
 char *tsc_decrypt(const char *fname, int *fsize_out)
 {
-CFILE *fp;
-int fsize, i;
+   int fsize, i;
+   CFILE *fp = copen(fname, "rb");
+   if (!fp)
+   {
+      NX_ERR("tsc_decrypt: no such file: '%s'!\n", fname);
+      return NULL;
+   }
 
-	fp = copen(fname, "rb");
-	if (!fp)
-	{
-		NX_ERR("tsc_decrypt: no such file: '%s'!\n", fname);
-		return NULL;
-	}
-	
-	cseek(fp, 0, SEEK_END);
-	fsize = ctell(fp);
-	cseek(fp, 0, SEEK_SET);
-	
-	// load file
-	char *buf = (char *)malloc(fsize+1);
-	cread(buf, fsize, 1, fp);
-	buf[fsize] = 0;
-	cclose(fp);
-	
-	// get decryption key, which is actually part of the text
-	int keypos = (fsize / 2);
-	int key = buf[keypos];
-	
-	// everything EXCEPT the key is encrypted
-	for(i=0;i<keypos;i++) { buf[i] = (buf[i] - key); }
-	for(i++;i<fsize;i++)  { buf[i] = (buf[i] - key); }
-	
-	if (fsize_out) *fsize_out = fsize;
-	return buf;
+   cseek(fp, 0, SEEK_END);
+   fsize = ctell(fp);
+   cseek(fp, 0, SEEK_SET);
+
+   // load file
+   char *buf = (char *)malloc(fsize+1);
+   cread(buf, fsize, 1, fp);
+   buf[fsize] = 0;
+   cclose(fp);
+
+   // get decryption key, which is actually part of the text
+   int keypos = (fsize / 2);
+   int key = buf[keypos];
+
+   // everything EXCEPT the key is encrypted
+   for(i=0;i<keypos;i++) { buf[i] = (buf[i] - key); }
+   for(i++;i<fsize;i++)  { buf[i] = (buf[i] - key); }
+
+   if (fsize_out) *fsize_out = fsize;
+   return buf;
 }
 
-/*
-void c------------------------------() {}
-*/
+static int ReadNumber(const char **buf, const char *buf_end)
+{
+   static char num[5] = { 0 };
+   int i = 0;
+
+   while(i < 4)
+   {
+      num[i] = nextchar(buf, buf_end);
+      if (!isdigit(num[i]))
+      {
+         (*buf)--;
+         break;
+      }
+
+      i++;
+   }
+
+   return atoi(num);
+}
+
 
 // compile a tsc file--a set of scripts in raw text format--into 'bytecode',
 // and place the finished scripts into the given page.
 bool tsc_compile(const char *buf, int bufsize, int pageno)
 {
-	ScriptPage *page = &script_pages[pageno];
-	const char *buf_end = (buf + (bufsize - 1));
-	DBuffer *script = NULL;
-	char cmdbuf[4] = { 0 };
+   ScriptPage *page = &script_pages[pageno];
+   const char *buf_end = (buf + (bufsize - 1));
+   DBuffer *script = NULL;
+   char cmdbuf[4] = { 0 };
 
 #ifdef DEBUG
-	//NX_LOG("<> tsc_compile bufsize = %d pageno = %d\n", bufsize, pageno);
+   //NX_LOG("<> tsc_compile bufsize = %d pageno = %d\n", bufsize, pageno);
 #endif
-	
-	while(buf <= buf_end)
-	{
-		char ch = *(buf++);
-		
-		if (ch == '#')
-		{	// start of a scriptzz
-			if (script)
-			{
-				script->Append8(OP_END);
-				script = NULL;
-			}
-			
-			int scriptno = ReadNumber(&buf, buf_end);
-			if (scriptno >= 10000 || scriptno < 0)
-			{
-				NX_ERR("tsc_compile: invalid script number: %d\n", scriptno);
-				return 1;
-			}
-			
-			// skip the CR after the script #
-			while(buf < buf_end)
-			{
-				if (*buf != '\r' && *buf != '\n') break;
-				buf++;
-			}
-			
+
+   while(buf <= buf_end)
+   {
+      char ch = *(buf++);
+
+      if (ch == '#')
+      {	// start of a scriptzz
+         if (script)
+         {
+            script->Append8(OP_END);
+            script = NULL;
+         }
+
+         int scriptno = ReadNumber(&buf, buf_end);
+         if (scriptno >= 10000 || scriptno < 0)
+         {
+            NX_ERR("tsc_compile: invalid script number: %d\n", scriptno);
+            return 1;
+         }
+
+         // skip the CR after the script #
+         while(buf < buf_end)
+         {
+            if (*buf != '\r' && *buf != '\n') break;
+            buf++;
+         }
+
 #ifdef DEBUG
-			//NX_LOG("Parsing script #%04d\n", scriptno);
+         //NX_LOG("Parsing script #%04d\n", scriptno);
 #endif
-			if (page->scripts.get(scriptno))
-			{
-				NX_ERR("tsc_compile WARNING: duplicate script #%04d; ignoring\n", scriptno);
-				// because script is left null, we'll ignore everything until we see another #
-			}
-			else
-			{
-				script = new DBuffer;
-				page->scripts.put(scriptno, script);
-			}
-		}
-		else if (ch == '<' && script)
-		{
-			// read the command type
-			cmdbuf[0] = nextchar(&buf, buf_end);
-			cmdbuf[1] = nextchar(&buf, buf_end);
-			cmdbuf[2] = nextchar(&buf, buf_end);
-			
-			int cmd = MnemonicToOpcode(cmdbuf);
-			if (cmd == -1) return 1;
-			
-			//NX_LOG("Command '%s', parameters %d\n", cmdbuf, cmd_table[cmd].nparams);
-			script->Append8(cmd);
-			
-			// read all parameters expected by that command
-			int nparams = cmd_table[cmd].nparams;
-			for(int i=0;i<nparams;i++)
-			{
-				int val = ReadNumber(&buf, buf_end);
-				
-				script->Append8(val >> 8);
-				script->Append8(val & 0xff);
-				
-				// colon between params
-				if (i < (nparams - 1))
-					buf++;
-			}
-		}
-		else if (script)
-		{	// text for message boxes
-			buf--;
-			script->Append8(OP_TEXT);
-			ReadText(script, &buf, buf_end);
-		}
-		
-	}
-	
-	if (script)
-		script->Append8(OP_END);
-	
-	return 0;
+         if (page->scripts.get(scriptno))
+         {
+            NX_ERR("tsc_compile WARNING: duplicate script #%04d; ignoring\n", scriptno);
+            // because script is left null, we'll ignore everything until we see another #
+         }
+         else
+         {
+            script = new DBuffer;
+            page->scripts.put(scriptno, script);
+         }
+      }
+      else if (ch == '<' && script)
+      {
+         // read the command type
+         cmdbuf[0] = nextchar(&buf, buf_end);
+         cmdbuf[1] = nextchar(&buf, buf_end);
+         cmdbuf[2] = nextchar(&buf, buf_end);
+
+         int cmd = MnemonicToOpcode(cmdbuf);
+         if (cmd == -1) return 1;
+
+         //NX_LOG("Command '%s', parameters %d\n", cmdbuf, cmd_table[cmd].nparams);
+         script->Append8(cmd);
+
+         // read all parameters expected by that command
+         int nparams = cmd_table[cmd].nparams;
+         for(int i=0;i<nparams;i++)
+         {
+            int val = ReadNumber(&buf, buf_end);
+
+            script->Append8(val >> 8);
+            script->Append8(val & 0xff);
+
+            // colon between params
+            if (i < (nparams - 1))
+               buf++;
+         }
+      }
+      else if (script)
+      {	// text for message boxes
+         buf--;
+         script->Append8(OP_TEXT);
+         ReadText(script, &buf, buf_end);
+      }
+
+   }
+
+   if (script)
+      script->Append8(OP_END);
+
+   return 0;
 }
 
 static char nextchar(const char **buf, const char *buf_end)
 {
-	if (*buf <= buf_end)
-		return *(*buf)++;
-	
-	return 0;
-}
+   if (*buf <= buf_end)
+      return *(*buf)++;
 
-static int ReadNumber(const char **buf, const char *buf_end)
-{
-static char num[5] = { 0 };
-int i = 0;
-	
-	while(i < 4)
-	{
-		num[i] = nextchar(buf, buf_end);
-		if (!isdigit(num[i]))
-		{
-			(*buf)--;
-			break;
-		}
-		
-		i++;
-	}
-	
-	return atoi(num);
+   return 0;
 }
 
 static void ReadText(DBuffer *script, const char **buf, const char *buf_end)

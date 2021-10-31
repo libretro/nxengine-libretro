@@ -20,9 +20,18 @@ lX		Location X
 
 */
 
+/*static */ int CredReader::ReadNumber()
+{
+	int num = atoi(&data[dataindex]);
+	while(isdigit(get())) ;
+	unget();
+	return num;
+}
+
+
 bool CredReader::ReadCommand(CredCommand *cmd)
 {
-int ch, i;
+   int ch, i;
 
 	memset(cmd, 0, sizeof(CredCommand));
 	cmd->type = -1;
@@ -86,14 +95,6 @@ int ch, i;
 }
 
 
-int CredReader::ReadNumber()
-{
-	int num = atoi(&data[dataindex]);
-	while(isdigit(get())) ;
-	unget();
-	return num;
-}
-
 void CredReader::Rewind()
 {
 	dataindex = 0;
@@ -118,7 +119,8 @@ char slash = '\\';
 char slash = '/';
 #endif
 
-	if (data) CloseFile();
+	if (data)
+      CloseFile();
 	snprintf(fname, sizeof(fname), "%s%cCredit.tsc", data_dir, slash);
 	
 	data = tsc_decrypt(fname, &datalen);
@@ -166,34 +168,3 @@ char CredReader::peek()
 	
 	return data[dataindex];
 }
-
-/*
-void c------------------------------() {}
-*/
-
-/*
-bool OpenFile();
-	void CloseFile();
-	bool ReadNextLine(CredCommand *cmd);
-	
-private:
-	FILE *fFP;
-	
-	
-enum CC
-{
-	CC_TEXT,
-	CC_SET_XOFF,
-	CC_BLANK_SPACE,
-	
-	CC_JUMP,
-	CC_FLAGJUMP,
-	CC_LABEL,
-	
-	CC_MUSIC,
-	CC_FADE_MUSIC,
-	CC_END
-};
-
-*/
-

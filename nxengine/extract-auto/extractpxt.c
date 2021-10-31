@@ -175,18 +175,12 @@ bool extract_pxt(RFILE *fp, int s, stPXSound *outsnd)
 	} chan[4];
 	int c, i;
 	int found = 0;
-	char slash;
-#ifdef _WIN32
-	slash = '\\';
-#else
-	slash = '/';
-#endif
 	for (i = 0; i < sizeof(snd) / sizeof(snd[0]); i++)
 	{
 		if (snd[i].id == s)
 		{
 			found = 1;
-			s = i;
+			s     = i;
 			break;
 		}
 	}

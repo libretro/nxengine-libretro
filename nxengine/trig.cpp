@@ -12,15 +12,15 @@ signed int tan_table[64];
 
 char trig_init(void)
 {
-	int degrees;
+   int degrees;
 
-	for(degrees=0;degrees<256;degrees++)
-		sin_table[degrees] = (int)(sin((double)degrees * PIBT) * (1 << CSF));
+   for(degrees=0;degrees<256;degrees++)
+      sin_table[degrees] = (int)(sin((double)degrees * PIBT) * (1 << CSF));
 
-	for(degrees=0;degrees<64;degrees++)
-		tan_table[degrees] = (int)(tan((double)degrees * PIBT) * (1 << 13));
+   for(degrees=0;degrees<64;degrees++)
+      tan_table[degrees] = (int)(tan((double)degrees * PIBT) * (1 << 13));
 
-	return 0;
+   return 0;
 }
 
 // given an angle and a speed, places the X and Y speeds in xs and ys.
@@ -56,12 +56,12 @@ void vector_from_angle(uint8_t angle, int speed, int *xs, int *ys)
 
 int xinertia_from_angle(uint8_t angle, int speed)
 {
-        int xs;
-	angle  += 64;
-	xs      = sin_table[angle];
-	xs     *= speed; xs >>= CSF;
-	
-	return xs;
+   int xs;
+   angle  += 64;
+   xs      = sin_table[angle];
+   xs     *= speed; xs >>= CSF;
+
+   return xs;
 }
 
 int yinertia_from_angle(uint8_t angle, int speed)

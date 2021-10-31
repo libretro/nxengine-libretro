@@ -72,7 +72,7 @@ void FloatText::AddQty(int amt)
    }
 
    if (this->shownAmount > 9999)
-      this->shownAmount = 9999;		// overrun protection for buffer
+      this->shownAmount = 9999; // overrun protection for buffer
 }
 
 // updates the position of a floattext in respect to it's object

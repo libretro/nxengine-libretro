@@ -33,7 +33,6 @@ static struct
 	int textx, texty;
 } ms;
 
-
 bool ms_init(int return_to_mode)
 {
 	memset(&ms, 0, sizeof(ms));
@@ -67,24 +66,24 @@ void c------------------------------() {}
 
 void ms_tick(void)
 {
-	DrawScene();
-	draw_banner();
-	
-	if (ms.state == MS_EXPANDING)
-	{
-		ms.expandframe++;
-		
-		if (ms.expandframe > EXPAND_LENGTH)
-			ms.state = MS_DISPLAYED;
-		else
-			draw_expand();
-	}
-	
-	if (ms.state == MS_DISPLAYED)
-	{
-		
-		// draw map
-		Graphics::DrawRect(ms.x - 1, ms.y - 1, ms.x + ms.w, ms.y + ms.h, DK_BLUE);
+   DrawScene();
+   draw_banner();
+
+   if (ms.state == MS_EXPANDING)
+   {
+      ms.expandframe++;
+
+      if (ms.expandframe > EXPAND_LENGTH)
+         ms.state = MS_DISPLAYED;
+      else
+         draw_expand();
+   }
+
+   if (ms.state == MS_DISPLAYED)
+   {
+
+      // draw map
+      Graphics::DrawRect(ms.x - 1, ms.y - 1, ms.x + ms.w, ms.y + ms.h, DK_BLUE);
 
       Graphics::FillRect(ms.x - 1, ms.y - 1, ms.x + ms.w, ms.y + ms.h, DK_BLUE);
       for (int y=0;y<ms.current_row;y++)
@@ -101,31 +100,27 @@ void ms_tick(void)
          ms.current_row++;
       if (ms.current_row < map.ysize)
          ms.current_row++;
-		
-		// you-are-here dot
-		if (++ms.timer & 8)
-			Sprites::draw_sprite(ms.px, ms.py, SPR_MAP_PIXELS, 4);
-		
-		// dismissal
-		if (justpushed(FIREKEY) || justpushed(JUMPKEY) || justpushed(MAPSYSTEMKEY))
-		{
-			ms.state = MS_CONTRACTING;
-		}
-	}
-	else if (ms.state == MS_CONTRACTING)
-	{
-		ms.expandframe--;
-		
-		if (ms.expandframe <= 0)
-		{
-			int param = (ms.return_gm == GM_INVENTORY) ? 1 : 0;
-			game.setmode(ms.return_gm, param);
-		}
-		else
-		{
-			draw_expand();
-		}
-	}
+
+      // you-are-here dot
+      if (++ms.timer & 8)
+         Sprites::draw_sprite(ms.px, ms.py, SPR_MAP_PIXELS, 4);
+
+      // dismissal
+      if (justpushed(FIREKEY) || justpushed(JUMPKEY) || justpushed(MAPSYSTEMKEY))
+         ms.state = MS_CONTRACTING;
+   }
+   else if (ms.state == MS_CONTRACTING)
+   {
+      ms.expandframe--;
+
+      if (ms.expandframe <= 0)
+      {
+         int param = (ms.return_gm == GM_INVENTORY) ? 1 : 0;
+         game.setmode(ms.return_gm, param);
+      }
+      else
+         draw_expand();
+   }
 }
 
 
@@ -133,17 +128,14 @@ void ms_tick(void)
 // expand/contract effect
 static void draw_expand(void)
 {
-int x1, y1, x2, y2;
+   int wd = (map.xsize * ms.expandframe) / EXPAND_LENGTH;
+   int ht = (map.ysize * ms.expandframe) / EXPAND_LENGTH;
+   int x1 = (SCREEN_WIDTH / 2)  - (wd / 2);
+   int y1 = (SCREEN_HEIGHT / 2) - (ht / 2);
+   int x2 = (SCREEN_WIDTH / 2)  + (wd / 2);
+   int y2 = (SCREEN_HEIGHT / 2) + (ht / 2);
 
-	int wd = (map.xsize * ms.expandframe) / EXPAND_LENGTH;
-	int ht = (map.ysize * ms.expandframe) / EXPAND_LENGTH;
-	
-	x1 = (SCREEN_WIDTH / 2)  - (wd / 2);
-	y1 = (SCREEN_HEIGHT / 2) - (ht / 2);
-	x2 = (SCREEN_WIDTH / 2)  + (wd / 2);
-	y2 = (SCREEN_HEIGHT / 2) + (ht / 2);
-	
-	Graphics::FillRect(x1, y1, x2, y2, DK_BLUE);
+   Graphics::FillRect(x1, y1, x2, y2, DK_BLUE);
 }
 
 
@@ -165,7 +157,7 @@ static int get_color(int tilecode)
 	{
 		case 0:
 			return 0;
-		
+
 		case 0x01:
 		case 0x02:
 		case 0x40:
@@ -188,7 +180,7 @@ static int get_color(int tilecode)
 		case 0xA2:
 		case 0xA3:
 			return 1;
-		
+
 		case 0x43:
 		case 0x50:
 		case 0x53:
@@ -200,10 +192,9 @@ static int get_color(int tilecode)
 		case 0x74:
 		case 0x77:
 			return 2;
-		
+
 		default:
-			return 3;
+			break;
 	}
+	return 3;
 }
-
-

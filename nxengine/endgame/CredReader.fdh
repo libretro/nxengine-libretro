@@ -4,5 +4,4 @@
 /* located in tsc.cpp */
 
 //--------------[referenced from endgame/CredReader.cpp]-------------//
-static int ReadNumber(const char **buf, const char *buf_end);
 char *tsc_decrypt(const char *fname, int *fsize_out);

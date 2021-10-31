@@ -16,35 +16,36 @@ enum FloatTextStates
 
 class FloatText
 {
-public:
-	FloatText(int sprite);
-	~FloatText();
-	void Reset();
-	
-	void AddQty(int amt);
-	bool IsScrollingAway();
-	
-	void UpdatePos(Object *assoc_object);
-	
-	static void DrawAll();
-	static void DeleteAll();
-	static void ResetAll(void);
-	
-	bool ObjectDestroyed;
+   public:
+      FloatText(int sprite);
+      ~FloatText();
+      void Reset();
 
-private:
-	void Draw();
-	
-	uint8_t state;
-	
-	int yoff;			// how much we've risen
-	int shownAmount;
-	int sprite;			// allows selecting font
-	int timer;
-	
-	int objX, objY;		// the center pixel of the associated object (de-CSFd)
-	FloatText *next, *prev;
-	static FloatText *first, *last;
+      void AddQty(int amt);
+      bool IsScrollingAway();
+
+      void UpdatePos(Object *assoc_object);
+
+      static void DrawAll();
+      static void DeleteAll();
+      static void ResetAll(void);
+
+      bool ObjectDestroyed;
+
+   private:
+      void Draw();
+
+      uint8_t state;
+
+      int yoff;			// how much we've risen
+      int shownAmount;
+      int sprite;			// allows selecting font
+      int timer;
+
+      // the center pixel of the associated object (de-CSFd)
+      int objX, objY;		
+      FloatText *next, *prev;
+      static FloatText *first, *last;
 };
 
 

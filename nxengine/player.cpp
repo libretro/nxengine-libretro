@@ -1650,5 +1650,3 @@ int scr_x, scr_y;
 	if (player->equipmask & EQUIP_WHIMSTAR)
 		draw_whimstars(&player->whimstar);
 }
-
-

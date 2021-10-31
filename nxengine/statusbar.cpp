@@ -62,44 +62,44 @@ bool statusbar_init(void)
 	return 0;
 }
 
+#define BOSSBAR_W	198
+      // BOSS_X = 32 at normal resolution
+#define BOSS_X		((SCREEN_WIDTH / 2) - (BOSSBAR_W / 2) - 29)
+#define BOSS_Y		(SCREEN_HEIGHT-20)
 
 void DrawStatusBar(void)
 {
-int level, curxp, maxxp;
-int w, x;
-bool maxed_out;
+   int level, curxp, maxxp;
+   int w, x;
+   bool maxed_out;
 
-	//debug("%08x", game.bossbar.object);
-	//debug("%s", game.bossbar.defeated ? "true" : "false");
-	
-	// handle animations etc
-	RunStatusBar();
-	
-	// draw boss bar
-	if (game.bossbar.object && !game.bossbar.defeated)
-	{
-		#define BOSSBAR_W	198
-		// BOSS_X = 32 at normal resolution
-		#define BOSS_X		((SCREEN_WIDTH / 2) - (BOSSBAR_W / 2) - 29)
-		#define BOSS_Y		(SCREEN_HEIGHT-20)
-		Sprites::draw_sprite(BOSS_X, BOSS_Y, SPR_TEXTBOX, 0, 0);
-		Sprites::draw_sprite(BOSS_X, BOSS_Y+8, SPR_TEXTBOX, 2, 0);
-		Sprites::draw_sprite(BOSS_X+8, BOSS_Y+4, SPR_BOSSHPICON, 0, 0);
-		
-		// e.g. bosses w/ multiple forms (Ballos)
-		if (game.bossbar.object->hp > game.bossbar.starting_hp)
-			game.bossbar.starting_hp = game.bossbar.object->hp;
-		
-		RunPercentBar(&game.bossbar.bar, game.bossbar.object->hp);
-		DrawPercentBar(&game.bossbar.bar, BOSS_X+40, BOSS_Y+5, game.bossbar.object->hp, game.bossbar.starting_hp, BOSSBAR_W);
-	}
-	
-	if (game.frozen || player->inputs_locked) return;
-	if (fade.getstate() != FS_NO_FADE) return;
-	
-	if (player->hp)
-	{
-		if (!player->hurt_flash_state)
+   //debug("%08x", game.bossbar.object);
+   //debug("%s", game.bossbar.defeated ? "true" : "false");
+
+   // handle animations etc
+   RunStatusBar();
+
+   // draw boss bar
+   if (game.bossbar.object && !game.bossbar.defeated)
+   {
+      Sprites::draw_sprite(BOSS_X, BOSS_Y, SPR_TEXTBOX, 0, 0);
+      Sprites::draw_sprite(BOSS_X, BOSS_Y+8, SPR_TEXTBOX, 2, 0);
+      Sprites::draw_sprite(BOSS_X+8, BOSS_Y+4, SPR_BOSSHPICON, 0, 0);
+
+      // e.g. bosses w/ multiple forms (Ballos)
+      if (game.bossbar.object->hp > game.bossbar.starting_hp)
+         game.bossbar.starting_hp = game.bossbar.object->hp;
+
+      RunPercentBar(&game.bossbar.bar, game.bossbar.object->hp);
+      DrawPercentBar(&game.bossbar.bar, BOSS_X+40, BOSS_Y+5, game.bossbar.object->hp, game.bossbar.starting_hp, BOSSBAR_W);
+   }
+
+   if (game.frozen || player->inputs_locked) return;
+   if (fade.getstate() != FS_NO_FADE) return;
+
+   if (player->hp)
+   {
+      if (!player->hurt_flash_state)
       {
          // -- draw the health bar -----------------------------
          Sprites::draw_sprite(HEALTH_X, HEALTH_Y, SPR_HEALTHBAR, 0, 0);
@@ -148,32 +148,32 @@ bool maxed_out;
          // Level Number
          DrawWeaponLevel(HEALTH_X + slide.lv_offset, XPBAR_Y, player->curWeapon);
       }
-		
-		// -- draw the weapon bar -----------------------------
-		// draw current weapon
-		if (player->curWeapon != WPN_NONE)
-			Sprites::draw_sprite(CURWEAPON_X + slide.wpn_offset, WEAPONBAR_Y, SPR_ARMSICONS, slide.firstWeapon, 0);
-		
-		// draw ammo, note we draw ammo of firstweapon NOT current weapon, for slide effect
-		DrawWeaponAmmo((AMMO_X + slide.wpn_offset + slide.ammo_offset), AMMO_Y, slide.firstWeapon);
-		
-		// draw other weapons
-		w = slide.firstWeapon;
-		x = STATUS_X + 64 + slide.wpn_offset + 1;
-		for(;;)
-		{
-			if (++w >= WPN_COUNT) w = 0;
-			if (w==slide.firstWeapon) break;
-			
-			if (player->weapons[w].hasWeapon)
-			{
-				Sprites::draw_sprite(x, WEAPONBAR_Y, SPR_ARMSICONS, w, RIGHT);
-				x += 16;
-			}
-		}
-		
-		DrawAirLeft((SCREEN_WIDTH/2) - (5*8), ((SCREEN_HEIGHT)/2)-16);
-	}
+
+      // -- draw the weapon bar -----------------------------
+      // draw current weapon
+      if (player->curWeapon != WPN_NONE)
+         Sprites::draw_sprite(CURWEAPON_X + slide.wpn_offset, WEAPONBAR_Y, SPR_ARMSICONS, slide.firstWeapon, 0);
+
+      // draw ammo, note we draw ammo of firstweapon NOT current weapon, for slide effect
+      DrawWeaponAmmo((AMMO_X + slide.wpn_offset + slide.ammo_offset), AMMO_Y, slide.firstWeapon);
+
+      // draw other weapons
+      w = slide.firstWeapon;
+      x = STATUS_X + 64 + slide.wpn_offset + 1;
+      for(;;)
+      {
+         if (++w >= WPN_COUNT) w = 0;
+         if (w==slide.firstWeapon) break;
+
+         if (player->weapons[w].hasWeapon)
+         {
+            Sprites::draw_sprite(x, WEAPONBAR_Y, SPR_ARMSICONS, w, RIGHT);
+            x += 16;
+         }
+      }
+
+      DrawAirLeft((SCREEN_WIDTH/2) - (5*8), ((SCREEN_HEIGHT)/2)-16);
+   }
 }
 
 void DrawAirLeft(int x, int y)
@@ -223,32 +223,28 @@ static void RunStatusBar(void)
 	// handle slowly decreasing the health when player is hurt
 	// note how it only decrements while it's actually visible--i thought that was a nice touch
 	if (!player->hurt_flash_state)
-	{
 		RunPercentBar(&PHealthBar, player->hp);
-	}
 	
-	if (game.frozen || player->inputs_locked) return;
-	if (fade.getstate() != FS_NO_FADE) return;
+	if (game.frozen || player->inputs_locked)
+      return;
+	if (fade.getstate() != FS_NO_FADE)
+      return;
 	
 	// sliding effect when changing weapons
 	if (slide.lv_offset)
 	{	// next weapon
 		slide.lv_offset += slide.move_dir;
 		if (--slide.timer > 0)
-		{
 			slide.wpn_offset += slide.move_dir;
-		}
 		else
 		{
 			if (!slide.timer) slide.firstWeapon = player->curWeapon;
-			slide.wpn_offset = slide.lv_offset;
+			slide.wpn_offset  = slide.lv_offset;
 			slide.ammo_offset = 0;
 		}
 	}
 	else
-	{
 		slide.firstWeapon = player->curWeapon;
-	}
 }
 
 
@@ -256,15 +252,17 @@ static void RunStatusBar(void)
 // newwpn = the weapon to change to
 void weapon_slide(int dir, int newwpn)
 {
-int sign;
-	if (slide.lv_offset) slide.firstWeapon = player->curWeapon;		// if already sliding change immediately
-	if (dir==RIGHT) sign = -1; else sign = 1;
-	
-	slide.lv_offset = SLIDE_LV_OFFSET * sign;
-	slide.timer = SLIDE_TIMER_START;
-	slide.ammo_offset = 16 * sign;
-	slide.move_dir = -2 * sign;
-	player->curWeapon = newwpn;
+   int sign          = 1;
+   if (slide.lv_offset) // if already sliding change immediately
+      slide.firstWeapon = player->curWeapon;
+   if (dir==RIGHT)
+      sign           = -1;
+
+   slide.lv_offset   = SLIDE_LV_OFFSET * sign;
+   slide.timer       = SLIDE_TIMER_START;
+   slide.ammo_offset = 16 * sign;
+   slide.move_dir    = -2 * sign;
+   player->curWeapon = newwpn;
 }
 
 // the opening slide effect on load/new game

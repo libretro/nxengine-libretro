@@ -1,4 +1,3 @@
-
 #include "nx.h"
 #include "endgame/island.h"
 #include "endgame/credits.h"
@@ -55,16 +54,24 @@ bool Game::init()
 		objprop[i].sprite = SPR_NULL;
 	}
 
-	AssignSprites();		// auto-generated function to assign sprites to objects
-	AssignExtraSprites();	// assign rest of sprites (to be replaced at some point)
+   // auto-generated function to assign sprites to objects
+	AssignSprites();
+   // assign rest of sprites (to be replaced at some point)
+	AssignExtraSprites(); 
 
-	if (ai_init()) return 1;			// setup function pointers to AI routines
+   // setup function pointers to AI routines
+	if (ai_init())
+      return 1;
 
-	if (initslopetable()) return 1;
-	if (initmapfirsttime()) return 1;
+	if (initslopetable())
+      return 1;
+	if (initmapfirsttime())
+      return 1;
 
-	// create the player object--note that the player is NOT destroyed on map change
-	if (game.createplayer()) return 1;
+	// create the player object - note that the player 
+   // is NOT destroyed on map change
+	if (game.createplayer())
+      return 1;
 
 	return 0;
 }
@@ -97,7 +104,6 @@ bool Game::initlevel()
 		PHandleAttributes();
 		PSelectFrame();
 		
-		NX_LOG("-- Starting on-entry script %d\n", game.switchstage.eventonentry);
 		StartScript(game.switchstage.eventonentry);
 		game.switchstage.eventonentry = 0;
 	}
@@ -141,8 +147,6 @@ bool Game::setmode(int newmode, int param, bool force)
 	if (game.mode == newmode && !force)
 		return 0;
 	
-	NX_LOG("Setting tick function to type %d param %d\n", newmode, param);
-	
 	if (tickfunctions[game.mode].OnExit)
 		tickfunctions[game.mode].OnExit();
 	
@@ -165,8 +169,6 @@ bool Game::pause(int pausemode, int param)
 {
 	if (game.paused == pausemode)
 		return 0;
-	
-	NX_LOG("Setting pause: type %d param %d\n", pausemode, param);
 	
 	if (tickfunctions[game.paused].OnExit)
 		tickfunctions[game.paused].OnExit();
@@ -192,9 +194,7 @@ bool Game::pause(int pausemode, int param)
 void Game::tick(void)
 {
 	if (game.paused)
-	{
 		tickfunctions[game.paused].OnTick();
-	}
 	else
 	{
 		// run scripts
@@ -377,15 +377,11 @@ void DrawScene(void)
 					Sprites::draw_sprite_clipped(scr_x, scr_y, o->sprite, o->frame, o->dir, o->clipx1, o->clipx2, o->clipy1, o->clipy2);
 				}
 				else
-				{
 					Sprites::draw_sprite(scr_x, scr_y, o->sprite, o->frame, o->dir);
-				}
 			}
 		}
 		else
-		{
 			o->onscreen = false;
-		}
 	}
 	
 	// draw the player
@@ -413,142 +409,138 @@ void c------------------------------() {}
 
 bool game_load(int num)
 {
-Profile p;
+   Profile p;
 
-	NX_LOG("game_load: loading savefile %d\n", num);
-	
-	if (profile_load(GetProfileName(num), &p))
-		return 1;
-	
-	return game_load(&p);
+   NX_LOG("game_load: loading savefile %d\n", num);
+
+   if (profile_load(GetProfileName(num), &p))
+      return 1;
+
+   return game_load(&p);
 }
 
 bool game_load(Profile *p)
 {
-int i;
+   int i;
 
-	player->hp = p->hp;
-	player->maxHealth = p->maxhp;
-	
-	player->whimstar.nstars = p->num_whimstars;
-	player->equipmask = p->equipmask;
-	
-	// load weapons
-	for(i=0;i<WPN_COUNT;i++)
-	{
-		player->weapons[i].hasWeapon = p->weapons[i].hasWeapon;
-		player->weapons[i].level = p->weapons[i].level;
-		player->weapons[i].xp = p->weapons[i].xp;
-		player->weapons[i].ammo = p->weapons[i].ammo;
-		player->weapons[i].maxammo = p->weapons[i].maxammo;
-	}
-	
-	player->curWeapon = p->curWeapon;
-	
-	// load inventory
-	memcpy(player->inventory, p->inventory, sizeof(player->inventory));
-	player->ninventory = p->ninventory;
-	
-	// load flags
-	memcpy(game.flags, p->flags, sizeof(game.flags));
-	
-	// load teleporter slots
-	textbox.StageSelect.ClearSlots();
-	for(i=0;i<p->num_teleslots;i++)
-	{
-		int slotno = p->teleslots[i].slotno;
-		int scriptno = p->teleslots[i].scriptno;
-		
-		textbox.StageSelect.SetSlot(slotno, scriptno);
-		NX_LOG(" - Read Teleporter Slot %d: slotno=%d scriptno=%d\n", i, slotno, scriptno);
-	}
-	
-	// have to load the stage last AFTER the flags are loaded because
-	// of the options to appear and disappear objects based on flags.
-	if (load_stage(p->stage)) return 1;
-	music(p->songno);
-	
-	player->x = p->px;
-	player->y = p->py;
-	player->dir = p->pdir;
-	player->hide = false;
-	game.showmapnametime = 0;
-	
-	return 0;
+   player->hp              = p->hp;
+   player->maxHealth       = p->maxhp;
+
+   player->whimstar.nstars = p->num_whimstars;
+   player->equipmask       = p->equipmask;
+
+   // load weapons
+   for(i=0;i<WPN_COUNT;i++)
+   {
+      player->weapons[i].hasWeapon = p->weapons[i].hasWeapon;
+      player->weapons[i].level = p->weapons[i].level;
+      player->weapons[i].xp = p->weapons[i].xp;
+      player->weapons[i].ammo = p->weapons[i].ammo;
+      player->weapons[i].maxammo = p->weapons[i].maxammo;
+   }
+
+   player->curWeapon = p->curWeapon;
+
+   // load inventory
+   memcpy(player->inventory, p->inventory, sizeof(player->inventory));
+   player->ninventory = p->ninventory;
+
+   // load flags
+   memcpy(game.flags, p->flags, sizeof(game.flags));
+
+   // load teleporter slots
+   textbox.StageSelect.ClearSlots();
+   for(i=0;i<p->num_teleslots;i++)
+   {
+      int slotno = p->teleslots[i].slotno;
+      int scriptno = p->teleslots[i].scriptno;
+
+      textbox.StageSelect.SetSlot(slotno, scriptno);
+      NX_LOG(" - Read Teleporter Slot %d: slotno=%d scriptno=%d\n", i, slotno, scriptno);
+   }
+
+   // have to load the stage last AFTER the flags are loaded because
+   // of the options to appear and disappear objects based on flags.
+   if (load_stage(p->stage)) return 1;
+   music(p->songno);
+
+   player->x = p->px;
+   player->y = p->py;
+   player->dir = p->pdir;
+   player->hide = false;
+   game.showmapnametime = 0;
+
+   return 0;
 }
 
 
 bool game_save(int num)
 {
-Profile p;
+   Profile p;
 
-	NX_LOG("game_save: writing savefile %d\n", num);
-	
-	if (game_save(&p))
-		return 1;
-	
-	if (profile_save(GetProfileName(num), &p))
-		return 1;
-	
-	return 0;
+   NX_LOG("game_save: writing savefile %d\n", num);
+
+   if (game_save(&p))
+      return 1;
+
+   if (profile_save(GetProfileName(num), &p))
+      return 1;
+
+   return 0;
 }
 
 bool game_save(Profile *p)
 {
-int i;
+   int i;
 
-	memset(p, 0, sizeof(Profile));
-	
-	p->stage = game.curmap;
-	p->songno = music_cursong();
-	
-	p->px = player->x;
-	p->py = player->y;
-	p->pdir = player->dir;
-	
-	p->hp = player->hp;
-	p->maxhp = player->maxHealth;
-	
-	p->num_whimstars = player->whimstar.nstars;
-	p->equipmask = player->equipmask;
-	
-	// save weapons
-	p->curWeapon = player->curWeapon;
-	
-	for(i=0;i<WPN_COUNT;i++)
-	{
-		p->weapons[i].hasWeapon = player->weapons[i].hasWeapon;
-		p->weapons[i].level = player->weapons[i].level;
-		p->weapons[i].xp = player->weapons[i].xp;
-		p->weapons[i].ammo = player->weapons[i].ammo;
-		p->weapons[i].maxammo = player->weapons[i].maxammo;
-	}
-	
-	// save inventory
-	p->ninventory = player->ninventory;
-	memcpy(p->inventory, player->inventory, sizeof(p->inventory));
-	
-	// save flags
-	memcpy(p->flags, game.flags, sizeof(p->flags));
-	
-	// save teleporter slots
-	for(i=0;i<NUM_TELEPORTER_SLOTS;i++)
-	{
-		int slotno, scriptno;
-		if (!textbox.StageSelect.GetSlotByIndex(i, &slotno, &scriptno))
-		{
-			p->teleslots[p->num_teleslots].slotno = slotno;
-			p->teleslots[p->num_teleslots].scriptno = scriptno;
-			p->num_teleslots++;
-		}
-	}
-	
-	return 0;
+   memset(p, 0, sizeof(Profile));
+
+   p->stage         = game.curmap;
+   p->songno        = music_cursong();
+
+   p->px            = player->x;
+   p->py            = player->y;
+   p->pdir          = player->dir;
+
+   p->hp            = player->hp;
+   p->maxhp         = player->maxHealth;
+
+   p->num_whimstars = player->whimstar.nstars;
+   p->equipmask     = player->equipmask;
+
+   // save weapons
+   p->curWeapon     = player->curWeapon;
+
+   for(i=0;i<WPN_COUNT;i++)
+   {
+      p->weapons[i].hasWeapon = player->weapons[i].hasWeapon;
+      p->weapons[i].level     = player->weapons[i].level;
+      p->weapons[i].xp        = player->weapons[i].xp;
+      p->weapons[i].ammo      = player->weapons[i].ammo;
+      p->weapons[i].maxammo   = player->weapons[i].maxammo;
+   }
+
+   // save inventory
+   p->ninventory = player->ninventory;
+   memcpy(p->inventory, player->inventory, sizeof(p->inventory));
+
+   // save flags
+   memcpy(p->flags, game.flags, sizeof(p->flags));
+
+   // save teleporter slots
+   for(i=0;i<NUM_TELEPORTER_SLOTS;i++)
+   {
+      int slotno, scriptno;
+      if (!textbox.StageSelect.GetSlotByIndex(i, &slotno, &scriptno))
+      {
+         p->teleslots[p->num_teleslots].slotno = slotno;
+         p->teleslots[p->num_teleslots].scriptno = scriptno;
+         p->num_teleslots++;
+      }
+   }
+
+   return 0;
 }
-
-/*
-void c------------------------------() {}
-*/
 
 // assign sprites for the objects that didn't get covered by the
 // auto-generated spritesetup->cpp, and set some properties on the objects.
@@ -556,133 +548,135 @@ void c------------------------------() {}
 // the object it is assigned to.
 void AssignExtraSprites(void)
 {
-	objprop[OBJ_PLAYER].sprite = SPR_MYCHAR;
-	objprop[OBJ_NPC_PLAYER].sprite = SPR_MYCHAR;
-	objprop[OBJ_PTELIN].sprite = SPR_MYCHAR;
-	objprop[OBJ_PTELOUT].sprite = SPR_MYCHAR;
+	objprop[OBJ_PLAYER].sprite            = SPR_MYCHAR;
+	objprop[OBJ_NPC_PLAYER].sprite        = SPR_MYCHAR;
+	objprop[OBJ_PTELIN].sprite            = SPR_MYCHAR;
+	objprop[OBJ_PTELOUT].sprite           = SPR_MYCHAR;
 	
-	objprop[OBJ_NULL].sprite = SPR_NULL;
-	objprop[OBJ_HVTRIGGER].sprite = SPR_NULL;
-	objprop[OBJ_BUBBLE_SPAWNER].sprite = SPR_NULL;
-	objprop[OBJ_DROPLET_SPAWNER].sprite = SPR_NULL;
-	objprop[OBJ_HEY_SPAWNER].sprite = SPR_NULL;
-	objprop[OBJ_WATERLEVEL].sprite = SPR_NULL;
+	objprop[OBJ_NULL].sprite              = SPR_NULL;
+	objprop[OBJ_HVTRIGGER].sprite         = SPR_NULL;
+	objprop[OBJ_BUBBLE_SPAWNER].sprite    = SPR_NULL;
+	objprop[OBJ_DROPLET_SPAWNER].sprite   = SPR_NULL;
+	objprop[OBJ_HEY_SPAWNER].sprite       = SPR_NULL;
+	objprop[OBJ_WATERLEVEL].sprite        = SPR_NULL;
 	objprop[OBJ_LAVA_DRIP_SPAWNER].sprite = SPR_NULL;
-	objprop[OBJ_RED_BAT_SPAWNER].sprite = SPR_NULL;
+	objprop[OBJ_RED_BAT_SPAWNER].sprite   = SPR_NULL;
 	objprop[OBJ_SCROLL_CONTROLLER].sprite = SPR_NULL;
-	objprop[OBJ_DOCTOR_GHOST].sprite = SPR_NULL;
-	objprop[OBJ_FALLING_BLOCK].sprite = SPR_NULL;	// set at runtime based on current map
+	objprop[OBJ_DOCTOR_GHOST].sprite      = SPR_NULL;
+	objprop[OBJ_FALLING_BLOCK].sprite     = SPR_NULL;	// set at runtime based on current map
 	objprop[OBJ_FALLING_BLOCK_SPAWNER].sprite = SPR_NULL;
-	objprop[OBJ_QUAKE].sprite = SPR_NULL;
-	objprop[OBJ_BUTE_SPAWNER].sprite = SPR_NULL;
-	objprop[OBJ_SMOKE_DROPPER].sprite = SPR_NULL;
+	objprop[OBJ_QUAKE].sprite                 = SPR_NULL;
+	objprop[OBJ_BUTE_SPAWNER].sprite          = SPR_NULL;
+	objprop[OBJ_SMOKE_DROPPER].sprite         = SPR_NULL;
 
-
-	objprop[OBJ_BUTE_ARROW].sprite = SPR_BUTE_ARROW_LEFT;	// so spawn point is applied
+   // so spawn point is applied
+	objprop[OBJ_BUTE_ARROW].sprite            = SPR_BUTE_ARROW_LEFT;
 	
 	objprop[OBJ_POLISHBABY].defaultnxflags |= NXFLAG_SLOW_WHEN_HURT;
 	
-	objprop[OBJ_MIMIGAC1].sprite = SPR_MIMIGAC;
-	objprop[OBJ_MIMIGAC2].sprite = SPR_MIMIGAC;
-	objprop[OBJ_MIMIGAC_ENEMY].sprite = SPR_MIMIGAC;
+	objprop[OBJ_MIMIGAC1].sprite         = SPR_MIMIGAC;
+	objprop[OBJ_MIMIGAC2].sprite         = SPR_MIMIGAC;
+	objprop[OBJ_MIMIGAC_ENEMY].sprite    = SPR_MIMIGAC;
 	objprop[OBJ_MIMIGAC_ENEMY].shaketime = 0;
 	
-	objprop[OBJ_MISERY_FLOAT].sprite = SPR_MISERY;
-	objprop[OBJ_MISERY_FLOAT].damage = 1;
-	objprop[OBJ_MISERY_STAND].sprite = SPR_MISERY;
+	objprop[OBJ_MISERY_FLOAT].sprite     = SPR_MISERY;
+	objprop[OBJ_MISERY_FLOAT].damage     = 1;
+	objprop[OBJ_MISERY_STAND].sprite     = SPR_MISERY;
 	
-	objprop[OBJ_PUPPY_WAG].sprite = SPR_PUPPY;
-	objprop[OBJ_PUPPY_BARK].sprite = SPR_PUPPY;
-	objprop[OBJ_PUPPY_CARRY].sprite = SPR_PUPPY;
-	objprop[OBJ_PUPPY_SLEEP].sprite = SPR_PUPPY_ASLEEP;
-	objprop[OBJ_PUPPY_RUN].sprite = SPR_PUPPY;
-	objprop[OBJ_PUPPY_ITEMS].sprite = SPR_PUPPY;
+	objprop[OBJ_PUPPY_WAG].sprite        = SPR_PUPPY;
+	objprop[OBJ_PUPPY_BARK].sprite       = SPR_PUPPY;
+	objprop[OBJ_PUPPY_CARRY].sprite      = SPR_PUPPY;
+	objprop[OBJ_PUPPY_SLEEP].sprite      = SPR_PUPPY_ASLEEP;
+	objprop[OBJ_PUPPY_RUN].sprite        = SPR_PUPPY;
+	objprop[OBJ_PUPPY_ITEMS].sprite      = SPR_PUPPY;
 	
-	objprop[OBJ_BALROG_DROP_IN].sprite = SPR_BALROG;
-	objprop[OBJ_BALROG_BUST_IN].sprite = SPR_BALROG;
+	objprop[OBJ_BALROG_DROP_IN].sprite   = SPR_BALROG;
+	objprop[OBJ_BALROG_BUST_IN].sprite   = SPR_BALROG;
 	
-	objprop[OBJ_CROWWITHSKULL].sprite = SPR_CROW;
+	objprop[OBJ_CROWWITHSKULL].sprite      = SPR_CROW;
 	objprop[OBJ_ARMADILLO].defaultnxflags |= (NXFLAG_FOLLOW_SLOPE | NXFLAG_SLOW_WHEN_HURT);
-	objprop[OBJ_SKULLHEAD_CARRIED].sprite = SPR_SKULLHEAD;
+	objprop[OBJ_SKULLHEAD_CARRIED].sprite  = SPR_SKULLHEAD;
 	
-	objprop[OBJ_TOROKO].defaultnxflags |= NXFLAG_FOLLOW_SLOPE;
+	objprop[OBJ_TOROKO].defaultnxflags    |= NXFLAG_FOLLOW_SLOPE;
 	objprop[OBJ_TOROKO_TELEPORT_IN].sprite = SPR_TOROKO;
 	
-	objprop[OBJ_KING].defaultnxflags |= NXFLAG_FOLLOW_SLOPE;
+	objprop[OBJ_KING].defaultnxflags      |= NXFLAG_FOLLOW_SLOPE;
 	
-	objprop[OBJ_FAN_DROPLET].sprite = SPR_WATER_DROPLET;
+	objprop[OBJ_FAN_DROPLET].sprite        = SPR_WATER_DROPLET;
 	
-	objprop[OBJ_MGUN_TRAIL].defaultflags |= FLAG_IGNORE_SOLID;
+	objprop[OBJ_MGUN_TRAIL].defaultflags  |= FLAG_IGNORE_SOLID;
 	
-	objprop[OBJ_BLOCK_MOVEH].sprite = SPR_MOVING_BLOCK;
-	objprop[OBJ_BLOCK_MOVEV].sprite = SPR_MOVING_BLOCK;
+	objprop[OBJ_BLOCK_MOVEH].sprite        = SPR_MOVING_BLOCK;
+	objprop[OBJ_BLOCK_MOVEV].sprite        = SPR_MOVING_BLOCK;
 	
-	objprop[OBJ_IRONH].shaketime = 8;
+	objprop[OBJ_IRONH].shaketime           = 8;
+
+   // omega handles his own shaketime
+	objprop[OBJ_OMEGA_BODY].shaketime      = 0;
+	objprop[OBJ_OMEGA_BODY].hurt_sound     = SND_ENEMY_HURT_BIG;
 	
-	objprop[OBJ_OMEGA_BODY].shaketime = 0;		// omega handles his own shaketime
-	objprop[OBJ_OMEGA_BODY].hurt_sound = SND_ENEMY_HURT_BIG;
+	objprop[OBJ_OMEGA_LEG].sprite          = SPR_OMG_LEG_INAIR;
+	objprop[OBJ_OMEGA_STRUT].sprite        = SPR_OMG_STRUT;
 	
-	objprop[OBJ_OMEGA_LEG].sprite = SPR_OMG_LEG_INAIR;
-	objprop[OBJ_OMEGA_STRUT].sprite = SPR_OMG_STRUT;
+	objprop[OBJ_OMEGA_SHOT].death_smoke_amt= 4;
+	objprop[OBJ_OMEGA_SHOT].death_sound    = SND_EXPL_SMALL;
+	objprop[OBJ_OMEGA_SHOT].initial_hp     = 1;
+	objprop[OBJ_OMEGA_SHOT].xponkill       = 1;
 	
-	objprop[OBJ_OMEGA_SHOT].death_smoke_amt = 4;
-	objprop[OBJ_OMEGA_SHOT].death_sound = SND_EXPL_SMALL;
-	objprop[OBJ_OMEGA_SHOT].initial_hp = 1;
-	objprop[OBJ_OMEGA_SHOT].xponkill = 1;
+	objprop[OBJ_BAT_HANG].sprite           = SPR_BAT;
+	objprop[OBJ_BAT_CIRCLE].sprite         = SPR_BAT;
 	
-	objprop[OBJ_BAT_HANG].sprite = SPR_BAT;
-	objprop[OBJ_BAT_CIRCLE].sprite = SPR_BAT;
-	
-	objprop[OBJ_FIREBALL1].defaultnxflags |= NXFLAG_FOLLOW_SLOPE;
+	objprop[OBJ_FIREBALL1].defaultnxflags  |= NXFLAG_FOLLOW_SLOPE;
 	objprop[OBJ_FIREBALL23].defaultnxflags |= NXFLAG_FOLLOW_SLOPE;
 	
-	objprop[OBJ_CURLY_AI].sprite = SPR_CURLY;
-	objprop[OBJ_CURLY_AI].defaultnxflags |= NXFLAG_FOLLOW_SLOPE;
+	objprop[OBJ_CURLY_AI].sprite            = SPR_CURLY;
+	objprop[OBJ_CURLY_AI].defaultnxflags   |= NXFLAG_FOLLOW_SLOPE;
 	
-	objprop[OBJ_CURLY].defaultnxflags |= NXFLAG_FOLLOW_SLOPE;
+	objprop[OBJ_CURLY].defaultnxflags      |= NXFLAG_FOLLOW_SLOPE;
 	
-	objprop[OBJ_MINICORE].hurt_sound = SND_ENEMY_HURT_COOL;
+	objprop[OBJ_MINICORE].hurt_sound        = SND_ENEMY_HURT_COOL;
 	objprop[OBJ_CORE_CONTROLLER].hurt_sound = SND_CORE_HURT;
 	
-	objprop[OBJ_CURLY_CARRIED].sprite = SPR_CURLY;
+	objprop[OBJ_CURLY_CARRIED].sprite       = SPR_CURLY;
 	
-	objprop[OBJ_BALROG_BOSS_RUNNING].sprite = SPR_BALROG;
-	objprop[OBJ_BALROG_BOSS_FLYING].sprite = SPR_BALROG;
+	objprop[OBJ_BALROG_BOSS_RUNNING].sprite  = SPR_BALROG;
+	objprop[OBJ_BALROG_BOSS_FLYING].sprite   = SPR_BALROG;
 	objprop[OBJ_BALROG_BOSS_MISSILES].sprite = SPR_BALROG;
 	
-	objprop[OBJ_XP].sprite = SPR_XP_SMALL;
+	objprop[OBJ_XP].sprite                   = SPR_XP_SMALL;
 	
-	objprop[OBJ_NPC_IGOR].sprite = SPR_IGOR;
-	objprop[OBJ_BOSS_IGOR].sprite = SPR_IGOR;
-	objprop[OBJ_BOSS_IGOR_DEFEATED].sprite = SPR_IGOR;
-	objprop[OBJ_IGOR_BALCONY].sprite = SPR_IGOR;
+	objprop[OBJ_NPC_IGOR].sprite             = SPR_IGOR;
+	objprop[OBJ_BOSS_IGOR].sprite            = SPR_IGOR;
+	objprop[OBJ_BOSS_IGOR_DEFEATED].sprite   = SPR_IGOR;
+	objprop[OBJ_IGOR_BALCONY].sprite         = SPR_IGOR;
 	
-	objprop[OBJ_X_TARGET].hurt_sound = SND_ENEMY_HURT_COOL;
-	objprop[OBJ_X_INTERNALS].shaketime = 9;
-	objprop[OBJ_X_MAINOBJECT].xponkill = 1;
+	objprop[OBJ_X_TARGET].hurt_sound         = SND_ENEMY_HURT_COOL;
+	objprop[OBJ_X_INTERNALS].shaketime       = 9;
+	objprop[OBJ_X_MAINOBJECT].xponkill       = 1;
 	
-	objprop[OBJ_POOH_BLACK_BUBBLE].xponkill = 0;
-	objprop[OBJ_POOH_BLACK_DYING].sprite = SPR_POOH_BLACK;
+	objprop[OBJ_POOH_BLACK_BUBBLE].xponkill  = 0;
+	objprop[OBJ_POOH_BLACK_DYING].sprite     = SPR_POOH_BLACK;
 	
-	objprop[OBJ_BOOSTER_FALLING].sprite = SPR_PROFESSOR_BOOSTER;
+	objprop[OBJ_BOOSTER_FALLING].sprite      = SPR_PROFESSOR_BOOSTER;
 	
 	objprop[OBJ_MIMIGA_FARMER_STANDING].sprite = SPR_MIMIGA_FARMER;
-	objprop[OBJ_MIMIGA_FARMER_WALKING].sprite = SPR_MIMIGA_FARMER;
-	objprop[OBJ_DROLL_GUARD].sprite = SPR_DROLL;
+	objprop[OBJ_MIMIGA_FARMER_WALKING].sprite  = SPR_MIMIGA_FARMER;
+	objprop[OBJ_DROLL_GUARD].sprite            = SPR_DROLL;
 	
-	objprop[OBJ_MA_PIGNON_CLONE].sprite = SPR_MA_PIGNON;
+	objprop[OBJ_MA_PIGNON_CLONE].sprite        = SPR_MA_PIGNON;
 	
-	objprop[OBJ_DOCTOR_SHOT_TRAIL].sprite = SPR_DOCTOR_SHOT;
+	objprop[OBJ_DOCTOR_SHOT_TRAIL].sprite      = SPR_DOCTOR_SHOT;
 	
 	// they're still able to detect when they touch floor; etc,
 	// but we don't want say a falling one to get blocked by the ceiling.
-	objprop[OBJ_RED_ENERGY].defaultflags |= FLAG_IGNORE_SOLID;
+	objprop[OBJ_RED_ENERGY].defaultflags      |= FLAG_IGNORE_SOLID;
 	
-	objprop[OBJ_SUE_TELEPORT_IN].sprite = SPR_SUE;
+	objprop[OBJ_SUE_TELEPORT_IN].sprite        = SPR_SUE;
 	
-	objprop[OBJ_MISERY_BAT].sprite = SPR_ORANGE_BAT_FINAL;
-	objprop[OBJ_UD_MINICORE_IDLE].sprite = SPR_UD_MINICORE;
-	
-	objprop[OBJ_WHIMSICAL_STAR].sprite = SPR_WHIMSICAL_STAR;	// for bbox only, object is invisible
+	objprop[OBJ_MISERY_BAT].sprite             = SPR_ORANGE_BAT_FINAL;
+	objprop[OBJ_UD_MINICORE_IDLE].sprite       = SPR_UD_MINICORE;
+
+   // for bbox only, object is invisible
+	objprop[OBJ_WHIMSICAL_STAR].sprite         = SPR_WHIMSICAL_STAR;
 }
 
