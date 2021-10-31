@@ -18,15 +18,7 @@ public:
 	
 	void AddString(const char *str);
 	char *StringAt(int index) const;
-	bool SetString(int index, const char *newstring);
 	void MakeEmpty();
-	
-	void Shuffle();
-	bool ContainsString(const char *term);
-	bool ContainsCaseString(const char *term);
-	void RemoveString(int index);
-	void RemoveString(const char *str);
-	void RemoveIString(const char *str);
 	
 	void SwapItems(int index1, int index2);
 	
