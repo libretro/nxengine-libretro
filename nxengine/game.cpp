@@ -1,3 +1,4 @@
+/* vim: set shiftwidth=3 tabstop=3 textwidth=80 expandtab: */
 #include "nx.h"
 #include "endgame/island.h"
 #include "endgame/credits.h"
@@ -167,28 +168,40 @@ bool Game::setmode(int newmode, int param, bool force)
 
 bool Game::pause(int pausemode, int param)
 {
-	if (game.paused == pausemode)
-		return 0;
-	
-	if (tickfunctions[game.paused].OnExit)
-		tickfunctions[game.paused].OnExit();
-	
-	game.paused = pausemode;
-	
-	if (tickfunctions[game.paused].OnEnter)
-	{
-		if (tickfunctions[game.paused].OnEnter(param))
-		{
-			NX_ERR("game.pause: initilization failed for mode %d\n", pausemode);
-			game.paused = 0;
-			return 1;
-		}
-	}
-	
-	if (!game.paused)
-		memset(inputs, 0, sizeof(inputs));
-	
-	return 0;
+   if (game.paused == pausemode)
+      return 0;
+
+   if (tickfunctions[game.paused].OnExit)
+      tickfunctions[game.paused].OnExit();
+
+   game.paused = pausemode;
+
+   if (tickfunctions[game.paused].OnEnter)
+   {
+      if (tickfunctions[game.paused].OnEnter(param))
+      {
+         NX_ERR("game.pause: initilization failed for mode %d\n", pausemode);
+         game.paused = 0;
+         return 1;
+      }
+   }
+
+   /*
+    * This prevents options menu from leaking inputs to other modes and
+    * game player.
+    */
+   if (!game.paused)
+      memcpy(lastpinputs, inputs, sizeof(lastpinputs));
+   /*
+    * This leaks inputs to other modes.
+    * How did nxengine-evo avoid leaking inputs to other modes with this?
+    */
+   /*
+    *  if (!game.paused)
+    *     memset(inputs, 0, sizeof(inputs));
+    */
+
+   return 0;
 }
 
 void Game::tick(void)
@@ -278,7 +291,6 @@ Object *o;
 	ScreenEffects::Draw();
 	map_draw_map_name();	// stage name overlay as on entry
 }
-
 
 // shake screen.
 void quake(int quaketime, int snd)

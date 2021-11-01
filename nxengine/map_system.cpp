@@ -1,4 +1,4 @@
-
+/* vim: set shiftwidth=3 tabstop=3 textwidth=80 expandtab: */
 // the Map System
 #include "nx.h"
 #include "map_system.h"
@@ -56,7 +56,16 @@ bool ms_init(int return_to_mode)
 
 void ms_close(void)
 {
-	memset(inputs, 0, sizeof(inputs));
+   /*
+    * This prevents map system from leaking inputs to other modes and
+    * game player.
+    */
+   memcpy(lastpinputs, inputs, sizeof(lastpinputs));
+   /*
+    * This leaks inputs to other modes.
+    * How did nxengine-evo avoid leaking inputs to other modes with this?
+    */
+   /* memset(inputs, 0, sizeof(inputs)); */
 }
 
 

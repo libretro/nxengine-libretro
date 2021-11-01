@@ -1,4 +1,4 @@
-
+/* vim: set shiftwidth=3 tabstop=3 textwidth=80 expandtab: */
 #include "../nx.h"
 #include "pause.fdh"
 
@@ -45,9 +45,3 @@ void pause_tick()
 		game.running = false;
 	}
 }
-
-
-
-
-
-

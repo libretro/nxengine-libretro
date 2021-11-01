@@ -1,4 +1,4 @@
-
+/* vim: set shiftwidth=3 tabstop=3 textwidth=80 expandtab: */
 #include "nx.h"
 #include "player.fdh"
 #include "inventory.h"
@@ -272,52 +272,45 @@ void PDoPhysics(void)
 
 void PUpdateInput(void)
 {
-int i;
-static unsigned inventory_delay = 0;
+   int i;
 
-	if (player->inputs_locked || player->disabled)
-	{
-		memset(pinputs, 0, sizeof(pinputs));
-	}
-	else
-	{
-		memcpy(pinputs, inputs, sizeof(pinputs));
-		
-		// prevent jumping/shooting when leaving a messagebox
-		if (player->inputs_locked_lasttime)
-		{
-			for(i=0;i<INPUT_COUNT;i++)
-				lastpinputs[i] |= pinputs[i];
-		}
+   if (player->inputs_locked || player->disabled)
+   {
+      memset(pinputs, 0, sizeof(pinputs));
+   }
+   else
+   {
+      memcpy(pinputs, inputs, sizeof(pinputs));
 
-      if (inventory_delay != 0)
-         inventory_delay--;
-      else
+      // prevent jumping/shooting when leaving a messagebox
+      if (player->inputs_locked_lasttime)
       {
-         // allow entering inventory
-         if (justpushed(INVENTORYKEY))
+         for(i=0;i<INPUT_COUNT;i++)
+            lastpinputs[i] |= pinputs[i];
+      }
+
+      // allow entering inventory
+      if (justpushed(INVENTORYKEY))
+      {
+         if (!game.frozen && !player->dead && GetCurrentScript() == -1)
          {
-            if (!game.frozen && !player->dead && GetCurrentScript() == -1)
+            player->inputs_locked = true;
+            game.setmode(GM_INVENTORY);
+         }
+      }
+
+      // Map System
+      if (justpushed(MAPSYSTEMKEY) && (FindInventory(ITEM_MAP_SYSTEM)!=-1))
+      {
+         if (!game.frozen && !player->dead && GetCurrentScript() == -1)
+         {
+            if (fade.getstate() == FS_NO_FADE && game.switchstage.mapno == -1)
             {
-               player->inputs_locked = true;
-               game.setmode(GM_INVENTORY);
-               inventory_delay = 15;
+               game.setmode(GM_MAP_SYSTEM, game.mode);
             }
          }
       }
-		
-		// Map System
-		if (justpushed(MAPSYSTEMKEY) && (FindInventory(ITEM_MAP_SYSTEM)!=-1))
-		{
-			if (!game.frozen && !player->dead && GetCurrentScript() == -1)
-			{
-				if (fade.getstate() == FS_NO_FADE && game.switchstage.mapno == -1)
-				{
-					game.setmode(GM_MAP_SYSTEM, game.mode);
-				}
-			}
-		}
-	}
+   }
 }
 
 

@@ -1,4 +1,4 @@
-
+/* vim: set shiftwidth=3 tabstop=3 textwidth=80 expandtab: */
 #include "nx.h"
 #include "p_arms.fdh"
 
@@ -93,30 +93,34 @@ void PResetWeapons()
 
 void PDoWeapons(void)
 {
-	// switching weapons. have to check for inputs_frozen since justpushed
-	// reads inputs[] directly, not pinputs[].
-	if (!player->inputs_locked)
-	{
-		if (justpushed(PREVWPNKEY)) stat_PrevWeapon();
-		if (justpushed(NEXTWPNKEY)) stat_NextWeapon();
-	}
-	
-	// firing weapon
-	if (pinputs[FIREKEY])
-	{
-		FireWeapon();
-		RunWeapon(true);
-	}
-	else
-	{
-		RunWeapon(false);
-	}
-	
-	PHandleSpur();
-	run_whimstar(&player->whimstar);
-	
-	if (empty_timer)
-		empty_timer--;
+   static bool weapon_enabled = false;
+   // switching weapons. have to check for inputs_frozen since justpushed
+   // reads inputs[] directly, not pinputs[].
+   if (!player->inputs_locked)
+   {
+      if (justpushed(PREVWPNKEY)) stat_PrevWeapon();
+      if (justpushed(NEXTWPNKEY)) stat_NextWeapon();
+   }
+
+   // firing weapon
+   if (pinputs[FIREKEY])
+   {
+      if (!lastpinputs[FIREKEY])
+         weapon_enabled = true;
+      if (weapon_enabled)
+         FireWeapon();
+   }
+   else
+   {
+      weapon_enabled = false;
+   }
+   RunWeapon(weapon_enabled);
+
+   PHandleSpur();
+   run_whimstar(&player->whimstar);
+
+   if (empty_timer)
+      empty_timer--;
 }
 
 /*
