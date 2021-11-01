@@ -1,4 +1,4 @@
-
+/* vim: set shiftwidth=3 tabstop=3 textwidth=80 expandtab: */
 #include "../nx.h"
 #include "options.h"
 #include "dialog.h"
@@ -95,13 +95,17 @@ void options_tick()
 
 void DialogDismissed()
 {
-	if (opt.InMainMenu)
-	{
-		memset(inputs, 0, sizeof(inputs));
-		game.pause(false);
-	}
-	else
-		EnterMainMenu();
+   if (opt.InMainMenu)
+   {
+      game.pause(false);
+      /*
+       * This leaks inputs to other modes.
+       * How did nxengine-evo avoid leaking inputs to other modes with this?
+       */
+      /* memset(inputs, 0, sizeof(inputs)); */
+   }
+   else
+      EnterMainMenu();
 }
 
 void _60hz_change(ODItem *item, int dir)
