@@ -278,9 +278,12 @@ static int text_draw(int x, int y, const char *text, int spacing, NXFont *font)
 		else
 		{	// variable spacing
 			if (ch == ' ' && shrink_spaces)
-			{	// 10.5 px for spaces - make smaller than they really are - the default
-				x += 6;
-				if (i & 1) x++;
+			{
+				/* This prevents various texts from overflowing textbox. */
+				x += 4;
+				/* 10.5 px for spaces - make smaller than they really are - the default */
+				/* x += 6; */
+				/* if (i & 1) x++; */
 			}
 			else
 			{
