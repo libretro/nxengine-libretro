@@ -39,6 +39,14 @@ bool Graphics::init(int resolution)
 
 void Graphics::close()
 {
+   Tileset::Close();
+   Sprites::Close();
+
+   if (screen)
+   {
+      delete screen;
+      screen = NULL;
+   }
 }
 
 /*
@@ -59,7 +67,7 @@ bool Graphics::InitVideo()
    if (!sdl_screen)
       return 1;
 
-   screen = new NXSurface(sdl_screen, false);
+   screen = new NXSurface(sdl_screen, true);
    if (!drawtarget) drawtarget = screen;
    return 0;
 }

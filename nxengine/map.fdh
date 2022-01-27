@@ -22,6 +22,7 @@ void map_draw_backdrop(void);
 static void DrawFastLeftLayered(void);
 static bool LoadBackdropIfNeeded(int backdrop_no);
 void map_flush_graphics();
+void map_close(void);
 void map_drawwaterlevel(void);
 void map_draw(uint8_t foreground);
 void scroll_normal(void);

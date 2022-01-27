@@ -29,6 +29,7 @@ bool Sprites::Init()
 {
    char f_sprites_sif[1024];
    memset(spritesheet, 0, sizeof(spritesheet));
+   memset(sprites, 0, sizeof(sprites));
 
    retro_create_path_string(f_sprites_sif, sizeof(f_sprites_sif), "data", "sprites.sif");
 
@@ -42,8 +43,17 @@ bool Sprites::Init()
 
 void Sprites::Close()
 {
+   int i;
+
    FlushSheets();
    sheetfiles.MakeEmpty();
+
+   for (i = 0; i < MAX_SPRITES; i++)
+   {
+      if (sprites[i].frame)
+         free(sprites[i].frame);
+   }
+   memset(sprites, 0, sizeof(sprites));
 }
 
 void Sprites::FlushSheets()

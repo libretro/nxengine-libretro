@@ -97,6 +97,7 @@ void sound_close(void)
 {
 	pxt_freeSoundFX();
 	SSClose();
+	org_close();
 }
 
 /*

@@ -14,6 +14,7 @@ extern "C" {
 typedef struct file_data CFILE;
 
 bool cachefiles_init(RFILE *exefp);
+void cachefiles_close(void);
 CFILE *copen(const char *fname, const char *mode);
 void cclose(CFILE *f);
 void cseek(CFILE *f, int offset, int origin);

@@ -8,6 +8,7 @@
 #include <libretro.h>
 #include <streams/file_stream.h>
 #include <file/file_path.h>
+#include <string/stdstring.h>
 
 #include "libretro_shared.h"
 #include "../common/misc.fdh"
@@ -49,12 +50,16 @@ unsigned retro_get_tick(void)
 void retro_set_environment(retro_environment_t cb)
 {
    struct retro_vfs_interface_info vfs_iface_info;
+   bool no_content = true;
+
    environ_cb = cb;
 
    vfs_iface_info.required_interface_version = 1;
    vfs_iface_info.iface                      = NULL;
    if (environ_cb(RETRO_ENVIRONMENT_GET_VFS_INTERFACE, &vfs_iface_info))
 	   filestream_vfs_init(&vfs_iface_info);
+
+   environ_cb(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, &no_content);
 }
 
 unsigned retro_api_version(void)
@@ -211,31 +216,79 @@ void retro_init(void)
       libretro_supports_bitmasks = true;
 }
 
-static void extract_directory(char *buf, const char *path, size_t size)
+static void extract_directory(char *out_dir, const char *in_path, size_t size)
 {
-   char *base;
-   strncpy(buf, path, size - 1);
-   buf[size - 1] = '\0';
+   size_t len;
 
-   base = strrchr(buf, '/');
-   if (!base)
-      base = strrchr(buf, '\\');
+   fill_pathname_parent_dir(out_dir, in_path, size);
 
-   if (base)
-      *base = '\0';
-   else
-   {
-      buf[0] = '.';
-      buf[1] = '\0';
-   }
+   /* Remove trailing slash, if required */
+   len = strlen(out_dir);
+   if ((len > 0) &&
+       (out_dir[len - 1] == PATH_DEFAULT_SLASH_C()))
+      out_dir[len - 1] = '\0';
+
+   /* If parent directory is an empty string,
+    * must set it to '.' */
+   if (string_is_empty(out_dir))
+      strlcpy(out_dir, ".", size);
 }
 
 bool retro_load_game(const struct retro_game_info *game)
 {
-   if (!game)
-      return false;
+   g_dir[0] = '\0';
 
-   extract_directory(g_dir, game->path, sizeof(g_dir));
+   if (game)
+      extract_directory(g_dir, game->path, sizeof(g_dir));
+   else
+   {
+      const char *system_dir = NULL;
+      bool game_file_exists  = false;
+      char game_file[1024];
+
+      game_file[0] = '\0';
+
+      /* Get system directory */
+      if (environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &system_dir) &&
+          system_dir)
+      {
+         fill_pathname_join(g_dir, system_dir, "nxengine", sizeof(g_dir));
+         fill_pathname_join(game_file, g_dir, "Doukutsu.exe", sizeof(game_file));
+         game_file_exists = path_is_valid(game_file);
+      }
+
+      if (!game_file_exists)
+      {
+         unsigned msg_interface_version = 0;
+         environ_cb(RETRO_ENVIRONMENT_GET_MESSAGE_INTERFACE_VERSION,
+               &msg_interface_version);
+
+         if (msg_interface_version >= 1)
+         {
+            struct retro_message_ext msg = {
+               "NXEngine game files missing from frontend system directory",
+               3000,
+               3,
+               RETRO_LOG_ERROR,
+               RETRO_MESSAGE_TARGET_ALL,
+               RETRO_MESSAGE_TYPE_NOTIFICATION,
+               -1
+            };
+            environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE_EXT, &msg);
+         }
+         else
+         {
+            struct retro_message msg = {
+               "NXEngine game files missing from frontend system directory",
+               180
+            };
+            environ_cb(RETRO_ENVIRONMENT_SET_MESSAGE, &msg);
+         }
+
+         return false;
+      }
+   }
+
    NX_LOG("g_dir: %s\n", g_dir);
 
    retro_init_saves();

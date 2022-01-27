@@ -129,11 +129,14 @@ bool Game::createplayer()
 
 void Game::close(void)
 {
-	// call any onexit/cleanup function for the current mode
-	setmode(GM_NONE);
-	
-	Objects::DestroyAll(true);	// destroy all objects and player
-	FloatText::DeleteAll();
+   // call any onexit/cleanup function for the current mode
+   setmode(GM_NONE);
+
+   Objects::DestroyAll(true);	// destroy all objects and player
+   FloatText::DeleteAll();
+
+   // Destroy any loaded backdrops
+   map_close();
 }
 
 /*

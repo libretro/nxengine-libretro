@@ -160,6 +160,7 @@ void post_main(void)
    sound_close();
    tsc_close();
    textbox.Deinit();
+   cachefiles_close();
 }
 
 static bool gameloop(void)
