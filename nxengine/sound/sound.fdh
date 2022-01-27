@@ -40,6 +40,7 @@ void SSClose(void);
 
 //------------------[referenced from sound/sound.cpp]----------------//
 int org_init(RFILE *fp, int org_volume);
+void org_close(void);
 void org_stop(void);
 bool org_is_playing(void);
 char org_load(int songno);

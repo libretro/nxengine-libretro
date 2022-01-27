@@ -474,6 +474,19 @@ int i;
 	}
 }
 
+void map_close(void)
+{
+   int i;
+
+   for(i=0;i<MAX_BACKDROPS;i++)
+   {
+      if (backdrop[i])
+      {
+         delete backdrop[i];
+         backdrop[i] = NULL;
+      }
+   }
+}
 
 /*
 void c------------------------------() {}

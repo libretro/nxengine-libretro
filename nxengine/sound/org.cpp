@@ -130,6 +130,7 @@ void c------------------------------() {}
 */
 
 extern "C" bool extract_org(RFILE *exefp);
+extern "C" void extract_org_free(void);
 
 int org_init(RFILE *fp, int org_volume)
 {
@@ -162,13 +163,14 @@ int org_init(RFILE *fp, int org_volume)
 
 void org_close(void)
 {
-int d;
+   int d;
 
-	org_stop();
-	free_buffers();
-	
-	for(d=0;d<NUM_DRUMS;d++)
-		if (drumtable[d].samples) free(drumtable[d].samples);
+   org_stop();
+   free_buffers();
+   extract_org_free();
+
+   for(d=0;d<NUM_DRUMS;d++)
+      if (drumtable[d].samples) free(drumtable[d].samples);
 }
 
 int mgetc(char **fp)

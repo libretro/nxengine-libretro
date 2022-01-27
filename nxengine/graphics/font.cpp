@@ -78,6 +78,11 @@ bool font_init(void)
 
 void font_close(void)
 {
+   if (shadesfc)
+   {
+      FreeSurface(shadesfc);
+      shadesfc = NULL;
+   }
 }
 
 bool font_reload()
@@ -236,6 +241,9 @@ bool NXFont::InitCharsShadowed(SDL_Surface *font, uint32_t color, uint32_t shado
 		dstrect.x = 0;
 		dstrect.y = 0;
 		DrawBlit(top, NULL, letters[i], &dstrect);
+
+		FreeSurface(top);
+		FreeSurface(bottom);
 	}
 
 	return 0;
