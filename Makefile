@@ -200,6 +200,18 @@ else ifeq ($(platform), ctr)
    STATIC_LINKING = 1
    SINGLE_PRECISION_FLOATS = 1
    MIN_AUDIO_PROCESSING_PER_FRAME = 1
+# GCW0 (OpenDingux and OpenDingux Beta)
+else ifeq ($(platform), gcw0)
+   TARGET := $(TARGET_NAME)_libretro.so
+   CC = /opt/gcw0-toolchain/usr/bin/mipsel-linux-gcc
+   CXX = /opt/gcw0-toolchain/usr/bin/mipsel-linux-g++
+   AR = /opt/gcw0-toolchain/usr/bin/mipsel-linux-ar
+   SHARED := -shared -Wl,--no-undefined -Wl,--version-script=$(CORE_DIR)/libretro/link.T
+   fpic := -fPIC
+   CFLAGS += -DDINGUX -fomit-frame-pointer -ffast-math -march=mips32 -mtune=mips32r2 -mhard-float
+   CFLAGS += -D_GNU_SOURCE=1
+   SINGLE_PRECISION_FLOATS = 1
+   MIN_AUDIO_PROCESSING_PER_FRAME = 1
 else ifeq ($(platform), rpi1)
    TARGET := $(TARGET_NAME)_libretro.so
    fpic := -fPIC
