@@ -183,6 +183,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
    info->geometry.max_height = SCREEN_HEIGHT;
    info->timing.fps = 60.0;
    info->timing.sample_rate = 22050.0;
+   info->aspect_ratio = SCREEN_WIDTH/SCREEN_HEIGHT;
 }
 
 static void check_system_specs(void)
