@@ -102,7 +102,7 @@ void Object::SetType(int type)
    o->flags = (objprop[type].defaultflags & ~flags_to_keep) | keep;
 
 #ifdef DEBUG
-   NX_LOG("new flags: %04x", o->flags);
+   NX_LOG("new flags: %04x\n", o->flags);
 #endif
 
    // setup default clipping extents, in case object turns on clip_enable
