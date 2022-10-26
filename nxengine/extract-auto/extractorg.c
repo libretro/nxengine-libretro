@@ -89,7 +89,7 @@ files[] =
    { NULL, 0, 0, 0 }
 };
 
-char *org_data[42];
+unsigned char *org_data[42];
 signed short wavetable[100][256];
 static int org_extracted = 0;
 
@@ -117,7 +117,7 @@ bool extract_org(RFILE *exefp)
 
       // write out the file
       
-      org_data[i] = (char *)malloc(files[i].length);
+      org_data[i] = (unsigned char *)malloc(files[i].length);
       memcpy(org_data[i], buffer, files[i].length);
    }
 

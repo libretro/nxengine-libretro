@@ -173,7 +173,7 @@ void org_close(void)
       if (drumtable[d].samples) free(drumtable[d].samples);
 }
 
-int mgetc(char **fp)
+static int mgetc(unsigned char **fp)
 {
    unsigned char volatile *f = *((unsigned char volatile **)fp);
    unsigned char volatile c = *f;
@@ -181,33 +181,31 @@ int mgetc(char **fp)
    return c;
 }
 
-uint16_t mgeti(char **fp)
+static uint16_t mgeti(unsigned char **fp)
 {
-uint16_t a, b;
-	a = mgetc(fp);
-	b = mgetc(fp);
+	uint16_t a = mgetc(fp);
+	uint16_t b = mgetc(fp);
 	return (b << 8) | a;
 }
 
-uint32_t mgetl(char **fp)
+static uint32_t mgetl(unsigned char **fp)
 {
-uint32_t a, b, c, d;
-	a = mgetc(fp);
-	b = mgetc(fp);
-	c = mgetc(fp);
-	d = mgetc(fp);
+	uint32_t a = mgetc(fp);
+	uint32_t b = mgetc(fp);
+	uint32_t c = mgetc(fp);
+	uint32_t d = mgetc(fp);
 	return (d<<24)|(c<<16)|(b<<8)|(a);
 }
 
-extern "C" char *org_data[42];
+extern "C" unsigned char *org_data[42];
 
 char org_load(int songno)
 {
    static const char *magic = "Org-02";
    char buf[8];
    int i, j;
-   char *f = org_data[songno];
-   char **fp = &f;
+   unsigned char *f = org_data[songno];
+   unsigned char **fp = &f;
    if (!fp)
       return 1;
 
