@@ -50,7 +50,6 @@ void c------------------------------() {}
 void HeavyPress::Run()
 {
 	if (!o) return;
-	//AIDEBUG;
 	
 	run_defeated();
 	run_passageway();

@@ -652,8 +652,6 @@ Object *UDCoreBoss::create_rotator(int angle, int front)
 // the different z-order of the one that was just swapped-in.
 void UDCoreBoss::run_rotator(Object *o)
 {
-	//debug("rotr s%d", o->state);
-	
 	switch(o->state)
 	{
 		case 0:

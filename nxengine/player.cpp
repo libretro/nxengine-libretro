@@ -1375,20 +1375,14 @@ void PDoRepel(void)
 	if (player->CheckAttribute(player->repel_u, player->nrepel_u, TA_SOLID_PLAYER))
 	{
 		if (!player->CheckAttribute(&sprites[player->sprite].block_d, TA_SOLID_PLAYER))
-		{
 			player->y += REPEL_SPEED;
-			//debug("REPEL [down]");
-		}
 	}
 
 	// do repel up
 	if (player->CheckAttribute(player->repel_d, player->nrepel_d, TA_SOLID_PLAYER))
 	{
 		if (!player->CheckAttribute(&sprites[player->sprite].block_u, TA_SOLID_PLAYER))
-		{
 			player->y -= REPEL_SPEED;
-			//debug("REPEL [up]");
-		}
 	}
 	*/
 }

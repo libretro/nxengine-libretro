@@ -32,7 +32,6 @@ void c------------------------------() {}
 
 void ai_misery_frenzied(Object *o)
 {
-	//AIDEBUG;
 	sidekick_run_defeated(o, 600);
 	
 	switch(o->state)
@@ -429,7 +428,6 @@ void c------------------------------() {}
 
 void ai_sue_frenzied(Object *o)
 {
-	//AIDEBUG;
 	sidekick_run_defeated(o, 500);
 	
 	switch(o->state)

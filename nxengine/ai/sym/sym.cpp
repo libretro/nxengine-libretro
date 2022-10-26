@@ -1029,8 +1029,6 @@ void c------------------------------() {}
 // "extra" map scrolling modes. Generally you'll <FON on it, then set the mode you desire.
 void ai_scroll_controller(Object *o)
 {
-	//debug("scrollctrl: state %d; dp %d; linked %08x", o->state, o->dirparam, o->linkedobject);
-	
 	switch(o->state)
 	{
 		// stay above player's head. This is used during the "mad run" Balcony2 stage;

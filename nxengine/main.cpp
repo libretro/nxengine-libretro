@@ -129,22 +129,23 @@ bool pre_main(void)
    // set null stage just to have something to do while we go to intro
    game.switchstage.mapno = 0;
 
-   //game.switchstage.mapno = LOAD_GAME;
-   //game.pause(GP_OPTIONS);
-
-   if (settings->skip_intro && path_is_valid(GetProfileName(settings->last_save_slot)))
+   if (     settings->skip_intro 
+         && path_is_valid(GetProfileName(settings->last_save_slot)))
       game.switchstage.mapno = LOAD_GAME;
    else
       game.setmode(GM_INTRO);
 
    // for debug
-   if (game.paused) { game.switchstage.mapno = 0; game.switchstage.eventonentry = 0; }
-   if (game.switchstage.mapno == LOAD_GAME) inhibit_loadfade = true;
+   if (game.paused)
+   {
+      game.switchstage.mapno = 0;
+      game.switchstage.eventonentry = 0;
+   }
+   if (game.switchstage.mapno == LOAD_GAME)
+      inhibit_loadfade = true;
 
    game.running = true;
-   freshstart = true;
-
-   NX_LOG("Entering main loop...\n");
+   freshstart   = true;
 
    return 0;
 }
@@ -199,12 +200,14 @@ bool run_main(void)
 			return 1;
 		}
 
-		if (!inhibit_loadfade) fade.Start(FADE_IN, FADE_CENTER);
-		else inhibit_loadfade = false;
+		if (inhibit_loadfade)
+         inhibit_loadfade = false;
+      else
+         fade.Start(FADE_IN, FADE_CENTER);
 	}
 	else
 	{
-		if (game.switchstage.mapno == NEW_GAME || \
+		if (  game.switchstage.mapno == NEW_GAME || 
 				game.switchstage.mapno == NEW_GAME_FROM_MENU)
 		{
 			static bool show_intro = (game.switchstage.mapno == NEW_GAME_FROM_MENU);
@@ -212,11 +215,9 @@ bool run_main(void)
 		}
 
 		// slide weapon bar on first intro to Start Point
-		if (game.switchstage.mapno == STAGE_START_POINT && \
-				game.switchstage.eventonentry == 91)
-		{
+		if (     game.switchstage.mapno == STAGE_START_POINT
+				&& game.switchstage.eventonentry == 91)
 			freshstart = true;
-		}
 
 		// switch maps
 		if (load_stage(game.switchstage.mapno))
@@ -259,9 +260,7 @@ static inline void run_tick(void)
 	if (justpushed(ESCKEY))
 	{
 		if (settings->instant_quit)
-		{
 			game.running = false;
-		}
 		else if (!game.paused)		// no pause from Options
 			game.pause(GP_PAUSED);
 	}
@@ -284,22 +283,22 @@ void InitNewGame(bool with_intro)
 	memset(game.skipflags, 0, sizeof(game.skipflags));
 	textbox.StageSelect.ClearSlots();
 	
-	game.quaketime = game.megaquaketime = 0;
-	game.showmapnametime = 0;
-	game.debug.god = 0;
-	game.running = true;
-	game.frozen = false;
+	game.quaketime                = game.megaquaketime = 0;
+	game.showmapnametime          = 0;
+	game.debug.god                = 0;
+	game.running                  = true;
+	game.frozen                   = false;
 	
 	// fully re-init the player object
 	Objects::DestroyAll(true);
 	game.createplayer();
 	
-	player->maxHealth = 3;
-	player->hp = player->maxHealth;
+	player->maxHealth             = 3;
+	player->hp                    = player->maxHealth;
 	
-	game.switchstage.mapno = STAGE_START_POINT;
-	game.switchstage.playerx = 10;
-	game.switchstage.playery = 8;
+	game.switchstage.mapno        = STAGE_START_POINT;
+	game.switchstage.playerx      = 10;
+	game.switchstage.playery      = 8;
 	game.switchstage.eventonentry = (with_intro) ? 200 : 91;
 	
 	fade.set_full(FADE_OUT);

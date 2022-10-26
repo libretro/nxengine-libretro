@@ -115,7 +115,6 @@ void c------------------------------() {}
 void BallosBoss::Run()
 {
 	if (!main) return;
-	//AIDEBUG;
 	
 	transfer_damage(body, main);
 	transfer_damage(eye[LEFT], main);

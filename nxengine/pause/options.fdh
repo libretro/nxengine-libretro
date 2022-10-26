@@ -43,8 +43,6 @@ void DialogDismissed();
 static void EnterMainMenu();
 void LeavingMainMenu();
 void _res_change(ODItem *item, int dir);
-void _debug_change(ODItem *item, int dir);
-void _debug_get(ODItem *item);
 void _save_change(ODItem *item, int dir);
 void _save_get(ODItem *item);
 void _sound_change(ODItem *item, int dir);

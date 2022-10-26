@@ -52,13 +52,6 @@ Caret *effect(int x, int y, int effectno);
 bool tsc_load(const char *fname, int pageno);
 int CVTDir(int csdir);
 
-
-/* located in debug.cpp */
-
-//----------------------[referenced from map.cpp]--------------------//
-void debug(const char *fmt, ...);
-
-
 /* located in ai/sym/smoke.cpp */
 
 //----------------------[referenced from map.cpp]--------------------//

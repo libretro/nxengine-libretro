@@ -459,7 +459,6 @@ int y;
 		break;
 		case 31:
 		{
-			//debug("%x", o->linkedobject->y);
 			if (o->linkedobject && o->linkedobject->y <= 0x45800)
 			{
 				o->state = 10;

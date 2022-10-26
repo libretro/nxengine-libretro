@@ -108,10 +108,6 @@ int i;
 	Object *o = main;
 	if (!o) return;
 	
-	//debug("main->state: %d", o->state);
-	//debug("main->timer: %d", o->timer);
-	//DebugCrosshair(o->xmark, o->ymark, 255,255,255);
-	
 	switch(o->state)
 	{
 		case 20:	// fight begin (script-triggered)

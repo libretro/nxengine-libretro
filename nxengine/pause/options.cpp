@@ -135,9 +135,6 @@ static void EnterMainMenu()
 
    dlg->AddSeparator();
 
-   //dlg->AddItem("Enable Debug Keys", _debug_change, _debug_get);
-   //dlg->AddItem("Save Slots: ", _save_change, _save_get);
-
    dlg->AddSeparator();
 
    dlg->AddItem("Music: ", _music_change, _music_get);

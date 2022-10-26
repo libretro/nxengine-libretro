@@ -62,12 +62,4 @@ void SmokeXY(int x, int y, int nclouds, int rangex=0, int rangey=0, Object *push
 #define COPY_PFBOX	\
 	{ sprites[o->sprite].bbox = sprites[o->sprite].frame[o->frame].dir[o->dir].pf_bbox; }
 
-#define AIDEBUG	\
-{	\
-	debug("%s", __FUNCTION__);	\
-	debug("state: %d", o->state);	\
-	debug("timer: %d", o->timer);	\
-	debug("timer2: %d", o->timer2);	\
-}
-
 #endif

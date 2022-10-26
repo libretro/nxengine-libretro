@@ -118,8 +118,6 @@ void IronheadBoss::Run(void)
 				o->ymark += (o->ymark < player->y) ? 0x200: -0x200;
 			}
 			
-			//debugXline(o->xmark, 255,0,0);
-			//debugYline(o->ymark, 0,255,0);
 			o->xinertia += (o->x > o->xmark) ? -8 : 8;
 			o->yinertia += (o->y > o->ymark) ? -8 : 8;
 			

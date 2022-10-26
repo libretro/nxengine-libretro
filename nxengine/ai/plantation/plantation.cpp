@@ -47,8 +47,6 @@ void c------------------------------() {}
 // dragonfly creature
 void ai_stumpy(Object *o)
 {
-	//debug("state: %d",o->state);
-	//debug("timer: %d",o->timer);
 	o->frame ^= 1;
 	
 	switch(o->state)

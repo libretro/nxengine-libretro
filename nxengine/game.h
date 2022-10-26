@@ -68,7 +68,6 @@ struct Game
 	struct
 	{
 		bool god;
-		//bool debugmode;
 		bool infinite_damage;
 		bool DrawBoundingBoxes;
 	} debug;
@@ -161,7 +160,6 @@ extern TextBox textbox;
 extern Object *onscreen_objects[MAX_OBJECTS];
 extern int nOnscreenObjects;
 
-void debug(const char *fmt, ...);
 void quake(int quaketime, int snd=-1);
 void megaquake(int quaketime, int snd=-1);
 

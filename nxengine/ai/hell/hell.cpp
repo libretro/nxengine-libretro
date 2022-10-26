@@ -38,7 +38,6 @@ void c------------------------------() {}
 
 void ai_bute_flying(Object *o)
 {
-	//AIDEBUG;
 	if (run_bute_defeated(o, BUTE_HP))
 		return;
 	

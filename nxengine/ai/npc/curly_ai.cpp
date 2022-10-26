@@ -27,18 +27,6 @@ int otiley;
 char seeking_player = 0;
 char wantdir;
 
-/*
-	debug("Curly Console");
-	debug("TGT: [%d,%d] %d", o->xmark>>CSF, o->ymark>>CSF, game.curlytarget.timeleft);
-	debug("State: %d", o->state);
-	debug("");
-	debug("RPT %d", o->curly.reachptimer);
-	debug("TJT %d", o->curly.tryjumptime);
-	debug("IJT %d:%d", o->curly.impjumptime, o->curly.impjump);
-	game.debug.god = 1;
-if (inputs[DEBUGKEY7]) o->state=999;
-*/
-	
 	// put these here so she'll spawn the shield immediately, even while she's still
 	// knocked out. otherwise she wouldn't have it turned on in the cutscene if the
 	// player defeats the core before she gets up. I know that's unlikely but still.

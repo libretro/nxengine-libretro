@@ -91,7 +91,6 @@ void StopScripts(void);
 /* located in debug.cpp */
 
 //---------------------[referenced from game.cpp]--------------------//
-void debug_clear();
 void DrawDebug(void);
 void DrawBoundingBoxes();
 

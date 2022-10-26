@@ -22,8 +22,6 @@ void c------------------------------() {}
 // scared toroko attacking in Shack
 void ai_toroko_shack(Object *o)
 {
-	//debug("Y:%d  Yinertia:%d  blockd:%d  flags:%d", o->y>>CSF, o->yinertia, o->blockd, o->flags);
-	
 	switch(o->state)
 	{
 		case 0:

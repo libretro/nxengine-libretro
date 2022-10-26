@@ -48,9 +48,6 @@ void c------------------------------() {}
 
 void ai_ballos_priest(Object *o)
 {
-	//AIDEBUG;
-	//debug("timer3: %d", o->timer3);
-	
 	/*if (o->state < 1000)
 	{
 		FindObjectByID2(500)->Delete();

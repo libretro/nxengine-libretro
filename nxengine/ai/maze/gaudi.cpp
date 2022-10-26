@@ -282,10 +282,6 @@ void ai_gaudi_armored(Object *o)
 	
 	FACEPLAYER;
 	
-	//debug("%d", o->state);
-	//debugVline(o->x, 0, 0, 255);
-	//debugVline(o->xmark, 0, 255, 0);
-	
 	switch(o->state)
 	{
 		case 0:

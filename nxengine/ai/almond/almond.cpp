@@ -21,14 +21,8 @@ void c------------------------------() {}
 
 void ai_waterlevel(Object *o)
 {
-/*	debug("WL State: %d", o->state);
-	debug("WL Y: %d", o->y>>CSF);
-	debug("WL Timer: %d", o->timer);
-	debug("WLForceUp: %d", map.wlforceup);*/
-	
 	if (map.wlforcestate)
 	{
-		NX_LOG("Forced WL state to %d\n", map.wlforcestate);
 		o->state = map.wlforcestate;
 		map.wlforcestate = 0;
 	}

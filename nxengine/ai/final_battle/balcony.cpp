@@ -278,7 +278,6 @@ void ai_falling_block_spawner(Object *o)
 void ai_falling_block(Object *o)
 {
 	o->damage = (player->Top() > o->CenterY()) ? 10 : 0;
-	//debug("Falling Block State %d", o->state);
 	
 	switch(o->state)
 	{

@@ -62,10 +62,6 @@ private:
 	// turns off scrolling and further script execution when "/" command hit at end
 	bool roll_running;
 	
-	
-	int lines_out;		// debug...
-	int lines_vis;		// ...counters
-	
 	CredReader script;
 	CredLine *firstline, *lastline;
 };

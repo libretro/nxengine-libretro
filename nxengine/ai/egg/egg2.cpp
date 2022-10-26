@@ -252,10 +252,6 @@ void c------------------------------() {}
 
 void ai_counter_bomb(Object *o)
 {
-	/*debug("state: %d", o->state);
-	debug("timer: %d", o->timer);
-	debug("timer2: %d", o->timer2);*/
-	
 	switch(o->state)
 	{
 		case 0:

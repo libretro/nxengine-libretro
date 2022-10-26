@@ -31,15 +31,6 @@ void c------------------------------() {}
 
 void ai_ma_pignon(Object *o)
 {
-	/*debug("state: %d", o->state);
-	debug("timer: %d", o->timer);
-	debug("timer2: %d", o->timer2);
-	debug("timer3: %d", o->timer3);
-	debug("xinertia: %d", o->xinertia);
-	debug("yinertia: %d", o->yinertia);
-	debug("frame: %d", o->frame);
-	*/
-	
 	switch(o->state)
 	{
 		case 0:

@@ -58,8 +58,6 @@ void c------------------------------() {}
 
 void ai_boss_doctor_frenzied(Object *o)
 {
-	//AIDEBUG;
-	
 	switch(o->state)
 	{
 		// fight begin/base state

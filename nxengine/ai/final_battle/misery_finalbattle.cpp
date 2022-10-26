@@ -31,10 +31,6 @@ void c------------------------------() {}
 
 void ai_boss_misery(Object *o)
 {
-	/*debug("state: %d", o->state);
-	debug("timer: %d", o->timer);
-	debug("timer2: %d", o->timer2);*/
-	
 	switch(o->state)
 	{
 		// fight begin and default/base state

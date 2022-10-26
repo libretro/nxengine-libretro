@@ -737,7 +737,6 @@ void run_phase_compensator(void)
 	if (displayed_phase_offs != 0)
 	{
 		int phase_offs = abs(map.real_xscroll - player->x) % 512;
-		//debug("%d", phase_offs);
 		
 		// move phase_adj towards phase_offs; phase_offs is how far
 		// out of sync we are with the player and so once we reach it

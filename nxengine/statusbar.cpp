@@ -73,9 +73,6 @@ void DrawStatusBar(void)
    int w, x;
    bool maxed_out;
 
-   //debug("%08x", game.bossbar.object);
-   //debug("%s", game.bossbar.defeated ? "true" : "false");
-
    // handle animations etc
    RunStatusBar();
 

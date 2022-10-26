@@ -25,8 +25,6 @@ bool Credits::Init()
 	xoffset = 0;
 	roll_running = true;
 	
-	lines_out = lines_vis = 0;
-	
 	firstline = NULL;
 	lastline = NULL;
 	
@@ -44,24 +42,11 @@ void c------------------------------() {}
 
 void Credits::Tick()
 {
-	/*debug("scroll_y: %d", scroll_y>>CSF);
-	debug("spawn_y: %d", spawn_y);
-	debug("scr_spawn_y: %d", SCREEN_Y(spawn_y));
-	debug("trigger: %d", SCREEN_HEIGHT+MARGIN);
-	debug("");*/
-	/*debug("imgno: %d", bigimage.imgno);
-	debug("state: %d", bigimage.state);
-	debug("imagex: %d", bigimage.imagex);*/
-	
 	if (roll_running || SCREEN_Y(spawn_y) >= (SCREEN_HEIGHT + 8))
-	{
 		scroll_y += 0x100;
-	}
 	
 	while(roll_running && SCREEN_Y(spawn_y) < (SCREEN_HEIGHT + MARGIN))
-	{
 		RunNextCommand();
-	}
 	
 	if (player)
 	{
@@ -99,12 +84,9 @@ CredCommand cmd;
 			// the last line is supposed to be centered--slightly
 			// varying font sizes can lead to it being a little bit off
 			if (strstr(line->text, "The End"))
-			{
 				line->x = (SCREEN_WIDTH / 2) - (GetFontWidth(line->text, TEXT_SPACING) / 2);
-			}
 			
 			spawn_y += 1;
-			lines_out++;
 		}
 		break;
 		
@@ -237,7 +219,6 @@ CredLine *Credits::AddLine(CredLine *line)
 		firstline = lastline = line;
 	}
 	
-	lines_vis++;
 	return line;
 }
 
@@ -247,7 +228,6 @@ void Credits::RemoveLine(CredLine *line)
 	if (line->prev) line->prev->next = line->next;
 	if (line == firstline) firstline = firstline->next;
 	if (line == lastline) lastline = lastline->next;
-	lines_vis--;
 }
 
 /*

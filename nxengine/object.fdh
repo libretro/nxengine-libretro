@@ -35,9 +35,6 @@ void hurtplayer(int damage);
 ScriptInstance *StartScript(int scriptno, int pageno);
 int GetCurrentScript(void);
 
-
-/* located in debug.cpp */
-
 /* located in ai/sym/smoke.cpp */
 
 //--------------------[referenced from object.cpp]-------------------//

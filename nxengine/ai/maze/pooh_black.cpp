@@ -27,9 +27,6 @@ void ai_pooh_black(Object *o)
 	// assume flying frame as it's the one used in most of the states
 	o->frame = FRAME_FLYING;
 	
-	//debugVline(o->CenterX(), 255,192,192);
-	//debugVline(bubble_xmark, 0,0,255);
-	
 	switch(o->state)
 	{
 		case 0:

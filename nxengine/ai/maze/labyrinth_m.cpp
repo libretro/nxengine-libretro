@@ -223,12 +223,6 @@ void c------------------------------() {}
 
 void ai_buyobuyo_base(Object *o)
 {
-/*if (o->onscreen) {
-	debug("state: %d", o->state);
-	debug("timer: %d", o->timer);
-	debug("timer2: %d", o->timer2);
-}*/
-	
 	if (o->state < 3 && o->hp < (1000 - BUYOBUYO_BASE_HP))
 	{
 		SmokeClouds(o, objprop[o->type].death_smoke_amt, 8, 8);
@@ -364,7 +358,6 @@ void ai_buyobuyo(Object *o)
 			
 			// move the point we are bobbling around
 			o->xmark += (o->dir == LEFT) ? -(1 << CSF) : (1 << CSF);
-			//debugVline(o->xmark, 0, 0xff, 0);
 			
 			if (++o->timer > 300)
 				deleteme = true;

@@ -14,11 +14,6 @@ void c------------------------------() {}
 
 void ai_frenzied_mimiga(Object *o)
 {
-	/*debug("state %d", o->state);
-	debug("timer %d", o->timer);
-	debug("xi %d", o->xinertia);
-	debug("yi %d", o->yinertia);*/
-	
 	switch(o->state)
 	{
 		case 0:

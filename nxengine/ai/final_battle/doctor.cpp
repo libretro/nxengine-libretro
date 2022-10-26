@@ -30,8 +30,6 @@ void c------------------------------() {}
 
 void ai_boss_doctor(Object *o)
 {
-	//AIDEBUG;
-	
 	/*if (o->state > 2 && o->state < 500)
 	{
 		o->state = 937;

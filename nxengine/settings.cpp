@@ -48,14 +48,12 @@ bool settings_load(Settings *setfile)
 		setfile->last_save_slot = 0;
 		setfile->multisave = true;
 
-		setfile->enable_debug_keys = false;
 		setfile->sound_enabled = true;
 		setfile->music_enabled = 1;	// both Boss and Regular music
 
 		setfile->instant_quit = false;
 		setfile->emulate_bugs = false;
 		setfile->no_quake_in_hell = false;
-		setfile->inhibit_fullscreen = false;
 		setfile->files_extracted = false;
 
 		// I found that 8bpp->32bpp blits are actually noticably faster

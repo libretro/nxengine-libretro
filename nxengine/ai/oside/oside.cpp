@@ -29,7 +29,6 @@ void c------------------------------() {}
 #define NS_GUARD_SET_POINT		6
 void ai_night_spirit(Object *o)
 {
-	//debug("ns state: %d", o->state);
 	switch(o->state)
 	{
 		case 0:
@@ -145,15 +144,11 @@ void ai_night_spirit(Object *o)
 		if (o->blocku) o->yinertia = 0x200;
 		if (o->blockd) o->yinertia = -0x200;
 		
-		//debugHline(o->ymark - (SCREEN_HEIGHT<<CSF), 0, 255, 0);
-		
 		// avoid leaving designated area
 		if (abs(o->y - o->ymark) > SCREEN_HEIGHT<<CSF)
 		{
 			if (o->state != NS_FIRING)
-			{
 				o->state = NS_RETURN_TO_SET_POINT;
-			}
 		}
 	}
 	
