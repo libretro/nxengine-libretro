@@ -177,13 +177,13 @@ void retro_set_controller_port_device(unsigned port, unsigned device)
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
-   info->geometry.base_width = SCREEN_WIDTH;
-   info->geometry.base_height = SCREEN_HEIGHT;
-   info->geometry.max_width = SCREEN_WIDTH; 
-   info->geometry.max_height = SCREEN_HEIGHT;
-   info->geometry.aspect_ratio = SCREEN_WIDTH/SCREEN_HEIGHT;
-   info->timing.fps = 60.0;
-   info->timing.sample_rate = 22050.0;
+   info->geometry.base_width   = SCREEN_WIDTH;
+   info->geometry.base_height  = SCREEN_HEIGHT;
+   info->geometry.max_width    = SCREEN_WIDTH; 
+   info->geometry.max_height   = SCREEN_HEIGHT;
+   info->geometry.aspect_ratio = (double)SCREEN_WIDTH / (double)SCREEN_HEIGHT;
+   info->timing.fps            = 60.0;
+   info->timing.sample_rate    = 22050.0;
 
 }
 
