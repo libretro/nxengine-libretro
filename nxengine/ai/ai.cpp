@@ -57,12 +57,8 @@ bool load_npc_tbl(void)
    retro_create_path_string(fname, sizeof(fname), g_dir, tmp_str);
 
    RFILE *fp = rfopen(fname, "rb");
-   if (!fp) {
-      NX_ERR("load_npc_tbl: %s is missing\n", fname);
+   if (!fp)
       return 1;
-   }
-
-   NX_LOG("Reading %s...\n", fname);
 
    for(i=0;i<nEntries;i++) objprop[i].defaultflags = rfgeti(fp);
    for(i=0;i<nEntries;i++) objprop[i].initial_hp = rfgeti(fp);

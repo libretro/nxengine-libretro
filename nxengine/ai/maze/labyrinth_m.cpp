@@ -240,7 +240,6 @@ void ai_buyobuyo_base(Object *o)
 	{
 		case 0:
 		{
-         NX_LOG("ai_buyobuyo_base - state 0\n");
 			// ceiling has different bounding box and action point
 			if (o->dir == RIGHT)
 				o->sprite = SPR_BUYOBUYO_BASE_CEILING;
@@ -250,7 +249,6 @@ void ai_buyobuyo_base(Object *o)
 		}
 		case 1:
 		{
-         NX_LOG("ai_buyobuyo_base - state 1\n");
 			if (pdistlx(0x14000))
 			{
 				if ((o->dir == LEFT && pdistly2(0x14000, 0x2000)) || \
@@ -269,7 +267,6 @@ void ai_buyobuyo_base(Object *o)
 		
 		case 2:
 		{
-         NX_LOG("ai_buyobuyo_base - state 2\n");
 			ANIMATE(3, 0, 1);
 			
 			if (++o->timer > 10)
@@ -308,14 +305,12 @@ void ai_buyobuyo(Object *o)
 		case 0:
 		{
 			// shoot up down at player...
-         NX_LOG("ai_buyobuyo - state 0\n");
 			o->yinertia = (o->dir == LEFT) ? -0x600 : 0x600;
 			o->state = 1;
 			o->timer = 0;
 		}
 		case 1:
 		{
-         NX_LOG("ai_buyobuyo - state 1\n");
 			o->timer++;		// inc fly time
 			// reached height of player yet?
 			if (pdistly(0x2000))
@@ -329,7 +324,6 @@ void ai_buyobuyo(Object *o)
 		
 		case 2:
 		{
-         NX_LOG("ai_buyobuyo - state 2\n");
 			// this slight "minimum fly time" keeps the underwater ones from
 			// smacking into the floor if the player is underwater with them
 			if (++o->timer > 3)
@@ -348,7 +342,6 @@ void ai_buyobuyo(Object *o)
 		
 		case 3:
 		{
-         NX_LOG("ai_buyobuyo - state 3\n");
 			if (o->x > o->xmark) o->xinertia -= 0x20;
 			if (o->x < o->xmark) o->xinertia += 0x20;
 			if (o->y > o->ymark) o->yinertia -= 0x20;

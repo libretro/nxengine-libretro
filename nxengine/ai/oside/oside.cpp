@@ -328,15 +328,7 @@ void c------------------------------() {}
 
 void ai_pixel_cat(Object *o)
 {
-	#ifdef SHOW_DEBUG_KITTY
-	if (o->state == 0)
-	{
-		o->y -= (32 << CSF);
-		o->state = 1;
-	}
-	#endif
 }
-
 
 void ai_little_family(Object *o)
 {

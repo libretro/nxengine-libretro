@@ -291,8 +291,6 @@ bool retro_load_game(const struct retro_game_info *game)
       }
    }
 
-   NX_LOG("g_dir: %s\n", g_dir);
-
    retro_init_saves();
 
    if (pre_main())

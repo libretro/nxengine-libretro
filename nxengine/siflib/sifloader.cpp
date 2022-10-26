@@ -58,20 +58,12 @@ bool SIFLoader::LoadHeader(const char *filename)
    fp = fFP = copen(filename, "rb");
 
    if (!fp)
-   {
-      NX_ERR("SIFLoader::LoadHeader: failed to open file '%s'\n", filename);
       return 1;
-   }
 
    if ((magick = cgetl(fp)) != SIF_MAGICK)
-   {
-      NX_ERR("SIFLoader::LoadHeader: magick check failed--this isn't a SIF file or is wrong version?\n");
-      NX_ERR(" (expected %08x, got %08x)\n", SIF_MAGICK, magick);
       return 1;
-   }
 
    int nsections = cgetc(fp);
-   NX_LOG("SIFLoader::LoadHeader: read index of %d sections\n", nsections);
 
    for(int i=0;i<nsections;i++)
    {
@@ -83,7 +75,6 @@ bool SIFLoader::LoadHeader(const char *filename)
       entry->data          = NULL;				// we won't load it until asked
 
       fIndex.AddItem(entry);
-      //NX_LOG("  - Sect%02d @ %04x\n", entry->type, entry->foffset);
    }
 
    // ..leave file handle open, its ok
@@ -108,12 +99,9 @@ uint8_t *SIFLoader::FindSection(int type, int *length_out)
          {
             if (!fFP)
             {
-               NX_ERR("SIFLoader::FindSection: entry found and need to load it, but file handle closed\n");
                if (length_out) *length_out = 0;
                return NULL;
             }
-
-            NX_LOG("Loading SIF section %d from address %04x\n", type, entry->foffset);
 
             entry->data = (uint8_t *)malloc(entry->length);
             cseek(fFP, entry->foffset, SEEK_SET);

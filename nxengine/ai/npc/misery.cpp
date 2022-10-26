@@ -184,14 +184,7 @@ Object *target;
 
 static Object *mbubble_find_target(void)
 {
-	Object *target = FindObjectByID2(1000);
-	if (!target)
-	{
-		NX_ERR("ai_miserys_bubble: failed to find a target object with ID2=1000\n");
-		return NULL;
-	}
-	
-	return target;
+	return FindObjectByID2(1000);
 }
 
 

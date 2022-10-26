@@ -58,7 +58,7 @@ char buf[256];
 	
 	// read data from exe
 	fp = fopen("/data/win/Programs/Games/Cave Story Deluxe/CaveStory/Doukutsu.exe", "rb");
-	if (!fp) { NX_ERROR("Failed opening exe\n"); return 1; }
+	if (!fp) return 1;
 	
 	// load raw data into struct
 	fseek(fp, DATA_OFFSET, SEEK_SET);

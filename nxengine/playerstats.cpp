@@ -96,12 +96,11 @@ void c------------------------------() {}
 void AddInventory(int item)
 {
 	if (player->ninventory+1 >= MAX_INVENTORY)
-   {
-      NX_ERR("<<<AddInventory: inventory is full>>\n");
-      game.running = 0;
-      return;
-   }
-	
+	{
+		game.running = 0;
+		return;
+	}
+
 	player->inventory[player->ninventory++] = item;
 	sound(SND_GET_ITEM);
 	RefreshInventoryScreen();
@@ -110,21 +109,19 @@ void AddInventory(int item)
 // remove an item from the inventory list (does nothing if it's not in there)
 void DelInventory(int item)
 {
-int slot;
-int i;
+	int slot;
+	int i;
 
 	for(;;)
 	{
 		slot = FindInventory(item);
 		if (slot == -1) break;
-		
+
 		for(i=slot;i<player->ninventory-1;i++)
-		{
 			player->inventory[i] = player->inventory[i+1];
-		}
 		player->ninventory--;
 	}
-	
+
 	RefreshInventoryScreen();
 }
 
@@ -200,15 +197,15 @@ void LoseWeapon(int wpn)
 // TAM command.
 void TradeWeapon(int oldwpn, int newwpn, int ammo)
 {
-int oldcurwpn = player->curWeapon;
+	int oldcurwpn = player->curWeapon;
 
 	// ammo 0 = no change; used when you get missiles are upgraded to Super Missiles
 	if (ammo == 0)
 		ammo = player->weapons[oldwpn].maxammo;
-	
+
 	GetWeapon(newwpn, ammo);
 	LoseWeapon(oldwpn);
-	
+
 	// switch to new weapon if the weapon traded was the
 	// one we were using. Otherwise, don't change current weapon.
 	if (oldwpn == oldcurwpn)
@@ -234,4 +231,3 @@ void RefillAllAmmo(void)
 			player->weapons[i].ammo = player->weapons[i].maxammo;
 	}
 }
-

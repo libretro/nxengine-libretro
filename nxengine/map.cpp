@@ -34,47 +34,44 @@ uint32_t tilekey[MAX_TILES] = {0, 0, 64, 2, 2, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 // tile attributes (pxa), and script (tsc).
 bool load_stage(int stage_no)
 {
-char stage[MAXPATHLEN];
-char fname[MAXPATHLEN];
-
-char slash;
+	char stage[MAXPATHLEN];
+	char fname[MAXPATHLEN];
 #ifdef _WIN32
-slash = '\\';
+	char slash = '\\';
 #else
-slash = '/';
+	char slash = '/';
 #endif
 
-	NX_LOG(" >> Entering stage %d: '%s'.\n", stage_no, stages[stage_no].stagename);
 	game.curmap = stage_no;		// do it now so onspawn events will have it
-	
+
 	if (Tileset::Load(stages[stage_no].tileset))
 		return 1;
-	
+
 	// get the base name of the stage without extension
 	const char *mapname = stages[stage_no].filename;
 	if (!strcmp(mapname, "lounge")) mapname = "Lounge";
 	snprintf(stage, sizeof(stage), "%s%c%s", stage_dir, slash, mapname);
-	
+
 	snprintf(fname, sizeof(fname), "%s.pxm", stage);
 	if (load_map(fname)) return 1;
-	
+
 	snprintf(fname, sizeof(fname), "%s%c%s.pxa", stage_dir, slash, tileset_names[stages[stage_no].tileset]);
 	if (load_tileattr(fname)) return 1;
-	
+
 	snprintf(fname, sizeof(fname), "%s.pxe", stage);
 	if (load_entities(fname)) return 1;
-	
+
 	snprintf(fname, sizeof(fname), "%s.tsc", stage);
 	if (tsc_load(fname, SP_MAP) == -1) return 1;
-	
+
 	map_set_backdrop(stages[stage_no].bg_no);
 	map.scrolltype = stages[stage_no].scroll_type;
 	map.motionpos = 0;
 
-   //hack to show nice backdrop in menu, like nicalis
-   stages[0].bg_no=9;
-   stages[0].scroll_type=BK_FASTLEFT_LAYERS;
-	
+	//hack to show nice backdrop in menu, like nicalis
+	stages[0].bg_no=9;
+	stages[0].scroll_type=BK_FASTLEFT_LAYERS;
+
 	return 0;
 }
 
@@ -85,53 +82,38 @@ void c------------------------------() {}
 // load a PXM map
 bool load_map(const char *fname)
 {
-	CFILE *fp;
 	int x, y;
-
-   NX_LOG("load_map: %s\n", fname);
-
-	fp = copen(fname, "rb");
+	CFILE *fp = copen(fname, "rb");
 	if (!fp)
-	{
-		NX_ERR("load_map: no such file: '%s'\n", fname);
 		return 1;
-	}
-	
+
 	if (!cverifystring(fp, "PXM"))
-	{
-		NX_ERR("load_map: invalid map format: '%s'\n", fname);
 		return 1;
-	}
-	
+
 	memset(&map, 0, sizeof(map));
-	
+
 	cgetc(fp);
 	map.xsize = cgeti(fp);
 	map.ysize = cgeti(fp);
-	
+
+        /* map is too large? */
 	if (map.xsize > MAP_MAXSIZEX || map.ysize > MAP_MAXSIZEY)
 	{
-		NX_ERR("load_map: map is too large -- size %dx%d but max is %dx%d\n", map.xsize, map.ysize, MAP_MAXSIZEX, MAP_MAXSIZEY);
 		cclose(fp);
 		return 1;
 	}
-	else
-	{
-		NX_LOG("load_map: level size %dx%d\n", map.xsize, map.ysize);
-	}
-	
+
 	for(y=0;y<map.ysize;y++)
-	for(x=0;x<map.xsize;x++)
-	{
-		map.tiles[x][y] = cgetc(fp);
-	}
-	
+		for(x=0;x<map.xsize;x++)
+		{
+			map.tiles[x][y] = cgetc(fp);
+		}
+
 	cclose(fp);
-	
+
 	map.maxxscroll = (((map.xsize * TILE_W) - SCREEN_WIDTH) - 8) << CSF;
 	map.maxyscroll = (((map.ysize * TILE_H) - SCREEN_HEIGHT) - 8) << CSF;
-	
-	NX_LOG("load_map: '%s' loaded OK! - %dx%d\n", fname, map.xsize, map.ysize);
+
 	return 0;
 }
 
@@ -147,20 +129,13 @@ int nEntities;
 	Objects::DestroyAll(false);
 	FloatText::ResetAll();
 
-	NX_LOG("load_entities: reading in %s\n", fname);
 	// now we can load in the new objects
 	fp = copen(fname, "rb");
 	if (!fp)
-	{
-		NX_ERR("load_entities: no such file: '%s'\n", fname);
 		return 1;
-	}
 	
 	if (!cverifystring(fp, "PXE"))
-	{
-		NX_ERR("load_entities: not a PXE: '%s'\n", fname);
 		return 1;
-	}
 	
 	cgetc(fp);
 	nEntities = cgetl(fp);
@@ -222,7 +197,6 @@ int nEntities;
 		}
 	}
 	
-	//NX_LOG("load_entities: loaded %d objects\n", nEntities);
 	cclose(fp);
 	return 0;
 }
@@ -230,45 +204,39 @@ int nEntities;
 // loads a pxa (tileattr) file
 bool load_tileattr(const char *fname)
 {
-CFILE *fp;
-int i;
-unsigned char tc;
+	CFILE *fp;
+	int i;
+	unsigned char tc;
 
 	map.nmotiontiles = 0;
 
-	NX_LOG("load_pxa: reading in %s\n", fname);
 	fp = copen(fname, "rb");
 	if (!fp)
-	{
-		NX_ERR("load_pxa: no such file: '%s'\n", fname);
 		return 1;
-	}
-	
+
 	for(i=0;i<256;i++)
 	{
 		tc = cgetc(fp);
 		tilecode[i] = tc;
 		tileattr[i] = tilekey[tc];
-		//NX_LOG("Tile %02x   TC %02x    Attr %08x   tilekey[%02x] = %08x\n", i, tc, tileattr[i], tc, tilekey[tc]);
-		
+
 		//FIXME: Destroyable star tiles not showing up right now
 		if (tc == 0x43)	// destroyable block - have to replace graphics
 		{
 			Graphics::CopySpriteToTile(SPR_DESTROYABLE, i, 0, 0);
 		}
-		
+
 		// add water currents to animation list
 		if (tileattr[i] & TA_CURRENT)
 		{
 			map.motiontiles[map.nmotiontiles].tileno = i;
 			map.motiontiles[map.nmotiontiles].dir = CVTDir(tc & 3);
 			map.motiontiles[map.nmotiontiles].sprite = SPR_WATER_CURRENT;
-			
+
 			map.nmotiontiles++;
-			NX_LOG("Added tile %02x to animation list, tc=%02x\n", i, tc);
 		}
 	}
-	
+
 	cclose(fp);
 	return 0;
 }
@@ -289,12 +257,7 @@ bool initmapfirsttime(void)
 
 	retro_create_path_string(fname, sizeof(fname), g_dir, "tilekey.dat");
 
-	NX_LOG("initmapfirsttime: loading %s.\n", fname);
-	if (!(fp = rfopen(fname, "rb")))
-	{
-		NX_LOG("%s is missing, using default\n", fname);
-	}
-	else
+	if ((fp = rfopen(fname, "rb")))
 	{
 		for(i=0;i<256;i++)
 			tilekey[i] = rfgetl(fp);
@@ -376,8 +339,7 @@ int x, y;
 		
 		default:
 			map.parscroll_x = map.parscroll_y = 0;
-			NX_ERR("map_draw_backdrop: unhandled map scrolling type %d\n", map.scrolltype);
-		break;
+			break;
 	}
 	
 	map.parscroll_x %= backdrop[map.backdrop]->Width();
@@ -445,10 +407,7 @@ slash = '/';
 		
 		backdrop[backdrop_no] = NXSurface::FromFile(fname, use_chromakey);
 		if (!backdrop[backdrop_no])
-		{
-			NX_ERR("Failed to load backdrop '%s'\n", fname);
 			return 1;
-		}
 	}
 	
 	return 0;
@@ -894,11 +853,6 @@ int x_off, y_off;
 // attempts to find an object with id2 matching the given value else returns NULL
 Object *FindObjectByID2(int id2)
 {
-	Object *result = ID2Lookup[id2];
-	
-	if (!result)
-		NX_ERR("FindObjectByID2: no such object %04d\n", id2);
-	
-	return result;
+	return ID2Lookup[id2];
 }
 

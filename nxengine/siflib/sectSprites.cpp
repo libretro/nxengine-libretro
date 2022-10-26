@@ -27,20 +27,15 @@ bool SIFSpritesSect::Decode(const uint8_t *data, int datalen,
    nsprites = read_U16(&data, data_end);
    if (nsprites_out) *nsprites_out = nsprites;
 
+   /* Too many sprites in file? */
    if (nsprites >= maxsprites)
-   {
-      NX_ERR("SIFSpritesSect::Decode: too many sprites in file (nsprites=%d, maxsprites=%d)\n", nsprites, maxsprites);
       return 1;
-   }
 
-   NX_LOG("SIFSpritesSect: loading %d sprites\n", nsprites);
    for(i=0;i<nsprites;i++)
    {
+      /* section corrupt - overran end of data? */
       if (data > data_end)
-      {
-         NX_ERR("SIFSpritesSect::Decode: section corrupt: overran end of data\n");
          return 1;
-      }
 
       // read sprite-level fields
       sprites[i].w = read_U8(&data, data_end);
@@ -51,10 +46,7 @@ bool SIFSpritesSect::Decode(const uint8_t *data, int datalen,
       sprites[i].ndirs = read_U8(&data, data_end);
 
       if (sprites[i].ndirs > SIF_MAX_DIRS)
-      {
-         NX_ERR("SIFSpritesSect::Decode: SIF_MAX_DIRS exceeded on sprite %d (ndirs=%d)\n", i, sprites[i].ndirs);
          return 1;
-      }
 
       LoadRect(&sprites[i].bbox, &data, data_end);
       LoadRect(&sprites[i].solidbox, &data, data_end);
@@ -96,21 +88,25 @@ bool SIFSpritesSect::LoadFrame(SIFFrame *frame, int ndirs,
       for(;;)
       {
          t = read_U8(data, data_end);
-         if (t == S_DIR_END) break;
+         if (t == S_DIR_END)
+		 break;
 
          switch(t)
          {
-            case S_DIR_DRAW_POINT: LoadPoint(&dir->drawpoint, data, data_end); break;
-            case S_DIR_ACTION_POINT: LoadPoint(&dir->actionpoint, data, data_end); break;
-            case S_DIR_ACTION_POINT_2: LoadPoint(&dir->actionpoint2, data, data_end); break;
-
+            case S_DIR_DRAW_POINT:
+		    LoadPoint(&dir->drawpoint, data, data_end);
+		    break;
+            case S_DIR_ACTION_POINT:
+		    LoadPoint(&dir->actionpoint, data, data_end);
+		    break;
+            case S_DIR_ACTION_POINT_2:
+		    LoadPoint(&dir->actionpoint2, data, data_end);
+		    break;
             case S_DIR_PF_BBOX:
-                                       LoadRect(&dir->pf_bbox, data, data_end);
-                                       break;
-
+		    LoadRect(&dir->pf_bbox, data, data_end);
+		    break;
             default:
-                                       NX_LOG("SIFSpriteSect::LoadFrame: encountered unknown optional field type %d\n", t);
-                                       return 1;
+		    return 1;
          }
       }
    }
@@ -137,11 +133,9 @@ void SIFSpritesSect::LoadPoint(SIFPoint *pt, const uint8_t **data,
 void SIFSpritesSect::LoadPointList(SIFPointList *lst, const uint8_t **data, const uint8_t *data_end)
 {
    lst->count = read_U8(data, data_end);
+   /* Too many block points? */
    if (lst->count > SIF_MAX_BLOCK_POINTS)
-   {
-      NX_ERR("SIFSpritesSect::LoadPointList: too many block points (%d, max=%d)\n", lst->count, SIF_MAX_BLOCK_POINTS);
       return;
-   }
 
    for(int i=0;i<lst->count;i++)
    {
@@ -178,9 +172,7 @@ uint8_t *SIFSpritesSect::Encode(SIFSprite *sprites,
       SavePointList(&sprites[i].block_d, &buf);
 
       for(f=0;f<sprites[i].nframes;f++)
-      {
          SaveFrame(&sprites[i].frame[f], sprites[i].ndirs, &buf);
-      }
    }
 
    if (datalen_out) *datalen_out = buf.Length();

@@ -48,17 +48,8 @@ static bool check_data_exists(void)
 {
    char fname[1024];
    retro_create_subpath_string(fname, sizeof(fname), g_dir, data_dir, "npc.tbl");
-   NX_LOG("check_data_exists: %s\n", fname);
-
    if (!path_is_valid(fname))
-   {
-      NX_ERR("Fatal Error\n");
-
-      NX_ERR("Missing \"%s\" directory.\n", data_dir);
-      NX_ERR("Please copy it over from a Doukutsu installation.\n");
       return 1;
-   }
-	
    return 0;
 }
 
@@ -73,8 +64,6 @@ bool pre_main(void)
    // load settings, or at least get the defaults,
    // so we know the initial screen resolution.
    settings_load(NULL);
-
-   NX_LOG("= Extracting Files =\n");
 
    retro_create_path_string(filename, sizeof(filename), g_dir, "Doukutsu.exe");
    fp = rfopen(filename, "rb");
@@ -98,15 +87,9 @@ bool pre_main(void)
    settings_save(NULL);
 
    if (Graphics::init(settings->resolution))
-   {
-      NX_ERR("Failed to initialize graphics.\n");
       return 1;
-   }
    if (font_init())
-   {
-      NX_ERR("Failed to load font.\n");
       return 1;
-   }
 
    if (check_data_exists())
       return 1;
@@ -193,7 +176,6 @@ bool run_main(void)
 		if (game.switchstage.mapno == LOAD_GAME_FROM_MENU)
 			freshstart = true;
 
-		NX_LOG("= Loading game =\n");
 		if (game_load(settings->last_save_slot))
 		{
 			game.running = false;
@@ -277,8 +259,6 @@ static inline void run_tick(void)
 
 void InitNewGame(bool with_intro)
 {
-	NX_LOG("= Beginning new game =\n");
-	
 	memset(game.flags, 0, sizeof(game.flags));
 	memset(game.skipflags, 0, sizeof(game.skipflags));
 	textbox.StageSelect.ClearSlots();

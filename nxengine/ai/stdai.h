@@ -6,10 +6,10 @@
 
 extern InitList AIRoutines;
 
-#define ONTICK(OBJTYPE, FUNCTION)		{ NX_DBG("Setting ONTICK to %p for type: %u.\n", FUNCTION, OBJTYPE);    objprop[OBJTYPE].ai_routines.ontick = FUNCTION; }
-#define ONDEATH(OBJTYPE, FUNCTION)		{ NX_DBG("Setting ONDEATH to %p for type: %u.\n", FUNCTION, OBJTYPE);   objprop[OBJTYPE].ai_routines.ondeath = FUNCTION; }
-#define AFTERMOVE(OBJTYPE, FUNCTION)	{ NX_DBG("Setting AFTERMOVE to %p for type: %u.\n", FUNCTION, OBJTYPE); objprop[OBJTYPE].ai_routines.aftermove = FUNCTION; }
-#define ONSPAWN(OBJTYPE, FUNCTION)		{ NX_DBG("Setting ONSPAWN to %p for type: %u.\n", FUNCTION, OBJTYPE);   objprop[OBJTYPE].ai_routines.onspawn = FUNCTION; }
+#define ONTICK(OBJTYPE, FUNCTION)	{ objprop[OBJTYPE].ai_routines.ontick = FUNCTION; }
+#define ONDEATH(OBJTYPE, FUNCTION)	{ objprop[OBJTYPE].ai_routines.ondeath = FUNCTION; }
+#define AFTERMOVE(OBJTYPE, FUNCTION)	{ objprop[OBJTYPE].ai_routines.aftermove = FUNCTION; }
+#define ONSPAWN(OBJTYPE, FUNCTION)	{ objprop[OBJTYPE].ai_routines.onspawn = FUNCTION; }
 
 #define GENERIC_NPC(O)	\
 {	\

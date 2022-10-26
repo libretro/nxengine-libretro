@@ -7,14 +7,12 @@ static SlopeTable slopetable[SLOPE_LAST+1];
 // creates the slope tables
 bool initslopetable(void)
 {
-int x, y, ya, mx;
-int curtable, opposing_table;
-int inverttable, invertfliptable;
-int flipmx, flipy;
-
-	NX_LOG("initslopetable: generating slopetables.\n");
+	int x, y, ya, mx;
+	int curtable, opposing_table;
+	int inverttable, invertfliptable;
+	int flipmx, flipy;
 	memset(slopetable, 0, sizeof(slopetable));
-	
+
 	ya = TILE_H-1;
 	for(x=0;x<TILE_W*2;x++)
 	{
@@ -34,21 +32,21 @@ int flipmx, flipy;
 			inverttable = SLOPE_CEIL_BACK2;
 			invertfliptable = SLOPE_CEIL_FWD1;
 		}
-		
+
 		for(y=ya;y<TILE_H;y++)
 		{
 			flipmx = TILE_W-1-mx;
 			flipy = TILE_H-1-y;
-			
+
 			slopetable[curtable].table[mx][y] = 1;
 			slopetable[opposing_table].table[flipmx][y] = 1;
 			slopetable[inverttable].table[mx][flipy] = 1;
 			slopetable[invertfliptable].table[flipmx][flipy] = 1;
 		}
-		
+
 		if (x & 1) ya--;
 	}
-	
+
 	return 0;
 }
 
@@ -58,32 +56,30 @@ void c------------------------------() {}
 
 // X and Y are non-CSFd pixel coordinates relative to the upper-left of the map.
 // if the given pixel is inside of a slope, returns the slope type 1-8. else, returns 0.
-uint8_t ReadSlopeTable(int x, int y)
+static uint8_t ReadSlopeTable(int x, int y)
 {
-int mx, my;
-int slopetype;
-uint8_t t;
-
+	int slopetype;
+	uint8_t t;
 	// convert coordinates into a tile and check if the tile is a slope tile
-	mx = (x / TILE_W);
-	my = (y / TILE_H);
-	
+	int mx = (x / TILE_W);
+	int my = (y / TILE_H);
+
 	if (mx < 0 || my < 0 || mx >= map.xsize || my >= map.ysize)
 		return 0;
-	
+
 	t = map.tiles[mx][my];
-	
+
 	if (tileattr[t] & TA_SLOPE)
 	{
 		slopetype = (tilecode[t] & 0x07) + 1;	// extract slope type from tile code
-		
+
 		// get offset from the tile
 		x %= TILE_W; y %= TILE_H;
-		
+
 		if (slopetable[slopetype].table[x][y])
 			return slopetype;
 	}
-	
+
 	return 0;
 }
 
@@ -91,7 +87,7 @@ uint8_t t;
 // are on the solid portion of a slope tile.
 bool IsSlopeAtPointList(Object *o, SIFPointList *points)
 {
-int x, y, i;
+	int x, y, i;
 
 	for(i=0;i<points->count;i++)
 	{
@@ -99,7 +95,7 @@ int x, y, i;
 		y = (o->y >> CSF) + points->point[i].y;
 		if (ReadSlopeTable(x, y)) return 1;
 	}
-	
+
 	return 0;
 }
 
@@ -110,14 +106,13 @@ void c------------------------------() {}
 // returns nonzero (the slope type) if the object is standing on a slope.
 int CheckStandOnSlope(Object *o)
 {
-int x, y, st;
+	int st;
+	int y = (o->y >> CSF) + sprites[o->sprite].slopebox.y2 + 1;
+	int x = (o->x >> CSF);
 
-	y = (o->y >> CSF) + sprites[o->sprite].slopebox.y2 + 1;
-	x = (o->x >> CSF);
-	
 	if ((st = ReadSlopeTable(x + sprites[o->sprite].slopebox.x1, y))) return st;
 	if ((st = ReadSlopeTable(x + sprites[o->sprite].slopebox.x2, y))) return st;
-	
+
 	return 0;
 }
 
@@ -125,17 +120,14 @@ int x, y, st;
 // because of a ceiling slope.
 int CheckBoppedHeadOnSlope(Object *o)
 {
-int x, y, st;
+	int st;
+	int y = (o->y >> CSF) + sprites[o->sprite].slopebox.y1 - 1;
+	int x = (o->x >> CSF);
 
-	y = (o->y >> CSF) + sprites[o->sprite].slopebox.y1 - 1;
-	x = (o->x >> CSF);
-	
 	// without this, you get stuck in the save area below Gum Door in Grasstown
-	//if (o == player) y += 4;
-	
 	if ((st = ReadSlopeTable(x + sprites[o->sprite].slopebox.x1, y))) return st;
 	if ((st = ReadSlopeTable(x + sprites[o->sprite].slopebox.x2, y))) return st;
-	
+
 	return 0;
 }
 
@@ -146,31 +138,33 @@ int x, y, st;
 // returns 1 if the object was blocked by a wall.
 bool movehandleslope(Object *o, int xinertia)
 {
-int xoff, opposing_x;
-int newx, newy, oldy;
-char blocked_wall;
+	int xoff, opposing_x;
+	int newx, newy, oldy;
+	char blocked_wall;
 
 	if (!xinertia) return 0;
-	
+
 	// for objects which don't follow slope, just treat the slope as a blockl/r
 	if (!(o->nxflags & NXFLAG_FOLLOW_SLOPE))
 	{
 		if (xinertia > 0)
 		{
-			if (o->blockr) return 1;
+			if (o->blockr)
+				return 1;
 		}
 		else
 		{
-			if (o->blockl) return 1;
+			if (o->blockl)
+				return 1;
 		}
-		
+
 		o->x += xinertia;
 		return 0;
 	}
-	
+
 	newx = o->x;
 	newy = o->y;
-	
+
 	// determine which side of the bounding box to use based on which way
 	// we're traveling
 	if (xinertia > 0)
@@ -183,126 +177,108 @@ char blocked_wall;
 		opposing_x = sprites[o->sprite].slopebox.x2;
 		xoff = sprites[o->sprite].slopebox.x1;
 	}
-	
+
 	// check the opposing side at y+1 to see if we were standing on a slope before the move.
 	uint8_t old_floor_slope, old_ceil_slope;
-	old_floor_slope = ReadSlopeTable((newx>>CSF) + opposing_x, \
-									 (newy>>CSF) + sprites[o->sprite].slopebox.y2 + 1);
-	
-	old_ceil_slope = ReadSlopeTable((newx>>CSF) + opposing_x, \
-									(newy>>CSF) + sprites[o->sprite].slopebox.y1 - 1);
-	
+	old_floor_slope = ReadSlopeTable((newx>>CSF) + opposing_x,
+			(newy>>CSF) + sprites[o->sprite].slopebox.y2 + 1);
+
+	old_ceil_slope = ReadSlopeTable((newx>>CSF) + opposing_x,
+			(newy>>CSF) + sprites[o->sprite].slopebox.y1 - 1);
+
 	// move the object
 	newx += xinertia;
-	
+
 	// check the opposing side again and if now we're not standing any more,
 	// we moved down the slope, so add +1 to the object's Y coordinate.
-	if (old_floor_slope && !ReadSlopeTable((newx>>CSF) + opposing_x, \
-										(newy>>CSF) + sprites[o->sprite].slopebox.y2 + 1))
+	if (old_floor_slope && !ReadSlopeTable((newx>>CSF) + opposing_x,
+				(newy>>CSF) + sprites[o->sprite].slopebox.y2 + 1))
 	{
 		bool walking_down = false;
-		
+
 		// only trigger if it's the correct slope type so that we would be walking down it if
 		// we were going in the direction we're going. prevents being shoved down 1px when
 		// exiting the top of a slope.
 		if (xinertia < 0)
 		{
-			if (old_floor_slope == SLOPE_FWD1 || \
-				old_floor_slope == SLOPE_FWD2)
-			{
+			if (old_floor_slope == SLOPE_FWD1 ||
+					old_floor_slope == SLOPE_FWD2)
 				walking_down = true;
-			}
 		}
 		else if (xinertia > 0)
 		{
-			if (old_floor_slope == SLOPE_BACK1 || \
-				old_floor_slope == SLOPE_BACK2)
-			{
+			if (old_floor_slope == SLOPE_BACK1 ||
+					old_floor_slope == SLOPE_BACK2)
 				walking_down = true;
-			}
 		}
-		
+
 		if (walking_down)
-		{
 			newy += (1<<CSF);
-		}
 	}
-	
+
 	// the same for ceiling slopes
-	if (old_ceil_slope && !ReadSlopeTable((newx>>CSF) + opposing_x, \
-										(newy>>CSF) + sprites[o->sprite].slopebox.y1 - 1))
+	if (old_ceil_slope && !ReadSlopeTable((newx>>CSF) + opposing_x,
+				(newy>>CSF) + sprites[o->sprite].slopebox.y1 - 1))
 	{
 		bool moveme = false;
-		
+
 		if (xinertia < 0)
 		{
-			if (old_ceil_slope == SLOPE_CEIL_BACK1 || \
-				old_ceil_slope == SLOPE_CEIL_BACK2)
-			{
+			if (old_ceil_slope == SLOPE_CEIL_BACK1 ||
+					old_ceil_slope == SLOPE_CEIL_BACK2)
 				moveme = true;
-			}
 		}
 		else if (xinertia > 0)
 		{
-			if (old_ceil_slope == SLOPE_CEIL_FWD1 || \
-				old_ceil_slope == SLOPE_CEIL_FWD2)
-			{
+			if (old_ceil_slope == SLOPE_CEIL_FWD1 ||
+					old_ceil_slope == SLOPE_CEIL_FWD2)
 				moveme = true;
-			}
 		}
-		
+
+		// moving down (actually up) the "descending" 
+                // (closer to real ceil) portion
+		// of a ceiling slope tile. Reverse of floor slope thingy above.
 		if (moveme)
-		{	// moving down (actually up) the "descending" (closer to real ceil) portion
-			// of a ceiling slope tile. Reverse of floor slope thingy above.
 			newy -= (1<<CSF);
-		}
 	}
-	
+
 	// check the coordinate and see if it's inside a slope tile.
 	// if so, move the object up 1 Y pixel.
-	uint8_t moved_into_ceil_slope = ReadSlopeTable((newx>>CSF) + xoff, \
-									(newy>>CSF) + sprites[o->sprite].slopebox.y1);
+	uint8_t moved_into_ceil_slope = ReadSlopeTable((newx>>CSF) + xoff,
+			(newy>>CSF) + sprites[o->sprite].slopebox.y1);
 	if (moved_into_ceil_slope)
-	{
 		newy += (1<<CSF);
-	}
-	
-	uint8_t moved_into_floor_slope = ReadSlopeTable((newx>>CSF) + xoff, \
-									(newy>>CSF) + sprites[o->sprite].slopebox.y2);
+
+	uint8_t moved_into_floor_slope = ReadSlopeTable((newx>>CSF) + xoff,
+			(newy>>CSF) + sprites[o->sprite].slopebox.y2);
 	if (moved_into_floor_slope)
-	{
 		newy -= (1<<CSF);
-	}
-	
+
 	// can't move if blocked by a wall. but if we've moved up or down 1px, be sure and update
 	// the blockr/l state before declaring we can't move--otherwise we can get stuck at the
 	// top of a slope with the bottom blockr/l stuck at the top px of the adjacent solid tile.
 	oldy = o->y;
 	o->y = newy;
-	
+
 	if (xinertia > 0)
 	{
 		if (oldy != newy)
 			o->UpdateBlockStates(RIGHTMASK);
-		
+
 		blocked_wall = o->blockr;
 	}
 	else
 	{
 		if (oldy != newy)
 			o->UpdateBlockStates(LEFTMASK);
-		
+
 		blocked_wall = o->blockl;
 	}
-	
+
+	// we can't actually move...so reset Y position
 	if (blocked_wall)
-	{	// we can't actually move...so reset Y position
 		o->y = oldy;
-	}
-	else
-	{	// can move...complete the move by setting the X position too
+	else // can move...complete the move by setting the X position too
 		o->x = newx;
-	}
-	
 	return blocked_wall;
 }

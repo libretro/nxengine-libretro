@@ -41,8 +41,6 @@ void ai_toroko_shack(Object *o)
 				
 				if (o->blockd)
 				{
-					ASSERT((o->y % TILE_H) == 0);
-					
 					o->yinertia = 0;
 					o->state = 2;
 				}

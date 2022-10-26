@@ -103,9 +103,6 @@ void BallosBoss::OnMapEntry(void)
 	objprop[OBJ_BALLOS_MAIN].shaketime = 8;
 	objprop[OBJ_BALLOS_BODY].shaketime = 0;
 	objprop[OBJ_BALLOS_EYE].shaketime = 0;
-	
-	// initilize parameters
-	NX_LOG("BallosBoss::OnMapEntry()\n");
 }
 
 /*

@@ -252,8 +252,6 @@ bool IsBlockedInShotDir(Object *o)
 		case UP: 	return o->blocku;
 		case DOWN: 	return o->blockd;
 	}
-	
-	NX_ERR("IsBlockedInShotDir(%x): invalid direction %d\n", o, o->shot.dir);
 	return 0;
 }
 

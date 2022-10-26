@@ -24,15 +24,13 @@ void ai_block_moveh(Object *o)
 	switch(o->state)
 	{
 		case 0:
-         NX_LOG("ai_block_moveh - state 0.\n");
 			o->flags |= FLAG_SOLID_BRICK;
 			o->smushdamage = 100;
 			o->state = (o->dir == LEFT) ? 10:20;
 		break;
 		
 		case 10:	// at right edge, ready to travel left
-         NX_LOG("ai_block_moveh - state 10.\n");
-			if (((px > objx) && (px - objx) < 0x3200) || \
+			if (((px > objx) && (px - objx) < 0x3200) || 
 				((px < objx) && (objx - px) < 0x32000))
 			{
 				if (pdistly(0x3200))
@@ -44,8 +42,7 @@ void ai_block_moveh(Object *o)
 		break;
 		
 		case 20:	// at left edge, ready to travel right
-         NX_LOG("ai_block_moveh - state 20.\n");
-			if (((px > objx) && (px - objx) < 0x32000) || \
+			if (((px > objx) && (px - objx) < 0x32000) ||
 				((px < objx) && (objx - px) < 0x3200))
 			{
 				if (pdistly(0x3200))
@@ -58,7 +55,6 @@ void ai_block_moveh(Object *o)
 		
 		case 30:	// traveling
 		{
-         NX_LOG("ai_block_moveh - state 30.\n");
 			XACCEL(0x20);
 			LIMITX(0x200);
 			
@@ -88,7 +84,6 @@ void ai_block_movev(Object *o)
 	switch(o->state)
 	{
 		case 0:
-         NX_LOG("ai_block_movev - state 0.\n");
 			o->flags |= FLAG_SOLID_BRICK;
 			o->smushdamage = 100;
 			o->dir = (o->dir == LEFT) ? UP : DOWN;
@@ -96,8 +91,7 @@ void ai_block_movev(Object *o)
 		break;
 		
 		case 10:	// at top edge, ready to travel down
-         NX_LOG("ai_block_movev - state 10.\n");
-			if (((py > objy) && (py - objy) < 0x32000) || \
+			if (((py > objy) && (py - objy) < 0x32000) ||
 				((py < objy) && (objy - py) < 0x3200))
 			{
 				if (pdistlx(0x3200))
@@ -109,7 +103,6 @@ void ai_block_movev(Object *o)
 		break;
 		
 		case 20:	// at bottom edge, ready to travel up
-         NX_LOG("ai_block_movev - state 20.\n");
 			if (((py > objy) && (py - objy) < 0x3200) || \
 				((py < objy) && (objy - py) < 0x32000))
 			{
@@ -122,7 +115,6 @@ void ai_block_movev(Object *o)
 		break;
 		
 		case 30:	// traveling
-         NX_LOG("ai_block_movev - state 30.\n");
 		{
 			YACCEL(0x20);
 			LIMITY(0x200);
@@ -156,14 +148,12 @@ void ai_boulder(Object *o)
 		// shaking
 		case 10:
 		{
-         NX_LOG("ai_boulder - state 10.\n");
 			o->state = 11;
 			o->timer = 0;
 			o->xmark = o->x;
 		}
 		case 11:
 		{
-         NX_LOG("ai_boulder - state 11.\n");
 			if ((++o->timer % 3) != 0)
 				o->x = o->xmark + (1 << CSF);
 			else
@@ -174,7 +164,6 @@ void ai_boulder(Object *o)
 		// thrown away by Balrog
 		case 20:
 		{
-         NX_LOG("ai_boulder - state 20.\n");
 			o->yinertia = -0x400;
 			o->xinertia = 0x100;
 			sound(SND_FUNNY_EXPLODE);
@@ -184,7 +173,6 @@ void ai_boulder(Object *o)
 		}
 		case 21:
 		{
-         NX_LOG("ai_boulder - state 21.\n");
 			o->yinertia += 0x10;
 			
 			if (o->blockd && o->yinertia >= 0)
@@ -200,18 +188,3 @@ void ai_boulder(Object *o)
 		break;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

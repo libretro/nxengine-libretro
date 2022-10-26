@@ -124,14 +124,9 @@ bool button_down;
 	{
 		int scriptno;
 		if (!GetSlotByIndex(fSelectionIndex, NULL, &scriptno))
-		{
-			NX_LOG("StageSelect: starting activation script %d\n", scriptno);
 			JumpScript(scriptno, SP_MAP);
-		}
-		else
-		{	// dismiss "no permission to teleport"
+		else // dismiss "no permission to teleport"
 			StopScripts();
-		}
 		
 		fMadeSelection = true;
 	}
@@ -181,8 +176,6 @@ void TB_StageSelect::SetSlot(int slotno, int scriptno)
 {
 	if (slotno >= 0 && slotno < NUM_TELEPORTER_SLOTS)
 		fSlots[slotno] = scriptno;
-	else
-		NX_LOG("StageSelect::SetSlot: invalid slotno %d\n", slotno);
 }
 
 void TB_StageSelect::ClearSlots()

@@ -93,17 +93,13 @@ void Object::SetType(int type)
 
    // apply defaultflags to new object type, but NOT ALL defaultflags.
    // otherwise <CNP's _WILL_ get messed up.
-   const static int flags_to_keep = \
-                                    (FLAG_SCRIPTONTOUCH | FLAG_SCRIPTONDEATH | FLAG_SCRIPTONACTIVATE | \
-                                     FLAG_APPEAR_ON_FLAGID | FLAG_DISAPPEAR_ON_FLAGID | \
+   const static int flags_to_keep = 
+                                    (FLAG_SCRIPTONTOUCH | FLAG_SCRIPTONDEATH | FLAG_SCRIPTONACTIVATE | 
+                                     FLAG_APPEAR_ON_FLAGID | FLAG_DISAPPEAR_ON_FLAGID | 
                                      FLAG_FACES_RIGHT);
 
    uint32_t keep = (o->flags & flags_to_keep);
-   o->flags = (objprop[type].defaultflags & ~flags_to_keep) | keep;
-
-#ifdef DEBUG
-   NX_LOG("new flags: %04x", o->flags);
-#endif
+   o->flags      = (objprop[type].defaultflags & ~flags_to_keep) | keep;
 
    // setup default clipping extents, in case object turns on clip_enable
    if (!o->clip_enable)
@@ -177,8 +173,6 @@ void Object::PushBehind(int objtype)
 	Object *target = Objects::FindByType(objtype);
 	if (target)
 		PushBehind(target);
-	else
-		NX_ERR("PushBehind: could not find object %d\n", objtype);
 }
 
 /*
@@ -824,10 +818,7 @@ void Object::RunAI()
          {
             if (GetCurrentScript() == -1 &&		// no override other scripts
                   game.switchstage.mapno == -1)	// no repeat exec after <TRA
-            {
-               NX_LOG("On-touch script %d triggered\n", o->id2);
                StartScript(o->id2);
-            }
          }
       }
    }

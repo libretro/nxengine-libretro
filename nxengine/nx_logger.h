@@ -24,10 +24,6 @@ extern retro_log_printf_t log_cb;
 
 #ifndef NDEBUG
 
-#define  NX_DBG(...) do { \
-   if (log_cb) \
-      log_cb(RETRO_LOG_DEBUG, __VA_ARGS__); \
-   } while (0)
 #define  NX_LOG(...) do { \
    if (log_cb) \
       log_cb(RETRO_LOG_INFO, __VA_ARGS__); \
@@ -41,7 +37,6 @@ extern retro_log_printf_t log_cb;
       log_cb(RETRO_LOG_ERROR, __VA_ARGS__); \
    } while (0)
 #else
-static INLINE void NX_DBG(const char *fmt, ...) { }
 static INLINE void NX_LOG(const char *fmt, ...) { }
 static INLINE void NX_WARN(const char *fmt, ...) { }
 static INLINE void NX_ERR(const char *fmt, ...) { }

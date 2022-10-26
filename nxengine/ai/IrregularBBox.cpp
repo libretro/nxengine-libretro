@@ -85,10 +85,7 @@ void IrregularBBox::place(void (*placefunc)(void *userparm), void *userparm)
 void IrregularBBox::set_bbox(int index, int x, int y, int w, int h, uint32_t flags)
 {
 	if (index < 0 || index >= num_bboxes)
-	{
-		NX_ERR("IrregularBBox::set_bbox: index out of range: %d\n", index);
 		return;
-	}
 	
 	Object *box = bbox[index];
 	

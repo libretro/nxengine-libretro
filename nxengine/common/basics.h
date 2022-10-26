@@ -13,15 +13,6 @@
 
 typedef unsigned char		uchar;
 
-#define ASSERT(X)	\
-{	\
-	if (!(X))	\
-	{	\
-		NX_ERR("** ASSERT FAILED: '%s' at %s(%d)\n", #X, __FILE__, __LINE__);	\
-		exit(1); 	\
-	}	\
-}
-
 #define SWAP(A, B)	{ A ^= B; B ^= A; A ^= B; }
 
 #ifndef MIN

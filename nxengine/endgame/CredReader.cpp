@@ -36,11 +36,9 @@ bool CredReader::ReadCommand(CredCommand *cmd)
 	memset(cmd, 0, sizeof(CredCommand));
 	cmd->type = -1;
 	
+        /* ReadNextCommand called but file is not loaded? */
 	if (!data)
-	{
-		NX_ERR("CredReader: ReadNextCommand called but file is not loaded!\n");
 		return 1;
-	}
 	
 	for(;;)
 	{
@@ -75,12 +73,8 @@ bool CredReader::ReadCommand(CredCommand *cmd)
 		break;
 		
 		default:
-		{
-			NX_ERR("CredReader: unknown command type '%c'\n", ch);
 			cmd->type = -1;
 			return 1;
-		}
-		break;
 	}
 	
 	if (isdigit(peek()))
@@ -112,33 +106,27 @@ CredReader::CredReader()
 
 bool CredReader::OpenFile(void)
 {
-char fname[MAXPATHLEN];
+	char fname[MAXPATHLEN];
 #ifdef _WIN32
-char slash = '\\';
+	char slash = '\\';
 #else
-char slash = '/';
+	char slash = '/';
 #endif
 
 	if (data)
-      CloseFile();
+		CloseFile();
 	snprintf(fname, sizeof(fname), "%s%cCredit.tsc", data_dir, slash);
-	
+
 	data = tsc_decrypt(fname, &datalen);
 	if (!data)
-	{
-		NX_ERR("CredReader: couldn't open '%s'!\n", fname);
 		return 1;
-	}
-	
-	NX_LOG("CredReader: '%s' loaded ok!\n", fname);
+
 	dataindex = 0;
 	return 0;
 }
 
 void CredReader::CloseFile()
 {
-	NX_LOG("CredReader: closing file\n");
-	
 	if (data)
 	{
 		free(data);

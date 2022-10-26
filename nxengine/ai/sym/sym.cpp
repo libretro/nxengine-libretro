@@ -145,12 +145,7 @@ void ai_hvtrigger(Object *o)
 	// ok then, we can trigger, except for:
 	if (GetCurrentScript() == -1 &&		// no override other scripts
 		game.switchstage.mapno == -1)	// no repeat exec after <TRA
-	{
-#ifdef DEBUG
-		NX_LOG("HVTrigger %04d (%08x) activated", o->id2, o);
-#endif
 		StartScript(o->id2);
-	}
 }
 
 // project the Option 1 beam and set the hvtrigger's y1/y2 or x1/x2
@@ -1078,24 +1073,15 @@ void ai_scroll_controller(Object *o)
 				o->linkedobject = game.stageboss.object;
 				
 				if (!o->linkedobject)
-				{
-					NX_ERR("sctrl: no stageboss object!\n");
 					o->Delete();
-				}
 			}
 			else
 			{
 				o->linkedobject = FindObjectByID2(o->dirparam);
 				
-				if (o->linkedobject)
-				{
-					NX_LOG("sctrl: successfully linked to object %08x\n", o->linkedobject);
-				}
-				else
-				{
-					NX_ERR("sctrl: failed to link to id2 %d: object not found\n", o->id2);
+				/* Failed to link to id2, object not found */
+				if (!o->linkedobject)
 					o->Delete();
-				}
 			}
 		}
 		case 101:
@@ -1182,12 +1168,7 @@ void onspawn_spike_small(Object *o)
 	// you can still sometimes get hurt by them in our engine.
 	int tile = map.tiles[(o->CenterX() >> CSF) / TILE_W][(o->CenterY() >> CSF) / TILE_H];
 	if (tileattr[tile] & TA_SOLID)
-	{
-#ifdef DEBUG
-		NX_LOG("onspawn_spike_small: spike %08x embedded in wall, deleting", o);
-#endif
 		o->Delete();
-	}
 }
 
 

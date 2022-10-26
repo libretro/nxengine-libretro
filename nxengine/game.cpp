@@ -115,10 +115,7 @@ bool Game::initlevel()
 bool Game::createplayer()
 {
 	if (player)
-	{
-		NX_ERR("game.createplayer: player already exists!\n");
 		return 1;
-	}
 	
 	player = (Player *)CreateObject(0, 0, OBJ_PLAYER);
 	PInitFirstTime();
@@ -160,7 +157,6 @@ bool Game::setmode(int newmode, int param, bool force)
 	{
 		if (tickfunctions[game.mode].OnEnter(param))
 		{
-			NX_ERR("game.setmode: initilization failed for mode %d\n", newmode);
 			game.mode = GM_NONE;
 			return 1;
 		}
@@ -183,7 +179,6 @@ bool Game::pause(int pausemode, int param)
    {
       if (tickfunctions[game.paused].OnEnter(param))
       {
-         NX_ERR("game.pause: initilization failed for mode %d\n", pausemode);
          game.paused = 0;
          return 1;
       }
@@ -378,10 +373,7 @@ void DrawScene(void)
 				o->onscreen = true;
 			}
 			else
-			{
-				NX_ERR("%s:%d: Max Objects Overflow\n", __FILE__, __LINE__);
 				return;
-			}
 			
 			if (!o->invisible && o->sprite != SPR_NULL)
 			{
@@ -422,9 +414,6 @@ void c------------------------------() {}
 bool game_load(int num)
 {
    Profile p;
-
-   NX_LOG("game_load: loading savefile %d\n", num);
-
    if (profile_load(GetProfileName(num), &p))
       return 1;
 
@@ -468,7 +457,6 @@ bool game_load(Profile *p)
       int scriptno = p->teleslots[i].scriptno;
 
       textbox.StageSelect.SetSlot(slotno, scriptno);
-      NX_LOG(" - Read Teleporter Slot %d: slotno=%d scriptno=%d\n", i, slotno, scriptno);
    }
 
    // have to load the stage last AFTER the flags are loaded because
@@ -489,8 +477,6 @@ bool game_load(Profile *p)
 bool game_save(int num)
 {
    Profile p;
-
-   NX_LOG("game_save: writing savefile %d\n", num);
 
    if (game_save(&p))
       return 1;

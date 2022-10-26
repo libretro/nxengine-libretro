@@ -126,8 +126,6 @@ bool Credits::Jump(int label)
 CredCommand cmd;
 bool tried_rewind = false;
 
-	NX_LOG("- Jump to label %04d\n", label);
-	
 	for(;;)
 	{
 		if (script.ReadCommand(&cmd) || cmd.type == CC_END)
@@ -244,30 +242,24 @@ enum BIStates
 
 bool BigImage::Init()
 {
-char fname[MAXPATHLEN];
-
+#ifdef _WIN32
+	char slash = '\\';
+#else
+	char slash = '/';
+#endif
+	char fname[MAXPATHLEN];
 	imagex = 0;
 	imgno = 0;
 	state = BI_CLEAR;
 	memset(images, 0, sizeof(images));
-   char slash;
-#ifdef _WIN32
-   slash = '\\';
-#else
-   slash = '/';
-#endif
-	
+
 	// load any images present
 	for(int i=0;i<MAX_BIGIMAGES;i++)
 	{
 		snprintf(fname, sizeof(fname), "%s%ccredit%02d.bmp", pic_dir, slash, i);
 		images[i] = NXSurface::FromFile(fname, false);
-		if (!images[i])
-			NX_ERR("BigImage::Init: image '%s' exists but seems corrupt!\n", fname);
-		else
-			NX_LOG("BigImage: loaded %s ok\n", fname);
 	}
-	
+
 	return 0;
 }
 
@@ -277,7 +269,6 @@ BigImage::~BigImage()
 	{
 		if (images[i])
 		{
-			NX_ERR("BigImage: freeing image %d\n", i);
 			delete images[i];
 			images[i] = NULL;
 		}
@@ -294,10 +285,7 @@ void BigImage::Set(int num)
 		state = BI_SLIDE_IN;
 	}
 	else
-	{
-		NX_ERR("BigImage::Set: invalid image number %d\n", num);
 		state = BI_CLEAR;
-	}
 }
 
 void BigImage::Clear()
@@ -347,10 +335,7 @@ bool credit_init(int parameter)
 {
 	credits = new Credits;
 	if (credits->Init())
-	{
-		NX_ERR("Credits initilization failed\n");
 		return 1;
-	}
 	
 	return 0;
 }

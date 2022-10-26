@@ -240,7 +240,6 @@ Caret *effect(int x, int y, int effectno)
          c = CreateCaret(x, y, SPR_QMARK, caret_qmark);
          break;
       default:
-         NX_ERR("effect: invalid effect type %d\n", effectno);
          return NULL;
    }
 

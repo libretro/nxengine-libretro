@@ -16,21 +16,21 @@ public:
 	
 private:
 	void *fFunctions[MAX_INIT_RECORDS];
-	int fCount;		// counting on behavior of auto-initilization to 0
+	int fCount;		// counting on behavior of auto-initialization to 0
 };
 
 class InitAdder
 {
 public:
-	InitAdder(InitList *initlist, void (*func)(void), const char *file = 0) { NX_LOG("InitAdder from %s.\n", file ? file : "null"); initlist->AddFunction(func); }
-	InitAdder(InitList *initlist, bool (*func)(void), const char *file = 0) { NX_LOG("InitAdder from %s.\n", file ? file : "null"); initlist->AddFunction(func); }
-	InitAdder(InitList &initlist, void (*func)(void), const char *file = 0) { NX_LOG("InitAdder from %s.\n", file ? file : "null"); initlist.AddFunction(func); }
-	InitAdder(InitList &initlist, bool (*func)(void), const char *file = 0) { NX_LOG("InitAdder from %s.\n", file ? file : "null"); initlist.AddFunction(func); }
+	InitAdder(InitList *initlist, void (*func)(void)) { initlist->AddFunction(func); }
+	InitAdder(InitList *initlist, bool (*func)(void)) { initlist->AddFunction(func); }
+	InitAdder(InitList &initlist, void (*func)(void)) { initlist.AddFunction(func); }
+	InitAdder(InitList &initlist, bool (*func)(void)) { initlist.AddFunction(func); }
 };
 
 #define INITFUNC(TARGET)	\
 	static void __InitFunc(void);	\
-	static InitAdder _ia(TARGET, __InitFunc, __FILE__);	\
+	static InitAdder _ia(TARGET, __InitFunc);	\
 	static void __InitFunc(void)	\
 
 #endif

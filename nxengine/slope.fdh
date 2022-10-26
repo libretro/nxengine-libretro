@@ -5,11 +5,7 @@
 
 //---------------------[referenced from slope.cpp]-------------------//
 bool initslopetable(void);
-uint8_t ReadSlopeTable(int x, int y);
 bool IsSlopeAtPointList(Object *o, SIFPointList *points);
 int CheckStandOnSlope(Object *o);
 int CheckBoppedHeadOnSlope(Object *o);
 bool movehandleslope(Object *o, int xinertia);
-void DrawSlopeTablesOnTiles();
-void DrawSlopeTableOnTile(int table, int tile);
-void dumpslopetable(int t);
