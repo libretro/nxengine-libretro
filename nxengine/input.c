@@ -11,11 +11,6 @@ unsigned controller_device;
 int16_t input_state_wrapper(unsigned port, unsigned device,
       unsigned index, unsigned id);
 
-bool input_init(void)
-{
-   return true;
-}
-
 const char *input_get_name(int index)
 {
    static const char *input_names[] =
@@ -87,10 +82,6 @@ void input_poll(void)
       }
    }
 
-}
-
-void input_close(void)
-{
 }
 
 static const int buttons[] = { JUMPKEY, FIREKEY, 0 };

@@ -67,8 +67,6 @@ bool pre_main(void)
 {
    char filename[1024];
    RFILE *fp;
-   // start up inputs first thing because settings_load may remap them
-   input_init();
 
    // load settings, or at least get the defaults,
    // so we know the initial screen resolution.
@@ -79,7 +77,6 @@ bool pre_main(void)
    retro_create_path_string(filename, sizeof(filename), g_dir, "Doukutsu.exe");
    fp = rfopen(filename, "rb");
 
-   //extract_files(fp);
    if (!cachefiles_init(fp))
       return 1;
 
@@ -155,7 +152,6 @@ void post_main(void)
    Carets::close();
 	
    Graphics::close();
-   input_close();
    font_close();
    sound_close();
    tsc_close();

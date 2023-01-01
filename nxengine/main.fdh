@@ -70,8 +70,6 @@ extern "C" {
 #endif
 
 //---------------------[referenced from main.cpp]--------------------//
-bool input_init(void);
-void input_close(void);
 void input_poll(void);
 bool justpushed(int k);
 
