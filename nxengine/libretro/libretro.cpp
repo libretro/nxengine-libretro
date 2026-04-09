@@ -37,6 +37,9 @@ extern "C" bool libretro_supports_bitmasks = false;
 
 static unsigned g_frame_cnt;
 
+static bool hw_render_use_fb = false;
+static bool hw_render_fb_checked = false;
+
 bool retro_60hz = true;
 unsigned pitch;
 
@@ -303,6 +306,8 @@ bool retro_load_game(const struct retro_game_info *game)
 void retro_deinit(void)
 {
    libretro_supports_bitmasks = false;
+   hw_render_use_fb = false;
+   hw_render_fb_checked = false;
 }
 
 void retro_reset(void)
@@ -318,12 +323,45 @@ void retro_run(void)
    poll_cb();
    static unsigned frame_cnt = 0;
 
+   if (!hw_render_fb_checked)
+   {
+      struct retro_framebuffer fb = {0};
+      fb.width         = SCREEN_WIDTH;
+      fb.height        = SCREEN_HEIGHT;
+      fb.access_flags  = RETRO_MEMORY_ACCESS_WRITE;
+      hw_render_use_fb  = environ_cb(RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER, &fb);
+      hw_render_fb_checked = true;
+
+      if (hw_render_use_fb && log_cb)
+         log_cb(RETRO_LOG_INFO, "Acquired current software framebuffer from frontend.\n");
+   }
+
    screen->Flip();
 
    if (retro_60hz)
    {
       while (!run_main());
-      video_cb(retro_frame_buffer, retro_frame_buffer_width, retro_frame_buffer_height, retro_frame_buffer_pitch);
+
+      if (hw_render_use_fb)
+      {
+         struct retro_framebuffer fb = {0};
+         fb.width        = retro_frame_buffer_width;
+         fb.height       = retro_frame_buffer_height;
+         fb.access_flags = RETRO_MEMORY_ACCESS_WRITE;
+         if (environ_cb(RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER, &fb))
+         {
+            memcpy(fb.data, retro_frame_buffer,
+                  retro_frame_buffer_height * retro_frame_buffer_pitch);
+            video_cb(fb.data, fb.width, fb.height, fb.pitch);
+         }
+         else
+            video_cb(retro_frame_buffer, retro_frame_buffer_width,
+                  retro_frame_buffer_height, retro_frame_buffer_pitch);
+      }
+      else
+         video_cb(retro_frame_buffer, retro_frame_buffer_width,
+               retro_frame_buffer_height, retro_frame_buffer_pitch);
+
       frame_cnt++;
    }
    else
@@ -331,7 +369,26 @@ void retro_run(void)
       if (frame_cnt % 6)
       {
          while (!run_main());
-         video_cb(retro_frame_buffer, retro_frame_buffer_width, retro_frame_buffer_height, retro_frame_buffer_pitch);
+
+         if (hw_render_use_fb)
+         {
+            struct retro_framebuffer fb = {0};
+            fb.width        = retro_frame_buffer_width;
+            fb.height       = retro_frame_buffer_height;
+            fb.access_flags = RETRO_MEMORY_ACCESS_WRITE;
+            if (environ_cb(RETRO_ENVIRONMENT_GET_CURRENT_SOFTWARE_FRAMEBUFFER, &fb))
+            {
+               memcpy(fb.data, retro_frame_buffer,
+                     retro_frame_buffer_height * retro_frame_buffer_pitch);
+               video_cb(fb.data, fb.width, fb.height, fb.pitch);
+            }
+            else
+               video_cb(retro_frame_buffer, retro_frame_buffer_width,
+                     retro_frame_buffer_height, retro_frame_buffer_pitch);
+         }
+         else
+            video_cb(retro_frame_buffer, retro_frame_buffer_width,
+                  retro_frame_buffer_height, retro_frame_buffer_pitch);
       }
       else
          video_cb(NULL, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH * sizeof(uint16_t)); // Dupe every 6th frame.
