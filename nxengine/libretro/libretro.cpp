@@ -57,10 +57,26 @@ void retro_set_environment(retro_environment_t cb)
 
    environ_cb = cb;
 
-   vfs_iface_info.required_interface_version = 1;
+   /* Ask for a VFS new enough to cover path_is_valid() as well: the engine
+    * checks for its data files before opening them, and a frontend path
+    * (Android SAF, SMB) is not something stat() can resolve.
+    * Note that filestream_vfs_init() ignores anything below v2, so the
+    * previous v1 request left the core on plain stdio. */
+   vfs_iface_info.required_interface_version = PATH_REQUIRED_VFS_VERSION;
    vfs_iface_info.iface                      = NULL;
    if (environ_cb(RETRO_ENVIRONMENT_GET_VFS_INTERFACE, &vfs_iface_info))
-	   filestream_vfs_init(&vfs_iface_info);
+   {
+      filestream_vfs_init(&vfs_iface_info);
+      path_vfs_init(&vfs_iface_info);
+   }
+   else
+   {
+      /* older frontend: take what it has, file streams only */
+      vfs_iface_info.required_interface_version = FILESTREAM_REQUIRED_VFS_VERSION;
+      vfs_iface_info.iface                      = NULL;
+      if (environ_cb(RETRO_ENVIRONMENT_GET_VFS_INTERFACE, &vfs_iface_info))
+         filestream_vfs_init(&vfs_iface_info);
+   }
 
    environ_cb(RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME, &no_content);
 }
